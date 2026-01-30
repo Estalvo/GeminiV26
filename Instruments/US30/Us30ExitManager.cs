@@ -1,0 +1,191 @@
+﻿using System;
+using System.Collections.Generic;
+using cAlgo.API;
+using cAlgo.API.Indicators;
+using GeminiV26.Core;
+
+namespace GeminiV26.Instruments.US30
+{
+    public class Us30ExitManager
+    {
+        private readonly Robot _bot;
+
+        private readonly Dictionary<long, PositionContext> _contexts = new();
+                
+        private const double BeOffsetR = 0.05;
+        private const double MinTrailImprovePips = 15;
+
+        private const double TrailTight = 1.2;
+        private const double TrailNormal = 1.6;
+        private const double TrailLoose = 2.1;
+
+        private const int AtrPeriod = 14;
+        private readonly AverageTrueRange _atrM5;
+
+        public Us30ExitManager(Robot bot)
+        {
+            _bot = bot;
+            _atrM5 = _bot.Indicators.AverageTrueRange(AtrPeriod, MovingAverageType.Exponential);
+        }
+
+        public void RegisterContext(PositionContext ctx)
+        {
+            _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
+        }
+
+        public void OnTick()
+        {
+            foreach (var pos in _bot.Positions)
+            {
+                if (pos.SymbolName != _bot.SymbolName)
+                    continue;
+
+                // szándékosan üres – tick exit később
+            }
+        }
+
+        // Bar-level exit handling (TradeCore compatibility)
+        public void OnBar(Position pos)
+        {
+            Manage(pos);
+        }
+
+
+        public void Manage(Position pos)
+        {
+            long key = Convert.ToInt64(pos.Id);
+
+            if (!_contexts.TryGetValue(key, out var ctx))
+                return;
+
+            if (!pos.StopLoss.HasValue)
+                return;
+
+            double stopLoss = pos.StopLoss.Value;
+
+            double rDist = Math.Abs(ctx.EntryPrice - stopLoss);
+            if (rDist <= 0)
+                return;
+
+            if (!ctx.Tp1Hit)
+            {
+                double tp1R = ctx.Tp1R;
+                if (tp1R <= 0)
+                    return;
+
+                double tp1Price =
+                    ctx.EntryPrice + Direction(pos) * rDist * tp1R;
+
+                bool reached =
+                    (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
+                    (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+
+                if (reached)
+                {
+                    ExecuteTp1(pos, ctx);
+                    MoveToBreakEven(pos, ctx, rDist);
+                    ctx.Tp1Hit = true;
+                    return;
+                }
+            }
+
+            if (ctx.Tp1Hit && ctx.TrailingMode != TrailingMode.None)
+            {
+                ApplyTrailing(pos, ctx);
+            }
+        }
+
+        private void ExecuteTp1(Position pos, PositionContext ctx)
+        {
+            double frac = ctx.Tp1CloseFraction;
+            if (frac <= 0 || frac >= 1)
+                frac = 0.5;
+
+            long minUnits = Convert.ToInt64(_bot.Symbol.VolumeInUnitsMin);
+
+            long targetUnits = (long)Math.Floor(pos.VolumeInUnits * frac);
+            if (targetUnits <= 0)
+                return;
+
+            long closeUnits = Convert.ToInt64(_bot.Symbol.NormalizeVolumeInUnits(targetUnits));
+
+            if (closeUnits < minUnits)
+                return;
+
+            if (closeUnits >= Convert.ToInt64(pos.VolumeInUnits))
+                closeUnits = Convert.ToInt64(pos.VolumeInUnits - minUnits);
+
+            if (closeUnits <= 0)
+                return;
+
+            _bot.ClosePosition(pos, closeUnits);
+
+            ctx.Tp1ClosedVolumeInUnits = (double)closeUnits;
+            ctx.RemainingVolumeInUnits = (double)(pos.VolumeInUnits - closeUnits);
+        }
+
+        private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist)
+        {
+            double bePrice = ctx.EntryPrice + Direction(pos) * rDist * BeOffsetR;
+
+            bool improve =
+                (pos.TradeType == TradeType.Buy && bePrice > pos.StopLoss.Value) ||
+                (pos.TradeType == TradeType.Sell && bePrice < pos.StopLoss.Value);
+
+            if (!improve)
+                return;
+
+            _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
+
+            ctx.BePrice = bePrice;
+            ctx.BeMode = BeMode.AfterTp1;
+        }
+
+        private void ApplyTrailing(Position pos, PositionContext ctx)
+        {
+            double atr = _atrM5.Result.LastValue;
+            if (atr <= 0)
+                return;
+
+            double mult = GetTrailMultiplier(ctx.TrailingMode);
+            double trailDist = atr * mult;
+
+            double desiredSl =
+                pos.TradeType == TradeType.Buy
+                    ? _bot.Symbol.Bid - trailDist
+                    : _bot.Symbol.Ask + trailDist;
+
+            if (ctx.BePrice > 0)
+            {
+                desiredSl = pos.TradeType == TradeType.Buy
+                    ? Math.Max(desiredSl, ctx.BePrice)
+                    : Math.Min(desiredSl, ctx.BePrice);
+            }
+
+            double minImprove = _bot.Symbol.PipSize * MinTrailImprovePips;
+
+            bool improve =
+                (pos.TradeType == TradeType.Buy && desiredSl > pos.StopLoss.Value + minImprove) ||
+                (pos.TradeType == TradeType.Sell && desiredSl < pos.StopLoss.Value - minImprove);
+
+            if (!improve)
+                return;
+
+            _bot.ModifyPosition(pos, desiredSl, pos.TakeProfit);
+        }
+
+        private static int Direction(Position pos)
+            => pos.TradeType == TradeType.Buy ? 1 : -1;
+
+        private static double GetTrailMultiplier(TrailingMode mode)
+        {
+            return mode switch
+            {
+                TrailingMode.Tight => TrailTight,
+                TrailingMode.Normal => TrailNormal,
+                TrailingMode.Loose => TrailLoose,
+                _ => TrailNormal
+            };
+        }
+    }
+}

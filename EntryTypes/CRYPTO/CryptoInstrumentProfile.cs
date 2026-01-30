@@ -1,0 +1,30 @@
+﻿namespace GeminiV26.EntryTypes.Crypto
+{
+    public sealed class CryptoInstrumentProfile
+    {
+        public string Symbol { get; init; }
+
+        // === Vol / trend baseline ===
+        public double MinAtrPips { get; init; }
+        public double MaxAtrPips { get; init; }
+
+        public double MinAdxTrend { get; init; }
+        public double MinAdxStrong { get; init; }
+
+        // === Wick / chop ===
+        public double MaxWickRatio { get; init; }
+        public int ChopLookbackBars { get; init; }
+
+        // === Impulse / flag skálázás ===
+        public double ImpulseAtrMult_M5 { get; init; }
+        public double ImpulseAtrMult_M1 { get; init; }
+        public double MaxFlagAtrMult { get; init; }
+
+        // === Range ===
+        public double RangeMaxWidthAtr { get; init; }
+
+        // === Viselkedési engedélyek ===
+        public bool AllowMeanReversion { get; init; }
+        public bool AllowRangeBreakout { get; init; }
+    }
+}

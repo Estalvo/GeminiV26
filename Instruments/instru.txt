@@ -1,0 +1,32 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 4483-EB7F
+
+ Directory of C:\Users\orken\SynologyDrive\2026\GeminiV26_Phase_3.7.1.9\Instruments
+
+01/17/2026  12:59 PM    <DIR>          .
+01/15/2026  06:31 AM    <DIR>          ..
+01/17/2026  11:05 AM    <DIR>          AUDNZD
+01/16/2026  11:29 PM    <DIR>          AUDUSD
+01/17/2026  11:07 AM    <DIR>          BTCUSD
+01/08/2026  10:51 AM    <DIR>          Common
+01/13/2026  08:55 PM    <DIR>          CRYPTO
+01/17/2026  11:22 AM    <DIR>          ETHUSD
+01/16/2026  10:54 PM    <DIR>          EURJPY
+01/16/2026  10:53 PM    <DIR>          EURUSD
+01/12/2026  09:12 AM    <DIR>          FX
+01/16/2026  10:54 PM    <DIR>          GBPJPY
+01/16/2026  10:27 AM    <DIR>          GBPUSD
+01/14/2026  05:13 PM    <DIR>          GER40
+01/01/2026  11:48 PM               753 IInstrumentContextBuilder.cs
+01/14/2026  06:47 PM    <DIR>          INDEX
+01/17/2026  12:59 PM                 0 instru.txt
+01/13/2026  08:22 PM    <DIR>          METAL
+01/16/2026  09:15 AM    <DIR>          NAS100
+01/16/2026  10:54 PM    <DIR>          NZDUSD
+01/14/2026  05:15 PM    <DIR>          US30
+01/16/2026  10:54 PM    <DIR>          USDCAD
+01/16/2026  10:54 PM    <DIR>          USDCHF
+01/15/2026  10:55 PM    <DIR>          USDJPY
+01/15/2026  08:23 PM    <DIR>          XAUUSD
+               2 File(s)            753 bytes
+              23 Dir(s)  224,548,700,160 bytes free

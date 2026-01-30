@@ -1,0 +1,16 @@
+C:\Users\orken\Downloads\GeminiV26\Core\BeMode.cs
+C:\Users\orken\Downloads\GeminiV26\Core\ConfidenceTradeModel.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry
+C:\Users\orken\Downloads\GeminiV26\Core\lista.txt
+C:\Users\orken\Downloads\GeminiV26\Core\PositionContext.cs
+C:\Users\orken\Downloads\GeminiV26\Core\RiskManager.cs
+C:\Users\orken\Downloads\GeminiV26\Core\TradeCore.cs
+C:\Users\orken\Downloads\GeminiV26\Core\TradeRouter.cs
+C:\Users\orken\Downloads\GeminiV26\Core\TradeViabilityMonitor.cs
+C:\Users\orken\Downloads\GeminiV26\Core\TrailingMode.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryContext.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryContextBuilder.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryEvaluation.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryRouter.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryType.cs
+C:\Users\orken\Downloads\GeminiV26\Core\Entry\TradeDirection.cs
