@@ -20,6 +20,25 @@
         public double ImpulseAtrMult_M1 { get; init; }
         public double MaxFlagAtrMult { get; init; }
 
+        // Require strong impulse before allowing pullback
+        public bool RequireStrongImpulseForPullback { get; set; }
+
+        // Minimum ADX required for pullback continuation
+        public double MinAdxForPullback { get; set; }
+
+        // Block pullback if HighVol but no strong impulse (BTC trap)
+        public bool BlockPullbackOnHighVolWithoutImpulse { get; set; }
+
+        // ================================
+        // PULLBACK VIABILITY (POST-ENTRY)
+        // ================================
+
+        // How many bars must show momentum after pullback
+        public int PullbackMfeCheckBars { get; set; }
+
+        // Minimum MFE (in R) required within that window
+        public double PullbackMinMfeR { get; init; }
+
         // === Range ===
         public double RangeMaxWidthAtr { get; init; }
 

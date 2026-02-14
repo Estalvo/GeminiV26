@@ -29,6 +29,15 @@ namespace GeminiV26.Core.Entry
         public double Ema21_M5;
         public double Ema21_M15;
 
+        // =========================
+        // EMA STRUCTURE (M5 / M15)
+        // =========================
+        public double Ema50_M5;
+        public double Ema200_M5;
+
+        public double Ema50_M15;
+        public double Ema200_M15;
+
         // slope = direction / strength
         public double Ema21Slope_M5;
         public double Ema21Slope_M15;
@@ -38,6 +47,19 @@ namespace GeminiV26.Core.Entry
         // =========================
         public double AtrM5;
         public double AtrM15;
+        public double AtrSlope_M5;
+        public double AtrAcceleration_M5;
+        
+        // =========================
+        // ADX / DMS (M5)
+        // =========================
+        public double Adx_M5 { get; set; }
+        public double AdxSlope_M5 { get; set; }
+        public double AdxAcceleration_M5 { get; set; }
+
+        public double PlusDI_M5 { get; set; }
+        public double MinusDI_M5 { get; set; }
+        public double DiSpread_M5 { get; set; }
 
         // =================================================
         // FX FLAG SUPPORT (Phase 3.8)

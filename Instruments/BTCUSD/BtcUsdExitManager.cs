@@ -10,7 +10,6 @@ namespace GeminiV26.Instruments.BTCUSD
     /// BTCUSD ExitManager – NAS100 struktúra alapján, de crypto-safe (double volume step).
     /// Szabály: TP1 előtt NINCS trailing. TP1 után BE + trailing.
     /// </summary>
-
     public class BtcUsdExitManager
     {
         private readonly Robot _bot;
@@ -18,12 +17,12 @@ namespace GeminiV26.Instruments.BTCUSD
         // PositionId -> context
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
-        // ===== TP1 / BE =====        
+        // ===== TP1 / BE =====
         private const double BeOffsetR = 0.05;
 
         // ===== Trailing =====
-        // Crypto ATR trail általában nagyobb multipliert igényel
-        private const double MinTrailImprovePips = 30;
+        // Régi: 30 pip túl nagy volt BTC-re sok környezetben
+        private const double MinTrailImprovePips = 10;
 
         private const double TrailTight = 1.2;
         private const double TrailNormal = 1.8;
@@ -52,7 +51,6 @@ namespace GeminiV26.Instruments.BTCUSD
 
         // =========================================================
         // BAR-LEVEL EXIT MANAGEMENT
-        // Kötelező a közös IExitManager szerződés miatt,
         // BTC esetén jelenleg nincs bar-alapú exit logika
         // =========================================================
         public void OnBar(Position position)
@@ -63,19 +61,25 @@ namespace GeminiV26.Instruments.BTCUSD
         // ==============================
         // TICK-LEVEL EXIT MANAGEMENT
         // ==============================
-        // TP1 + trailing IDE KERÜLT,
-        // hogy tick-pontos végrehajtás legyen
         public void OnTick()
         {
-            foreach (var kv in _contexts)
-            {
-                long key = kv.Key;
-                var ctx = kv.Value;
+            // Snapshot kulcsok: biztonságosabb, mint közvetlen foreach a dict-en
+            var keys = new List<long>(_contexts.Keys);
 
+            // M1 bar a wick-realitáshoz (TP1 touch)
+            var m1 = _bot.MarketData.GetBars(TimeFrame.Minute);
+            Bar m1Bar = m1 != null && m1.Count > 0 ? m1.LastBar : default;
+
+            foreach (var key in keys)
+            {
+                if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                    continue;
+
+                // Position lookup
                 Position pos = null;
                 foreach (var p in _bot.Positions)
                 {
-                    if (p.Id == kv.Key)
+                    if (Convert.ToInt64(p.Id) == key)
                     {
                         pos = p;
                         break;
@@ -88,30 +92,42 @@ namespace GeminiV26.Instruments.BTCUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                double stopLoss = pos.StopLoss.Value;
-
-                // R-distance az eredeti SL alapján (ctx.EntryPrice vs aktuális SL)
+                // R-distance az eredeti SL alapján (ctx.EntryPrice vs eredeti SL távolság)
                 double rDist = ctx.RiskPriceDistance;
                 if (rDist <= 0)
                     continue;
 
                 // =========================
-                // TP1 (tick-pontos)
+                // TP1 (crypto-touch: M1 wick)
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
                     double tp1Price =
                         ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
 
-                    bool reached =
-                        (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
-                        (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+                    // Ha nincs M1 bar, fallback tick alapra
+                    bool reached;
+                    if (m1 != null && m1.Count > 0)
+                    {
+                        reached = pos.TradeType == TradeType.Buy
+                            ? m1Bar.High >= tp1Price
+                            : m1Bar.Low <= tp1Price;
+                    }
+                    else
+                    {
+                        reached =
+                            (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
+                            (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+                    }
 
                     if (reached)
                     {
                         _bot.Print("[BTCUSD][TP1][HIT] TP1 HIT (OnTick)");
                         ExecuteTp1(pos, ctx, rDist);
-                        continue;
+
+                        // KRITIKUS: TP1 után azonnal kilépünk ebből a tickből,
+                        // hogy ne legyen state-ütközés a partial close / modify miatt.
+                        return;
                     }
 
                     // 🔒 TP1 előtt trailing TILOS
@@ -126,19 +142,16 @@ namespace GeminiV26.Instruments.BTCUSD
         }
 
         // =========================================================
-        // Manage() MEGMARAD
-        // (nem töröljük, de exit logika már OnTick-ben fut)
+        // Manage() megmarad, de exit logika OnTick-ben fut
         // =========================================================
         public void Manage(Position pos)
         {
-            _bot.Print(
-                $"[BTCUSD][INFO] Manage() called, exit handled in OnTick()");
+            _bot.Print("[BTCUSD][INFO] Manage() called, exit handled in OnTick()");
         }
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
             // 1) Partial close (crypto-safe)
-            // NAS logika: ctx.Tp1CloseFraction (ha nincs értelmes, 0.5)
             double frac = ctx.Tp1CloseFraction;
             if (frac <= 0 || frac >= 1)
                 frac = 0.5;
@@ -156,8 +169,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             // Ne zárjuk ki véletlen fullra (maradjon legalább minUnits)
             if (closeUnits >= pos.VolumeInUnits)
-                closeUnits = _bot.Symbol.NormalizeVolumeInUnits(
-                    pos.VolumeInUnits - minUnits);
+                closeUnits = _bot.Symbol.NormalizeVolumeInUnits(pos.VolumeInUnits - minUnits);
 
             if (closeUnits >= minUnits && closeUnits > 0)
             {
@@ -196,6 +208,10 @@ namespace GeminiV26.Instruments.BTCUSD
             if (!pos.StopLoss.HasValue)
                 return;
 
+            // Safety: ha valamiért nem állt be TP1-nél
+            if (ctx.TrailingMode == TrailingMode.None)
+                ctx.TrailingMode = TrailingMode.Normal;
+
             double atr = _atrM5.Result.LastValue;
             if (atr <= 0)
                 return;
@@ -216,14 +232,14 @@ namespace GeminiV26.Instruments.BTCUSD
                     : Math.Min(desiredSl, ctx.BePrice);
             }
 
-            double minImprove =
-                _bot.Symbol.PipSize * MinTrailImprovePips;
+            // Minimum SL-improve: pip alap + ATR arányos biztosíték (rezsimálló)
+            double minImprovePip = _bot.Symbol.PipSize * MinTrailImprovePips;
+            double minImproveAtr = atr * 0.15; // ~15% ATR
+            double minImprove = Math.Max(minImprovePip, minImproveAtr);
 
             bool improve =
-                (pos.TradeType == TradeType.Buy &&
-                 desiredSl > pos.StopLoss.Value + minImprove) ||
-                (pos.TradeType == TradeType.Sell &&
-                 desiredSl < pos.StopLoss.Value - minImprove);
+                (pos.TradeType == TradeType.Buy && desiredSl > pos.StopLoss.Value + minImprove) ||
+                (pos.TradeType == TradeType.Sell && desiredSl < pos.StopLoss.Value - minImprove);
 
             if (!improve)
                 return;

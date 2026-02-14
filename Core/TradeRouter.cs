@@ -49,6 +49,8 @@ namespace GeminiV26.Core
         // =========================================================
         public EntryEvaluation SelectEntry(List<EntryEvaluation> signals)
         {
+            _bot.Print("[TR] SelectEntry CALLED");
+
             if (signals == null || signals.Count == 0)
                 return null;
 
@@ -167,11 +169,12 @@ namespace GeminiV26.Core
             // =========================
             switch (type)
             {
-                case EntryType.FX_Flag: return 0;                  // új, valódi flag (ritka, erős)
-                case EntryType.FX_ImpulseContinuation: return 1;   // régi "flag" logika
-                case EntryType.FX_Pullback: return 2;
-                case EntryType.FX_RangeBreakout: return 3;
-                case EntryType.FX_Reversal: return 4;
+                case EntryType.FX_Flag: return 0;
+                case EntryType.FX_FlagContinuation: return 1;
+                case EntryType.FX_MicroContinuation: return 2; // 👈 ÚJ
+                case EntryType.FX_Pullback: return 3;
+                case EntryType.FX_RangeBreakout: return 4;
+                case EntryType.FX_Reversal: return 5;
                 default: return 100;
             }
         }

@@ -58,6 +58,8 @@ namespace GeminiV26.Instruments.FX
         // ===== IMPULSE =====
         public int MaxBarsSinceImpulse { get; init; }
         public int AtrExpandPenalty { get; init; }
+        public int NoImpulsePenalty { get; init; } = 20;
+        public bool RequireImpulse { get; init; } = false;
 
         // ===== FLAG STRUCTURE =====
         public int FlagBars { get; init; }
@@ -95,6 +97,12 @@ namespace GeminiV26.Instruments.FX
 
         // ===== VOLATILITY =====
         public bool AtrExpansionHardBlock { get; init; }
+
+        // FX Instrument Profile
+        public double OverextAtrSoft = 1.2;   // score penalty
+        public double OverextAtrHard = 1.8;   // hard reject
+        public double OverextAdxRelax = 0.4;  // ADX relax factor
+
     }
 
     // ======================================================

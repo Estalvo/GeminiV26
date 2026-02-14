@@ -20,6 +20,8 @@ namespace GeminiV26
         // 🔹 TRADE LOGGING
         private TradeLogger _tradeLogger;
 
+        //private TelemetryRecorder _telemetry;
+
         // 🔹 SESSION
         public string CurrentSessionId { get; private set; }
 
@@ -48,7 +50,7 @@ namespace GeminiV26
             _barLogger = new BarLogger(this);
             _eventLogger = new EventLogger(SymbolName);
             _tradeLogger = new TradeLogger(SymbolName);
-
+            //_telemetry = new TelemetryRecorder(SymbolName);
             // =========================
             // 🔔 BOT START EVENT
             // =========================

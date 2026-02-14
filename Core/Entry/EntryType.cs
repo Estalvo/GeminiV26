@@ -13,7 +13,8 @@
         FX_Flag,
         FX_RangeBreakout,
         FX_Reversal,
-        FX_ImpulseContinuation,
+        FX_FlagContinuation,
+        FX_MicroContinuation,
 
         // ===== INDEX =====
         Index_Breakout,

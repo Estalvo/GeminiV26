@@ -1,5 +1,6 @@
 using GeminiV26.Core.Entry;
 using GeminiV26.Risk;
+using System;
 
 namespace GeminiV26.Instruments.GBPJPY
 {
@@ -33,9 +34,11 @@ namespace GeminiV26.Instruments.GBPJPY
         // =========================
         public double GetRiskPercent(int score)
         {
-            if (score >= 85) return 0.35;
-            if (score >= 75) return 0.30;
-            return 0.25;
+            double n = NormalizeScore(score);
+
+            // GBPJPY: extra volatilis → alacsonyabb plafon
+            // 0.20% → 0.30%
+            return 0.20 + n * (0.30 - 0.20);
         }
 
         // =========================
@@ -43,44 +46,50 @@ namespace GeminiV26.Instruments.GBPJPY
         // =========================
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            if (score >= 85) return 2.8;
-            if (score >= 75) return 3.0;
-            return 3.2;
+            double n = NormalizeScore(score);
+
+            // GBPJPY: nagyon wickes
+            // 3.5 → 3.0
+            return 3.5 - n * 0.5;
         }
 
         // =========================
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
-            out double tp1R,
-            out double tp1Ratio,
-            out double tp2R,
-            out double tp2Ratio)
+    int score,
+    out double tp1R,
+    out double tp1Ratio,
+    out double tp2R,
+    out double tp2Ratio)
         {
-            // GBPJPY – nagyon impulzív FX pár
-            // cél: jó setupnál hagyjuk futni, gyengénél gyors biztosítás
+            double n = NormalizeScore(score);
 
-            if (score >= 85)
-            {
-                tp1R = 0.50;
-                tp1Ratio = 0.40;   // 60% runner
-                tp2R = 1.8;
-            }
-            else if (score >= 75)
-            {
-                tp1R = 0.38;
-                tp1Ratio = 0.55;
-                tp2R = 1.3;
-            }
-            else
+            // gyenge / zajos
+            if (n < 0.50)
             {
                 tp1R = 0.30;
                 tp1Ratio = 0.70;
                 tp2R = 0.9;
+                tp2Ratio = 0.30;
+                return;
             }
 
-            tp2Ratio = 1.0 - tp1Ratio;
+            // normál
+            if (n < 0.75)
+            {
+                tp1R = 0.38;
+                tp1Ratio = 0.55;
+                tp2R = 1.3;
+                tp2Ratio = 0.45;
+                return;
+            }
+
+            // top impulzív setup
+            tp1R = 0.50;
+            tp1Ratio = 0.40;   // 60% runner
+            tp2R = 1.8;
+            tp2Ratio = 0.60;
         }
 
         // =========================
@@ -88,7 +97,16 @@ namespace GeminiV26.Instruments.GBPJPY
         // =========================
         public double GetLotCap(int score)
         {
-            return 0.80;
+            double n = NormalizeScore(score);
+
+            // GBPJPY: brutális vol → erős cap
+            return 0.55 + n * 0.30; // 0.55 → 0.85
+        }
+
+        private static double NormalizeScore(int score)
+        {
+            // GBPJPY: új FX score-tartomány, de óvatos használat
+            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

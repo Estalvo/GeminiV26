@@ -1,0 +1,435 @@
+﻿using System;
+using cAlgo.API;
+using GeminiV26.Core;
+using GeminiV26.Core.Entry;
+using GeminiV26.Instruments.FX;
+
+namespace GeminiV26.EntryTypes.FX
+{
+    public sealed class FX_FlagEntry : IEntryType
+    {
+        public EntryType Type => EntryType.FX_Flag;
+
+        public EntryEvaluation Evaluate(EntryContext ctx)
+        {
+            int score = 0; // ✅ mindig létezik
+            int baseQuality = 0;
+            int penaltyTotal = 0;
+
+            if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
+                return Invalid(ctx, $"CTX_NOT_READY({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score
+                );
+
+            var fx = FxInstrumentMatrix.Get(ctx.Symbol);
+            
+            if (fx == null)
+                return Invalid(
+                    ctx, $"NO_FX_PROFILE({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score
+                );
+
+            if (fx.FlagTuning == null || !fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
+                return Invalid(
+                    ctx, $"NO_FLAG_TUNING({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score
+                );
+
+            // ✅ csak itt, mert itt már létezik tuning
+            score = tuning.BaseScore;
+
+            // =====================================================
+            // BASE QUALITY SCORE (FX FLAG) – CONTEXT-SAFE
+            // =====================================================
+
+            // FX flag structure (implicit)
+            baseQuality += 20;
+
+            // ATR expansion reward (ez VAN ctx-ben)
+            if (ctx.IsAtrExpanding_M5)
+                baseQuality += 10;
+
+            // HTF alignment reward (ez IS VAN ctx-ben)
+            if (ctx.FxHtfAllowedDirection == ctx.TrendDirection &&
+                ctx.FxHtfConfidence01 > 0.6)
+            {
+                baseQuality += 10;
+            }
+
+            // Session reward (ctx.Session VAN)
+            if (ctx.Session == FxSession.London || ctx.Session == FxSession.NewYork)
+                baseQuality += 5;
+
+            // Apply
+            score += baseQuality;
+/*
+            ctx.Log?.Invoke(
+                $"[FX_FLAG_BASE] {ctx.Symbol} {ctx.Session} " +
+                $"baseQ={baseQuality} scoreSoFar={score + baseQuality}"
+            );
+*/
+            // =====================================================
+            // IMPULSE
+            // =====================================================
+            bool hasImpulse = ctx.HasImpulse_M5;
+
+            // FX: impulse NEM kötelező
+            if (!hasImpulse)
+            {
+                // compression / pre-breakout flag
+                score += 10; // fix érték, NEM profile-ból most
+            }
+
+            // FX flag gyakran később indul, mint a textbook impulse után 1-2 bar
+            if (hasImpulse &&
+                ctx.BarsSinceImpulse_M5 > tuning.MaxBarsSinceImpulse + 2)
+            {
+                return Invalid(ctx, $"STALE_IMPULSE({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);                
+            }
+
+            // ATR expansion score logic (as-is)
+            if (!ctx.IsAtrExpanding_M5)
+            {
+                score -= tuning.AtrExpandPenalty;
+                penaltyTotal += tuning.AtrExpandPenalty;
+            }
+
+            // =====================================================
+            // SESSION-SPECIFIC EARLY TIME GATE (profit-driven)
+            // =====================================================
+
+            int maxBarsEarly = ctx.Session switch
+            {
+                FxSession.Asia => tuning.MaxBarsSinceImpulse,     // Asia marad szigorú
+                FxSession.London => tuning.MaxBarsSinceImpulse + 3, // London ENGEDÉKENY
+                FxSession.NewYork => tuning.MaxBarsSinceImpulse + 2,
+                _ => tuning.MaxBarsSinceImpulse
+            };
+
+            if (IsLateEntryAfterImpulseFxFlag(ctx, maxBarsEarly, hasImpulse, ctx.Session))
+            {
+                // Asia hard tilt
+                if (ctx.Session == FxSession.Asia)
+                    return Invalid(ctx, $"LATE_FLAG({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+                
+                // London / NY → csak büntetés
+                score -= 10;
+                penaltyTotal += 10;
+            }
+
+            // =====================================================
+            // FLAG STRUCTURE
+            // =====================================================
+            if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
+                return Invalid(ctx, $"FLAG_BARS_FAILS({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+            
+            if (rangeAtr > fx.MaxFlagAtrMult)
+                return Invalid(ctx, $"FLAG_TOO_WIDE({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+            
+            // =====================================================
+            // PULLBACK DEPTH
+            // =====================================================
+            double maxDist = fx.PullbackStyle switch
+            {
+                FxPullbackStyle.Shallow => tuning.MaxPullbackAtr * 0.8,
+                FxPullbackStyle.EMA21 => tuning.MaxPullbackAtr,
+                FxPullbackStyle.EMA50 => tuning.MaxPullbackAtr * 1.2,
+                FxPullbackStyle.Structure => tuning.MaxPullbackAtr * 1.4,
+                _ => tuning.MaxPullbackAtr
+            };
+
+            var over = CheckOverextension(ctx, maxDist);
+
+            if (over.Hard)
+                return Invalid(ctx, $"OVEREXT_HARD({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+            
+            if (over.Soft)
+            {
+                score -= 15;
+                penaltyTotal += 15;
+            }
+
+            // =====================================================
+            // CONTINUATION SIGNAL (FX-optimized)
+            // =====================================================
+
+            // van-e bármilyen folytatás jel
+            bool hasContinuationSignal =
+                BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer) ||
+                ctx.M1TriggerInTrendDirection ||
+                ctx.IsValidFlagStructure_M5;
+
+            // Asia: marad szigorú, csak breakout
+            if (ctx.Session == FxSession.Asia &&
+                !BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer))
+            {
+                return Invalid(ctx, $"ASIA_NO_BREAKOUT({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+            }
+
+            // London / NY: elég, ha VAN continuation jel
+
+            if (!hasContinuationSignal)
+            {
+                return Invalid(ctx, $"NO_CONTINUATION_SIGNAL({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);                
+            }
+
+            // RECHECK IMPULSE AFTER FLAG (Asia fake-k ellen)
+            // Keep only for Asia (where fake impulses are common), otherwise redundant.
+            if (ctx.Session == FxSession.Asia &&
+                hasImpulse &&
+                ctx.BarsSinceImpulse_M5 > tuning.MaxBarsSinceImpulse)
+            {
+                return Invalid(ctx, $"STALE_IMPULSE_POST_FLAG({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);                
+            }
+
+            // =====================================================
+            // CANDLE BODY
+            // =====================================================
+            if (!BodyAligned(ctx))
+            {
+                if (tuning.BodyMisalignPenalty == int.MaxValue && ctx.Session == FxSession.Asia)
+                    return Invalid(ctx, $"WEAK_ENTRY_BODY({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+                
+                int p = tuning.BodyMisalignPenalty == int.MaxValue ? 15 : tuning.BodyMisalignPenalty;
+                score -= p;
+                penaltyTotal += p;
+            }
+
+            // =====================================================
+            // M1 TRIGGER
+            // =====================================================
+            if (ctx.M1TriggerInTrendDirection)
+            {
+                score += tuning.M1TriggerBonus;
+            }
+            else
+            {
+                if (tuning.RequireM1Trigger && ctx.Session == FxSession.Asia)
+                    return Invalid(ctx, $"M1_REQUIRED_ASIA({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+                
+                score -= tuning.NoM1Penalty;
+                penaltyTotal += tuning.NoM1Penalty;
+            }
+
+            // =====================================================
+            // FLAG QUALITY
+            // =====================================================
+            if (ctx.IsValidFlagStructure_M5)
+                score += tuning.FlagQualityBonus;
+
+            // =====================================================
+            // SESSION SCORE DELTA (MATRIX)
+            // =====================================================
+            if (fx.SessionScoreDelta != null &&
+                fx.SessionScoreDelta.TryGetValue(ctx.Session, out var sd))
+                score += sd;
+
+            // =====================================================
+            // HTF PENALTY (FX FLAG – SOFT ONLY)
+            // =====================================================
+            int htfPenalty = HtfPenalty(
+                ctx,
+                ctx.TrendDirection,
+                tuning.HtfBasePenalty,
+                tuning.HtfScalePenalty);
+
+            // FX Flag: csak ERŐS HTF + SZEMBE irány esetén
+            if (ctx.FxHtfConfidence01 > 0.8 &&
+                ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfAllowedDirection != ctx.TrendDirection)
+            {
+                score -= htfPenalty;
+                penaltyTotal += htfPenalty;
+            }
+
+            // =====================================================
+            // FX FLAG SOFT FLOOR (ANTI-DEATH ZONE)
+            // =====================================================
+            if (score < 0 && score >= -10)
+            {
+                score = 20; // életben marad, de nem domináns
+            }
+                        
+            if (score < tuning.MinScore)
+                return Invalid(ctx, $"LOW_SCORE({score}) baseQ={baseQuality} pen={penaltyTotal}",
+                    score);
+            
+            return Valid(
+                ctx,
+                score,
+                rangeAtr,
+                $"FX_FLAG_{ctx.Session} baseQ={baseQuality} pen={penaltyTotal}"
+            );
+
+        }
+
+        // =========================================================
+        // HELPERS
+        // =========================================================
+
+        private static bool TryComputeFlag(
+            EntryContext ctx,
+            int bars,
+            out double hi,
+            out double lo,
+            out double rangeAtr)
+        {
+            hi = double.MinValue;
+            lo = double.MaxValue;
+            rangeAtr = 999;
+
+            var m5 = ctx.M5;
+            int lastClosed = m5.Count - 2;
+            int end = lastClosed - 1;
+            int start = end - bars + 1;
+            if (start < 2) return false;
+
+            for (int i = start; i <= end; i++)
+            {
+                hi = Math.Max(hi, m5[i].High);
+                lo = Math.Min(lo, m5[i].Low);
+            }
+
+            if (ctx.AtrM5 <= 0) return false;
+
+            rangeAtr = (hi - lo) / ctx.AtrM5;
+            return true;
+        }
+
+        private static bool IsOverextended(EntryContext ctx, double maxAtr)
+        {
+            var bars = ctx.M5;
+            int i = bars.Count - 2;
+            double dist = Math.Abs(bars[i].Close - ctx.Ema21_M5);
+            return dist > ctx.AtrM5 * maxAtr;
+        }
+
+        private static bool BreakoutClose(
+            EntryContext ctx,
+            double hi,
+            double lo,
+            double bufAtr)
+        {
+            var bars = ctx.M5;
+            int i = bars.Count - 2;
+            double buf = ctx.AtrM5 * bufAtr;
+            double close = bars[i].Close;
+
+            return ctx.TrendDirection switch
+            {
+                TradeDirection.Long => close > hi + buf,
+                TradeDirection.Short => close < lo - buf,
+                _ => false
+            };
+        }
+
+        private static bool BodyAligned(EntryContext ctx)
+        {
+            var bars = ctx.M5;
+            int i = bars.Count - 2;
+
+            return ctx.TrendDirection switch
+            {
+                TradeDirection.Long => bars[i].Close > bars[i].Open,
+                TradeDirection.Short => bars[i].Close < bars[i].Open,
+                _ => false
+            };
+        }
+
+        private static int HtfPenalty(
+            EntryContext ctx,
+            TradeDirection dir,
+            int basePenalty,
+            int scale)
+        {
+            if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfConfidence01 > 0 &&
+                ctx.FxHtfAllowedDirection != dir)
+            {
+                return (int)(basePenalty + scale * ctx.FxHtfConfidence01);
+            }
+
+            return 0;
+        }
+
+        private static EntryEvaluation Valid(
+            EntryContext ctx,
+            int score,
+            double rangeAtr,
+            string tag)
+            => new()
+            {
+                Symbol = ctx.Symbol,
+                Type = EntryType.FX_Flag,
+                Direction = ctx.TrendDirection,
+                Score = score,
+                IsValid = true,
+                Reason = $"{tag} dir={ctx.TrendDirection} score={score} rATR={rangeAtr:F2}"
+            };
+
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason, int score)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.FX_Flag,
+                Direction = ctx?.TrendDirection ?? TradeDirection.None, // maradjon irány debugra
+                Score = score, // ne vágd 0-ra
+                IsValid = false,
+                Reason = $"{reason} rawScore={score}"
+            };
+        }
+
+        private static bool IsLateEntryAfterImpulseFxFlag(
+            EntryContext ctx,
+            int maxBars,
+            bool hasImpulse,
+            FxSession session)
+        {
+            if (!hasImpulse)
+                return false;
+
+            if (session == FxSession.Asia)
+                return ctx.BarsSinceImpulse_M5 > maxBars;
+
+            return false;
+        }
+
+        private static OverextResult CheckOverextension(EntryContext ctx, double baseAtr)
+        {
+            var bars = ctx.M5;
+            int i = bars.Count - 2;
+
+            double refPrice = ctx.TrendDirection == TradeDirection.Long
+                ? bars[i].Low
+                : bars[i].High;
+
+            double distAtr = Math.Abs(refPrice - ctx.Ema21_M5) / ctx.AtrM5;
+
+            return new OverextResult
+            {
+                DistAtr = distAtr,
+                Soft = distAtr > baseAtr,
+                Hard = distAtr > baseAtr * 1.5
+            };
+        }
+
+        private struct OverextResult
+        {
+            public double DistAtr;
+            public bool Soft;
+            public bool Hard;
+        }
+
+    }
+}

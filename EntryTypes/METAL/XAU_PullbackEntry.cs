@@ -1,4 +1,6 @@
-﻿using GeminiV26.Core.Entry;
+﻿using System;
+using System.Collections.Generic;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.EntryTypes.METAL
 {
@@ -6,77 +8,114 @@ namespace GeminiV26.EntryTypes.METAL
     {
         public EntryType Type => EntryType.XAU_Pullback;
 
+        // === METAL softening knobs ===
+        private const int FreshImpulsePenalty = 8;
+        private const int AtrSpikePenalty = 8;
+        private const int DeepPullbackPenalty = 10;
+        private const int NoM1Penalty = 6;
+
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady)
                 return Reject(ctx, "CTX_NOT_READY");
 
+            var reasons = new List<string>(8);
+
             // =========================
             // HARD MARKET STATE GATES (XAU)
             // =========================
-            // XAU pullback csak VALÓDI trendben
             if (ctx.MarketState == null || !ctx.MarketState.IsTrend)
                 return Reject(ctx, "XAU_NO_TREND_STATE");
 
-            // ADX túl alacsony → nincs follow-through
             if (ctx.MarketState.Adx < 16.0)
                 return Reject(ctx, "XAU_ADX_TOO_LOW");
 
             // =========================
-            // DIRECTION (XAU – TREND ONLY)
+            // DIRECTION (TREND ONLY)
             // =========================
             TradeDirection dir = ctx.TrendDirection;
-
             if (dir != TradeDirection.Long && dir != TradeDirection.Short)
                 return Reject(ctx, "NO_TREND_DIR");
 
-            int score = 60;
+            int baseScore = 60;
+            int score = baseScore;
+            reasons.Add($"Base={baseScore}");
 
             // =========================
-            // TIME MEMORY GATES (XAU)
+            // TIME MEMORY (XAU)
             // =========================
 
             // túl friss impulzus → SOFT
             if (ctx.BarsSinceImpulse_M5 < 1)
-                score -= 10;
+            {
+                score -= FreshImpulsePenalty;
+                reasons.Add($"FRESH_IMPULSE(-{FreshImpulsePenalty})");
+            }
 
             // túl régi impulzus → HARD
             if (ctx.BarsSinceImpulse_M5 > 6)
-                return Reject(ctx, "STALE_IMPULSE");
+                return RejectDecision(ctx, score, "STALE_IMPULSE", reasons);
 
             // pullback ne húzódjon el
             if (ctx.PullbackBars_M5 > 3)
-                return Reject(ctx, "PULLBACK_TOO_LONG");
+                return RejectDecision(ctx, score, "PULLBACK_TOO_LONG", reasons);
 
             // =========================
-            // VOLATILITY SPIKE FILTER (XAU)
+            // VOLATILITY SPIKE FILTER
             // =========================
             if (ctx.BarsSinceImpulse_M5 <= 1 && ctx.IsAtrExpanding_M5)
-                score -= 10;
+            {
+                score -= AtrSpikePenalty;
+                reasons.Add($"ATR_SPIKE(-{AtrSpikePenalty})");
+            }
 
             // =========================
             // IMPULSE REQUIREMENT
             // =========================
             if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5)
-                return Reject(ctx, "NO_IMPULSE");
+                return RejectDecision(ctx, score, "NO_IMPULSE", reasons);
 
             score += 10;
+            reasons.Add("+IMPULSE(10)");
 
             // =========================
             // PULLBACK QUALITY
             // =========================
-
-            // pullback ne legyen túl mély
             if (ctx.PullbackDepthAtr_M5 > 1.8)
-                return Reject(ctx, "PULLBACK_TOO_DEEP");
+            {
+                bool htfAligned =
+                    ctx.MetalHtfAllowedDirection == TradeDirection.None ||
+                    ctx.MetalHtfAllowedDirection == dir;
 
-            score += 10;
+                if (htfAligned)
+                {
+                    score -= DeepPullbackPenalty;
+                    reasons.Add($"DEEP_PULLBACK_SOFT(-{DeepPullbackPenalty}) dATR={ctx.PullbackDepthAtr_M5:F2}");
+                }
+                else
+                {
+                    return RejectDecision(ctx, score, "PULLBACK_TOO_DEEP", reasons);
+                }
+            }
+            else
+            {
+                score += 10;
+                reasons.Add("+PB_OK(10)");
+            }
 
             // =========================
             // M1 TRIGGER
             // =========================
             if (ctx.M1TriggerInTrendDirection)
+            {
                 score += 10;
+                reasons.Add("+M1(10)");
+            }
+            else
+            {
+                score -= NoM1Penalty;
+                reasons.Add($"NO_M1(-{NoM1Penalty})");
+            }
 
             // =========================
             // DYNAMIC MIN SCORE (XAU)
@@ -89,17 +128,35 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.BarsSinceImpulse_M5 >= 4)
                 minScore += 5;
 
+            // Router floor kompatibilitás
+            if (score > 0 && score < 20)
+                score = 20;
+
+            if (score < minScore)
+                return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
+
+            // =========================
+            // ACCEPT
+            // =========================
+            string note =
+                $"[XAU_PB] {ctx.Symbol} dir={dir} " +
+                $"Score={score} Min={minScore} Decision=ACCEPT | " +
+                string.Join(" | ", reasons);
+
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                IsValid = score >= minScore,
-                Reason = $"XAU_PB score={score}/{minScore}"
+                IsValid = true,
+                Reason = note
             };
         }
 
+        // =====================================================
+        // REJECT HELPERS
+        // =====================================================
         private EntryEvaluation Reject(EntryContext ctx, string reason)
         {
             return new EntryEvaluation
@@ -108,6 +165,31 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = Type,
                 IsValid = false,
                 Reason = reason
+            };
+        }
+
+        private EntryEvaluation RejectDecision(
+            EntryContext ctx,
+            int score,
+            string reason,
+            List<string> reasons,
+            int? minScore = null)
+        {
+            string note =
+                $"[XAU_PB] {ctx?.Symbol} dir={ctx?.TrendDirection} " +
+                $"Score={score}" +
+                (minScore.HasValue ? $" Min={minScore.Value}" : "") +
+                $" Decision=REJECT Reason={reason} | " +
+                (reasons != null ? string.Join(" | ", reasons) : "");
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = ctx?.TrendDirection ?? TradeDirection.None,
+                Score = Math.Max(0, score),
+                IsValid = false,
+                Reason = note
             };
         }
     }

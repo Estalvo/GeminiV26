@@ -48,27 +48,13 @@ namespace GeminiV26.Instruments.EURUSD
             if (ctx.Tp1Hit)
                 return;
 
-            int bars = BarsSinceEntry(ctx);
-            if (bars > 2)
-                return;
-
-            double currentR = GetCurrentR(pos, ctx);
-            ctx.MaxFavorableR = Math.Max(ctx.MaxFavorableR, currentR);
-
-            bool momentumFail =
-                ctx.FinalConfidence < 70 &&
-                ctx.MaxFavorableR < 0.1 &&
-                currentR < -0.05;
-
-            if (!momentumFail)
-                return;
-
-            _bot.ClosePosition(pos);
-            ctx.ExitReason = ExitReason.MomentumFail;
-
+            // =========================
+            // FX EARLY EXIT TILTÁS
+            // =========================
             _bot.Print(
-                $"[EURUSD EXIT] MOMENTUM FAIL bars={bars} R={currentR:F2} MFE={ctx.MaxFavorableR:F2}"
+                $"[{ctx.Symbol} EXIT SKIP] FX ExitManager – no momentum exit before TP1"
             );
+            return;            
         }
 
         // =====================================================
@@ -220,6 +206,10 @@ namespace GeminiV26.Instruments.EURUSD
                 ? _bot.Symbol.Bid - trailDist
                 : _bot.Symbol.Ask + trailDist;
 
+            double signedPips = pos.TradeType == TradeType.Buy
+                ? pos.Pips
+                : -pos.Pips;
+
             // BE padló
             if (ctx.BePrice > 0)
             {
@@ -230,7 +220,30 @@ namespace GeminiV26.Instruments.EURUSD
 
             desiredSl = Normalize(desiredSl);
 
-            // FIRST TRAIL: ha még BE-n vagyunk → improve nélkül
+            double currentR =
+                (Math.Abs(pos.Pips) * _bot.Symbol.PipSize) / ctx.RiskPriceDistance;
+
+            bool slAtBe =
+                ctx.BePrice > 0 &&
+                Math.Abs(pos.StopLoss.Value - ctx.BePrice) <= _bot.Symbol.PipSize;
+
+            bool allowFirstTrail =
+                ctx.BePrice > 0 &&
+                currentR >= 0.15;
+
+            if (slAtBe && allowFirstTrail)
+            {
+                bool better = pos.TradeType == TradeType.Buy
+                    ? desiredSl > pos.StopLoss.Value
+                    : desiredSl < pos.StopLoss.Value;
+
+                if (better)
+                    _bot.ModifyPosition(pos, desiredSl, pos.TakeProfit);
+
+                return;
+            }
+
+            /* FIRST TRAIL: ha még BE-n vagyunk → improve nélkül
             bool slAtBe =
                 ctx.BePrice > 0 &&
                 Math.Abs(pos.StopLoss.Value - ctx.BePrice) <= _bot.Symbol.PipSize;
@@ -246,11 +259,12 @@ namespace GeminiV26.Instruments.EURUSD
 
                 return;
             }
+            */
 
             // NORMAL TRAILING
             double minImprove = Math.Max(
-                _bot.Symbol.PipSize * 0.5,
-                atrVal * 0.05
+                _bot.Symbol.PipSize * 1.0,
+                atrVal * 0.08
             );
 
             bool improve = pos.TradeType == TradeType.Buy

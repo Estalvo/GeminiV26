@@ -1,5 +1,6 @@
 using GeminiV26.Core.Entry;
 using GeminiV26.Risk;
+using System;
 
 namespace GeminiV26.Instruments.EURJPY
 {
@@ -33,10 +34,11 @@ namespace GeminiV26.Instruments.EURJPY
         // =========================
         public double GetRiskPercent(int score)
         {
-            // FX: konzervatívabb, nincs gate
-            if (score >= 85) return 0.35;
-            if (score >= 75) return 0.30;
-            return 0.25;
+            double n = NormalizeScore(score);
+
+            // JPY: óvatosabb plafon
+            // 0.22% → 0.32%
+            return 0.22 + n * (0.32 - 0.22);
         }
 
         // =========================
@@ -44,45 +46,50 @@ namespace GeminiV26.Instruments.EURJPY
         // =========================
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            if (score >= 85) return 2.8;
-            if (score >= 75) return 3.0;
-            return 3.2;
+            double n = NormalizeScore(score);
+
+            // JPY: szélesebb alap, kisebb szűkülés
+            // 3.3 → 2.9
+            return 3.3 - n * 0.4;
         }
 
         // =========================
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
-            out double tp1R,
-            out double tp1Ratio,
-            out double tp2R,
-            out double tp2Ratio)
+    int score,
+    out double tp1R,
+    out double tp1Ratio,
+    out double tp2R,
+    out double tp2Ratio)
         {
-            // EURJPY – gyors, impulzív FX pár
-            // cél: ne vegyük ki túl korán a jó tradeket,
-            // de gyenge score-nál maradjon védekező
+            double n = NormalizeScore(score);
 
-            if (score >= 85)
-            {
-                tp1R = 0.45;
-                tp1Ratio = 0.45;
-                tp2R = 1.4;
-            }
-            else if (score >= 75)
-            {
-                tp1R = 0.35;
-                tp1Ratio = 0.55;
-                tp2R = 1.1;
-            }
-            else
+            // gyenge / bizonytalan
+            if (n < 0.45)
             {
                 tp1R = 0.30;
                 tp1Ratio = 0.70;
                 tp2R = 0.9;
+                tp2Ratio = 0.30;
+                return;
             }
 
-            tp2Ratio = 1.0 - tp1Ratio;
+            // normál
+            if (n < 0.70)
+            {
+                tp1R = 0.35;
+                tp1Ratio = 0.55;
+                tp2R = 1.1;
+                tp2Ratio = 0.45;
+                return;
+            }
+
+            // jó / impulzív continuation
+            tp1R = 0.45;
+            tp1Ratio = 0.45;
+            tp2R = 1.4;
+            tp2Ratio = 0.55;
         }
 
         // =========================
@@ -90,7 +97,16 @@ namespace GeminiV26.Instruments.EURJPY
         // =========================
         public double GetLotCap(int score)
         {
-            return 1.0;
+            double n = NormalizeScore(score);
+
+            // JPY: soha nem full cap
+            return 0.60 + n * 0.30; // 0.60 → 0.90
+        }
+
+        private static double NormalizeScore(int score)
+        {
+            // JPY FX: score-tartomány ugyanaz, de óvatosabban használjuk
+            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

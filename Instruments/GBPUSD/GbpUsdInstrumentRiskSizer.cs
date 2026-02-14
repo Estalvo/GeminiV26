@@ -12,10 +12,10 @@ namespace GeminiV26.Instruments.GBPUSD
     public class GbpUsdInstrumentRiskSizer : IInstrumentRiskSizer
     {
         // FX: konzervatívabb
-        private const double RiskLow = 0.12;
-        private const double RiskMed = 0.18;
-        private const double RiskHigh = 0.25;
-        private const double RiskMax = 0.30;
+        private const double RiskLow = 0.25;
+        private const double RiskMed = 0.35;
+        private const double RiskHigh = 0.50;
+        private const double RiskMax = 0.65;
 
         // GBPUSD: noise miatt SL kicsit szélesebb, mint USDJPY
         private const double SlBase = 1.65;
@@ -24,23 +24,30 @@ namespace GeminiV26.Instruments.GBPUSD
 
         public double GetRiskPercent(int score)
         {
-            if (score < 60) return 0.0;
-            if (score < 70) return RiskLow;
-            if (score < 80) return RiskMed;
-            if (score < 90) return RiskHigh;
-            return RiskMax;
+            double n = NormalizeScore(score);
+
+            if (n < 0.15) return 0.0;          // régi <60
+            if (n < 0.40) return RiskLow;      // ~65–70
+            if (n < 0.65) return RiskMed;      // ~75
+            if (n < 0.85) return RiskHigh;     // ~82–85
+            return RiskMax;                    // top setup
         }
 
         public double GetStopLossAtrMultiplier(int score, EntryType _ /* FX ignores entry type */)
         {
             double baseMult = SlBase;
 
-            if (score >= 85) baseMult -= 0.05;
-            if (score >= 92) baseMult -= 0.05;
+            double n = NormalizeScore(score);
+
+            if (n >= 0.75) baseMult -= 0.05;
+            if (n >= 0.90) baseMult -= 0.05;
 
             return Math.Max(baseMult, 1.35);
         }
 
+        // =========================
+        // TP struktúra (R + arány)
+        // =========================
         public void GetTakeProfit(
             int score,
             out double tp1R,
@@ -48,43 +55,43 @@ namespace GeminiV26.Instruments.GBPUSD
             out double tp2R,
             out double tp2Ratio)
         {
-            // GBPUSD – noise-os FX, kontrollált runner
+            // GBPUSD: biztosabb TP1 – marad
+            tp1R = 0.45;
 
-            if (score < 70)
-            {
-                tp1R = 0.35; tp1Ratio = 0.55;
-                tp2R = 1.10; tp2Ratio = 0.45;
-                return;
-            }
+            // =====================================================
+            // TP1 RATIO – DINAMIKUS
+            // Jó score → több runner
+            // =====================================================
+            double n = NormalizeScore(score);
 
-            if (score < 80)
-            {
-                tp1R = 0.45; tp1Ratio = 0.50;
-                tp2R = 1.35; tp2Ratio = 0.50;
-                return;
-            }
+            // TP1 mindig biztos, de jobb score → több runner
+            tp1Ratio = 0.60 - n * 0.20; // 0.70 → 0.45
 
-            if (score < 90)
-            {
-                tp1R = 0.50; tp1Ratio = 0.45;
-                tp2R = 1.60; tp2Ratio = 0.55;
-                return;
-            }
+            // =====================================================
+            // TP2 R – HELYES JUTALMAZÓ GÖRBE
+            // AUDNZD kicsit „lustább”, mint EURUSD
+            // =====================================================
+            tp2R = 1.0 + n * 0.6; // 1.0 → 1.6
 
-            // score >= 90
-            tp1R = 0.55; tp1Ratio = 0.40;
-            tp2R = 1.80; tp2Ratio = 0.60;
+            // TP2 a maradékra
+            tp2Ratio = 1.0 - tp1Ratio;
         }
 
         public double GetLotCap(int score)
         {
-            // GBPUSD: volatilis, wickes → konzervatív skála
-            if (score < 65) return 0.55;
-            if (score < 75) return 0.65;
-            if (score < 85) return 0.75;
-            if (score < 92) return 0.85;
-            return 0.95;   // soha nem megy 1.0 fölé
+            double n = NormalizeScore(score);
+
+            if (n < 0.30) return 0.55;
+            if (n < 0.50) return 0.65;
+            if (n < 0.70) return 0.75;
+            if (n < 0.85) return 0.85;
+            return 0.95;
         }
 
+        private static double NormalizeScore(int score)
+        {
+            // FX új score-tartomány: ~55–90
+            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+        }
     }
 }

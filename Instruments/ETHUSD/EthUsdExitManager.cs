@@ -192,9 +192,7 @@ namespace GeminiV26.Instruments.ETHUSD
         }
 
         private void ApplyTrailing(Position pos, PositionContext ctx)
-        {
-            _bot.Print($"[ETH DEBUG] PipSize={_bot.Symbol.PipSize} TickSize={_bot.Symbol.TickSize}");
-
+        {            
             if (!pos.StopLoss.HasValue)
                 return;
 

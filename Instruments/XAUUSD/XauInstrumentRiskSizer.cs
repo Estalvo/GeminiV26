@@ -36,10 +36,9 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            // Bucketek – NEM gate
-            if (finalConfidence >= 85) return 0.22;
-            if (finalConfidence >= 75) return 0.16;
-            return 0.10;
+            if (finalConfidence >= 85) return 0.55;
+            if (finalConfidence >= 75) return 0.35;
+            return 0.20;
         }
 
         // =========================================================
@@ -96,9 +95,13 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         public double GetLotCap(int finalConfidence)
         {
-            // Safety hard cap (nem gate)
-            // A lot cap lehet confidence-függő, de éles indulásnál stabil cap jobb.
-            return 0.10;
+            if (finalConfidence >= 85)
+                return 0.50;
+
+            if (finalConfidence >= 75)
+                return 0.30;
+
+            return 0.20;
         }
 
         // =========================================================

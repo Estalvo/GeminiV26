@@ -1,5 +1,6 @@
 using GeminiV26.Core.Entry;
 using GeminiV26.Risk;
+using System;
 
 namespace GeminiV26.Instruments.USDCHF
 {
@@ -33,10 +34,11 @@ namespace GeminiV26.Instruments.USDCHF
         // =========================
         public double GetRiskPercent(int score)
         {
-            // FX: konzervatívabb, nincs gate
-            if (score >= 85) return 0.35;
-            if (score >= 75) return 0.30;
-            return 0.25;
+            double n = NormalizeScore(score);
+
+            // FX – konzervatív, de skálázódó
+            // 0.22% → 0.35%
+            return 0.22 + n * (0.35 - 0.22);
         }
 
         // =========================
@@ -44,9 +46,11 @@ namespace GeminiV26.Instruments.USDCHF
         // =========================
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            if (score >= 85) return 2.8;
-            if (score >= 75) return 3.0;
-            return 3.2;
+            double n = NormalizeScore(score);
+
+            // Jobb score → feszesebb SL
+            // 3.2 → 2.7
+            return 3.2 - n * 0.5;
         }
 
         // =========================
@@ -59,30 +63,25 @@ namespace GeminiV26.Instruments.USDCHF
             out double tp2R,
             out double tp2Ratio)
         {
-            // USDCHF: clean, slow mover → runner-barát
-            tp1R = 0.30;
+            // AUDNZD: biztosabb TP1 – marad
+            tp1R = 0.3;
 
-            // =========================
+            // =====================================================
             // TP1 RATIO – DINAMIKUS
-            // jobb score = több futtatás
-            // =========================
-            if (score >= 85)
-                tp1Ratio = 0.45;   // 55% fut
-            else if (score >= 75)
-                tp1Ratio = 0.55;
-            else
-                tp1Ratio = 0.70;   // védekező baseline
+            // Jó score → több runner
+            // =====================================================
+            double n = NormalizeScore(score);
 
-            // =========================
-            // TP2 R – MONOTON GÖRBE
-            // =========================
-            if (score >= 85)
-                tp2R = 1.8;
-            else if (score >= 75)
-                tp2R = 1.4;
-            else
-                tp2R = 1.1;
+            // TP1 mindig biztos, de jobb score → több runner
+            tp1Ratio = 0.70 - n * 0.25; // 0.70 → 0.45
 
+            // =====================================================
+            // TP2 R – HELYES JUTALMAZÓ GÖRBE
+            // AUDNZD kicsit „lustább”, mint EURUSD
+            // =====================================================
+            tp2R = 1.0 + n * 0.6; // 1.0 → 1.6
+
+            // TP2 a maradékra
             tp2Ratio = 1.0 - tp1Ratio;
         }
 
@@ -91,7 +90,17 @@ namespace GeminiV26.Instruments.USDCHF
         // =========================
         public double GetLotCap(int score)
         {
-            return 0.8;
+            double n = NormalizeScore(score);
+
+            // FX: ne legyen azonnal full cap
+            // 65% → 100%
+            return 0.65 + n * 0.35;
+        }
+
+        private static double NormalizeScore(int score)
+        {
+            // FX új valós tartomány: ~55–90
+            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

@@ -79,13 +79,7 @@ namespace GeminiV26.Core
         private readonly TradeMetaStore _tradeMetaStore = new();
        
         private const string BotLabel = "GeminiV26";
-
-        // =========================
-        // HARD LOSS GUARD (CORE)
-        // =========================        
-        private const double HARD_MAX_LOSS_MIN_USD = -40.0;   // abszolút védelem
-        private const double HARD_MAX_LOSS_PER_LOT = -35.0;   // USD / 1.0 lot
-
+                
         // =========================
         // Instrument components
         // NOTE: nem readonly, mert csak az adott chart instrumentumát initeljük
@@ -350,7 +344,8 @@ namespace GeminiV26.Core
                 _entryTypes = new List<IEntryType>
                 {
                     new FX_FlagEntry(),                   // ÚJ, valódi flag
-                    new FX_ImpulseContinuationEntry(),    // RÉGI "flag"
+                    new FX_FlagContinuationEntry(),       // RÉGI "flag"
+                    new FX_MicroContinuationEntry(),
                     new FX_PullbackEntry(),
                     new FX_RangeBreakoutEntry(),
                     new FX_ReversalEntry()
@@ -663,28 +658,81 @@ namespace GeminiV26.Core
 
         public void OnBar()
         {
-            _bot.Print($"[ONBAR DBG] sym={_bot.SymbolName} ctxs={_positionContexts != null}");
+            string sym = _bot.SymbolName;
+            _bot.Print($"[ONBAR DBG] sym={sym}");
+
+            bool isFx = _fxMarketStateDetector != null &&
+            !_bot.SymbolName.Contains("XAU") &&
+            !_bot.SymbolName.Contains("BTC") &&
+            !_bot.SymbolName.Contains("ETH") &&
+            !IsNasSymbol(_bot.SymbolName) &&
+            !_bot.SymbolName.Contains("GER");
+
+            bool isCrypto = _cryptoMarketStateDetector != null &&
+                            (_bot.SymbolName.Contains("BTC") || _bot.SymbolName.Contains("ETH"));
+
+            bool isMetal = _xauMarketStateDetector != null &&
+                           _bot.SymbolName.Contains("XAU");
+
+            bool isIndex = _indexMarketStateDetector != null &&
+                           (IsNasSymbol(_bot.SymbolName) || IsGer40(_bot.SymbolName));
 
             // =========================
-            // XAU MarketState (only if XAU wired)
+            // ADDED: instrument classification (SSOT for this method)
             // =========================
+            string symU = sym.ToUpperInvariant();
+            bool isMetalSymbol = symU.Contains("XAU") || symU.Contains("XAG");
+            bool isCryptoSymbol = symU.Contains("BTC") || symU.Contains("ETH");
+            bool isIndexSymbol = IsNasSymbol(symU) || symU.Contains("US30") || symU.Contains("US 30") || symU.Contains("GER") || symU.Contains("DAX");
+            bool isFxSymbol =
+                !isMetalSymbol && !isCryptoSymbol && !isIndexSymbol &&
+                GeminiV26.Instruments.FX.FxInstrumentMatrix.Contains(symU);
+
+            FxMarketState fxState = null;
             XauMarketState xauState = null;
-            if (_bot.SymbolName.Contains("XAU") && _xauMarketStateDetector != null)
+            CryptoMarketState cryptoState = null;
+            IndexMarketState indexState = null;
+
+            // =========================
+            // MARKET STATE SNAPSHOT
+            // =========================
+            // ADDED: run only the detector that matches the instrument type
+            if (isFx)
+            {
+                fxState = _fxMarketStateDetector.Evaluate();
+                if (fxState != null)
+                    _bot.Print($"[FX MarketState] {sym} Trend={fxState.IsTrend}");
+            }
+            else if (isCrypto)
+            {
+                cryptoState = _cryptoMarketStateDetector.Evaluate();
+                if (cryptoState != null)
+                    _bot.Print($"[CRYPTO MarketState] {sym} Trend={cryptoState.IsTrend}");
+            }
+            else if (isMetal)
             {
                 xauState = _xauMarketStateDetector.Evaluate();
                 if (xauState != null)
-                {
-                    _bot.Print(
-                        $"[XAU MarketState] {_bot.SymbolName} " +
-                        $"Range={xauState.IsRange} " +
-                        $"SoftRange={xauState.IsSoftRange} " +
-                        $"Breakout={xauState.IsBreakout} " +
-                        $"PostBO={xauState.IsPostBreakout} " +
-                        $"ADX={xauState.Adx:F1} " +
-                        $"ATR={xauState.Atr:F2} " +
-                        $"Width={xauState.RangeWidth:F2}"
-                    );
-                }
+                    _bot.Print($"[XAU MarketState] {sym} Range={xauState.IsRange}");
+            }
+            else if (isIndex)
+            {
+                indexState = _indexMarketStateDetector.Evaluate();
+                if (indexState != null)
+                    _bot.Print($"[INDEX MarketState] {sym} Trend={indexState.IsTrend}");
+            }
+            else
+            {
+                _bot.Print($"[TC] WARN: Unknown instrument type in OnBar sym={sym}");
+            }
+
+            // =========================
+            // ADDED: prevent NRE if contexts dictionary isn't initialized yet
+            // =========================
+            if (_positionContexts == null)
+            {
+                _bot.Print("[TC] WARN: _positionContexts is NULL (skip exit+entry pipeline this bar)");
+                return;
             }
 
             // =========================
@@ -694,6 +742,15 @@ namespace GeminiV26.Core
             {
                 if (pos.SymbolName != _bot.SymbolName)
                     continue;
+
+                _bot.Print($"[EXIT DBG] posId={pos.Id} sym={pos.SymbolName}");
+
+                // ⛔ TEMP SAFETY (you already had this)
+                if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
+                {
+                    _bot.Print($"[EXIT DBG] NO PositionContext for posId={pos.Id}");
+                    continue;
+                }
 
                 if (_bot.SymbolName.Contains("XAU"))
                     _xauExitManager?.OnBar(pos);
@@ -750,7 +807,33 @@ namespace GeminiV26.Core
                 return;
             }
 
+            // =========================
+            // ADDED: hard null guards before building context / routing
+            // =========================
+            if (_contextBuilder == null)
+            {
+                _bot.Print("[TC] ERROR: _contextBuilder is NULL (cannot build entry context)");
+                return;
+            }
+            if (_globalSessionGate == null)
+            {
+                _bot.Print("[TC] ERROR: _globalSessionGate is NULL (cannot gate entries)");
+                return;
+            }
+            if (_entryRouter == null)
+            {
+                _bot.Print("[TC] ERROR: _entryRouter is NULL (cannot evaluate entries)");
+                return;
+            }
+
             _ctx = _contextBuilder.Build(_bot.SymbolName);
+
+            // ADDED: context must be ready
+            if (_ctx == null || !_ctx.IsReady)
+            {
+                _bot.Print("[TC] BLOCKED: EntryContext not ready");
+                return;
+            }
 
             // =========================
             // GLOBAL SESSION GATE
@@ -764,37 +847,58 @@ namespace GeminiV26.Core
             // =========================
             // FX SESSION INJECT
             // =========================
-            if (_fxMarketStateDetector != null)
+            if (isFxSymbol) // ADDED: use instrument classification, not detector presence
             {
                 if (_bot.SymbolName.Contains("EURUSD"))
-                    _ctx.Session = ((EurUsdSessionGate)_eurUsdSessionGate).GetSession();
-
+                {
+                    if (_eurUsdSessionGate is EurUsdSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: EURUSD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("USDJPY"))
-                    _ctx.Session = ((UsdJpySessionGate)_usdJpySessionGate).GetSession();
-
+                {
+                    if (_usdJpySessionGate is UsdJpySessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: USDJPY session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("GBPUSD"))
-                    _ctx.Session = ((GbpUsdSessionGate)_gbpUsdSessionGate).GetSession();
-
+                {
+                    if (_gbpUsdSessionGate is GbpUsdSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: GBPUSD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("AUDUSD"))
-                    _ctx.Session = ((AudUsdSessionGate)_audUsdSessionGate).GetSession();
-
+                {
+                    if (_audUsdSessionGate is AudUsdSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: AUDUSD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("AUDNZD"))
-                    _ctx.Session = ((AudNzdSessionGate)_audNzdSessionGate).GetSession();
-
+                {
+                    if (_audNzdSessionGate is AudNzdSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: AUDNZD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("EURJPY"))
-                    _ctx.Session = ((EurJpySessionGate)_eurJpySessionGate).GetSession();
-
+                {
+                    if (_eurJpySessionGate is EurJpySessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: EURJPY session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("GBPJPY"))
-                    _ctx.Session = ((GbpJpySessionGate)_gbpJpySessionGate).GetSession();
-
+                {
+                    if (_gbpJpySessionGate is GbpJpySessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: GBPJPY session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("NZDUSD"))
-                    _ctx.Session = ((NzdUsdSessionGate)_nzdUsdSessionGate).GetSession();
-
+                {
+                    if (_nzdUsdSessionGate is NzdUsdSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: NZDUSD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("USDCAD"))
-                    _ctx.Session = ((UsdCadSessionGate)_usdCadSessionGate).GetSession();
-
+                {
+                    if (_usdCadSessionGate is UsdCadSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: USDCAD session gate missing or wrong type");
+                }
                 else if (_bot.SymbolName.Contains("USDCHF"))
-                    _ctx.Session = ((UsdChfSessionGate)_usdChfSessionGate).GetSession();
+                {
+                    if (_usdChfSessionGate is UsdChfSessionGate sg) _ctx.Session = sg.GetSession();
+                    else _bot.Print("[TC] WARN: USDCHF session gate missing or wrong type");
+                }
             }
 
             TradeType xauBias = TradeType.Buy;   // default
@@ -870,17 +974,17 @@ namespace GeminiV26.Core
             // =========================
             // FX HTF BIAS GATE (Group-level)
             // =========================
-            bool isFxSymbol =
-                _fxMarketStateDetector != null &&
-                !_bot.SymbolName.Contains("XAU") &&
-                !IsNasSymbol(_bot.SymbolName) &&
-                !_bot.SymbolName.Contains("US30") &&
-                !_bot.SymbolName.Contains("GER40") &&
-                !_bot.SymbolName.Contains("GER") &&
-                !_bot.SymbolName.Contains("BTC") &&
-                !_bot.SymbolName.Contains("ETH");
+            bool isFxSymbolGate =
+                isFxSymbol &&
+                !symU.Contains("XAU") &&
+                !IsNasSymbol(symU) &&
+                !symU.Contains("US30") &&
+                !symU.Contains("GER40") &&
+                !symU.Contains("GER") &&
+                !symU.Contains("BTC") &&
+                !symU.Contains("ETH");
 
-            if (isFxSymbol && _fxBias != null)
+            if (isFxSymbolGate && _fxBias != null)
             {
                 var bias = _fxBias.Get(_bot.SymbolName);
 
@@ -892,29 +996,52 @@ namespace GeminiV26.Core
                     $"[FX HTF] allow={bias.AllowedDirection} " +
                     $"conf={bias.Confidence01:0.00} reason={bias.Reason}"
                 );
-
-                // ❌ nincs return
-                // ❌ nincs direction filter
             }
-
             else if (isCryptoSymbol && _cryptoBias != null)
             {
                 var bias = _cryptoBias.Get(_bot.SymbolName);
 
                 _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
 
-                if (bias.State == HtfBiasState.Neutral ||
-                    bias.State == HtfBiasState.Transition)
+                // 1) HTF Transition: full block
+                if (bias.State == HtfBiasState.Transition)
                     return;
 
-                symbolSignals = symbolSignals
-                    .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                    .ToList();
-
-                if (symbolSignals.All(e => e == null || !e.IsValid))
+                // 2) HTF Neutral: csak a Pullback maradhat, és ilyenkor NEM szűrünk direction-re
+                //    (mert allow=None, és különben mindent kidobnánk)
+                if (bias.State == HtfBiasState.Neutral)
                 {
-                    _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by bias");
-                    return;
+                    symbolSignals = symbolSignals
+                        .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
+                        .ToList();
+
+                    if (symbolSignals.All(e => e == null || !e.IsValid))
+                    {
+                        foreach (var s in symbolSignals)
+                            _bot.Print($"[TC][NEUTRAL CAND] type={s?.Type} valid={s?.IsValid} dir={s?.Direction} score={s?.Score} reason={s?.Reason}");
+
+                        _bot.Print("[TC] CRYPTO HTF NEUTRAL: only pullback allowed, none valid");
+                        return;
+                    }
+
+                    // Neutralban itt MEGÁLLUNK: nem alkalmazunk bias.AllowedDirection szűrést
+                    // és nem return-ölünk, menjen tovább a TradeRouter/Executor felé.
+                }
+                else
+                {
+                    // 3) HTF Bull/Bear: direction-szűrés az allowed irányra
+                    if (bias.AllowedDirection != TradeDirection.None)
+                    {
+                        symbolSignals = symbolSignals
+                            .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                            .ToList();
+
+                        if (symbolSignals.All(e => e == null || !e.IsValid))
+                        {
+                            _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by bias");
+                            return;
+                        }
+                    }
                 }
             }
 
@@ -926,19 +1053,24 @@ namespace GeminiV26.Core
 
                 if (bias.State == HtfBiasState.Neutral ||
                     bias.State == HtfBiasState.Transition)
-                    return;
-
-                symbolSignals = symbolSignals
-                    .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                    .ToList();
-
-                if (symbolSignals.All(e => e == null || !e.IsValid))
                 {
-                    _bot.Print("[TC] XAU HTF BLOCK: all candidates filtered by bias");
-                    return;
+                    _bot.Print("[TC] XAU HTF NOTE: Transition/Neutral -> skip bias filtering, continue to router");
+                    // NEM return!
                 }
-            }
+                else
+                {
+                    symbolSignals = symbolSignals
+                        .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                        .ToList();
 
+                    if (symbolSignals.All(e => e == null || !e.IsValid))
+                    {
+                        _bot.Print("[TC] XAU HTF BLOCK: all candidates filtered by bias");
+                        return;
+                    }
+                }
+
+            }
             else if (isIndexSymbol && _indexBias != null)
             {
                 var bias = _indexBias.Get(_bot.SymbolName);
@@ -960,17 +1092,38 @@ namespace GeminiV26.Core
                 }
             }
 
-
             var selected = _router.SelectEntry(symbolSignals);
 
-            // =========================
-            // TRACE – was there a selected entry?
-            // =========================
             _bot.Print($"[TRACE] selected is null = {selected == null}");
 
             if (selected == null)
             {
                 _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
+                return;
+            }
+
+            // =========================
+            // XAU HARD RANGE BLOCK (ENTRY-LEVEL)
+            // =========================
+            if (_bot.SymbolName.Contains("XAU") &&
+                _xauMarketStateDetector != null)
+            {
+                xauState = _xauMarketStateDetector.Evaluate();
+
+                if (xauState != null && xauState.IsRange)
+                {
+                    _bot.Print(
+                        $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
+                        $"Width={xauState.RangeWidth:F2} ADX={xauState.Adx:F1}"
+                    );
+                    return;
+                }
+            }
+
+            // ADDED: meta store guard
+            if (_tradeMetaStore == null)
+            {
+                _bot.Print("[TC] ERROR: _tradeMetaStore is NULL (skip entry)");
                 return;
             }
 
@@ -986,31 +1139,6 @@ namespace GeminiV26.Core
 
             _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
 
-            // =========================
-            // XAU DIR INJECT (ONLY IF ENTRY DID NOT DECIDE)
-            // =========================
-            if (_bot.SymbolName.Contains("XAU") && selected.Direction == TradeDirection.None)
-            {
-                selected.Direction =
-                    xauBias == TradeType.Buy
-                        ? TradeDirection.Long
-                        : TradeDirection.Short;
-
-                _bot.Print($"[TC][XAU] DIR INJECTED (fallback) {selected.Direction} (conf={xauBiasConfidence})");
-            }
-
-            if (_bot.SymbolName.Contains("XAU"))
-            {
-                _bot.Print(
-                    $"[ASSERT][XAU] after inject: " +
-                    $"selected.Type={selected.Type} " +
-                    $"dir={selected.Direction} " +
-                    $"score={selected.Score} " +
-                    $"valid={selected.IsValid}"
-                );
-            }
-
-            // ✅ SAFETY: diag fallback / invalid eval ne crasheljen
             if (selected.Direction == TradeDirection.None)
             {
                 _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
@@ -1628,8 +1756,9 @@ namespace GeminiV26.Core
         }
 
         // =========================================================
-        // HARD LOSS GUARD – CORE LEVEL (CTX-INDEPENDENT)
+        // HARD LOSS GUARD – INSTRUMENT AWARE (LEAN VERSION)
         // =========================================================
+
         private readonly HashSet<long> _hardLossClosing = new();
 
         private bool CheckHardLoss()
@@ -1639,48 +1768,42 @@ namespace GeminiV26.Core
                 if (pos == null)
                     continue;
 
-                // only our bot's positions
+                // Only our bot positions
                 if (pos.Label != BotLabel)
                     continue;
 
-                // only this chart's symbol
+                // Only this chart symbol
                 if (!pos.SymbolName.Equals(_bot.SymbolName, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                // avoid spamming close calls on the same position
+                // Prevent duplicate close spam
                 if (_hardLossClosing.Contains(pos.Id))
                     continue;
 
-                // Use NET profit for safety (includes commissions/swap impact)
                 double loss = pos.NetProfit;
 
-                // -------------------------------
-                // Dynamic hard loss calculation
-                // -------------------------------
+                // ----------------------------------------
+                // Instrument specific hard limits
+                // ----------------------------------------
 
-                // base protection up to 0.5 lot
-                const double BASE_HARD_LOSS_USD = -40.0;
+                double hardLimit;
 
-                // additional loss allowed per extra lot above 0.5
-                const double LOSS_PER_EXTRA_LOT = -20.0;
+                string sym = pos.SymbolName.ToUpper();
 
-                // absolute safety cap (never allow more loss than this)
-                const double ABSOLUTE_HARD_LOSS_CAP = -80.0;
+                if (sym.Contains("XAU"))
+                    hardLimit = -200.0;
 
-                // convert volume to lots (symbol-aware)
-                double volumeLots = pos.VolumeInUnits / _bot.Symbol.VolumeInUnitsMin;
+                else if (sym.Contains("BTC") || sym.Contains("ETH"))
+                    hardLimit = -120.0;
 
-                // calculate extra lots above 0.5
-                double extraLots = Math.Max(0.0, volumeLots - 0.5);
+                else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
+                    hardLimit = -100.0;
 
-                // linear scaling
-                double dynamicHardLoss = BASE_HARD_LOSS_USD + LOSS_PER_EXTRA_LOT * extraLots;
+                else
+                    hardLimit = -100.0; // default FX
 
-                // apply absolute cap
-                dynamicHardLoss = Math.Max(dynamicHardLoss, ABSOLUTE_HARD_LOSS_CAP);
 
-                // only active losing positions beyond hard limit
-                if (loss > dynamicHardLoss)
+                if (loss > hardLimit)
                     continue;
 
                 _hardLossClosing.Add(pos.Id);
@@ -1688,17 +1811,16 @@ namespace GeminiV26.Core
                 _bot.Print(
                     $"[HARD LOSS EXIT] pos={pos.Id} symbol={pos.SymbolName} " +
                     $"net={loss:F2} gross={pos.GrossProfit:F2} " +
-                    $"limit={dynamicHardLoss:F2} lot={volumeLots:F2}"
+                    $"limit={hardLimit:F2}"
                 );
 
                 _bot.ClosePosition(pos);
-                return true; // stop further exit processing this tick
+                return true;
             }
 
             return false;
         }
 
-        
         /*
         // LEGACY (unused since Phase 3.x)
         // Kept for reference only – NOT CALLED
@@ -1757,7 +1879,7 @@ namespace GeminiV26.Core
             return new List<IEntryType>
             {
                 new FX_FlagEntry(),
-                new FX_ImpulseContinuationEntry(),
+                new FX_FlagContinuationEntry(),
                 new FX_PullbackEntry(),
                 new FX_RangeBreakoutEntry(),
                 new FX_ReversalEntry()

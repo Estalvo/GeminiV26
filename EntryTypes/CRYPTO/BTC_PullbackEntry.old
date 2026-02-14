@@ -1,0 +1,217 @@
+﻿using GeminiV26.Core.Entry;
+using GeminiV26.EntryTypes.Crypto;
+
+namespace GeminiV26.EntryTypes.Crypto
+{
+    public class BTC_PullbackEntry : IEntryType
+    {
+        public EntryType Type => EntryType.Crypto_Pullback;
+        private const int MIN_SCORE = 28;
+
+        public EntryEvaluation Evaluate(EntryContext ctx)
+        {
+            // =========================
+            // CTX / SAFETY
+            // =========================
+            if (ctx == null || !ctx.IsReady)
+                return Invalid(ctx, "CTX_NOT_READY");
+
+            var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
+
+            // =========================
+            // DIRECTION (must NOT be None, or TradeCore will drop it)
+            // =========================
+            var bars = ctx.M5;
+            if (bars == null || bars.Count < 20)
+                return Invalid(ctx, "M5_NOT_READY");
+
+            int lastClosed = bars.Count - 2;
+            
+            TradeDirection dir = ctx.TrendDirection;
+
+            bool usingSoftFallback = false;
+
+            // HA nincs slope trend → csak akkor engedj fallback-et,
+            // ha van friss impulzus és expanzió (tehát nem chop)
+            if (dir == TradeDirection.None)
+            {
+                if (!ctx.HasImpulse_M5 ||
+                    ctx.BarsSinceImpulse_M5 > 2 ||
+                    !ctx.IsAtrExpanding_M5)
+                {
+                    return Invalid(ctx, "NO_HARD_TREND_PULLBACK_BLOCK");
+                }
+
+                usingSoftFallback = true;
+
+                dir = (bars[lastClosed].Close >= ctx.Ema21_M5)
+                    ? TradeDirection.Long
+                    : TradeDirection.Short;
+            }
+
+            // =========================
+            // EMA21 RECLAIM INVALIDATES SHORT PULLBACK
+            // =========================
+            if (dir == TradeDirection.Short)
+            {
+                bool ema21Reclaim =
+                    bars[lastClosed].Close > ctx.Ema21_M5 &&
+                    bars[lastClosed - 1].Close <= ctx.Ema21_M5;
+
+                if (ema21Reclaim)
+                    return Invalid(ctx, "PULLBACK_BLOCKED_BY_EMA21_RECLAIM");
+            }
+
+            // =========================
+            // IMPULSE GUARDS (FX STYLE)
+            // =========================
+            if (!ctx.HasImpulse_M5 && profile.RequireStrongImpulseForPullback)
+                return Invalid(ctx, "NO_IMPULSE");
+
+            if (ctx.BarsSinceImpulse_M5 > 16)
+                return Invalid(ctx, "IMPULSE_TOO_OLD");
+
+            if (profile.RequireStrongImpulseForPullback && ctx.BarsSinceImpulse_M5 > 3)
+                return Invalid(ctx, "CRYPTO_PULLBACK_IMPULSE_NOT_FRESH");
+
+            // =========================
+            // BTC HIGH-VOL FAKE CONTINUATION
+            // =========================
+            if (profile.BlockPullbackOnHighVolWithoutImpulse &&
+                !ctx.IsVolatilityAcceptable_Crypto &&
+                ctx.BarsSinceImpulse_M5 > 2)
+            {
+                return Invalid(ctx, "CRYPTO_PULLBACK_VOLATILITY_BLOCK");
+            }
+
+            // =========================
+            // PULLBACK DEPTH – HARD
+            // =========================
+            if (ctx.PullbackDepthAtr_M5 > 1.3)
+                return Invalid(ctx, "PULLBACK_TOO_DEEP");
+                        
+            // =========================
+            // TREND FATIGUE ULTRASOUND
+            // =========================
+
+            // 1️⃣ Erős, de már lassuló trend
+            bool adxExhausted =
+                ctx.Adx_M5 > 45 &&
+                ctx.AdxSlope_M5 <= 0;
+
+            // 2️⃣ ATR már nem tágul
+            bool atrContracting =
+                ctx.AtrSlope_M5 <= 0;
+
+            // 3️⃣ DI spread szűkül (momentum gyengül)
+            bool diConverging =
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8;
+
+            // 4️⃣ Impulzus nem friss
+            bool impulseStale =
+                ctx.BarsSinceImpulse_M5 > 3 ||
+                !ctx.HasImpulse_M5;
+
+            // Final fatigue condition
+            bool trendFatigue =
+                adxExhausted &&
+                atrContracting &&
+                diConverging &&
+                impulseStale;
+
+            if (trendFatigue)
+            {
+                return Invalid(ctx, "CRYPTO_TREND_FATIGUE_ULTRASOUND");
+            }
+
+            // =========================
+            // BASE SCORE
+            // =========================
+            int score = 25;
+
+            // =========================
+            // TREND ENERGY PROXY (ADX helyett)
+            // =========================
+            if (!ctx.IsAtrExpanding_M5 &&
+                !ctx.IsVolatilityAcceptable_Crypto &&
+                ctx.BarsSinceImpulse_M5 > 2)
+            {
+                score -= 10;
+            }
+
+            // =========================
+            // VOL REGIME – SOFT
+            // =========================
+            if (!ctx.IsVolatilityAcceptable_Crypto)
+                score -= 10;
+
+            // =========================
+            // CRYPTO EARLY PULLBACK GUARD
+            // Ne lépjünk az első reakcióra
+            // =========================
+            if (ctx.HasReactionCandle_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 2 &&
+                !ctx.LastClosedBarInTrendDirection)
+            {
+                return Invalid(ctx, "CRYPTO_EARLY_PULLBACK_WAIT");
+            }
+
+            // =========================
+            // PULLBACK QUALITY
+            // =========================
+            bool validPullbackReaction =
+                ctx.IsPullbackDecelerating_M5 &&
+                ctx.HasReactionCandle_M5 &&
+                (
+                    ctx.TrendDirection != TradeDirection.None
+                        ? ctx.LastClosedBarInTrendDirection
+                        : true // HTF Neutral → ne kérj trendirányt
+                );
+
+            if (validPullbackReaction)
+            {
+                score += 10;
+            }
+
+            // =========================
+            // M1 CONFIRMATION
+            // =========================
+            if (ctx.M1TriggerInTrendDirection)
+                score += 8;
+            else
+                score -= 3;
+
+            // =========================
+            // IMPULSE BONUS
+            // =========================
+            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 3)
+                score += 8;
+
+            // =========================
+            // FINAL CHECK
+            // =========================
+            if (score < MIN_SCORE)
+                return Invalid(ctx, $"SCORE_TOO_LOW_{score}");
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = EntryType.Crypto_Pullback,
+                Direction = dir, // <<< EZ A LÉNYEG
+                Score = score,
+                IsValid = true,
+                Reason = $"BTC_PULLBACK_OK dir={dir} score={score}"
+            };
+        }
+
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason)
+            => new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.Crypto_Pullback,
+                Direction = TradeDirection.None,
+                IsValid = false,
+                Reason = reason + ";"
+            };
+    }
+}

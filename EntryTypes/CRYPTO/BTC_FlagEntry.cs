@@ -8,19 +8,29 @@ namespace GeminiV26.EntryTypes.Crypto
     {
         public EntryType Type => EntryType.Crypto_Flag;
 
-        private const int MaxBarsSinceImpulse = 5;
+        private const int MaxBarsSinceImpulse = 8;
         private const int FlagBars = 3;
-        private const double MaxFlagRangeAtr = 0.85;
+        // private const double MaxFlagRangeAtr = 0.85;
         private const double BreakBufferAtr = 0.07;
         private const double MaxDistFromEmaAtr = 1.05;
 
         private const int BaseScore = 75;
-        private const int MinScore = 65;
+        private const int MinScore = 55;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
                 return Invalid(ctx, "CTX_NOT_READY");
+
+            var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
+
+            // =========================
+            // HTF / TREND GATE – FLAG ONLY IF DIRECTIONAL
+            // =========================
+            // Flag csak akkor futhat, ha a trend egyértelmű
+            var dir = ctx.TrendDirection;
+            if (dir == TradeDirection.None)
+                return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
 
             if (!ctx.HasImpulse_M5)
                 return Invalid(ctx, "NO_IMPULSE");
@@ -31,18 +41,10 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsValidFlagStructure_M5)
                 return Invalid(ctx, "INVALID_FLAG");
 
-            if (ctx.IsRange_M5)
+            if (ctx.IsRange_M5 && !profile.AllowRangeBreakout)
                 return Invalid(ctx, "RANGE_NO_FLAG");
 
-            var dir = ctx.TrendDirection;
-            if (dir == TradeDirection.None)
-                return Invalid(ctx, "NO_TREND_DIR");
-                        
-            int score = BaseScore;
-
-            if (!ctx.IsVolatilityAcceptable_Crypto)
-                score -= 15;
-
+            // ===== CONTEXT =====
             var bars = ctx.M5;
             int lastClosed = bars.Count - 2;
             int flagEnd = lastClosed - 1;
@@ -54,6 +56,20 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.AtrM5 <= 0)
                 return Invalid(ctx, "ATR_ZERO");
 
+            // ===== SCORE =====
+            int score = BaseScore;
+
+            if (!ctx.IsVolatilityAcceptable_Crypto)
+                score -= 15;
+
+            // ===== EMA21 RECLAIM (SHORT SOFT BLOCK) =====
+            bool ema21Reclaim =
+                bars[lastClosed].Close > ctx.Ema21_M5 &&
+                bars[lastClosed - 1].Close <= ctx.Ema21_M5;
+
+            if (dir == TradeDirection.Short && ema21Reclaim)
+                score -= 10;
+
             double hi = double.MinValue;
             double lo = double.MaxValue;
 
@@ -64,18 +80,29 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             double range = hi - lo;
-            if (range > ctx.AtrM5 * MaxFlagRangeAtr)
+            if (range > ctx.AtrM5 * profile.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE");
 
             double close = bars[lastClosed].Close;
             double distFromEma = Math.Abs(close - ctx.Ema21_M5);
 
             if (distFromEma > ctx.AtrM5 * MaxDistFromEmaAtr)
-                return Invalid(ctx, "OVEREXTENDED");
+                score -= 10;
 
             double buf = ctx.AtrM5 * BreakBufferAtr;
             bool bullBreak = close > hi + buf;
             bool bearBreak = close < lo - buf;
+
+            // =========================
+            // CRYPTO FLAG EARLY BREAKOUT GUARD
+            // Az első breakout gyakran fake → várunk megerősítést
+            // =========================
+            if ((bullBreak || bearBreak) &&
+                ctx.BarsSinceImpulse_M5 <= 3 &&
+                !ctx.M1TriggerInTrendDirection)
+            {
+                return Invalid(ctx, "CRYPTO_FLAG_EARLY_BREAKOUT_WAIT");
+            }
 
             if (dir == TradeDirection.Long && !bullBreak)
                 return Invalid(ctx, "NO_BREAKOUT_CLOSE_LONG");

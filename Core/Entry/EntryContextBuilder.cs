@@ -103,25 +103,100 @@ namespace GeminiV26.Core.Entry
             int m5Idx = ctx.M5.Count - 2;
             int m15Idx = ctx.M15.Count - 2;
 
+            // =====================================================
+            // ATR (M5 + M15)
+            // =====================================================
+
+            var atr_m5 = _bot.Indicators.AverageTrueRange(ctx.M5, 14, MovingAverageType.Simple);
+            var atr_m15 = _bot.Indicators.AverageTrueRange(ctx.M15, 14, MovingAverageType.Simple);
+
+            // aktuális index
+            ctx.AtrM5 = atr_m5.Result[m5Idx];
+            ctx.AtrM15 = atr_m15.Result.LastValue;
+
+            // --- ATR slope (trend volatility iránya)
+            ctx.AtrSlope_M5 = atr_m5.Result[m5Idx] - atr_m5.Result[m5Idx - 2];
+
+            // --- ATR acceleration (opcionális – volatility gyorsul-e vagy lassul)
+            ctx.AtrAcceleration_M5 =
+                (atr_m5.Result[m5Idx] - atr_m5.Result[m5Idx - 2]) -
+                (atr_m5.Result[m5Idx - 2] - atr_m5.Result[m5Idx - 4]);
+
+            // pip konverzió
+            var sym = _bot.Symbols.GetSymbol(symbol);
+            double pipSize = sym?.PipSize ?? 0;
+
+            ctx.AtrPips_M5 = (pipSize > 0)
+                ? (ctx.AtrM5 / pipSize)
+                : 0;
+
+
+            // =====================================================
+            // ADX / DMS (M5)
+            // =====================================================
+
+            var dms = _bot.Indicators.DirectionalMovementSystem(ctx.M5, 14);
+
+            // --- ADX aktuális érték
+            ctx.Adx_M5 = dms.ADX[m5Idx];
+
+            // --- ADX slope (trend erősödik vagy gyengül)
+            ctx.AdxSlope_M5 = dms.ADX[m5Idx] - dms.ADX[m5Idx - 2];
+
+            // --- ADX acceleration (trend gyorsul vagy kifullad)
+            ctx.AdxAcceleration_M5 =
+                (dms.ADX[m5Idx] - dms.ADX[m5Idx - 2]) -
+                (dms.ADX[m5Idx - 2] - dms.ADX[m5Idx - 4]);
+
+            // --- Directional bias
+            ctx.PlusDI_M5 = dms.DIPlus[m5Idx];
+            ctx.MinusDI_M5 = dms.DIMinus[m5Idx];
+
+            // --- DI spread (irányerő különbség)
+            ctx.DiSpread_M5 = ctx.PlusDI_M5 - ctx.MinusDI_M5;
+
             // -------------------------
-            // EMA
+            // EMA (MIND LAST CLOSED INDEXRŐL)
             // -------------------------
             var ema21_m5 = _bot.Indicators.ExponentialMovingAverage(ctx.M5.ClosePrices, 21);
             var ema21_m15 = _bot.Indicators.ExponentialMovingAverage(ctx.M15.ClosePrices, 21);
 
-            ctx.Ema21_M5 = ema21_m5.Result.LastValue;
-            ctx.Ema21_M15 = ema21_m15.Result.LastValue;
+            var ema50M5 = _bot.Indicators.ExponentialMovingAverage(ctx.M5.ClosePrices, 50);
+            var ema200M5 = _bot.Indicators.ExponentialMovingAverage(ctx.M5.ClosePrices, 200);
 
+            var ema50M15 = _bot.Indicators.ExponentialMovingAverage(ctx.M15.ClosePrices, 50);
+            var ema200M15 = _bot.Indicators.ExponentialMovingAverage(ctx.M15.ClosePrices, 200);
+
+            ctx.Ema21_M5 = ema21_m5.Result[m5Idx];
+            ctx.Ema21_M15 = ema21_m15.Result[m15Idx];
+
+            ctx.Ema50_M5 = ema50M5.Result[m5Idx];
+            ctx.Ema200_M5 = ema200M5.Result[m5Idx];
+
+            ctx.Ema50_M15 = ema50M15.Result[m15Idx];
+            ctx.Ema200_M15 = ema200M15.Result[m15Idx];
+
+            // slope = last closed diff
             ctx.Ema21Slope_M5 = ema21_m5.Result[m5Idx] - ema21_m5.Result[m5Idx - 3];
             ctx.Ema21Slope_M15 = ema21_m15.Result[m15Idx] - ema21_m15.Result[m15Idx - 3];
 
-            // =================================================
-            // HARD TREND
-            // =================================================
-            if (ctx.Ema21Slope_M15 > 0 && ctx.Ema21Slope_M5 > 0)
-                ctx.TrendDirection = TradeDirection.Long;
-            else if (ctx.Ema21Slope_M15 < 0 && ctx.Ema21Slope_M5 < 0)
-                ctx.TrendDirection = TradeDirection.Short;
+            // -------------------------
+            // HARD TREND (MOST MÁR ATR KÉSZ)
+            // -------------------------
+            ctx.TrendDirection = TradeDirection.None;
+
+            if (ctx.AtrM5 > 0 && ctx.AtrM15 > 0)
+            {
+                double slopeM5 = ctx.Ema21Slope_M5 / ctx.AtrM5;
+                double slopeM15 = ctx.Ema21Slope_M15 / ctx.AtrM15;
+
+                const double SlopeDeadzone = 0.05;
+
+                if (slopeM15 > SlopeDeadzone && slopeM5 > SlopeDeadzone)
+                    ctx.TrendDirection = TradeDirection.Long;
+                else if (slopeM15 < -SlopeDeadzone && slopeM5 < -SlopeDeadzone)
+                    ctx.TrendDirection = TradeDirection.Short;
+            }
 
             // XAU/XAG fallback
             if (ctx.TrendDirection == TradeDirection.None && IsMetalSymbol(symbol))
@@ -144,17 +219,7 @@ namespace GeminiV26.Core.Entry
                 !isCrypto &&
                 !isMetal &&
                 FxInstrumentMatrix.Contains(symbol);
-
-            // -------------------------
-            // ATR
-            // -------------------------
-            var atr_m5 = _bot.Indicators.AverageTrueRange(ctx.M5, 14, MovingAverageType.Simple);
-            var atr_m15 = _bot.Indicators.AverageTrueRange(ctx.M15, 14, MovingAverageType.Simple);
-
-            ctx.AtrM5 = atr_m5.Result.LastValue;
-            ctx.AtrM15 = atr_m15.Result.LastValue;
-            ctx.AtrPips_M5 = ctx.AtrM5 / _bot.Symbol.PipSize;
-
+                        
             // =================================================
             // PROFILES
             // =================================================
@@ -164,10 +229,12 @@ namespace GeminiV26.Core.Entry
                     ? IndexInstrumentMatrix.Get(symbol)
                     : null;
 
-            XAU_InstrumentProfile metalProfile =
-                isMetal
-                    ? XAU_InstrumentMatrix.Get(symbol)
-                    : null;
+            XAU_InstrumentProfile metalProfile = null;
+
+            if (isMetal && XAU_InstrumentMatrix.Contains(symbol))
+            {
+                metalProfile = XAU_InstrumentMatrix.Get(symbol);
+            }
 
             // =================================================
             // CRYPTO VOLATILITY REGIME
@@ -193,11 +260,18 @@ namespace GeminiV26.Core.Entry
             double m5Body = Math.Abs(ctx.M5.ClosePrices[m5Idx] - ctx.M5.OpenPrices[m5Idx]);
             double m5Range = ctx.M5.HighPrices[m5Idx] - ctx.M5.LowPrices[m5Idx];
 
-            if (isFx && fxProfile != null)
+            double fallbackMult =
+                isFx ? 0.55 :          // FX-en szigorúbb fallback
+                isMetal ? 0.45 :       // ha ide esne (ritka), kicsit szigorúbb
+                0.40;                  // teljesen generic
+
+            if (isFx)
             {
+                double mult = (fxProfile != null) ? fxProfile.ImpulseAtrMult_M5 : fallbackMult;
+
                 ctx.HasImpulse_M5 =
                     ctx.AtrM5 > 0 &&
-                    m5Body > ctx.AtrM5 * fxProfile.ImpulseAtrMult_M5;
+                    m5Body > ctx.AtrM5 * mult;
             }
             else if (isIndex && indexProfile != null)
             {
@@ -218,7 +292,7 @@ namespace GeminiV26.Core.Entry
             {
                 ctx.HasImpulse_M5 =
                     ctx.AtrM5 > 0 &&
-                    m5Body > ctx.AtrM5 * 0.4;
+                    m5Body > ctx.AtrM5 * fallbackMult;
             }
 
             // =================================================
@@ -247,7 +321,8 @@ namespace GeminiV26.Core.Entry
             }
 
             // =================================================
-            // FLAG STRUCTURE M5
+            // GENERIC 5-BAR MICRO STRUCTURE CHECK (USED BY CRYPTO/METAL/INDEX)
+            // NOT THE SAME AS FX TUNED FLAG LOGIC
             // =================================================
             double hi = double.MinValue;
             double lo = double.MaxValue;
@@ -316,10 +391,7 @@ namespace GeminiV26.Core.Entry
                         extreme = Math.Max(extreme, ctx.M5.HighPrices[i]);
                 }
 
-                double reference =
-                    ctx.TrendDirection == TradeDirection.Long
-                        ? ctx.M5.ClosePrices[m5Idx + 1]
-                        : ctx.M5.ClosePrices[m5Idx + 1];
+                double reference = ctx.M5.ClosePrices[m5Idx + 1];
 
                 ctx.PullbackDepthAtr_M5 =
                     Math.Abs(reference - extreme) / ctx.AtrM5;
@@ -427,33 +499,68 @@ namespace GeminiV26.Core.Entry
             }
 
             // =================================================
-            // M1 BREAKOUT (unchanged)
+            // M1 BREAKOUT (event-based, compression filtered)
             // =================================================
+
             double m1Hi = double.MinValue;
             double m1Lo = double.MaxValue;
 
+            // előző 5 lezárt M1 bar
             for (int i = m1Idx - 5; i <= m1Idx - 1; i++)
             {
                 m1Hi = Math.Max(m1Hi, ctx.M1.HighPrices[i]);
                 m1Lo = Math.Min(m1Lo, ctx.M1.LowPrices[i]);
             }
 
-            double m1Close = ctx.M1.ClosePrices[m1Idx];
+            double prevClose = ctx.M1.ClosePrices[m1Idx - 1];
+            double currClose = ctx.M1.ClosePrices[m1Idx];
 
             ctx.HasBreakout_M1 = false;
             ctx.BreakoutDirection = TradeDirection.None;
 
-            if (m1Close > m1Hi)
+            // ============================
+            // 1) EVENT-BASED CROSS
+            // ============================
+
+            bool crossUp = prevClose <= m1Hi && currClose > m1Hi;
+            bool crossDown = prevClose >= m1Lo && currClose < m1Lo;
+
+            // ============================
+            // 2) COMPRESSION FILTER
+            // ============================
+
+            double m1Range = m1Hi - m1Lo;
+
+            // instrument-aware compression
+            double compressionMult =
+                isCrypto ? 0.35 :
+                isMetal ? 0.40 :
+                isIndex ? 0.45 :
+                           0.50;   // FX default
+
+            bool isCompressed =
+                ctx.AtrM5 > 0 &&
+                m1Range < ctx.AtrM5 * compressionMult;
+
+            // ============================
+            // FINAL DECISION
+            // ============================
+
+            if (isCompressed)
             {
-                ctx.HasBreakout_M1 = true;
-                ctx.BreakoutDirection = TradeDirection.Long;
+                if (crossUp)
+                {
+                    ctx.HasBreakout_M1 = true;
+                    ctx.BreakoutDirection = TradeDirection.Long;
+                }
+                else if (crossDown)
+                {
+                    ctx.HasBreakout_M1 = true;
+                    ctx.BreakoutDirection = TradeDirection.Short;
+                }
             }
-            else if (m1Close < m1Lo)
-            {
-                ctx.HasBreakout_M1 = true;
-                ctx.BreakoutDirection = TradeDirection.Short;
-            }
-            
+
+            // trend alignment
             ctx.M1TriggerInTrendDirection =
                 ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == ctx.TrendDirection;

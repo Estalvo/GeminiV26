@@ -8,7 +8,7 @@ using GeminiV26.Instruments.FX;
 namespace GeminiV26.Instruments.EURUSD
 {
     /// <summary>
-    /// EURUSD Instrument Executor – Phase 3.7.4
+    /// EURUSD Instrument Executor – Phase 3.9
     /// - Nincs néma abort
     /// - Context teljes feltöltése
     /// - FX risk sizer használata

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeminiV26.Core;
+using GeminiV26.Core.Entry;
+using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.METAL
 {
@@ -8,82 +11,228 @@ namespace GeminiV26.EntryTypes.METAL
         private static readonly Dictionary<string, XAU_InstrumentProfile> _map =
             new(StringComparer.OrdinalIgnoreCase)
             {
-                ["XAUUSD"] = new XAU_InstrumentProfile
-                {
-                    Symbol = "XAUUSD",
+                ["XAUUSD"] = Build(
+                    symbol: "XAUUSD",
+                    
+                    // ===== instrument karakter =====
+                    pullbackStyle: FxPullbackStyle.EMA50,
+                    minAtrPips: 10.0,
+                    minAdx: 18.0,
+                    maxWick: 0.52,
+                    rangeLookback: 14,
+                    rangeMaxAtr: 0.95,
+                    allowAsia: false,
+                    sessionStart: 7,
+                    sessionEnd: 20,
 
-                    MinAtrPips = 10.0,
-                    MinAdxTrend = 12.0,
-                    MaxWickRatio = 0.75,
+                    // ===== entry policy =====
+                    maxFlagAtr: 2.0,
+                    maxPullbackAtr: 1.20,
+                    atrExpansionHardBlock: true,
+                    atrExpandPenalty: 8,
 
-                    RangeLookbackBars = 14,
-                    RangeMaxWidthAtr = 1.25,
+                    sessionScore: new()
+                    {
+                        { FxSession.Asia,    -8 },
+                        { FxSession.London,  +6 },
+                        { FxSession.NewYork, +4 }
+                    },
 
-                    AllowAsian = false,
-                    SessionStartHour = 7,
-                    SessionEndHour = 20,
+                    // ===== FLAG SESSION TUNING =====
+                    asia: new FxFlagSessionTuning
+                    {
+                        BaseScore = 55,
+                        FlagBars = 2,
+                        MaxFlagAtrMult = 1.4,      // ⬆️ 1.3 → 1.4 (kicsit több levegő)
+                        MaxPullbackAtr = 0.90,     // ⬆️ 0.85 → 0.90
+                        BreakoutAtrBuffer = 0.05,
+                        BodyMisalignPenalty = 6,
+                        M1TriggerBonus = 3,
+                        FlagQualityBonus = 0,
+                        RequireM1Trigger = false,
+                        AtrExpansionHardBlock = false,
+                        MinScore = 68              // marad magas
+                    },
+                    london: new FxFlagSessionTuning
+                    {
+                        BaseScore = 62,
+                        FlagBars = 3,
+                        MaxFlagAtrMult = 2.0,      // ⬆️ 2.2 → 2.8
+                        MaxPullbackAtr = 1.05,     // ⬆️ 1.30 → 1.40
+                        BreakoutAtrBuffer = 0.07, // ⬇️ 0.08 → 0.07
+                        BodyMisalignPenalty = int.MaxValue,
+                        M1TriggerBonus = 6,
+                        FlagQualityBonus = 4,
+                        RequireM1Trigger = false,
+                        AtrExpansionHardBlock = false,
+                        MinScore = 68              // ⬇️ 70 → 65 (nagyon fontos!)
+                    },
+                    ny: new FxFlagSessionTuning
+                    {
+                        BaseScore = 58,
+                        FlagBars = 2,
+                        MaxFlagAtrMult = 1.6,      // ⬆️ 1.5 → 1.8
+                        MaxPullbackAtr = 1.20,     // ⬆️ 1.05 → 1.70
+                        BreakoutAtrBuffer = 0.09, // ⬇️ 0.10 → 0.09
+                        BodyMisalignPenalty = int.MaxValue,
+                        M1TriggerBonus = 0,
+                        FlagQualityBonus = 6,
+                        RequireM1Trigger = true,
+                        AtrExpansionHardBlock = true,
+                        MinScore = 62              // marad
+                    }
+                ),
 
-                    SlAtrMultLow = 3.0,
-                    SlAtrMultNormal = 2.7,
-                    SlAtrMultHigh = 2.4,
+                ["XAGUSD"] = Build(
+                    symbol: "XAGUSD",
 
-                    Tp1R_High = 0.55,
-                    Tp1R_Normal = 0.45,
-                    Tp1R_Low = 0.40,
+                    pullbackStyle: FxPullbackStyle.Structure,
+                    minAtrPips: 8.0,
+                    minAdx: 18.0,
+                    maxWick: 0.55,
+                    rangeLookback: 14,
+                    rangeMaxAtr: 1.00,
+                    allowAsia: false,
+                    sessionStart: 7,
+                    sessionEnd: 20,
 
-                    BeOffsetR = 0.10,
+                    maxFlagAtr: 2.2,
+                    maxPullbackAtr: 1.30,
+                    atrExpansionHardBlock: true,
+                    atrExpandPenalty: 10,
 
-                    TrailAtrTight = 1.8,
-                    TrailAtrNormal = 2.4,
-                    TrailAtrLoose = 3.0,
-                    MinTrailImprovePips = 25,
+                    sessionScore: new()
+                    {
+                        { FxSession.Asia,    -10 },
+                        { FxSession.London,  +5 },
+                        { FxSession.NewYork, +3 }
+                    },
 
-                    LotCap = 2.0
-                },
-
-                ["XAGUSD"] = new XAU_InstrumentProfile
-                {
-                    Symbol = "XAGUSD",
-
-                    MinAtrPips = 8.0,
-                    MinAdxTrend = 16.0,
-                    MaxWickRatio = 0.70,
-
-                    RangeLookbackBars = 14,
-                    RangeMaxWidthAtr = 1.15,
-
-                    AllowAsian = false,
-                    SessionStartHour = 7,
-                    SessionEndHour = 20,
-
-                    SlAtrMultLow = 3.4,
-                    SlAtrMultNormal = 3.0,
-                    SlAtrMultHigh = 2.6,
-
-                    Tp1R_High = 0.50,
-                    Tp1R_Normal = 0.40,
-                    Tp1R_Low = 0.35,
-
-                    BeOffsetR = 0.10,
-
-                    TrailAtrTight = 2.0,
-                    TrailAtrNormal = 2.6,
-                    TrailAtrLoose = 3.2,
-                    MinTrailImprovePips = 20,
-
-                    LotCap = 2.0
-                }
+                    asia: new FxFlagSessionTuning
+                    {
+                        BaseScore = 55,
+                        FlagBars = 2,
+                        MaxFlagAtrMult = 1.4,
+                        MaxPullbackAtr = 0.90,
+                        BreakoutAtrBuffer = 0.05,
+                        BodyMisalignPenalty = 6,
+                        M1TriggerBonus = 3,
+                        FlagQualityBonus = 0,
+                        RequireM1Trigger = false,
+                        AtrExpansionHardBlock = false
+                    },
+                    london: new FxFlagSessionTuning
+                    {
+                        BaseScore = 60,
+                        FlagBars = 3,
+                        MaxFlagAtrMult = 2.2,
+                        MaxPullbackAtr = 1.15,
+                        BreakoutAtrBuffer = 0.08,
+                        BodyMisalignPenalty = int.MaxValue,
+                        M1TriggerBonus = 5,
+                        FlagQualityBonus = 3,
+                        RequireM1Trigger = false,
+                        AtrExpansionHardBlock = false,
+                        MinScore = 65
+                    },
+                    ny: new FxFlagSessionTuning
+                    {
+                        BaseScore = 50,
+                        FlagBars = 2,
+                        MaxFlagAtrMult = 1.3,
+                        MaxPullbackAtr = 1.00,
+                        BreakoutAtrBuffer = 0.10,
+                        BodyMisalignPenalty = int.MaxValue,
+                        M1TriggerBonus = 0,
+                        FlagQualityBonus = 3,
+                        RequireM1Trigger = true,
+                        AtrExpansionHardBlock = true,
+                        MinScore = 58
+                    }
+                )
             };
 
-        public static XAU_InstrumentProfile Get(string symbolName)
+        // =====================================================
+        // DEBUG / REGISTRY API (FX-MINTA)
+        // =====================================================
+        public static IEnumerable<string> DebugKeys() => _map.Keys;
+
+        // =====================================================
+        // BUILDER – KÖTELEZŐ KONZISZTENCIA
+        // =====================================================
+        private static XAU_InstrumentProfile Build(
+            string symbol,
+            FxPullbackStyle pullbackStyle,
+            double minAtrPips,
+            double minAdx,
+            double maxWick,
+            int rangeLookback,
+            double rangeMaxAtr,
+            bool allowAsia,
+            int sessionStart,
+            int sessionEnd,
+            double maxFlagAtr,
+            double maxPullbackAtr,
+            bool atrExpansionHardBlock,
+            int atrExpandPenalty,
+            Dictionary<FxSession, int> sessionScore,
+            FxFlagSessionTuning asia,
+            FxFlagSessionTuning london,
+            FxFlagSessionTuning ny)
         {
-            if (string.IsNullOrWhiteSpace(symbolName))
-                return _map["XAUUSD"];
+            return new XAU_InstrumentProfile
+            {
+                Symbol = symbol,
 
-            if (_map.TryGetValue(symbolName, out var p))
-                return p;
+                // ===== MarketState =====
+                MinAtrPips = minAtrPips,
+                MinAdxTrend = minAdx,
+                MaxWickRatio = maxWick,
+                RangeLookbackBars = rangeLookback,
+                RangeMaxWidthAtr = rangeMaxAtr,
 
-            return _map["XAUUSD"];
+                // ===== Session gate =====
+                AllowAsian = allowAsia,
+                SessionStartHour = sessionStart,
+                SessionEndHour = sessionEnd,
+
+                // ===== ENTRY policy =====
+                PullbackStyle = pullbackStyle,
+                MaxFlagAtrMult = maxFlagAtr,
+                MaxPullbackAtr = maxPullbackAtr,
+                AtrExpansionHardBlock = atrExpansionHardBlock,
+                AtrExpandPenalty = atrExpandPenalty,
+                SessionScoreDelta = sessionScore,
+
+                // ===== FLAG session tuning =====
+                FlagTuning = new()
+                {
+                    [FxSession.Asia] = asia,
+                    [FxSession.London] = london,
+                    [FxSession.NewYork] = ny
+                }
+            };
         }
+
+        // =====================================================
+        // SAFE ACCESSORS
+        // =====================================================
+        public static XAU_InstrumentProfile Get(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol))
+                return null;
+
+            var s = symbol.ToUpperInvariant();
+            if (!s.Contains("XAU") && !s.Contains("XAG"))
+                return null;
+
+            if (_map.TryGetValue(symbol, out var profile))
+                return profile;
+
+            return null;
+        }
+
+        public static bool Contains(string symbol)
+            => _map.ContainsKey(symbol);
     }
 }

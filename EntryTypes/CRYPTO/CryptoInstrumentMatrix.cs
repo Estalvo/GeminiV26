@@ -5,6 +5,11 @@ namespace GeminiV26.EntryTypes.Crypto
 {
     public static class CryptoInstrumentMatrix
     {
+
+        // ================================
+        // PULLBACK MOMENTUM CONTROL
+        // ================================
+               
         private static readonly Dictionary<string, CryptoInstrumentProfile> _map =
             new(StringComparer.OrdinalIgnoreCase)
             {
@@ -17,27 +22,29 @@ namespace GeminiV26.EntryTypes.Crypto
 
                     // === Volatility ===
                     MinAtrPips = 80,
-                    MaxAtrPips = 650,
+                    MaxAtrPips = 480,
 
                     // === Trend ===
-                    MinAdxTrend = 22,
-                    MinAdxStrong = 26,
+                    MinAdxTrend = 20,
+                    MinAdxStrong = 22,
 
                     // === Wick / chop ===
-                    MaxWickRatio = 0.62,
-                    ChopLookbackBars = 3,
+                    MaxWickRatio = 0.55,
+                    ChopLookbackBars = 5,
 
                     // === Impulse / flag ===
-                    ImpulseAtrMult_M5 = 0.55,
-                    ImpulseAtrMult_M1 = 0.20,
-                    MaxFlagAtrMult = 0.9,
+                    ImpulseAtrMult_M5 = 0.30,
+                    ImpulseAtrMult_M1 = 0.30,
+                    MaxFlagAtrMult = 1.1,
 
                     // === Range ===
-                    RangeMaxWidthAtr = 1.25,
+                    RangeMaxWidthAtr = 1.05,
 
                     // === Behaviour ===
                     AllowMeanReversion = false,
-                    AllowRangeBreakout = true
+                    AllowRangeBreakout = true,
+                    BlockPullbackOnHighVolWithoutImpulse = false,
+                    RequireStrongImpulseForPullback = false
                 },
 
                 // =========================
@@ -52,24 +59,26 @@ namespace GeminiV26.EntryTypes.Crypto
                     MaxAtrPips = 320,
 
                     // === Trend ===
-                    MinAdxTrend = 21,
-                    MinAdxStrong = 24,
+                    MinAdxTrend = 19,
+                    MinAdxStrong = 22,
 
                     // === Wick / chop ===
                     MaxWickRatio = 0.60,
-                    ChopLookbackBars = 3,
+                    ChopLookbackBars = 5,
 
                     // === Impulse / flag ===
-                    ImpulseAtrMult_M5 = 0.52,
-                    ImpulseAtrMult_M1 = 0.18,
-                    MaxFlagAtrMult = 0.85,
+                    ImpulseAtrMult_M5 = 0.45,
+                    ImpulseAtrMult_M1 = 0.30,
+                    MaxFlagAtrMult = 1.0,
 
                     // === Range ===
                     RangeMaxWidthAtr = 1.15,
 
                     // === Behaviour ===
                     AllowMeanReversion = false,
-                    AllowRangeBreakout = true
+                    AllowRangeBreakout = true,
+                    BlockPullbackOnHighVolWithoutImpulse = false,
+                    RequireStrongImpulseForPullback = false
                 }
             };
 

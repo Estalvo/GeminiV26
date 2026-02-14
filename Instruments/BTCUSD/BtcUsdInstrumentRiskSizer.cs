@@ -40,27 +40,20 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            // High confidence – valóban prémium setup
-            if (finalConfidence >= 85)
-                return 0.28;   // ⬆ volt 0.22
-
-            // Normal confidence – most már tisztább belépések
-            if (finalConfidence >= 75)
-                return 0.20;   // ⬆ volt 0.16
-
-            // Low confidence – változatlan (védelem)
-            return 0.10;
+            if (finalConfidence >= 85) return 1.25;  // 0.60 × 2.1 ≈ 1.26
+            if (finalConfidence >= 75) return 0.85;  // 0.40 × 2.1 ≈ 0.84
+            return 0.53;                             // 0.25 × 2.1 ≈ 0.52
         }
 
         // =========================================================
-        // STOP LOSS ATR MULTIPLIER
+        // STOP LOSS ATR MULTIPLIER – BTC widened (×1.4)
         // =========================================================
         public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            // Magas confidence → feszesebb SL
-            return finalConfidence >= 85
-                ? 2.6
-                : 3.0;
+            if (finalConfidence >= 85)
+                return 2.5;   // volt 1.8
+
+            return 3.1;       // volt 2.2
         }
 
         // =========================================================
@@ -75,9 +68,9 @@ namespace GeminiV26.Instruments.BTCUSD
         {
             if (finalConfidence >= 85)
             {
-                tp1R = 0.45;
-                tp2R = 1.90;     // ⬅ hagyjuk kifutni a jó BTC tradeket
-                tp1Ratio = 0.30; // ⬅ kevesebb korai zárás
+                tp1R = 0.40;      // volt 0.45
+                tp2R = 1.90;
+                tp1Ratio = 0.40;  // volt 0.30
             }
             else if (finalConfidence >= 75)
             {
@@ -100,7 +93,7 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            return 50000; // units, nem lot
+            return 100000; // units, nem lot
         }
     }
 }

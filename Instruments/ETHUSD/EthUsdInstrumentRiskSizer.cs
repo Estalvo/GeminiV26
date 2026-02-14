@@ -40,16 +40,9 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            // High confidence – prémium ETH setup
-            if (finalConfidence >= 85)
-                return 0.26;   // ⬆ volt 0.22
-
-            // Normal confidence – tisztább belépések
-            if (finalConfidence >= 75)
-                return 0.19;   // ⬆ volt 0.16
-
-            // Low confidence – védelem, változatlan
-            return 0.10;
+            if (finalConfidence >= 85) return 1.00; 
+            if (finalConfidence >= 75) return 0.70; 
+            return 0.40;                            
         }
 
         // =========================================================
@@ -73,29 +66,26 @@ namespace GeminiV26.Instruments.ETHUSD
             out double tp2R,
             out double tp2Ratio)
         {
-            // ETH M5 – intraday / scalp-swing hybrid
-
             if (finalConfidence >= 85)
             {
                 tp1R = 0.45;
-                tp1Ratio = 0.40;
-                tp2R = 1.7;
+                tp2R = 2.0;      // ⬆ hagyjuk futni
+                tp1Ratio = 0.30; // kevesebb korai zárás
             }
             else if (finalConfidence >= 75)
             {
                 tp1R = 0.35;
-                tp2R = 1.3;
+                tp2R = 1.50;
+                tp1Ratio = 0.40;
             }
             else
             {
                 tp1R = 0.30;
-                tp2R = 1.0;
+                tp2R = 1.10;
+                tp1Ratio = 0.55; // védelem gyenge setupnál
             }
 
-            // részleges zárás
-            tp1Ratio = 0.50;
-            tp2Ratio = 0.50;
-
+            tp2Ratio = 1.0 - tp1Ratio;
         }
 
         // =========================================================
@@ -103,7 +93,7 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            return 50000; // units, nem lot
+            return 100000; // units, nem lot
         }
     }
 }

@@ -186,6 +186,13 @@ namespace GeminiV26.Instruments.USDJPY
         // =====================================================
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
+            // BE már beállítva → ne fusson újra
+            if (ctx.BePrice > 0)
+                return;
+
+            if (!pos.StopLoss.HasValue)
+                return;
+
             double bePrice = pos.TradeType == TradeType.Buy
                 ? pos.EntryPrice + rDist * BeOffsetR
                 : pos.EntryPrice - rDist * BeOffsetR;

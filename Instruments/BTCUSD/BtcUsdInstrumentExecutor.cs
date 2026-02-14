@@ -104,8 +104,39 @@ namespace GeminiV26.Instruments.BTCUSD
                 _bot.Print("[BTCUSD][EXEC] abort: invalid lossPerUnit");
                 return;
             }
-
+                        
             double rawUnits = riskMoney / lossPerUnit;
+
+            // =========================================================
+            // SCORE-BASED RISK MONOTONICITY GUARD (CRYPTO)
+            // =========================================================
+            double score = tempFinalConfidence;
+
+            double scoreRiskMult =                
+                score < 45 ? 0.70 :
+                score < 55 ? 0.85 :
+                score < 65 ? 0.95 :
+                             1.00;
+
+            rawUnits *= scoreRiskMult;
+
+            // =========================================================
+            // CRYPTO SCORE SAFETY GUARD (HARD CAP)
+            // low score MUST NOT produce large size
+            // =========================================================
+            double minUnits = _bot.Symbol.VolumeInUnitsMin;
+            double maxLowScoreUnits = minUnits * 3;
+
+            if (tempFinalConfidence < 45 &&
+                rawUnits > maxLowScoreUnits)
+            {
+                _bot.Print(
+                    $"[BTCUSD][RISK] score={tempFinalConfidence} rawUnits capped " +
+                    $"from {rawUnits:F6} to {maxLowScoreUnits:F6}"
+                );
+
+                rawUnits = maxLowScoreUnits;
+            }
 
             if (rawUnits < _bot.Symbol.VolumeInUnitsMin)
             {

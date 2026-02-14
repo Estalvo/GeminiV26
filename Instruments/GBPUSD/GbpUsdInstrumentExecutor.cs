@@ -144,10 +144,10 @@ namespace GeminiV26.Instruments.GBPUSD
                 _botLabel,
                 slPips,
                 tp2Pips);
-
+                        
             if (!result.IsSuccessful || result.Position == null)
                 return;
-
+                        
             long positionKey = result.Position.Id;
 
             var ctx = new PositionContext
@@ -158,7 +158,10 @@ namespace GeminiV26.Instruments.GBPUSD
                 EntryReason = entry.Reason,
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
-                
+
+                // 🔴 KRITIKUS – TP / BE / TRAILING ALAPJA (1R)
+                RiskPriceDistance = slPriceDist,
+
                 Tp1R = tp1R,
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
@@ -169,7 +172,6 @@ namespace GeminiV26.Instruments.GBPUSD
                     tempFinalConfidence >= 85 ? TrailingMode.Loose :
                     tempFinalConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight
-
             };
 
             _positionContexts[positionKey] = ctx;

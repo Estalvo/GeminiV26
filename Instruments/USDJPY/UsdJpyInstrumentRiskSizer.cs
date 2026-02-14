@@ -1,5 +1,6 @@
 ﻿using GeminiV26.Core.Entry;
 using GeminiV26.Risk;
+using System;
 
 namespace GeminiV26.Instruments.USDJPY
 {
@@ -17,37 +18,30 @@ namespace GeminiV26.Instruments.USDJPY
         private const double RiskMax = 0.35;
 
         // USDJPY: trend/pullback → SL feszesebb, mint US30
-        private const double SlBase = 1.45;
-        private const double SlWide = 1.75;
-        private const double SlTight = 1.25;
+        // USDJPY: widened SL (+40%)
+        private const double SlBase = 2.05;   // volt 1.45
+        private const double SlWide = 2.45;   // volt 1.75
+        private const double SlTight = 1.75;  // volt 1.25
 
         public double GetRiskPercent(int score)
         {
-            if (score < 60) return 0.05;
-            if (score < 70) return RiskLow;
-            if (score < 80) return RiskMed;
-            if (score < 90) return RiskHigh;
-            return RiskMax;
+            double n = NormalizeScore(score);
+
+            // USDJPY: tisztább trend, de gyors
+            // 0.15% → 0.32%
+            return 0.15 + n * (0.32 - 0.15);
         }
 
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            double baseMult = entryType switch
-            {
-                EntryType.TC_Pullback => SlTight,
-                EntryType.TC_Flag => SlBase,
-                EntryType.BR_RangeBreakout => SlWide,
-                EntryType.TR_Reversal => SlWide,
-                _ => SlBase
-            };
+            double n = NormalizeScore(score);
 
-            // magas confidence → picit feszesebb
-            if (score >= 85) baseMult -= 0.05;
-            if (score >= 92) baseMult -= 0.05;
+            double baseMult = SlBase; // FX-only: egységes baseline
 
-            if (baseMult < 1.10) baseMult = 1.10;
+            if (n >= 0.75) baseMult -= 0.05;
+            if (n >= 0.90) baseMult -= 0.05;
 
-            return baseMult;
+            return Math.Max(baseMult, 1.10);
         }
 
         public void GetTakeProfit(
@@ -57,46 +51,52 @@ namespace GeminiV26.Instruments.USDJPY
             out double tp2R,
             out double tp2Ratio)
         {
-            // USDJPY – VALIDÁCIÓS + RUNNER PROFIL
-            // Cél: korai TP1 → BE / trailing,
-            // de jó score-nál valódi futás engedése
+            double n = NormalizeScore(score);
 
-            if (score < 70)
+            if (n < 0.40)
             {
                 tp1R = 0.30; tp1Ratio = 0.70;
                 tp2R = 0.80; tp2Ratio = 0.30;
                 return;
             }
 
-            if (score < 80)
+            if (n < 0.65)
             {
                 tp1R = 0.35; tp1Ratio = 0.65;
                 tp2R = 1.00; tp2Ratio = 0.35;
                 return;
             }
 
-            if (score < 90)
+            if (n < 0.85)
             {
                 tp1R = 0.40; tp1Ratio = 0.55;
                 tp2R = 1.40; tp2Ratio = 0.45;
                 return;
             }
 
-            // score >= 90 → prémium trend
+            // prémium trend
             tp1R = 0.45;
-            tp1Ratio = 0.45;     // több runner
-            tp2R = 1.80;         // hagyjuk futni
+            tp1Ratio = 0.45;
+            tp2R = 1.80;
             tp2Ratio = 0.55;
         }
 
         public double GetLotCap(int score)
         {
-            // USDJPY: tisztább trend, de gyors
-            if (score < 65) return 0.65;
-            if (score < 75) return 0.80;
-            if (score < 85) return 0.95;
-            if (score < 92) return 1.05;
-            return 1.10;   // abszolút plafon
+            double n = NormalizeScore(score);
+
+            if (n < 0.45) return 0.65;
+            if (n < 0.65) return 0.80;
+            if (n < 0.85) return 0.95;
+            if (n < 0.95) return 1.05;
+            return 1.10;
         }
+
+        private static double NormalizeScore(int score)
+        {
+            // USDJPY – új FX score-tartomány
+            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+        }
+
     }
 }
