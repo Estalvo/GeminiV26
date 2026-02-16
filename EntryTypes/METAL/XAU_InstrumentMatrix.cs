@@ -60,12 +60,12 @@ namespace GeminiV26.EntryTypes.METAL
                         MaxFlagAtrMult = 2.0,      // ⬆️ 2.2 → 2.8
                         MaxPullbackAtr = 1.05,     // ⬆️ 1.30 → 1.40
                         BreakoutAtrBuffer = 0.07, // ⬇️ 0.08 → 0.07
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 4,
                         M1TriggerBonus = 6,
                         FlagQualityBonus = 4,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 68              // ⬇️ 70 → 65 (nagyon fontos!)
+                        MinScore = 65              // ⬇️ 70 → 65 (nagyon fontos!)
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -74,7 +74,7 @@ namespace GeminiV26.EntryTypes.METAL
                         MaxFlagAtrMult = 1.6,      // ⬆️ 1.5 → 1.8
                         MaxPullbackAtr = 1.20,     // ⬆️ 1.05 → 1.70
                         BreakoutAtrBuffer = 0.09, // ⬇️ 0.10 → 0.09
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 6,
                         RequireM1Trigger = true,

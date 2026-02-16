@@ -149,12 +149,49 @@ namespace GeminiV26.Instruments.INDEX
 
         public static IndexInstrumentProfile Get(string symbol)
         {
-            if (_map.TryGetValue(symbol, out var profile))
+            if (string.IsNullOrWhiteSpace(symbol))
+                throw new ArgumentException("Symbol is null or empty");
+
+            string s = Normalize(symbol);
+
+            if (_map.TryGetValue(s, out var profile))
                 return profile;
 
             throw new ArgumentException(
                 $"Index instrument not defined in matrix: {symbol}"
             );
+        }
+
+        private static string Normalize(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol))
+                return symbol;
+
+            var s = symbol
+                .ToUpperInvariant()
+                .Replace(" ", "")
+                .Replace("_", "");
+
+            // ===== NAS100 =====
+            if (s.Contains("USTECH100") ||
+                s.Contains("USTECH") ||
+                s.Contains("US100") ||
+                s.Contains("NAS100"))
+                return "NAS100";
+
+            // ===== US30 =====
+            if (s.Contains("US30") ||
+                s.Contains("DOW"))
+                return "US30";
+
+            // ===== GER40 =====
+            if (s.Contains("GER40") ||
+                s.Contains("DE40") ||
+                s.Contains("DAX") ||
+                s.Contains("GERMANY40"))   // ← JAVÍTVA (nincs space)
+                return "GER40";
+
+            return s;
         }
 
         public static bool Contains(string symbol)

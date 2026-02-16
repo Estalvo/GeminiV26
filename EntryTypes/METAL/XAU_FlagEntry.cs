@@ -12,15 +12,15 @@ namespace GeminiV26.EntryTypes.METAL
         public EntryType Type => EntryType.XAU_Flag;
 
         // === METAL softening knobs (tudatos, lokális policy) ===
-        private const int GlobalWidePenaltyPer01Atr = 3;      // 0.1 ATR-enként
-        private const int GlobalWidePenaltyCap = 12;
+        private const int GlobalWidePenaltyPer01Atr = 2;      // 0.1 ATR-enként
+        private const int GlobalWidePenaltyCap = 8;
 
         private const int SessionWidePenaltyPer01Atr = 4;     // 0.1 ATR-enként
         private const int SessionWidePenaltyCap = 10;
-        private const double SessionWideHardFactor = 1.35;    // ha sessionLimit * 1.35 felett: hard reject
+        private const double SessionWideHardFactor = 1.6;    // ha sessionLimit * 1.6 felett: hard reject
 
-        private const int OverextendedPenalty_LondonNy = 7;
-        private const int OverextendedPenalty_Asia = 4;
+        private const int OverextendedPenalty_LondonNy = 5;
+        private const int OverextendedPenalty_Asia = 3;
 
         // =====================================================
         // ENTRY ROUTER (session-dispatch only)
@@ -92,7 +92,7 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.HasImpulse_M5 &&
                 IsImpulseExhaustedXau(ctx,
                     lookback: 6,
-                    netAtrMult: 1.2,
+                    netAtrMult: 1.4,
                     bodyAtrMult: 0.6))
             {
                 reasons.Add("IMPULSE_EXHAUSTED");
@@ -105,6 +105,34 @@ namespace GeminiV26.EntryTypes.METAL
                     "IMPULSE_EXHAUSTED",
                     reasons
                 );
+            }
+
+            // =====================================================
+            // XAU TREND FATIGUE ULTRASOUND (HARD REJECT)
+            // cél: késői belépések tiltása, amikor a trend kifullad
+            // =====================================================
+            bool adxExhausted =
+                ctx.Adx_M5 > 40 &&              // XAU-n elég alacsonyabb küszöb is
+                ctx.AdxSlope_M5 <= 0;
+
+            bool atrContracting =
+                ctx.AtrSlope_M5 <= 0;
+
+            bool diConverging =
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 6;   // XAU-n szigorúbb lehet
+
+            bool impulseStale =
+                !ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > 3;
+
+            bool trendFatigue =
+                adxExhausted &&
+                atrContracting &&
+                impulseStale;
+
+            if (trendFatigue)
+            {
+                reasons.Add("TREND_FATIGUE_ULTRASOUND");
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "XAU_TREND_FATIGUE_ULTRASOUND", reasons);
             }
 
             // -----------------------------
@@ -245,6 +273,34 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // =====================================================
+            // CHOP / RANGE SOFT GUARD (XAU) – only penalty
+            // =====================================================
+            bool chopZone =
+                ctx.Adx_M5 < 20 &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7 &&
+                !ctx.IsAtrExpanding_M5;
+
+            if (chopZone)
+            {
+                score -= 5;                 // finom, nehogy megölje a jó flaget
+                reasons.Add("CHOP_SOFT(-5)");
+            }
+
+            // =====================================================
+            // GRIND CONTINUATION SUPPORT (London only)
+            // =====================================================
+            if (session == FxSession.London &&
+                ctx.Adx_M5 >= 20 &&
+                ctx.Adx_M5 <= 25 &&
+                ctx.AdxSlope_M5 >= 0 &&
+                ctx.IsValidFlagStructure_M5 &&
+                !ctx.IsAtrExpanding_M5)
+            {
+                score += 3;
+                reasons.Add("+GRIND_CONT(3)");
+            }
+
+            // =====================================================
             // HTF PENALTY (METAL)
             // =====================================================
             int htfP = HtfPenalty(ctx, ctx.TrendDirection, tuning.HtfBasePenalty, tuning.HtfScalePenalty);
@@ -253,11 +309,7 @@ namespace GeminiV26.EntryTypes.METAL
                 score -= htfP;
                 reasons.Add($"-HTF({htfP})");
             }
-
-            // Router kompatibilitás
-            if (score > 0 && score < 20)
-                score = 20;
-
+                        
             // MinScore gate (marad)
             if (score < tuning.MinScore)
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, $"LOW_SCORE({score})", reasons);
@@ -422,7 +474,10 @@ namespace GeminiV26.EntryTypes.METAL
                 ctx.MetalHtfConfidence01 > 0 &&
                 ctx.MetalHtfAllowedDirection != dir)
             {
-                return (int)(basePenalty + scalePenalty * ctx.MetalHtfConfidence01);
+                int p = (int)(basePenalty + scalePenalty * ctx.MetalHtfConfidence01);
+        
+                // CAP – ne vigye túlzásba
+                return Math.Min(p, 10);
             }
 
             return 0;

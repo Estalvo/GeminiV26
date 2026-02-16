@@ -385,8 +385,24 @@ namespace GeminiV26.EntryTypes.FX
             // 5. FINAL SCORE
             // =====================================================
             // Debug assist: show key gating context in reason via score only (keeps pipeline simple)
-            if (score < tuning.MinScore)
-                return Invalid(ctx, $"LOW_SCORE({score}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} ny={(ctx.Session == FxSession.NewYork)}", score);
+            int min = tuning.MinScore;
+
+            // NY-ban engedj 2 pont tolerance-t, mert ott sok a spike / wick
+            if (ctx.Session == FxSession.NewYork)
+                min -= 2;
+
+            // HTF transition esetén ne legyen full hard gate
+            if (ctx.FxHtfAllowedDirection == TradeDirection.None)
+                min -= 2;
+
+            // Safety clamp
+            if (min < 0)
+                min = 0;
+
+            if (score < min)
+                return Invalid(ctx,
+                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session}",
+                    score);
 
             // HARD SYSTEM SAFETY
             if (ctx.TrendDirection == TradeDirection.None)

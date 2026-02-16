@@ -53,7 +53,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
                         BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,     // ÚJ: Londonban is kötelező az M1, hogy ne vegyünk csúcsot! -< vissza false-ra
@@ -67,7 +67,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.90,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -118,7 +118,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 2.3,
                         MaxPullbackAtr = 1.35,
                         BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,
@@ -132,7 +132,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.95,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -185,7 +185,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.6,        // SZIGORÍTÁS: 2.0-ról 1.6-ra
                         MaxPullbackAtr = 0.90,       // SZIGORÍTÁS: 1.30-ról 0.90-re
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,     // KRITIKUS: Londonban is kötelező az M1 trigger!
@@ -199,7 +199,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.90,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 8,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -254,7 +254,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 2.1,
                         MaxPullbackAtr = 1.40,
                         BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,
@@ -268,7 +268,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.95,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -321,7 +321,7 @@ namespace GeminiV26.Instruments.FX
                     MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.0-ról 1.8-ra (kevesebb zajt engedünk)
                     MaxPullbackAtr = 1.10,       // SZIGORÍTÁS: 1.30-ról 1.10-re (ne engedjünk túl mély korrekciót)
                     BreakoutAtrBuffer = 0.08,
-                    BodyMisalignPenalty = int.MaxValue,
+                    BodyMisalignPenalty = 5,
                     M1TriggerBonus = 5,
                     FlagQualityBonus = 3,
                     RequireM1Trigger = true,     // KRITIKUS: Londonban is kötelezővé tesszük az M1 triggert!
@@ -336,7 +336,7 @@ namespace GeminiV26.Instruments.FX
                     MaxFlagAtrMult = 1.1,
                     MaxPullbackAtr = 0.75,
                     BreakoutAtrBuffer = 0.10,
-                    BodyMisalignPenalty = int.MaxValue,
+                    BodyMisalignPenalty = 8,
                     M1TriggerBonus = 0,
                     FlagQualityBonus = 3,
                     RequireM1Trigger = true,
@@ -391,7 +391,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.70,
                         BreakoutAtrBuffer = 0.12,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -407,7 +407,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.60,
                         BreakoutAtrBuffer = 0.15,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 8,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -462,7 +462,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.3,        // SZIGORÍTÁS: 1.8 -> 1.3
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.35 -> 0.85
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,     // ÚJ: Itt is kell az M1 kontroll
@@ -476,7 +476,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.85,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 8,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -529,7 +529,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.1,
                         MaxPullbackAtr = 0.70,
                         BreakoutAtrBuffer = 0.12,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 10,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -543,7 +543,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 0.7,
                         MaxPullbackAtr = 0.50,
                         BreakoutAtrBuffer = 0.15,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 12,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -596,7 +596,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.6,        // SZIGORÍTÁS: 2.0 -> 1.6 (megfogja a csúcson vételt)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30 -> 1.00
                         BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,     // ÚJ: Itt is kötelező az M1 trigger
@@ -612,7 +612,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.90,
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 2,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
@@ -667,7 +667,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.4,        // SZIGORÍTÁS: 2.0 -> 1.4 (Kompaktabb setupok)
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.30 -> 0.85
                         BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 5,        // JUTALMAZÁS: Ha tiszta a kép, kapjon nagy bónuszt
                         RequireM1Trigger = true,     // ÚJ: Londonban is kötelező az M1 trigger
@@ -683,7 +683,7 @@ namespace GeminiV26.Instruments.FX
                         MaxFlagAtrMult = 1.1,
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 0.90 -> 0.75
                         BreakoutAtrBuffer = 0.10,
-                        BodyMisalignPenalty = int.MaxValue,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 2,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,

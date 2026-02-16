@@ -1,5 +1,7 @@
-﻿using GeminiV26.Core.Entry;
+﻿using cAlgo.API;
+using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.INDEX;
+using System;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
@@ -7,28 +9,58 @@ namespace GeminiV26.EntryTypes.INDEX
     {
         public EntryType Type => EntryType.Index_Breakout;
 
-        private const int BaseScore = 50;
+        private const int BaseScore = 55;
+        private const int MinScore = 55;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            if (!ctx.IsReady)
-                return null;
+            int score = 0;
 
-            // =====================================================
-            // PROFILE (KIEGÉSZÍTÉS – NEM MÓDOSÍTÁS)
-            // =====================================================
+            if (ctx == null || !ctx.IsReady)
+                return Reject(ctx, "CTX_NOT_READY", score, TradeDirection.None);
+
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
-            // =====================================================
 
             if (!ctx.HasBreakout_M1)
-                return null;
+                return Reject(ctx, "NO_BREAKOUT_M1", score, TradeDirection.None);
 
             TradeDirection dir = ctx.BreakoutDirection;
             if (dir == TradeDirection.None)
-                return null;
+                return Reject(ctx, "NO_BREAKOUT_DIR", score, TradeDirection.None);
 
-            int score = BaseScore;
+            score = BaseScore;
 
+            // =====================================================
+            // Chop / Range SOFT
+            // =====================================================
+            bool chopZone =
+                ctx.Adx_M5 < p.MinAdxTrend &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8 &&
+                !ctx.IsAtrExpanding_M5;
+
+            if (chopZone)
+                score -= 6;
+
+            // =====================================================
+            // Trend Fatigue Ultrasound (HARD REJECT)
+            // =====================================================
+            bool adxExhausted = ctx.Adx_M5 > 40 && ctx.AdxSlope_M5 <= 0;
+            bool atrContracting = ctx.AtrSlope_M5 <= 0;
+            bool diConverging = System.Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
+            bool impulseStale = !ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > 3;
+
+            int fatigueCount = 0;
+            if (adxExhausted) fatigueCount++;
+            if (atrContracting) fatigueCount++;
+            if (diConverging) fatigueCount++;
+            if (impulseStale) fatigueCount++;
+
+            if (fatigueCount >= 3)
+                return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
+
+            // =====================================================
+            // Core breakout scoring
+            // =====================================================
             if (ctx.TrendDirection == dir)
                 score += 5;
 
@@ -38,28 +70,49 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx.IsAtrExpanding_M5)
                 score += 3;
 
-            // market state = SOFT
             if (ctx.MarketState?.IsTrend == true)
                 score += 5;
 
             if (ctx.MarketState?.IsLowVol == true)
-                score -= 15;
+                score -= 8; // was -15
+
+            // Strong aligned momentum bonus
+            if (ctx.TrendDirection == dir &&
+                ctx.HasImpulse_M5 &&
+                ctx.IsAtrExpanding_M5)
+            {
+                score += 3;
+            }
 
             // =====================================================
-            // PROFILE SOFT BIAS (INDEX-SAFE)
+            // Fake breakout guard (HARD)
+            // =====================================================
+            bool weakBreakout =
+                !ctx.IsAtrExpanding_M5 &&
+                !ctx.HasImpulse_M5 &&
+                ctx.TrendDirection != dir &&
+                ctx.Adx_M5 < p.MinAdxTrend;
+
+            if (weakBreakout)
+                return Reject(ctx, "WEAK_FAKE_BREAKOUT", score, dir);
+
+            // =====================================================
+            // Profile soft bias
             // =====================================================
             if (p.SessionBias == IndexSessionBias.NewYork)
                 score += 1;
 
             if (p.Volatility == IndexVolatilityClass.Extreme)
                 score += 1;
-            // =====================================================
 
-            // breakout NEVER beats flag/pullback by score
-            score -= 10;
+            // Breakout shouldn't beat Flag/Pullback too easily
+            if (p.PullbackStyle == IndexPullbackStyle.Structure)
+                score -= 6;
+            else
+                score -= 4;
 
-            if (score < 55)
-                return null;
+            if (score < MinScore)
+                return Reject(ctx, $"LOW_SCORE({score})", score, dir);
 
             return new EntryEvaluation
             {
@@ -69,8 +122,36 @@ namespace GeminiV26.EntryTypes.INDEX
                 Score = score,
                 IsValid = true,
                 Reason =
-                    $"IDX_BREAKOUT_3.8 dir={dir} score={score} " +
-                    $"trendAlign={(ctx.TrendDirection == dir)} impulse={ctx.HasImpulse_M5}"
+                    $"IDX_BREAKOUT dir={dir} score={score} " +
+                    $"trendAlign={(ctx.TrendDirection == dir)} impulse={ctx.HasImpulse_M5} atrExp={ctx.IsAtrExpanding_M5}"
+            };
+        }
+
+        private static EntryEvaluation Reject(
+            EntryContext ctx,
+            string reason,
+            int score,
+            TradeDirection dir)
+        {
+            Console.WriteLine(
+                $"[IDX_FLAG][REJECT] {reason} | " +
+                $"score={score} | " +
+                $"dir={dir} | " +
+                $"Impulse={ctx?.HasImpulse_M5} | " +
+                $"BarsSinceImp={ctx?.BarsSinceImpulse_M5} | " +
+                $"ATRexp={ctx?.IsAtrExpanding_M5} | " +
+                $"ADX={ctx?.Adx_M5:F1} | " +
+                $"DIΔ={System.Math.Abs((ctx?.PlusDI_M5 ?? 0) - (ctx?.MinusDI_M5 ?? 0)):F1}"
+            );
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.Index_Breakout,
+                Direction = dir,
+                IsValid = false,
+                Score = System.Math.Max(0, score),
+                Reason = reason
             };
         }
     }

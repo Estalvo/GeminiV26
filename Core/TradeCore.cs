@@ -290,8 +290,8 @@ namespace GeminiV26.Core
             }
             else if (
                 symbol.Contains("NAS") ||
-                symbol.Contains("US TECH") ||
-                symbol.Contains("US 30") ||
+                symbol.Contains("USTECH") ||
+                symbol.Contains("US30") ||
                 symbol.Contains("GER") ||
                 symbol.Contains("DAX")
             )
@@ -299,6 +299,7 @@ namespace GeminiV26.Core
                 _indexMarketStateDetector = new IndexMarketStateDetector(_bot);
                 _indexBias = new IndexHtfBiasEngine(_bot);
             }
+
             else
             {
                 _bot.Print($"❌ UNKNOWN SYMBOL ROUTING: {symbol}");
@@ -321,7 +322,7 @@ namespace GeminiV26.Core
             else if (symbol.Contains("XAU"))
             {
                 _entryTypes = new List<IEntryType>
-                {                    
+                {
                     new XAU_FlagEntry(),
                     new XAU_PullbackEntry(),
                     new XAU_ReversalEntry(),
@@ -338,7 +339,7 @@ namespace GeminiV26.Core
                 symbol.Contains("GBPJPY") ||
                 symbol.Contains("NZDUSD") ||
                 symbol.Contains("USDCAD") ||
-                symbol.Contains("USDCHF") 
+                symbol.Contains("USDCHF")
             )
             {
                 _entryTypes = new List<IEntryType>
@@ -353,12 +354,11 @@ namespace GeminiV26.Core
             }
             else if (
                 symbol.Contains("NAS") ||
-                symbol.Contains("USTECH") ||     // ← EZ HIÁNYZOTT
-                symbol.Contains("US TECH") ||
-                symbol.Contains("US 30") ||
+                symbol.Contains("USTECH") ||
                 symbol.Contains("US30") ||
                 symbol.Contains("GER") ||
-                symbol.Contains("DAX"))
+                symbol.Contains("DAX")
+            )
             {
                 _entryTypes = new List<IEntryType>
                 {
@@ -380,7 +380,7 @@ namespace GeminiV26.Core
                     new TR_ReversalEntry(),
                 };
             }
-
+        
 
             _entryRouter = new EntryRouter(_entryTypes);
             _contextBuilder = new EntryContextBuilder(bot);
@@ -658,32 +658,38 @@ namespace GeminiV26.Core
 
         public void OnBar()
         {
-            string sym = _bot.SymbolName;
-            _bot.Print($"[ONBAR DBG] sym={sym}");
+            string rawSym = _bot.SymbolName;
+            string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
+
+            _bot.Print($"[ONBAR DBG] raw={rawSym} canonical={sym}");
 
             bool isFx = _fxMarketStateDetector != null &&
-            !_bot.SymbolName.Contains("XAU") &&
-            !_bot.SymbolName.Contains("BTC") &&
-            !_bot.SymbolName.Contains("ETH") &&
-            !IsNasSymbol(_bot.SymbolName) &&
-            !_bot.SymbolName.Contains("GER");
+                !sym.Contains("XAU") &&
+                !sym.Contains("BTC") &&
+                !sym.Contains("ETH") &&
+                !IsNasSymbol(sym) &&
+                !sym.Contains("GER");
 
             bool isCrypto = _cryptoMarketStateDetector != null &&
-                            (_bot.SymbolName.Contains("BTC") || _bot.SymbolName.Contains("ETH"));
+                            (sym.Contains("BTC") || sym.Contains("ETH"));
 
             bool isMetal = _xauMarketStateDetector != null &&
-                           _bot.SymbolName.Contains("XAU");
+                           sym.Contains("XAU");
 
             bool isIndex = _indexMarketStateDetector != null &&
-                           (IsNasSymbol(_bot.SymbolName) || IsGer40(_bot.SymbolName));
+                           (IsNasSymbol(sym) || IsGer40(sym) || sym == "US30");
 
             // =========================
             // ADDED: instrument classification (SSOT for this method)
             // =========================
-            string symU = sym.ToUpperInvariant();
+            string symU = sym.ToUpperInvariant();   // ✅ már canonical
             bool isMetalSymbol = symU.Contains("XAU") || symU.Contains("XAG");
             bool isCryptoSymbol = symU.Contains("BTC") || symU.Contains("ETH");
-            bool isIndexSymbol = IsNasSymbol(symU) || symU.Contains("US30") || symU.Contains("US 30") || symU.Contains("GER") || symU.Contains("DAX");
+            bool isIndexSymbol =
+                IsNasSymbol(symU) ||
+                symU == "US30" ||
+                IsGer40(symU);
+
             bool isFxSymbol =
                 !isMetalSymbol && !isCryptoSymbol && !isIndexSymbol &&
                 GeminiV26.Instruments.FX.FxInstrumentMatrix.Contains(symU);
@@ -696,34 +702,33 @@ namespace GeminiV26.Core
             // =========================
             // MARKET STATE SNAPSHOT
             // =========================
-            // ADDED: run only the detector that matches the instrument type
             if (isFx)
             {
                 fxState = _fxMarketStateDetector.Evaluate();
                 if (fxState != null)
-                    _bot.Print($"[FX MarketState] {sym} Trend={fxState.IsTrend}");
+                    _bot.Print($"[FX MarketState] {rawSym} Trend={fxState.IsTrend}");
             }
             else if (isCrypto)
             {
                 cryptoState = _cryptoMarketStateDetector.Evaluate();
                 if (cryptoState != null)
-                    _bot.Print($"[CRYPTO MarketState] {sym} Trend={cryptoState.IsTrend}");
+                    _bot.Print($"[CRYPTO MarketState] {rawSym} Trend={cryptoState.IsTrend}");
             }
             else if (isMetal)
             {
                 xauState = _xauMarketStateDetector.Evaluate();
                 if (xauState != null)
-                    _bot.Print($"[XAU MarketState] {sym} Range={xauState.IsRange}");
+                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange}");
             }
             else if (isIndex)
             {
                 indexState = _indexMarketStateDetector.Evaluate();
                 if (indexState != null)
-                    _bot.Print($"[INDEX MarketState] {sym} Trend={indexState.IsTrend}");
+                    _bot.Print($"[INDEX MarketState] {rawSym} Trend={indexState.IsTrend}");
             }
             else
             {
-                _bot.Print($"[TC] WARN: Unknown instrument type in OnBar sym={sym}");
+                _bot.Print($"[TC] WARN: Unknown instrument type in OnBar sym={rawSym}");
             }
 
             // =========================
@@ -971,6 +976,16 @@ namespace GeminiV26.Core
                 return;
             }
 
+            // ===== IDE TEDD =====
+            _bot.Print($"[DBG ENTRY] total candidates={symbolSignals.Count}");
+
+            foreach (var e in symbolSignals)
+            {
+                _bot.Print(
+                    $"[DBG ENTRY] type={e.Type} dir={e.Direction} " +
+                    $"valid={e.IsValid} score={e.Score}"
+                );
+            }
             // =========================
             // FX HTF BIAS GATE (Group-level)
             // =========================
@@ -983,7 +998,7 @@ namespace GeminiV26.Core
                 !symU.Contains("GER") &&
                 !symU.Contains("BTC") &&
                 !symU.Contains("ETH");
-
+                        
             if (isFxSymbolGate && _fxBias != null)
             {
                 var bias = _fxBias.Get(_bot.SymbolName);

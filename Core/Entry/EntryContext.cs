@@ -153,12 +153,22 @@ namespace GeminiV26.Core.Entry
         public double FxHtfConfidence01 { get; set; } = 0.0;
         public string FxHtfReason { get; set; }
 
-        // =================================================
-        // CRYPTO HTF BIAS
-        // =================================================
-        public TradeDirection CryptoHtfAllowedDirection { get; set; } = TradeDirection.None;
-        public double CryptoHtfConfidence01 { get; set; } = 0.0;
-        public string CryptoHtfReason { get; set; }
+        // =========================
+        // CRYPTO HTF SOFT PENALTY
+        // =========================
+        if (ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
+            ctx.CryptoHtfAllowedDirection != dir &&
+            ctx.CryptoHtfConfidence01 > 0.0)
+        {
+            int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01); // 2..8
+                score -= htfPenalty;
+    
+            Console.WriteLine(
+                $"[BTC_PULLBACK][HTF] mismatch dir={dir} htf={ctx.CryptoHtfAllowedDirection} " +
+                $"conf={ctx.CryptoHtfConfidence01:F2} pen={htfPenalty} reason={ctx.CryptoHtfReason}"
+            );
+        }
+
 
         // =================================================
         // INDEX HTF BIAS

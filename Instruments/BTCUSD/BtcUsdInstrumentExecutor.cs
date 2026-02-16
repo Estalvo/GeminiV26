@@ -125,7 +125,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // low score MUST NOT produce large size
             // =========================================================
             double minUnits = _bot.Symbol.VolumeInUnitsMin;
-            double maxLowScoreUnits = minUnits * 3;
+            double maxLowScoreUnits = minUnits * 20;
 
             if (tempFinalConfidence < 45 &&
                 rawUnits > maxLowScoreUnits)
