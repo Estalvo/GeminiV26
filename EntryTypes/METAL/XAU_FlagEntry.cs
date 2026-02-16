@@ -127,7 +127,8 @@ namespace GeminiV26.EntryTypes.METAL
             bool trendFatigue =
                 adxExhausted &&
                 atrContracting &&
-                impulseStale;
+                impulseStale &&
+                diConverging;
 
             if (trendFatigue)
             {
@@ -205,6 +206,41 @@ namespace GeminiV26.EntryTypes.METAL
             bool flagStructOk = ctx.IsValidFlagStructure_M5;
 
             // =====================================================
+            // XAU HH STRUCTURE CONFIRM (HARD REJECT)
+            // Long esetén kötelező HH close
+            // =====================================================
+            var bars = ctx.M5;
+            int last = bars.Count - 2;
+                        
+            if (ctx.TrendDirection == TradeDirection.Long)
+            {
+                if (bars[last].Close <= hi)
+                {
+                    reasons.Add("NO_FLAG_HIGH_BREAK");
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "NO_FLAG_HIGH_BREAK", reasons);
+                }
+            }
+
+            // =====================================================
+            // XAU LOWER HIGH DETECT (HARD REJECT)
+            // ha az utolsó 3 high csökkenő → distribution
+            // =====================================================
+            if (ctx.TrendDirection == TradeDirection.Long)
+            {
+                int h1 = last - 1;
+                int h2 = last - 2;
+                int h3 = last - 3;
+
+                if (h1 >= 0 && h2 >= 0 && h3 >= 0 &&
+                    bars[h1].High < bars[h2].High &&
+                    bars[h2].High < bars[h3].High)
+                {
+                    reasons.Add("LOWER_HIGH_SEQUENCE");
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "LOWER_HIGH_SEQUENCE", reasons);
+                }
+            }
+
+            // =====================================================
             // XAU EARLY BREAKOUT – SOFT PENALTY (NEM TILT)
             // Erős trendben az első M5 breakout gyakran csak "tap"
             // =====================================================
@@ -229,6 +265,24 @@ namespace GeminiV26.EntryTypes.METAL
                 if (m5CloseBreakout) reasons.Add("BO=M5CLOSE");
                 else if (m1Trigger) reasons.Add("BO=M1TRIGGER");
                 else if (flagStructOk) reasons.Add("BO=FLAGSTRUCT");
+            }
+
+            // =====================================================
+            // XAU BODY DOMINANCE CHECK (SOFT)
+            // túl kanócos breakout → gyenge continuation
+            // =====================================================
+            double range = bars[last].High - bars[last].Low;
+            double body = Math.Abs(bars[last].Close - bars[last].Open);
+
+            if (range > 0)
+            {
+                double bodyRatio = body / range;
+
+                if (bodyRatio < 0.55) // XAU-n legyen szigorúbb
+                {
+                    score -= 4;
+                    reasons.Add("WEAK_BODY_SOFT(-4)");
+                }
             }
 
             // =====================================================
