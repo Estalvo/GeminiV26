@@ -21,25 +21,6 @@ namespace GeminiV26.EntryTypes.METAL
         private const int OverextendedPenalty_LondonNy = 5;
         private const int OverextendedPenalty_Asia = 3;
 
-        // ==========================================================
-        // METAL LATE FILTER v1 (ADD-ONLY) – VERSIONED KNOBS
-        // ==========================================================
-        private const string LateFilterVersion = "METAL_LATE_FILTER_V1";
-
-        // Hard block only on true climax roll (rare, but deadly if not blocked)
-        private const double XauAdxClimax = 42.0;
-        private const double XagAdxClimax = 38.0;
-        private const double DefaultAdxClimax = 40.0;
-
-        private const int ClimaxMinBarsSinceImpulse = 2;
-
-        // Soft penalties / minScore boost
-        private const int LateBreakSoftPenalty_London = 6;
-        private const int LateBreakSoftPenalty_NewYork = 8;
-        private const int LateBreakHardExtraPenalty_NY = 4; // only when very late + no signal
-
-        private const int TransitionMinScoreBoost = 3; // “HTF-transition proxy” (no new ctx props needed)
-
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
@@ -75,9 +56,8 @@ namespace GeminiV26.EntryTypes.METAL
                 return Invalid(ctx, "NO_FLAG_TUNING");
 
             int score = tuning.BaseScore;
-            var reasons = new List<string>(16);
+            var reasons = new List<string>(12);
             reasons.Add($"Base={tuning.BaseScore}");
-            reasons.Add(LateFilterVersion);
 
             if (!ctx.HasImpulse_M5)
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "NO_IMPULSE", reasons);
@@ -92,7 +72,7 @@ namespace GeminiV26.EntryTypes.METAL
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "IMPULSE_EXHAUSTED", reasons);
 
             // ===============================
-            // TREND FATIGUE (EXISTING)
+            // TREND FATIGUE
             // ===============================
             bool trendFatigue =
                 ctx.Adx_M5 > 40 &&
@@ -104,27 +84,8 @@ namespace GeminiV26.EntryTypes.METAL
             if (trendFatigue)
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "TREND_FATIGUE", reasons);
 
-            // ==========================================================
-            // METAL LATE FILTER v1 – 1) CLIMAX ROLL HARD BLOCK (ADD-ONLY)
-            // ==========================================================
-            // Goal: block only the "climax then roll" continuation entries that very often go full loss.
-            // Matrix-aware: XAU higher climax threshold than XAG.
-            double adxClimax = ResolveAdxClimax(profile);
-
-            bool climaxRoll =
-                ctx.Adx_M5 >= adxClimax &&
-                ctx.AdxSlope_M5 <= 0 &&
-                ctx.BarsSinceImpulse_M5 >= ClimaxMinBarsSinceImpulse &&
-                !ctx.IsAtrExpanding_M5; // expanding ATR can still be a valid continuation in metals
-
-            if (climaxRoll)
-            {
-                reasons.Add($"CLIMAX_ROLL_BLOCK(adx={ctx.Adx_M5:F1}>=thr{adxClimax:F0} slope={ctx.AdxSlope_M5:F3} bsi={ctx.BarsSinceImpulse_M5} atrExp={ctx.IsAtrExpanding_M5})");
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "CLIMAX_ROLL", reasons);
-            }
-
             // ===============================
-            // WIDE FLAG penalties (EXISTING)
+            // WIDE FLAG penalties
             // ===============================
             if (profile.MaxFlagAtrMult > 0 && rangeAtr > profile.MaxFlagAtrMult)
             {
@@ -148,7 +109,7 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // ===============================
-            // BREAKOUT / ENERGY (EXISTING)
+            // BREAKOUT / ENERGY
             // ===============================
             bool m5Break = BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer);
             bool m1 = ctx.M1TriggerInTrendDirection;
@@ -162,52 +123,8 @@ namespace GeminiV26.EntryTypes.METAL
             if (flagStruct && !energyOk)
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAGSTRUCT_NO_ENERGY", reasons);
 
-            // ==========================================================
-            // METAL LATE FILTER v1 – 2) LATE CONTINUATION PENALTY (ADD-ONLY)
-            // ==========================================================
-            // Goal: if structure break is not fresh AND no breakout / no M1 confirmation,
-            // penalize heavily (NY stronger), but do NOT fully block -> not "no trading".
-            int barsSinceBreak =
-                ctx.TrendDirection == TradeDirection.Long
-                    ? ctx.BarsSinceHighBreak_M5
-                    : ctx.BarsSinceLowBreak_M5;
-
-            bool noFreshSignal = !m5Break && !m1;
-
-            if (barsSinceBreak > 3 && noFreshSignal)
-            {
-                int p = session == FxSession.NewYork ? LateBreakSoftPenalty_NewYork : LateBreakSoftPenalty_London;
-                score -= p;
-                reasons.Add($"LATE_BREAK(-{p}) bsb={barsSinceBreak} m5Break={m5Break} m1={m1}");
-
-                // NY extra hardening only if very late AND no struct energy
-                if (session == FxSession.NewYork && barsSinceBreak > 5 && !flagStruct)
-                {
-                    score -= LateBreakHardExtraPenalty_NY;
-                    reasons.Add($"LATE_BREAK_NY_EXTRA(-{LateBreakHardExtraPenalty_NY}) bsb={barsSinceBreak} flagStruct={flagStruct}");
-                }
-            }
-
-            // ==========================================================
-            // METAL LATE FILTER v1 – 3) TRANSITION MIN SCORE BOOST (ADD-ONLY)
-            // ==========================================================
-            // HTF transition proxy without adding new ctx fields:
-            // When trend loses "push" (ADX slope down / DI converging / ATR not expanding),
-            // require a bit higher MinScore so only good signals pass.
-            int minScoreAdj = tuning.MinScore;
-
-            bool transitionRisk =
-                (ctx.Adx_M5 >= 28 && ctx.AdxSlope_M5 <= 0 && Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8 && !ctx.IsAtrExpanding_M5)
-                || (ctx.IsRange_M5 && !ctx.IsAtrExpanding_M5 && ctx.BarsSinceImpulse_M5 > 2);
-
-            if (transitionRisk)
-            {
-                minScoreAdj += TransitionMinScoreBoost;
-                reasons.Add($"TRANSITION_MIN+{TransitionMinScoreBoost}(min={tuning.MinScore}->{minScoreAdj}) adx={ctx.Adx_M5:F1} slope={ctx.AdxSlope_M5:F3} diΔ={Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5):F1} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}");
-            }
-
             // ===============================
-            // STRUCTURE CONFIRM (EXISTING)
+            // STRUCTURE CONFIRM (FULL MIRROR)
             // ===============================
             var bars = ctx.M5;
             int last = bars.Count - 2;
@@ -215,23 +132,23 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.TrendDirection == TradeDirection.Long)
             {
                 if (bars[last].Close <= hi)
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "NO_FLAG_HIGH_BREAK", reasons);
 
                 if (IsLowerHighSequence(bars, last))
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "LOWER_HIGH_SEQUENCE", reasons);
             }
 
             if (ctx.TrendDirection == TradeDirection.Short)
             {
                 if (bars[last].Close >= lo)
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "NO_FLAG_LOW_BREAK", reasons);
 
                 if (IsHigherLowSequence(bars, last))
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "HIGHER_LOW_SEQUENCE", reasons);
+                    return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "HIGHER_LOW_SEQUENCE", reasons);
             }
 
             // ===============================
-            // BODY DOMINANCE (EXISTING)
+            // BODY DOMINANCE
             // ===============================
             double range = bars[last].High - bars[last].Low;
             double body = Math.Abs(bars[last].Close - bars[last].Open);
@@ -247,7 +164,7 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             if (!BodyAligned(ctx))
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "BODY_MISMATCH", reasons);
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "BODY_MISMATCH", reasons);
 
             if (m1)
             {
@@ -261,34 +178,17 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add($"+FQ({tuning.FlagQualityBonus})");
             }
 
-            if (score < minScoreAdj)
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOW_SCORE", reasons);
+            if (score < tuning.MinScore)
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "LOW_SCORE", reasons);
 
             reasons.Add("ACCEPT");
 
-            return ValidDecision(ctx, session, tag, score, minScoreAdj, rangeAtr, reasons);
+            return ValidDecision(ctx, session, tag, score, tuning.MinScore, rangeAtr, reasons);
         }
 
         // ===============================
-        // Helpers (EXISTING + ADD-ONLY)
+        // Helpers
         // ===============================
-
-        private static double ResolveAdxClimax(XAU_InstrumentProfile profile)
-        {
-            if (profile == null || string.IsNullOrWhiteSpace(profile.Symbol))
-                return DefaultAdxClimax;
-
-            string s = profile.Symbol.ToUpperInvariant();
-
-            if (s.Contains("XAU"))
-                return XauAdxClimax;
-
-            if (s.Contains("XAG"))
-                return XagAdxClimax;
-
-            // placeholder for platinum etc (kept generic)
-            return DefaultAdxClimax;
-        }
 
         private static bool IsLowerHighSequence(Bars bars, int last)
         {

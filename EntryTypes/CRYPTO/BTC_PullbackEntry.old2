@@ -11,41 +11,43 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 18;
+            int score = 18; // 🔥 MINDEN ELÉ
 
+            // =========================
+            // CTX / SAFETY
+            // =========================
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, "CTX_NOT_READY", score);
 
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
-            if (profile == null)
-                return Block(ctx, "NO_CRYPTO_PROFILE", score);
 
+            // =========================
+            // DIRECTION (must NOT be None, or TradeCore will drop it)
+            // =========================
             var bars = ctx.M5;
             if (bars == null || bars.Count < 20)
                 return Block(ctx, "M5_NOT_READY", score);
 
             int lastClosed = bars.Count - 2;
 
-            // =========================
-            // DIRECTION
-            // =========================
             TradeDirection dir = ctx.TrendDirection;
-
+            
             if (dir == TradeDirection.None)
             {
-                if (!ctx.HasImpulse_M5)
-                    return Block(ctx, "NO_PULLBACK_DIRECTION_NO_IMPULSE", score);
+                // csak akkor blockolj, ha tényleg nincs semmi
+                if (!ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > 4)
+                {
+                    return Block(ctx, "NO_PULLBACK_DIRECTION", score);
+                }
 
-                if (ctx.BarsSinceImpulse_M5 > 8)
-                    return Block(ctx, "NO_PULLBACK_DIRECTION_TOO_OLD", score);
-
+                // ATR expanzió ne legyen kötelező
                 dir = (bars[lastClosed].Close >= ctx.Ema21_M5)
                     ? TradeDirection.Long
                     : TradeDirection.Short;
             }
 
             // =========================
-            // EMA RECLAIM
+            // EMA21 RECLAIM INVALIDATES SHORT PULLBACK
             // =========================
             if (dir == TradeDirection.Short && lastClosed >= 1)
             {
@@ -58,48 +60,64 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
-            // IMPULSE TOO OLD HARD
+            // IMPULSE GUARDS (FX STYLE)
             // =========================
+            //if (!ctx.HasImpulse_M5 && profile.RequireStrongImpulseForPullback)
+            //    return Block(ctx, "NO_IMPULSE", score);
+
             if (ctx.BarsSinceImpulse_M5 > 16)
-                return Block(ctx, "IMPULSE_TOO_OLD", score, dir);
+                return Block(ctx, "IMPULSE_TOO_OLD", score);
+
+            //if (profile.RequireStrongImpulseForPullback && ctx.BarsSinceImpulse_M5 > 3)
+            //    return Block(ctx, "CRYPTO_PULLBACK_IMPULSE_NOT_FRESH", score);
 
             // =========================
-            // HIGH VOL WITHOUT IMPULSE HARD
+            // BTC HIGH-VOL FAKE CONTINUATION
             // =========================
             if (profile.BlockPullbackOnHighVolWithoutImpulse &&
                 !ctx.IsVolatilityAcceptable_Crypto &&
-                !ctx.HasImpulse_M5)
+                ctx.BarsSinceImpulse_M5 > 2)
             {
-                return Block(ctx, "CRYPTO_PULLBACK_VOL_BLOCK_NO_IMPULSE", score, dir);
+                return Block(ctx, "CRYPTO_PULLBACK_VOLATILITY_BLOCK", score);
             }
 
             // =========================
-            // PULLBACK TOO DEEP HARD
+            // PULLBACK DEPTH – HARD
             // =========================
             if (ctx.PullbackDepthAtr_M5 > 1.8)
-                return Block(ctx, "PULLBACK_TOO_DEEP", score, dir);
+                return Block(ctx, "PULLBACK_TOO_DEEP", score);
 
             // =========================
-            // TREND FATIGUE SOFT
+            // TREND FATIGUE ULTRASOUND
             // =========================
-            bool trendFatigue =
+            bool adxExhausted =
                 ctx.Adx_M5 > 45 &&
-                ctx.AdxSlope_M5 <= 0 &&
-                ctx.AtrSlope_M5 <= 0 &&
+                ctx.AdxSlope_M5 <= 0;
+
+            bool atrContracting =
+                ctx.AtrSlope_M5 <= 0;
+
+            bool diConverging =
                 Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8;
 
+            bool trendFatigue =
+                adxExhausted &&
+                atrContracting &&
+                diConverging;
+
             if (trendFatigue)
-                score -= 10;
+            {
+                score -= 10; // nagy bünti, de ne hard stop
+            }
 
             // =========================
-            // REQUIRE IMPULSE HARD
+            // REQUIRE FRESH IMPULSE (CRYPTO SPECIFIC)
             // =========================
             if (!ctx.HasImpulse_M5)
+            {
                 return Block(ctx, "CRYPTO_PULLBACK_NO_IMPULSE", score, dir);
+            }
 
-            // =========================
-            // IMPULSE AGE SOFT
-            // =========================
             if (ctx.BarsSinceImpulse_M5 > 3)
             {
                 int agePenalty = Math.Min(10, (ctx.BarsSinceImpulse_M5 - 3) * 2);
@@ -111,10 +129,35 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
-            // VOL SOFT
+            // TREND ENERGY PROXY (ADX helyett)
+            // =========================
+            if (!ctx.IsAtrExpanding_M5 &&
+                !ctx.IsVolatilityAcceptable_Crypto &&
+                ctx.BarsSinceImpulse_M5 > 2)
+            {
+                score -= 4;
+            }
+            
+            // =========================
+            // VOL REGIME – SOFT
             // =========================
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 score -= 6;
+
+            // =========================
+            // CRYPTO EARLY PULLBACK GUARD (HARD)
+            // =========================
+            if (ctx.HasReactionCandle_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 2 &&
+                !ctx.LastClosedBarInTrendDirection)
+            {
+                score -= 4;
+
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][SOFT] CRYPTO_EARLY_PULLBACK_WAIT | " +
+                    $"penalty=4 | BarsSinceImpulse={ctx.BarsSinceImpulse_M5}"
+                );
+            }
 
             // =========================
             // PULLBACK QUALITY
@@ -125,12 +168,12 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.LastClosedBarInTrendDirection;
 
             if (validPullbackReaction)
+            {
                 score += 10;
-            else
-                score -= 8;   // ← erős minőségszűrés
+            }
 
             // =========================
-            // M1 CONFIRM
+            // M1 CONFIRMATION
             // =========================
             if (ctx.M1TriggerInTrendDirection)
                 score += 8;
@@ -140,26 +183,44 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // IMPULSE BONUS
             // =========================
-            if (ctx.BarsSinceImpulse_M5 <= 3 && validPullbackReaction)
+            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 3 && validPullbackReaction)
                 score += 6;
 
             // =========================
-            // HTF SOFT PENALTY
+            // CHOP / RANGE – SOFT (INDEX)
+            // =========================
+            bool chopZone =
+                ctx.Adx_M5 < 20 &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7 &&
+                !ctx.IsAtrExpanding_M5;
+
+            if (chopZone && ctx.Adx_M5 < 14)
+                score -= 4;
+                        
+            // =========================
+            // CRYPTO HTF SOFT PENALTY
             // =========================
             if (ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
                 ctx.CryptoHtfAllowedDirection != dir &&
                 ctx.CryptoHtfConfidence01 > 0.0)
             {
-                int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01);
+                int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01); // 2..8
                 score -= htfPenalty;
+
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][HTF] mismatch dir={dir} htf={ctx.CryptoHtfAllowedDirection} " +
+                    $"conf={ctx.CryptoHtfConfidence01:F2} pen={htfPenalty} reason={ctx.CryptoHtfReason}"
+                );
             }
 
             // =========================
-            // OVEREXTENDED SOFT
+            // OVEREXTENDED – SOFT 
             // =========================
+            double distFromEma = Math.Abs(bars[lastClosed].Close - ctx.Ema21_M5);
             if (ctx.AtrM5 > 0)
             {
-                double distAtr = Math.Abs(bars[lastClosed].Close - ctx.Ema21_M5) / ctx.AtrM5;
+                double distAtr = distFromEma / ctx.AtrM5;
+
                 if (distAtr > 0.9)
                     score -= 4;
             }
@@ -168,7 +229,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // FINAL CHECK
             // =========================
             if (score < MIN_SCORE)
-                return Block(ctx, $"SCORE_TOO_LOW_{score}", score, dir);
+                return Block(ctx, $"SCORE_TOO_LOW_{score}", score);
 
             return new EntryEvaluation
             {
@@ -181,10 +242,12 @@ namespace GeminiV26.EntryTypes.Crypto
             };
         }
 
-        private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir = TradeDirection.None)
+        // 4 paraméteres – amikor már van dir
+        private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir)
         {
             Console.WriteLine(
-                $"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}"
+                $"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | " +
+                $"score={score}"
             );
 
             return new EntryEvaluation
@@ -196,6 +259,12 @@ namespace GeminiV26.EntryTypes.Crypto
                 Score = score,
                 Reason = reason
             };
+        }
+
+        // 3 paraméteres – backward compatibility
+        private EntryEvaluation Block(EntryContext ctx, string reason, int score)
+        {
+            return Block(ctx, reason, score, TradeDirection.None);
         }
     }
 }

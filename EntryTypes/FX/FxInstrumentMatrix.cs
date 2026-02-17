@@ -56,8 +56,8 @@ namespace GeminiV26.Instruments.FX
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = false,     // ÚJ: Londonban is kötelező az M1, hogy ne vegyünk csúcsot! -< vissza false-ra
-                        AtrExpansionHardBlock = false
+                        RequireM1Trigger = true,     // ÚJ: Londonban is kötelező az M1, hogy ne vegyünk csúcsot! -< vissza false-ra
+                        AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -121,8 +121,8 @@ namespace GeminiV26.Instruments.FX
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = false,
-                        AtrExpansionHardBlock = false
+                        RequireM1Trigger = true,
+                        AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -258,7 +258,7 @@ namespace GeminiV26.Instruments.FX
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,
-                        AtrExpansionHardBlock = false
+                        AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {

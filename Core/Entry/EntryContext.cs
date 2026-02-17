@@ -22,6 +22,10 @@ namespace GeminiV26.Core.Entry
         public Bars M5;
         public Bars M15;
 
+        public int BarsSinceHighBreak_M5 { get; set; }
+        public int BarsSinceLowBreak_M5 { get; set; }
+        public int BarsSinceImpulse_M5 { get; set; }
+
         // =========================
         // EMA
         // =========================
@@ -105,7 +109,6 @@ namespace GeminiV26.Core.Entry
         // =========================
         // Time memory (M5)
         // =========================
-        public int BarsSinceImpulse_M5;
         public int PullbackBars_M5;
 
         // =========================
@@ -153,22 +156,10 @@ namespace GeminiV26.Core.Entry
         public double FxHtfConfidence01 { get; set; } = 0.0;
         public string FxHtfReason { get; set; }
 
-        // =========================
-        // CRYPTO HTF SOFT PENALTY
-        // =========================
-        if (ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
-            ctx.CryptoHtfAllowedDirection != dir &&
-            ctx.CryptoHtfConfidence01 > 0.0)
-        {
-            int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01); // 2..8
-                score -= htfPenalty;
-    
-            Console.WriteLine(
-                $"[BTC_PULLBACK][HTF] mismatch dir={dir} htf={ctx.CryptoHtfAllowedDirection} " +
-                $"conf={ctx.CryptoHtfConfidence01:F2} pen={htfPenalty} reason={ctx.CryptoHtfReason}"
-            );
-        }
-
+        // ===== CRYPTO HTF bias (lightweight) =====
+        public TradeDirection CryptoHtfAllowedDirection { get; set; } = TradeDirection.None;
+        public double CryptoHtfConfidence01 { get; set; } = 0.0;
+        public string CryptoHtfReason { get; set; }
 
         // =================================================
         // INDEX HTF BIAS

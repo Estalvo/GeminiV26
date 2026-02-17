@@ -1,5 +1,6 @@
 ﻿using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.INDEX;
+using System;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
@@ -7,12 +8,11 @@ namespace GeminiV26.EntryTypes.INDEX
     {
         public EntryType Type => EntryType.Index_Pullback;
 
-        private const int BaseScore = 60;   // ⬆ emelve (55 → 60)
-        private const int MinScore = 55;    // ⬆ enyhén emelve (52 → 55)
+        private const int BaseScore = 60;
+        private const int MinScore = 55;
 
-        // ===== FALLBACK LIMITS =====
-        private const double MaxPullbackDepthAtr = 0.9;   // 0.8 → 0.9 (index bírja)
-        private const int MaxPullbackBars = 5;            // 4 → 5 (ne ölje meg a jó retrace-t)
+        private const double MaxPullbackDepthAtr = 0.9;
+        private const int MaxPullbackBars = 5;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -20,6 +20,13 @@ namespace GeminiV26.EntryTypes.INDEX
                 return null;
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
+
+            // =============================
+            // MATRIX DRIVEN THRESHOLDS
+            // =============================
+            double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
+            int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : 4;
+            double minAtrPoints = p.MinAtrPoints > 0 ? p.MinAtrPoints : 0;
 
             double maxPullbackDepthAtr =
                 p.PullbackStyle == IndexPullbackStyle.Shallow ? 0.7 :
@@ -38,18 +45,24 @@ namespace GeminiV26.EntryTypes.INDEX
             int score = BaseScore;
 
             // =====================================================
-            // CHOP SOFT
+            // CHOP SOFT (matrix ADX)
             // =====================================================
             bool chopZone =
-                ctx.Adx_M5 < 20 &&
-                System.Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7 &&
+                ctx.Adx_M5 < minAdxTrend &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7 &&
                 !ctx.IsAtrExpanding_M5;
 
             if (chopZone)
                 score -= 6;
 
             // =====================================================
-            // TREND FATIGUE → SOFT (nem hard kill)
+            // ATR sanity (matrix driven)
+            // =====================================================
+            if (minAtrPoints > 0 && ctx.AtrM5 < minAtrPoints)
+                score -= 6;
+
+            // =====================================================
+            // TREND FATIGUE → SOFT
             // =====================================================
             bool adxExhausted =
                 ctx.Adx_M5 > 45 &&
@@ -59,10 +72,11 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.AtrSlope_M5 <= 0;
 
             bool diConverging =
-                System.Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
 
             bool impulseStale =
-                !ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > 4;
+                !ctx.HasImpulse_M5 ||
+                ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse;
 
             int fatigueCount = 0;
             if (adxExhausted) fatigueCount++;
@@ -79,7 +93,6 @@ namespace GeminiV26.EntryTypes.INDEX
             // PULLBACK STRUCTURAL GATES
             // =====================================================
 
-            // Pullback alatt ATR ne expandáljon erősen
             if (ctx.IsAtrExpanding_M5 && ctx.PullbackDepthAtr_M5 > 0.6)
                 score -= 6;
 
@@ -90,16 +103,15 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx.PullbackBars_M5 > maxPullbackBars)
                 return null;
 
-            // Reaction candle KÖTELEZŐ
             if (!ctx.HasReactionCandle_M5)
                 return null;
 
-            // Reaction legyen trend irányú
             if (!ctx.LastClosedBarInTrendDirection)
                 score -= 10;
 
-            // EMA distance sanity
-            double distFromEma = System.Math.Abs(ctx.M5.Last(1).Close - ctx.Ema21_M5);
+            double distFromEma =
+                Math.Abs(ctx.M5.Last(1).Close - ctx.Ema21_M5);
+
             if (distFromEma > ctx.AtrM5 * 1.2)
                 score -= 8;
 
@@ -130,16 +142,31 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 12;
 
             // =====================================================
-            // FLAG PRIORITY (csak ha erős flag)
+            // FLAG PRIORITY
             // =====================================================
-            if (ctx.IsValidFlagStructure_M5 && ctx.M1TriggerInTrendDirection)
+            if (ctx.IsValidFlagStructure_M5 &&
+                ctx.M1TriggerInTrendDirection)
                 score -= 12;
 
             // =====================================================
             // FINAL SCORE GATE
             // =====================================================
             if (score < MinScore)
+            {
+                Console.WriteLine(
+                    $"[IDX_PULLBACK][REJECT] LOW_SCORE({score}) | " +
+                    $"dir={dir} | pbATR={ctx.PullbackDepthAtr_M5:F2} | " +
+                    $"pbBars={ctx.PullbackBars_M5} | fatigue={trendFatigue} | " +
+                    $"ADX={ctx.Adx_M5:F1}"
+                );
                 return null;
+            }
+
+            Console.WriteLine(
+                $"[IDX_PULLBACK][PASS] dir={dir} score={score} | " +
+                $"pbATR={ctx.PullbackDepthAtr_M5:F2} | pbBars={ctx.PullbackBars_M5} | " +
+                $"fatigue={trendFatigue} | ADX={ctx.Adx_M5:F1}"
+            );
 
             return new EntryEvaluation
             {
@@ -149,7 +176,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 Score = score,
                 IsValid = true,
                 Reason =
-                    $"IDX_PULLBACK_4.0 dir={dir} score={score} " +
+                    $"IDX_PULLBACK_4.1 dir={dir} score={score} " +
                     $"pbATR={ctx.PullbackDepthAtr_M5:F2} pbBars={ctx.PullbackBars_M5} fatigue={trendFatigue}"
             };
         }

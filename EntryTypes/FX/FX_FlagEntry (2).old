@@ -14,9 +14,6 @@ namespace GeminiV26.EntryTypes.FX
         {
             int score = 0;
 
-            // === MIN SCORE DYNAMIC BOOST (no simplification, just additive) ===
-            int minBoost = 0;
-
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
                 return Invalid(ctx, "CTX_NOT_READY", score);
 
@@ -32,81 +29,6 @@ namespace GeminiV26.EntryTypes.FX
                 return Invalid(ctx, "NO_FLAG_TUNING", score);
 
             score = tuning.BaseScore;
-
-            // =====================================================
-            // 0. LATE TREND FILTER v1 – (ADD ONLY, NO DELETE)
-            // =====================================================
-            // Goal:
-            // - block/penalize "late continuation" in NY/London when ADX is climactic and rolling
-            // - harden HTF transition (allow=None style)
-            // - delay NY continuation in first bars after session open (if the context exposes it)
-
-            // --- ADX Climax / Rolling Guard (reflection-safe) ---
-            // Uses (if present): Adx_M5 (double), AdxSlope_M5 (double) OR AdxSlope01_M5 (double)
-            if (TryGetDouble(ctx, "Adx_M5", out var adxM5))
-            {
-                double adxSlope = 0;
-                bool hasSlope =
-                    TryGetDouble(ctx, "AdxSlope_M5", out adxSlope) ||
-                    TryGetDouble(ctx, "AdxSlope01_M5", out adxSlope);
-
-                // fallback: if slope not available, treat "climax" as soft-penalty only
-                if (adxM5 >= 38.0)
-                {
-                    if (hasSlope)
-                    {
-                        // CLIMAX + rolling/flat = classic stop-sweep zone for continuation
-                        if (adxM5 >= 40.0 && adxSlope <= 0.0)
-                        {
-                            // stricter in NY/London
-                            if (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London)
-                                return Invalid(ctx, $"ADX_CLIMAX_ROLLING adx={adxM5:F1} slope={adxSlope:F3}", score);
-
-                            score -= 8;
-                        }
-                        else if (adxM5 >= 38.0 && adxSlope <= 0.0)
-                        {
-                            score -= 5;
-                        }
-                    }
-                    else
-                    {
-                        // slope unknown -> soft penalty only, no hard block
-                        if (adxM5 >= 42.0 && (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London))
-                            score -= 4;
-                    }
-                }
-            }
-
-            // --- HTF TRANSITION hardening (allow=None / transition zone) ---
-            // We don't delete your existing min relax; we add a boost so transition doesn't auto-pass.
-            bool htfTransitionZone =
-                ctx.FxHtfAllowedDirection == TradeDirection.None &&
-                ctx.FxHtfConfidence01 >= 0.50;
-
-            if (htfTransitionZone)
-            {
-                // make it harder to pass borderline 50-score trades
-                minBoost += 4;     // raises the bar without hard-blocking
-                score -= 2;        // small penalty to push only best setups through
-            }
-
-            // --- NY Session Impulse Delay (first bars after NY open if available) ---
-            // Uses (if present): BarsSinceSessionOpen_M5 (int) or SessionBarIndex_M5 (int)
-            // We apply later too (after breakout/confirm), but we can set a pre-penalty here.
-            int nyBars = int.MaxValue;
-            bool hasNyBars =
-                TryGetInt(ctx, "BarsSinceSessionOpen_M5", out nyBars) ||
-                TryGetInt(ctx, "SessionBarIndex_M5", out nyBars);
-
-            bool nyEarly = ctx.Session == FxSession.NewYork && hasNyBars && nyBars <= 2;
-
-            if (nyEarly)
-            {
-                // discourage first-spike continuation entries; still allow breakout+confirm later
-                score -= 3;
-                minBoost += 2;
-            }
 
             // =====================================================
             // 1. EMA POSITION FILTER (FX-SAFE)
@@ -239,7 +161,7 @@ namespace GeminiV26.EntryTypes.FX
             const double RewardZoneHigh = 0.15;
 
             bool slopeRewarded = false;
-
+                        
             // =====================================================
             // BEAR FLAG (SHORT)
             // Enyhén felfelé csorgó korrekció
@@ -296,7 +218,7 @@ namespace GeminiV26.EntryTypes.FX
             {
                 score += 2;
             }
-
+                        
             // =====================================================
             // 4. CONTINUATION SIGNAL
             // =====================================================
@@ -370,10 +292,6 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (ctx.Session == FxSession.NewYork && !breakout && !hasM1Confirmation)
             {
-                // --- NY Early Impulse Delay: hard block if we are within first 2 bars of session open ---
-                if (nyEarly)
-                    return Invalid(ctx, $"NY_EARLY_CONTINUATION_DELAY bars={nyBars}", score);
-
                 score -= 8;
 
                 if (ctx.FxHtfAllowedDirection != TradeDirection.None && ctx.FxHtfConfidence01 >= 0.55)
@@ -422,7 +340,7 @@ namespace GeminiV26.EntryTypes.FX
                 else
                     score -= 3;
             }
-
+                        
             // =====================================================
             // 4C. STRUCTURAL TREND ALIGNMENT (EMA50 / EMA200 M5)
             // =====================================================
@@ -517,16 +435,13 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.FxHtfAllowedDirection == TradeDirection.None)
                 min -= 2;
 
-            // ✅ LATE TREND FILTER boost (ADD ONLY)
-            min += minBoost;
-
             // Safety clamp
             if (min < 0)
                 min = 0;
 
             if (score < min)
                 return Invalid(ctx,
-                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost}",
+                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session}",
                     score);
 
             // HARD SYSTEM SAFETY
@@ -651,54 +566,6 @@ namespace GeminiV26.EntryTypes.FX
                 return last.Close < last.Open && last.High < prev.High;
 
             return false;
-        }
-
-        // =====================================================
-        // REFLECTION-SAFE CTX ACCESSORS (NO MEMBER ASSUMPTIONS)
-        // =====================================================
-
-        private static bool TryGetDouble(object obj, string propName, out double value)
-        {
-            value = 0;
-            if (obj == null) return false;
-
-            var p = obj.GetType().GetProperty(propName);
-            if (p == null) return false;
-
-            var v = p.GetValue(obj, null);
-            if (v == null) return false;
-
-            try
-            {
-                value = Convert.ToDouble(v);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryGetInt(object obj, string propName, out int value)
-        {
-            value = 0;
-            if (obj == null) return false;
-
-            var p = obj.GetType().GetProperty(propName);
-            if (p == null) return false;
-
-            var v = p.GetValue(obj, null);
-            if (v == null) return false;
-
-            try
-            {
-                value = Convert.ToInt32(v);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }

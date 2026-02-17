@@ -9,7 +9,6 @@ namespace GeminiV26.EntryTypes.INDEX
     {
         public EntryType Type => EntryType.Index_Flag;
 
-        // ===== Tunables (INDEX) =====
         private const int MaxBarsSinceImpulse = 4;
         private const int FlagBars = 3;
 
@@ -32,20 +31,28 @@ namespace GeminiV26.EntryTypes.INDEX
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
 
-            int maxBarsSinceImpulse =
-                p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : MaxBarsSinceImpulse;
+            int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : MaxBarsSinceImpulse;
+            int flagBars = p.FlagBars > 0 ? p.FlagBars : FlagBars;
+            double maxFlagRangeAtr = p.MaxFlagAtrMult > 0 ? p.MaxFlagAtrMult : MaxFlagRangeAtr;
+            double breakoutBufferAtr = p.BreakoutBufferAtr > 0 ? p.BreakoutBufferAtr : BreakBufferAtr;
+            double maxDistFromEmaAtr = p.MaxEmaDistanceAtr > 0 ? p.MaxEmaDistanceAtr : MaxDistFromEmaAtr;
 
-            int flagBars =
-                p.FlagBars > 0 ? p.FlagBars : FlagBars;
+            bool requireStructure = (p.PullbackStyle == IndexPullbackStyle.Structure);
 
-            double maxFlagRangeAtr =
-                p.MaxFlagAtrMult > 0 ? p.MaxFlagAtrMult : MaxFlagRangeAtr;
+            double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
+            double chopAdxThreshold = p.ChopAdxThreshold > 0 ? p.ChopAdxThreshold : minAdxTrend;
+            double chopDiDiff = p.ChopDiDiffThreshold > 0 ? p.ChopDiDiffThreshold : 7;
 
-            double breakoutBufferAtr =
-                p.BreakoutBufferAtr > 0 ? p.BreakoutBufferAtr : BreakBufferAtr;
+            int fatigueThreshold = p.FatigueThreshold > 0 ? p.FatigueThreshold : 3;
+            double fatigueAdxLevel = p.FatigueAdxLevel > 0 ? p.FatigueAdxLevel : 40;
 
-            double maxDistFromEmaAtr =
-                p.MaxEmaDistanceAtr > 0 ? p.MaxEmaDistanceAtr : MaxDistFromEmaAtr;
+            double scoreMultiplier = p.ScoreWeightMultiplier > 0 ? p.ScoreWeightMultiplier : 1.0;
+
+            Console.WriteLine(
+                $"[IDX_FLAG][PROFILE] sym={ctx.Symbol} norm={p.Symbol} " +
+                $"minAdx={minAdxTrend} chopAdx={chopAdxThreshold} fatigueTh={fatigueThreshold} " +
+                $"scoreMult={scoreMultiplier:F2}"
+            );
 
             var bars = ctx.M5;
             var dir = ctx.TrendDirection;
@@ -55,71 +62,86 @@ namespace GeminiV26.EntryTypes.INDEX
 
             score = BaseScore;
 
-            // ===== MarketState SOFT (INDEX) =====
+            // =========================
+            // MARKET STATE
+            // =========================
             if (ctx.MarketState?.IsLowVol == true)
-                score -= 8;   // was -15
+                score -= 8;
 
             if (ctx.MarketState?.IsTrend != true)
-                score -= 6;   // was -10
+                score -= 6;
 
-            // ===== Chop / Range SOFT (INDEX) =====
+            // =========================
+            // CHOP
+            // =========================
             bool chopZone =
-                ctx.Adx_M5 < 20 &&
-                System.Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7 &&
+                ctx.Adx_M5 < chopAdxThreshold &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < chopDiDiff &&
                 !ctx.IsAtrExpanding_M5;
 
             if (chopZone)
                 score -= 6;
 
-            // ===== Impulse gate =====
+            // =========================
+            // IMPULSE GATE
+            // =========================
             if (!ctx.HasImpulse_M5)
             {
-                if (ctx.MarketState != null && ctx.MarketState.IsTrend)
-                    score -= 8;    // was -12
+                if (ctx.MarketState?.IsTrend == true)
+                    score -= 8;
                 else
                     return Reject(ctx, "NO_IMPULSE", score, dir);
             }
 
             if (ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse)
             {
-                if (ctx.MarketState != null && ctx.MarketState.IsTrend)
-                    score -= 6;    // was -8
+                if (ctx.MarketState?.IsTrend == true)
+                    score -= 6;
                 else
                     return Reject(ctx, "STALE_IMPULSE", score, dir);
             }
 
-            // ===== Trend Fatigue Ultrasound (HARD REJECT) =====
-            bool adxExhausted = ctx.Adx_M5 > 40 && ctx.AdxSlope_M5 <= 0;
+            // =========================
+            // MATRIX-DRIVEN FATIGUE
+            // =========================
+            bool adxExhausted = ctx.Adx_M5 > fatigueAdxLevel && ctx.AdxSlope_M5 <= 0;
             bool atrContracting = ctx.AtrSlope_M5 <= 0;
-            bool diConverging = System.Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
-            bool impulseStale = !ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > 3;
+            bool diConverging = Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < chopDiDiff;
+            bool impulseStale = !ctx.HasImpulse_M5 || ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse;
 
-            if (adxExhausted && atrContracting && impulseStale)
+            int fatigueCount = 0;
+            if (adxExhausted) fatigueCount++;
+            if (atrContracting) fatigueCount++;
+            if (diConverging) fatigueCount++;
+            if (impulseStale) fatigueCount++;
+
+            if (fatigueCount >= fatigueThreshold)
                 return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
 
-            // ===== (1) Continuation structure – SOFT (INDEX) =====
+            // =========================
+            // CONTINUATION STRUCTURE
+            // =========================
             if (dir == TradeDirection.Long)
             {
                 if (ctx.BrokeLastSwingHigh_M5)
                     score += 8;
-                else if (ctx.M5.Last(1).Close > ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5)
+                else if (!requireStructure && ctx.M5.Last(1).Close > ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5)
                     score += 2;
                 else
                     score -= 10;
             }
-            else // Short
+            else
             {
                 if (ctx.BrokeLastSwingLow_M5)
                     score += 8;
-                else if (ctx.M5.Last(1).Close < ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5)
+                else if (!requireStructure && ctx.M5.Last(1).Close < ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5)
                     score += 2;
                 else
                     score -= 10;
             }
 
-            // ===== Flag structure signal (HARD) =====
             if (!ctx.IsValidFlagStructure_M5)
-                score -= 8;   // soft instead of hard
+                score -= 8;
 
             int lastClosed = bars.Count - 2;
             int flagEnd = lastClosed - 1;
@@ -131,12 +153,11 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx.AtrM5 <= 0)
                 return Reject(ctx, "ATR_ZERO", score, dir);
 
-            // ===== Flag range =====
             double hi = double.MinValue, lo = double.MaxValue;
             for (int i = flagStart; i <= flagEnd; i++)
             {
-                hi = System.Math.Max(hi, bars[i].High);
-                lo = System.Math.Min(lo, bars[i].Low);
+                hi = Math.Max(hi, bars[i].High);
+                lo = Math.Min(lo, bars[i].Low);
             }
 
             double flagRange = hi - lo;
@@ -150,18 +171,15 @@ namespace GeminiV26.EntryTypes.INDEX
                     return Reject(ctx, "FLAG_TOO_WIDE", score, dir);
             }
 
-            // ===== (2) Distribution / drift tilt (SOFT) =====
-            double netMove = System.Math.Abs(bars[flagEnd].Close - bars[flagStart].Open);
+            double netMove = Math.Abs(bars[flagEnd].Close - bars[flagStart].Open);
             if (netMove < ctx.AtrM5 * MaxFlagSlopeAtr)
                 score -= 8;
 
-            // ===== Location gate (SOFT) =====
             double close = bars[lastClosed].Close;
-            double distFromEma = System.Math.Abs(close - ctx.Ema21_M5);
+            double distFromEma = Math.Abs(close - ctx.Ema21_M5);
             if (distFromEma > ctx.AtrM5 * maxDistFromEmaAtr)
-                score -= 6; // was -10
+                score -= 6;
 
-            // ===== Breakout CLOSE required (HARD) =====
             double buf = ctx.AtrM5 * breakoutBufferAtr;
             bool bullBreak = close > hi + buf;
             bool bearBreak = close < lo - buf;
@@ -172,7 +190,6 @@ namespace GeminiV26.EntryTypes.INDEX
             if (dir == TradeDirection.Short && !bearBreak)
                 score -= 10;
 
-            // ===== Breakout candle quality (HARD) =====
             double o = bars[lastClosed].Open;
             double h = bars[lastClosed].High;
             double l = bars[lastClosed].Low;
@@ -181,7 +198,7 @@ namespace GeminiV26.EntryTypes.INDEX
             if (range <= 0)
                 return Reject(ctx, "BAD_BAR_RANGE", score, dir);
 
-            double body = System.Math.Abs(close - o);
+            double body = Math.Abs(close - o);
             double bodyRatio = body / range;
 
             if (bodyRatio < MaxBreakoutBodyToRangeMin)
@@ -193,12 +210,16 @@ namespace GeminiV26.EntryTypes.INDEX
             if (dir == TradeDirection.Short && close >= o)
                 score -= 8;
 
-            // ===== SCORE =====
             if (ctx.M1TriggerInTrendDirection)
                 score += 5;
 
             if (ctx.IsAtrExpanding_M5)
                 score += 2;
+
+            // =========================
+            // MATRIX SCORE MULTIPLIER
+            // =========================
+            score = (int)Math.Round(score * scoreMultiplier);
 
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score})", score, dir);
@@ -211,8 +232,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 Score = score,
                 IsValid = true,
                 Reason =
-                    $"IDX_FLAG dir={dir} score={score} " +
-                    $"flagATR={(flagRange / ctx.AtrM5):F2} bodyR={bodyRatio:F2}"
+                    $"IDX_FLAG dir={dir} score={score} mult={scoreMultiplier:F2} " +
+                    $"fatigue={fatigueCount}/{fatigueThreshold} " +
+                    $"flagATR={(flagRange / ctx.AtrM5):F2}"
             };
         }
 
@@ -223,14 +245,8 @@ namespace GeminiV26.EntryTypes.INDEX
             TradeDirection dir)
         {
             Console.WriteLine(
-                $"[IDX_FLAG][REJECT] {reason} | " +
-                $"score={score} | " +
-                $"dir={dir} | " +
-                $"Impulse={ctx?.HasImpulse_M5} | " +
-                $"BarsSinceImp={ctx?.BarsSinceImpulse_M5} | " +
-                $"ATRexp={ctx?.IsAtrExpanding_M5} | " +
-                $"ADX={ctx?.Adx_M5:F1} | " +
-                $"DIΔ={System.Math.Abs((ctx?.PlusDI_M5 ?? 0) - (ctx?.MinusDI_M5 ?? 0)):F1}"
+                $"[IDX_FLAG][REJECT] {reason} | score={score} | dir={dir} | " +
+                $"ADX={ctx?.Adx_M5:F1} Impulse={ctx?.HasImpulse_M5}"
             );
 
             return new EntryEvaluation
@@ -239,10 +255,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 Type = EntryType.Index_Flag,
                 Direction = dir,
                 IsValid = false,
-                Score = System.Math.Max(0, score),
+                Score = Math.Max(0, score),
                 Reason = reason
             };
         }
-
     }
 }

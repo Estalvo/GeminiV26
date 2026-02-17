@@ -46,7 +46,7 @@
         public double ImpulseAtrMult_M1 { get; set; }
         public int MaxBarsSinceImpulse_M5 { get; set; }
 
-        // ===== FLAG (ENTRY) =====
+        // ===== FLAG =====
         public int FlagBars { get; set; }
         public double MaxFlagAtrMult { get; set; }
         public double BreakoutBufferAtr { get; set; }
@@ -55,7 +55,7 @@
         // ===== SESSION =====
         public bool AllowAsianSession { get; set; }
 
-        // ===== PROFIT EXTENSION =====
+        // ===== PROFIT =====
         public double Tp1R { get; set; }
         public double RunnerMinR { get; set; }
         public double MaxExtensionR { get; set; }
@@ -69,5 +69,24 @@
         public double MaxAdverseRBeforeTP1 { get; set; }
         public int MaxBarsWithoutProgress_M5 { get; set; }
         public bool AllowEarlyExit { get; set; }
+
+        // =====================================================
+        // ===== NEW – MATRIX CONTROLLED BEHAVIOUR =====
+        // =====================================================
+
+        // --- Chop behaviour ---
+        public double ChopAdxThreshold { get; set; }
+        public double ChopDiDiffThreshold { get; set; }
+
+        // --- Trend fatigue behaviour ---
+        public int FatigueThreshold { get; set; }          // hány feltétel elég a rejecthez
+        public double FatigueAdxLevel { get; set; }        // milyen ADX felett vizsgáljuk
+
+        // --- Pullback behaviour (hybrid logic későbbre) ---
+        public bool UseHybridPullbackDepth { get; set; }
+        public double MaxPullbackPercentOfImpulse { get; set; }
+
+        // --- Score character weighting ---
+        public double ScoreWeightMultiplier { get; set; }
     }
 }
