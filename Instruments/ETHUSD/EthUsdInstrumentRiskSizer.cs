@@ -40,9 +40,10 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            if (finalConfidence >= 85) return 1.00; 
-            if (finalConfidence >= 75) return 0.70; 
-            return 0.40;                            
+            // Magas confidence → nagyobb risk (skálázódó)
+            if (finalConfidence >= 85) return 1.30;
+            if (finalConfidence >= 75) return 0.90;
+            return 0.55;
         }
 
         // =========================================================
@@ -50,10 +51,9 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            // Magas confidence → feszesebb SL
             return finalConfidence >= 85
-                ? 2.6
-                : 3.0;
+                ? 1.8
+                : 2.2;
         }
 
         // =========================================================
@@ -68,21 +68,24 @@ namespace GeminiV26.Instruments.ETHUSD
         {
             if (finalConfidence >= 85)
             {
-                tp1R = 0.45;
-                tp2R = 2.0;      // ⬆ hagyjuk futni
-                tp1Ratio = 0.30; // kevesebb korai zárás
+                tp1R = 0.40;
+                tp1Ratio = 0.25;
+
+                tp2R = 2.5;
             }
             else if (finalConfidence >= 75)
             {
                 tp1R = 0.35;
-                tp2R = 1.50;
-                tp1Ratio = 0.40;
+                tp1Ratio = 0.35;
+
+                tp2R = 1.8;
             }
             else
             {
                 tp1R = 0.30;
-                tp2R = 1.10;
-                tp1Ratio = 0.55; // védelem gyenge setupnál
+                tp1Ratio = 0.45;
+
+                tp2R = 1.3;
             }
 
             tp2Ratio = 1.0 - tp1Ratio;
