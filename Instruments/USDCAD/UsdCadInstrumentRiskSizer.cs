@@ -48,9 +48,9 @@ namespace GeminiV26.Instruments.USDCAD
         {
             double n = NormalizeScore(score);
 
-            // Jobb score → feszesebb SL
-            // 3.2 → 3.5
-            return 3.5 - n * 0.5;
+            // USDCAD – grind FX, nem spike instrument
+            // 2.1 → 1.6 ATR
+            return 2.1 - n * 0.5;
         }
 
         // =========================
