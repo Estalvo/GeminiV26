@@ -11,18 +11,6 @@ public class GlobalSessionGate
         _bot = bot;
     }
 
-    // ===== Asia FX whitelist =====
-    private static readonly HashSet<string> AsiaFxWhitelist = new()
-    {
-        "USDJPY",
-        "EURJPY",
-        "GBPJPY",
-        "AUDJPY",
-        "AUDUSD",
-        "NZDUSD",
-        "XAUUSD"
-    };
-
     public bool AllowEntry(string symbol)
     {
         // =========================
@@ -34,43 +22,38 @@ public class GlobalSessionGate
         TimeSpan utc = _bot.Server.Time.TimeOfDay;
 
         // =================================================
-        // 1. GLOBÁLIS FIX TILTÁSOK
+        // 1. GLOBÁLIS, SZŰK FIX TILTÁSOK (AIRBAG)
         // =================================================
 
-        // NY close / Asia open chaos
-        if (IsInRange(utc, new TimeSpan(21, 30, 0), new TimeSpan(1, 30, 0)))
+        // NY close / Asia open chaos – SZŰKÍTETT
+        if (IsInRange(utc, new TimeSpan(22, 0, 0), new TimeSpan(0, 30, 0)))
             return false;
 
-        // Asia vége / Közel-Kelet
-        if (IsInRange(utc, new TimeSpan(5, 0, 0), new TimeSpan(7, 0, 0)))
+        // NY open körüli sweep – SZŰKÍTETT
+        if (IsInRange(utc, new TimeSpan(14, 25, 0), new TimeSpan(14, 45, 0)))
             return false;
 
-        // NY open körüli sweep
-        if (IsInRange(utc, new TimeSpan(14, 15, 0), new TimeSpan(14, 50, 0)))
+        // NY lunch chop – csak FX, rövidebb
+        if (IsFx(symbol) && IsInRange(utc, new TimeSpan(13, 30, 0), new TimeSpan(14, 30, 0)))
             return false;
-
-        // NY lunch / pre-US data chop (FX + Metal only) 14:00–15:50 UTC+1  ==>  13:00–14:50 UTC
-        if ((IsFx(symbol) || symbol.StartsWith("XAU") || symbol.StartsWith("XAG"))
-            && IsInRange(utc, new TimeSpan(13, 0, 0), new TimeSpan(14, 50, 0)))
-            return false;
-
 
         // =================================================
-        // 2. ASIA SESSION – FX WHITELIST
+        // 2. ASIA SESSION – SOFT SZŰRÉS
         // =================================================
         if (IsAsiaSession(utc) && IsFx(symbol))
         {
-            if (!AsiaFxWhitelist.Contains(symbol))
+            // Asia-ban tiltjuk az EUR/GBP kereszteket (zajosak, lassúak)
+            if (ContainsAny(symbol, "EUR", "GBP"))
                 return false;
         }
 
         // =================================================
-        // 3. LONDON + NY – AUD / NZD / JPY TILTÁS
+        // 3. NEW YORK SESSION – AUD/NZD/JPY TILTÁS (LONDON SZABAD)
         // =================================================
-        if ((IsLondonSession(utc) || IsNySession(utc)) && IsFx(symbol))
+        if (IsNySession(utc) && IsFx(symbol))
         {
-            // USDJPY kivétel NY-ban
-            if (symbol == "USDJPY" && IsNySession(utc))
+            // USDJPY kivétel marad NY-ban
+            if (symbol == "USDJPY")
                 return true;
 
             if (ContainsAny(symbol, "AUD", "NZD", "JPY"))
@@ -92,7 +75,7 @@ public class GlobalSessionGate
 
     private bool IsLondonSession(TimeSpan utc)
     {
-        // London +1h: 08:00 – 16:00 UTC
+        // London: 08:00 – 16:00 UTC
         return utc >= new TimeSpan(8, 0, 0) && utc < new TimeSpan(16, 0, 0);
     }
 
@@ -128,6 +111,7 @@ public class GlobalSessionGate
         if (from < to)
             return now >= from && now < to;
 
+        // over midnight
         return now >= from || now < to;
     }
 
@@ -135,7 +119,6 @@ public class GlobalSessionGate
     {
         return symbol.StartsWith("BTC")
             || symbol.StartsWith("ETH")
-            || symbol.StartsWith("CRYPTO"); // ha van ilyen prefix
+            || symbol.StartsWith("CRYPTO");
     }
-
 }
