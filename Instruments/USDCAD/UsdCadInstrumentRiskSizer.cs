@@ -49,8 +49,8 @@ namespace GeminiV26.Instruments.USDCAD
             double n = NormalizeScore(score);
 
             // Jobb score → feszesebb SL
-            // 3.2 → 2.7
-            return 3.2 - n * 0.5;
+            // 3.2 → 3.5
+            return 3.5 - n * 0.5;
         }
 
         // =========================
