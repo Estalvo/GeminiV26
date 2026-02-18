@@ -95,7 +95,9 @@ namespace GeminiV26.EntryTypes.Crypto
             // REQUIRE IMPULSE HARD
             // =========================
             if (!ctx.HasImpulse_M5)
-                return Block(ctx, "CRYPTO_PULLBACK_NO_IMPULSE", score, dir);
+            {
+                score -= 12;   // soft penalty instead of hard block
+            }
 
             // =========================
             // IMPULSE AGE SOFT
