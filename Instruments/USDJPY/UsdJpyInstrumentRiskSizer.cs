@@ -19,17 +19,17 @@ namespace GeminiV26.Instruments.USDJPY
 
         // USDJPY: trend/pullback → SL feszesebb, mint US30
         // USDJPY: widened SL (+40%)
-        private const double SlBase = 2.05;   // volt 1.45
-        private const double SlWide = 2.45;   // volt 1.75
-        private const double SlTight = 1.75;  // volt 1.25
+        private const double SlBase = 1.45;
+        private const double SlWide = 1.75;
+        private const double SlTight = 1.25;
 
         public double GetRiskPercent(int score)
         {
             double n = NormalizeScore(score);
 
-            // USDJPY: tisztább trend, de gyors
-            // 0.15% → 0.32%
-            return 0.15 + n * (0.32 - 0.15);
+            // USDJPY – meaningful risk
+            // 0.40% → 0.75%
+            return 0.40 + n * (0.75 - 0.40);
         }
 
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)

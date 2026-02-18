@@ -102,8 +102,8 @@ namespace GeminiV26.EntryTypes.FX
             if (htfTransitionZone)
             {
                 // make it harder to pass borderline 50-score trades
-                minBoost += 4;     // raises the bar without hard-blocking
-                score -= 2;        // small penalty to push only best setups through
+                minBoost += 2;     // raises the bar without hard-blocking
+                // score -= 2;        // small penalty to push only best setups through
             }
 
             // --- NY Session Impulse Delay (first bars after NY open if available) ---
@@ -327,6 +327,14 @@ namespace GeminiV26.EntryTypes.FX
              HasM1FollowThrough(ctx) ||
              HasM1PullbackConfirm(ctx);
 
+            // =====================================================
+            // NY + HTF TRANSITION GUARD (must have breakout OR M1 confirmation)
+            // =====================================================
+            if (ctx.Session == FxSession.NewYork && htfTransitionZone && !breakout && !hasM1Confirmation)
+            {
+                return Invalid(ctx, $"NY_HTF_TRANSITION_NEEDS_CONFIRM conf={ctx.FxHtfConfidence01:F2}", score);
+            }
+ 
             bool softM1 =
                 ctx.Session == FxSession.London &&
                 score >= tuning.MinScore + 2 &&
@@ -514,23 +522,27 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            // =====================================================
-            // 5. FINAL SCORE
-            // =====================================================
-            int min = tuning.MinScore - 4;   // <- EZ fogja legjobban “kiszabadítani”
-            
-            if (ctx.Session == FxSession.NewYork) min -= 2;
-            if (ctx.FxHtfAllowedDirection == TradeDirection.None) min -= 2;
-            min += Math.Max(0, minBoost - 2); // minBoost ne ölje meg
+            int min = tuning.MinScore;
 
-            // Safety clamp
-            if (min < 0)
-                min = 0;
+            // ===================================================== 
+            // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
+            // ===================================================== 
+            // Session strictness
+            if (ctx.Session == FxSession.NewYork) min += 2;
+            if (ctx.Session == FxSession.London)  min += 1;
+
+            if (htfTransitionZone)
+                min += 4;
+
+            // Apply minBoost gently
+            min += Math.Max(0, minBoost - 2);
+
+            if (min < 0) min = 0;
 
             if (score < min)
                 return Invalid(ctx,
                     $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost}",
-                    score);
+                score);
 
             // HARD SYSTEM SAFETY
             if (ctx.TrendDirection == TradeDirection.None)
