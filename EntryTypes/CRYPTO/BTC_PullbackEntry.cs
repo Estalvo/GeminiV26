@@ -7,11 +7,11 @@ namespace GeminiV26.EntryTypes.Crypto
     public class BTC_PullbackEntry : IEntryType
     {
         public EntryType Type => EntryType.Crypto_Pullback;
-        private const int MIN_SCORE = 16;
+        private const int MIN_SCORE = 18;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 18;
+            int score = 22;
 
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, "CTX_NOT_READY", score);
@@ -96,7 +96,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (!ctx.HasImpulse_M5)
             {
-                score -= 12;   // soft penalty instead of hard block
+                score -= 6;   // soft penalty instead of hard block
             }
 
             // =========================
@@ -104,7 +104,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (ctx.BarsSinceImpulse_M5 > 3)
             {
-                int agePenalty = Math.Min(10, (ctx.BarsSinceImpulse_M5 - 3) * 2);
+                int agePenalty = Math.Min(8, (ctx.BarsSinceImpulse_M5 - 3) * 1);
                 score -= agePenalty;
 
                 Console.WriteLine(
@@ -116,7 +116,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // VOL SOFT
             // =========================
             if (!ctx.IsVolatilityAcceptable_Crypto)
-                score -= 6;
+                score -= 4;
 
             // =========================
             // PULLBACK QUALITY
@@ -127,7 +127,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.LastClosedBarInTrendDirection;
 
             if (validPullbackReaction)
-                score += 10;
+                score += 12;
             else
                 score -= 8;   // ← erős minőségszűrés
 
