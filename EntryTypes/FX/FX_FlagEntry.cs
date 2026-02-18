@@ -70,14 +70,18 @@ namespace GeminiV26.EntryTypes.FX
                 {
                     if (hasSlope)
                     {
-                        // CLIMAX + rolling/flat = classic stop-sweep zone for continuation
+                        // CLIMAX + rolling/flat = classic stop-sweep zone
                         if (adxM5 >= 40.0 && adxSlope <= 0.0)
                         {
-                            // stricter in NY/London
                             if (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London)
-                                return Invalid(ctx, $"ADX_CLIMAX_ROLLING adx={adxM5:F1} slope={adxSlope:F3}", score);
-
-                            score -= 8;
+                            {
+                                score -= 8;
+                                minBoost += 2;   // kicsit magasabb léc
+                            }
+                            else
+                            {
+                                score -= 6;
+                            }
                         }
                         else if (adxM5 >= 38.0 && adxSlope <= 0.0)
                         {
@@ -86,9 +90,12 @@ namespace GeminiV26.EntryTypes.FX
                     }
                     else
                     {
-                        // slope unknown -> soft penalty only, no hard block
-                        if (adxM5 >= 42.0 && (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London))
+                        // slope unknown -> soft penalty only
+                        if (adxM5 >= 42.0 &&
+                            (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London))
+                        {
                             score -= 4;
+                        }
                     }
                 }
             }
@@ -332,9 +339,21 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (ctx.Session == FxSession.NewYork && htfTransitionZone && !breakout && !hasM1Confirmation)
             {
-                return Invalid(ctx, $"NY_HTF_TRANSITION_NEEDS_CONFIRM conf={ctx.FxHtfConfidence01:F2}", score);
+                // Csak borderline setupokat tiltsunk
+                int strictMin = tuning.MinScore + 6;
+
+                if (score < strictMin)
+                {
+                    return Invalid(ctx,
+                        $"NY_HTF_TRANSITION_NEEDS_CONFIRM conf={ctx.FxHtfConfidence01:F2}",
+                        score);
+                }
+
+                // Erősebb setup átmehet, de kap büntetést
+                score -= 3;
+                minBoost += 2;
             }
- 
+
             bool softM1 =
                 ctx.Session == FxSession.London &&
                 score >= tuning.MinScore + 2 &&
@@ -532,10 +551,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.Session == FxSession.London)  min += 1;
 
             if (htfTransitionZone)
-                min += 4;
+                min += 2;
 
             // Apply minBoost gently
-            min += Math.Max(0, minBoost - 2);
+            min += Math.Min(4, minBoost);
 
             if (min < 0) min = 0;
 

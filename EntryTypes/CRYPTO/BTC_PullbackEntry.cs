@@ -31,17 +31,10 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             TradeDirection dir = ctx.TrendDirection;
 
+            // ===== CRYPTO STRICT CONTINUATION RULE =====
             if (dir == TradeDirection.None)
             {
-                if (!ctx.HasImpulse_M5)
-                    return Block(ctx, "NO_PULLBACK_DIRECTION_NO_IMPULSE", score);
-
-                if (ctx.BarsSinceImpulse_M5 > 8)
-                    return Block(ctx, "NO_PULLBACK_DIRECTION_TOO_OLD", score);
-
-                dir = (bars[lastClosed].Close >= ctx.Ema21_M5)
-                    ? TradeDirection.Long
-                    : TradeDirection.Short;
+                return Block(ctx, "CRYPTO_PULLBACK_NO_TREND", score);
             }
 
             // =========================
@@ -164,6 +157,13 @@ namespace GeminiV26.EntryTypes.Crypto
                 double distAtr = Math.Abs(bars[lastClosed].Close - ctx.Ema21_M5) / ctx.AtrM5;
                 if (distAtr > 0.9)
                     score -= 4;
+            }
+
+            // ===== COUNTER-TREND HARD BLOCK =====
+            if (ctx.TrendDirection != TradeDirection.None &&
+                dir != ctx.TrendDirection)
+            {
+                return Block(ctx, "CRYPTO_COUNTER_TREND_BLOCK", score, dir);
             }
 
             // =========================
