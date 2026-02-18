@@ -190,7 +190,7 @@ namespace GeminiV26.Core.Entry
                 double slopeM5 = ctx.Ema21Slope_M5 / ctx.AtrM5;
                 double slopeM15 = ctx.Ema21Slope_M15 / ctx.AtrM15;
 
-                const double SlopeDeadzone = 0.05;
+                double SlopeDeadzone = isFx ? 0.03 : 0.05;
 
                 if (slopeM15 > SlopeDeadzone && slopeM5 > SlopeDeadzone)
                     ctx.TrendDirection = TradeDirection.Long;
