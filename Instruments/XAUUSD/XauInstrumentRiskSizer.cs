@@ -184,7 +184,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (rawUnits <= 0)
                 return 0;
 
-            double units = symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
+            long units = (long)symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
             if (units <= 0)
                 return 0;
 
@@ -194,6 +194,16 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (maxUnits > 0 && units > maxUnits)
                 units = maxUnits;
+
+            // =========================================================
+            // XAU: MIN LOT FLOOR (presence rule) – 0.10–0.20 lot
+            // =========================================================
+            double minLot = 0.10;
+            double minUnits = symbol.NormalizeVolumeInUnits(minLot * symbol.LotSize, RoundingMode.Down);
+
+            // Ha a risk sizing túl kicsit ad (pl. 0.05), emeljük minimumra
+            if (minUnits > 0 && units < minUnits)
+                units = minUnits;
 
             return units > 0 ? (long)units : 0;
         }

@@ -41,6 +41,21 @@ namespace GeminiV26.EntryTypes.FX
             // - harden HTF transition (allow=None style)
             // - delay NY continuation in first bars after session open (if the context exposes it)
 
+            // =====================================================
+            // LOW ADX HARD FILTER (ANTI WEAK TREND CONTINUATION)
+            // =====================================================
+
+            if (TryGetDouble(ctx, "Adx_M5", out var adxCheck))
+            {
+                double minAdx =
+                    ctx.Session == FxSession.NewYork ? 25.0 :
+                    ctx.Session == FxSession.London ? 23.0 :
+                    22.0;
+
+                if (adxCheck < minAdx)
+                    return Invalid(ctx, $"ADX_TOO_LOW {adxCheck:F1}<{minAdx}", score);
+            }
+
             // --- ADX Climax / Rolling Guard (reflection-safe) ---
             // Uses (if present): Adx_M5 (double), AdxSlope_M5 (double) OR AdxSlope01_M5 (double)
             if (TryGetDouble(ctx, "Adx_M5", out var adxM5))
@@ -650,6 +665,7 @@ namespace GeminiV26.EntryTypes.FX
 
             return false;
         }
+
 
         // =====================================================
         // REFLECTION-SAFE CTX ACCESSORS (NO MEMBER ASSUMPTIONS)

@@ -82,13 +82,7 @@ namespace GeminiV26.Instruments.GBPUSD
                         pos.TradeType == TradeType.Buy
                             ? pos.EntryPrice + rDist * ctx.Tp1R
                             : pos.EntryPrice - rDist * ctx.Tp1R;
-
-                    _bot.Print(
-                        $"[TP1 DEBUG] entry={pos.EntryPrice:F5} " +
-                        $"rDist={rDist:F5} Tp1R={ctx.Tp1R:F2} " +
-                        $"currentR={GetCurrentR(pos, ctx):F2}"
-                    );
-
+                    
                     if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
                     {
                         ExecuteTp1(pos, ctx);
