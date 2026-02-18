@@ -36,9 +36,9 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            // FX – konzervatív, de skálázódó            
+            // EURUSD – kontrollált FX
             // 0.35% → 0.65%
-            return 0.35 + n * (0.95 - 0.35);
+            return 0.35 + n * (0.65 - 0.35);
         }
 
         // =========================
@@ -48,9 +48,9 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            // Jobb score → feszesebb SL
-            // 3.4 → 2.9
-            return 3.4 - n * 0.5;
+            // EURUSD – realisztikus FX SL
+            // 1.9 → 1.5 ATR
+            return 1.9 - n * 0.4;
         }
 
         // =========================
@@ -63,25 +63,12 @@ namespace GeminiV26.Instruments.EURUSD
             out double tp2R,
             out double tp2Ratio)
         {
-            // EURUSD: biztosabb TP1 – marad
-            tp1R = 0.45;
-
-            // =====================================================
-            // TP1 RATIO – DINAMIKUS
-            // Jó score → több runner
-            // =====================================================
             double n = NormalizeScore(score);
 
-            // TP1 mindig biztos, de jobb score → több runner
-            tp1Ratio = 0.55 - n * 0.20; // 0.55 → 0.35
+            tp1R = 0.50;                    // fix 0.5R
+            tp1Ratio = 0.60 - n * 0.15;     // 0.60 → 0.45
 
-            // =====================================================
-            // TP2 R – HELYES JUTALMAZÓ GÖRBE
-            // AUDNZD kicsit „lustább”, mint EURUSD
-            // =====================================================
-            tp2R = 1.0 + n * 0.6; // 1.0 → 1.6
-
-            // TP2 a maradékra
+            tp2R = 1.2 + n * 0.6;           // 1.2 → 1.8
             tp2Ratio = 1.0 - tp1Ratio;
         }
 

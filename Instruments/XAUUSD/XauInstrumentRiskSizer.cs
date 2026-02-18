@@ -180,32 +180,42 @@ namespace GeminiV26.Instruments.XAUUSD
             if (valuePerPricePerUnit <= 0)
                 return 0;
 
+            // rawUnits még lehet double
             double rawUnits = riskMoney / (slPriceDistance * valuePerPricePerUnit);
             if (rawUnits <= 0)
                 return 0;
 
-            long units = (long)symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
+            // NORMALIZE → LONG
+            long units = symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
             if (units <= 0)
                 return 0;
 
-            // Cap (lot → units)
+            // =========================================================
+            // CAP (lot → units)
+            // =========================================================
             double maxLot = GetLotCap(finalConfidence);
-            double maxUnits = symbol.NormalizeVolumeInUnits(maxLot * symbol.LotSize, RoundingMode.Down);
+            long maxUnits = symbol.NormalizeVolumeInUnits(
+                maxLot * symbol.LotSize,
+                RoundingMode.Down
+            );
 
             if (maxUnits > 0 && units > maxUnits)
                 units = maxUnits;
 
             // =========================================================
-            // XAU: MIN LOT FLOOR (presence rule) – 0.10–0.20 lot
+            // XAU: MIN LOT FLOOR – 0.10 lot
             // =========================================================
             double minLot = 0.10;
-            double minUnits = symbol.NormalizeVolumeInUnits(minLot * symbol.LotSize, RoundingMode.Down);
 
-            // Ha a risk sizing túl kicsit ad (pl. 0.05), emeljük minimumra
+            long minUnits = symbol.NormalizeVolumeInUnits(
+                minLot * symbol.LotSize,
+                RoundingMode.Down
+            );
+
             if (minUnits > 0 && units < minUnits)
                 units = minUnits;
 
-            return units > 0 ? (long)units : 0;
+            return units;
         }
     }
 }
