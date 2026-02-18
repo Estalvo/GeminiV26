@@ -149,6 +149,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = Type,
                 Direction = dir,
                 Score = score,
+                LogicConfidence = ctx.LogicConfidence,  
                 IsValid = true,
                 Reason = note
             };

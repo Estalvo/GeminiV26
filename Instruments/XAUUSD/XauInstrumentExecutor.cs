@@ -115,7 +115,10 @@ namespace GeminiV26.Instruments.XAUUSD
                 EntryReason = entry.Reason,
 
                 EntryScore = entry.Score,
-                LogicConfidence = 0,
+
+                LogicConfidence = entry.LogicConfidence > 0
+                    ? entry.LogicConfidence
+                    : entry.Score,
 
                 EntryTime = _bot.Server.Time,
 
