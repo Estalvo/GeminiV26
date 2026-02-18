@@ -1013,52 +1013,63 @@ namespace GeminiV26.Core
                 );
             }
             else if (isCryptoSymbol && _cryptoBias != null)
+{
+    var bias = _cryptoBias.Get(_bot.SymbolName);
+
+    _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
+
+    // =====================================================
+    // 1) TRANSITION / NEUTRAL
+    //    -> NO FULL BLOCK
+    //    -> Only Pullback allowed
+    // =====================================================
+    if (bias.State == HtfBiasState.Neutral ||
+        bias.State == HtfBiasState.Transition)
+    {
+        _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback only, no direction filter");
+
+        symbolSignals = symbolSignals
+            .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
+            .ToList();
+
+        if (symbolSignals.All(e => e == null || !e.IsValid))
+        {
+            foreach (var s in symbolSignals)
             {
-                var bias = _cryptoBias.Get(_bot.SymbolName);
-
-                _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
-
-                // 1) HTF Transition: full block
-                if (bias.State == HtfBiasState.Transition)
-                    return;
-
-                // 2) HTF Neutral: csak a Pullback maradhat, és ilyenkor NEM szűrünk direction-re
-                //    (mert allow=None, és különben mindent kidobnánk)
-                if (bias.State == HtfBiasState.Neutral)
-                {
-                    symbolSignals = symbolSignals
-                        .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
-                        .ToList();
-
-                    if (symbolSignals.All(e => e == null || !e.IsValid))
-                    {
-                        foreach (var s in symbolSignals)
-                            _bot.Print($"[TC][NEUTRAL CAND] type={s?.Type} valid={s?.IsValid} dir={s?.Direction} score={s?.Score} reason={s?.Reason}");
-
-                        _bot.Print("[TC] CRYPTO HTF NEUTRAL: only pullback allowed, none valid");
-                        return;
-                    }
-
-                    // Neutralban itt MEGÁLLUNK: nem alkalmazunk bias.AllowedDirection szűrést
-                    // és nem return-ölünk, menjen tovább a TradeRouter/Executor felé.
-                }
-                else
-                {
-                    // 3) HTF Bull/Bear: direction-szűrés az allowed irányra
-                    if (bias.AllowedDirection != TradeDirection.None)
-                    {
-                        symbolSignals = symbolSignals
-                            .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                            .ToList();
-
-                        if (symbolSignals.All(e => e == null || !e.IsValid))
-                        {
-                            _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by bias");
-                            return;
-                        }
-                    }
-                }
+                _bot.Print(
+                    $"[TC][CRYPTO HTF CAND] type={s?.Type} " +
+                    $"valid={s?.IsValid} dir={s?.Direction} " +
+                    $"score={s?.Score} reason={s?.Reason}");
             }
+
+            _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback in Transition/Neutral");
+            return;
+        }
+
+        // IMPORTANT:
+        // No direction filtering here.
+        // Continue to router.
+    }
+    else
+    {
+        // =====================================================
+        // 2) BULL / BEAR
+        //    -> Direction filter enforced
+        // =====================================================
+        if (bias.AllowedDirection != TradeDirection.None)
+        {
+            symbolSignals = symbolSignals
+                .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                .ToList();
+
+            if (symbolSignals.All(e => e == null || !e.IsValid))
+            {
+                _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by allowed direction");
+                return;
+            }
+        }
+    }
+}
 
             else if (isMetalSymbol && _metalBias != null)
             {
