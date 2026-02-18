@@ -31,7 +31,7 @@ namespace GeminiV26.EntryTypes.FX
             if (fx.FlagTuning == null || !fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, "NO_FLAG_TUNING", score);
 
-            score = tuning.BaseScore;
+            score = tuning.BaseScore + 6;
 
             // =====================================================
             // 0. LATE TREND FILTER v1 – (ADD ONLY, NO DELETE)
@@ -108,6 +108,13 @@ namespace GeminiV26.EntryTypes.FX
                 minBoost += 2;
             }
 
+// =====================================================
+// COMMON LAST CLOSED BAR (ONE SOURCE OF TRUTH)
+// =====================================================
+int lastClosedIndex = ctx.M5.Count - 2;     // utolsó LEZÁRT bar
+var lastBar = ctx.M5[lastClosedIndex];
+double lastClose = lastBar.Close;
+
             // =====================================================
             // 1. EMA POSITION FILTER (FX-SAFE)
             // =====================================================
@@ -117,14 +124,14 @@ namespace GeminiV26.EntryTypes.FX
             double emaDistAtr = Math.Abs(lastClose - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (emaDistAtr < 0.10)
-                return Invalid(ctx, "PRICE_ON_EMA", score);
+                score -= 3;   // ne öld meg, csak büntesd
 
             if (emaDistAtr < 0.18 && ctx.HasImpulse_M5)
                 score += 2;
 
             // 🔧 OVEREXT ONLY IF NO IMPULSE (ANTI-CHASE)
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.5 && !ctx.HasImpulse_M5)
-                return Invalid(ctx, "OVEREXT_PRICE_NO_IMPULSE", score);
+                score -= 6;   // eddig kinyírta a setupok 30-40%-át
 
             // 🔧 MOMENTUM CONTINUATION BONUS
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 && ctx.HasImpulse_M5)
@@ -149,7 +156,7 @@ namespace GeminiV26.EntryTypes.FX
             }
             else
             {
-                score += 3; // 🔧 FX-ben a jó flag gyakran kompresszió
+                score += 6; // agresszívebb kompressziós continuation engedés
             }
 
             // =====================================================
@@ -180,8 +187,7 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5)
             {
-                // nem range-nek detektált, de energiátlan kompresszió -> kevés edge
-                score -= 3;
+                score -= 1; // enyhébb meh bünti
             }
 
             // =====================================================
@@ -194,7 +200,7 @@ namespace GeminiV26.EntryTypes.FX
                     ctx.LastClosedBarInTrendDirection;
 
                 if (!hasReaction)
-                    score -= 6;
+                    score -= 3;
             }
 
             // =====================================================
@@ -218,7 +224,6 @@ namespace GeminiV26.EntryTypes.FX
             // 3B. FLAG SLOPE VALIDATION
             // =====================================================
 
-            int lastClosedIndex = ctx.M5.Count - 2;
             int firstFlagIndex = lastClosedIndex - tuning.FlagBars + 1;
 
             if (firstFlagIndex < 0)
@@ -316,29 +321,27 @@ namespace GeminiV26.EntryTypes.FX
             // 🔴 EARLY ENTRY RETEST GUARD
             // Ne lépjünk be, ha a flag széle / EMA21 még nem volt rendesen visszatesztelve
             // és nincs M5-ös irányba záró reakció
-
+            
             bool needsRetestGuard =
-                !breakout &&                       // még nincs tiszta breakout
-                !ctx.HasReactionCandle_M5 &&       // nincs M5 reakció
-                !ctx.LastClosedBarInTrendDirection // nincs irányba zárás
+                !breakout &&
+                !ctx.HasReactionCandle_M5 &&
+                !ctx.LastClosedBarInTrendDirection
                 &&
                 (
-                    // LONG: még nem tesztelte vissza a flag low / EMA21 zónát
                     (ctx.TrendDirection == TradeDirection.Long &&
-                     lastClose > lo &&
-                     ctx.M5[ctx.M5.Count - 1].Low > lo)
+                    lastClose > lo &&
+                    lastBar.Low > lo)
 
                     ||
 
-                    // SHORT: még nem tesztelte vissza a flag high / EMA21 zónát
                     (ctx.TrendDirection == TradeDirection.Short &&
-                     lastClose < hi &&
-                     ctx.M5[ctx.M5.Count - 1].High < hi)
+                    lastClose < hi &&
+                    lastBar.High < hi)
                 );
 
             if (needsRetestGuard && ctx.Session == FxSession.London)
             {
-                return Invalid(ctx, "EARLY_FLAG_NO_RETEST", score);
+                score -= 5; // ne blokkoljon, csak tolja fel a minőségi irányba
             }
 
             if (needsRetestGuard && ctx.Session == FxSession.NewYork)
@@ -359,10 +362,10 @@ namespace GeminiV26.EntryTypes.FX
             // és nincs friss breakout, akkor late continuation
             if (barsSinceBreak > 3 && !breakout && !hasM1Confirmation)
             {
-                score -= 6;
+                score -= 3;
 
                 if (barsSinceBreak > 5 && ctx.Session == FxSession.London && !hasM1Confirmation)
-                    score -= 4;
+                    score -= 2;
             }
 
             // =====================================================
@@ -370,14 +373,12 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (ctx.Session == FxSession.NewYork && !breakout && !hasM1Confirmation)
             {
-                // --- NY Early Impulse Delay: hard block if we are within first 2 bars of session open ---
                 if (nyEarly)
-                    return Invalid(ctx, $"NY_EARLY_CONTINUATION_DELAY bars={nyBars}", score);
+                    score -= 4;        // ne block, csak bünti
 
-                score -= 8;
-
+                score -= 4;            // -8 túl sok volt
                 if (ctx.FxHtfAllowedDirection != TradeDirection.None && ctx.FxHtfConfidence01 >= 0.55)
-                    score -= 4;
+                    score -= 2;
             }
 
             if (!breakout && !hasM1Confirmation && !softM1 && ctx.Session != FxSession.NewYork)
@@ -389,13 +390,9 @@ namespace GeminiV26.EntryTypes.FX
                 score += 1;
 
             // 🔧 CONTINUATION SCORE
-            if (breakout)
-                score += 5;
-            else if (hasM1Confirmation)
-                score += 3;
-
-            if (ctx.Session == FxSession.Asia && !breakout)
-                return Invalid(ctx, "ASIA_NO_BREAKOUT", score);
+            if (breakout) score += 8;
+            else if (hasM1Confirmation) score += 5;
+            else if (ctx.LastClosedBarInTrendDirection) score += 2; // agresszív: M5 irányba zárás is kapjon kredit
 
             // =====================================================
             // 4B. FX HTF DIRECTION FILTER (ANTI COUNTER-HTF)
@@ -506,19 +503,11 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // 5. FINAL SCORE
             // =====================================================
-            // Debug assist: show key gating context in reason via score only (keeps pipeline simple)
-            int min = tuning.MinScore;
-
-            // NY-ban engedj 2 pont tolerance-t, mert ott sok a spike / wick
-            if (ctx.Session == FxSession.NewYork)
-                min -= 2;
-
-            // HTF transition esetén ne legyen full hard gate
-            if (ctx.FxHtfAllowedDirection == TradeDirection.None)
-                min -= 2;
-
-            // ✅ LATE TREND FILTER boost (ADD ONLY)
-            min += minBoost;
+            int min = tuning.MinScore - 4;   // <- EZ fogja legjobban “kiszabadítani”
+            
+            if (ctx.Session == FxSession.NewYork) min -= 2;
+            if (ctx.FxHtfAllowedDirection == TradeDirection.None) min -= 2;
+            min += Math.Max(0, minBoost - 2); // minBoost ne ölje meg
 
             // Safety clamp
             if (min < 0)
@@ -550,15 +539,25 @@ namespace GeminiV26.EntryTypes.FX
             hi = double.MinValue;
             lo = double.MaxValue;
 
-            if (ctx.M5.Count < bars + 2)
+            // kell legalább: bars db lezárt + 1 futó + 1 biztonság
+            if (ctx.M5 == null || ctx.M5.Count < bars + 3)
             {
                 rangeAtr = 0;
                 return false;
             }
 
-            for (int i = 1; i <= bars; i++)
+            int lastClosed = ctx.M5.Count - 2;          // utolsó LEZÁRT
+            int first = lastClosed - bars + 1;
+
+            if (first < 0)
             {
-                var bar = ctx.M5[ctx.M5.Count - i];
+                rangeAtr = 0;
+                return false;
+            }
+
+            for (int i = first; i <= lastClosed; i++)
+            {
+                var bar = ctx.M5[i];
                 hi = Math.Max(hi, bar.High);
                 lo = Math.Min(lo, bar.Low);
             }
