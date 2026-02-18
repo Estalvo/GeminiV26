@@ -108,19 +108,18 @@ namespace GeminiV26.EntryTypes.FX
                 minBoost += 2;
             }
 
-// =====================================================
-// COMMON LAST CLOSED BAR (ONE SOURCE OF TRUTH)
-// =====================================================
-int lastClosedIndex = ctx.M5.Count - 2;     // utolsó LEZÁRT bar
-var lastBar = ctx.M5[lastClosedIndex];
-double lastClose = lastBar.Close;
+            // =====================================================
+            // COMMON LAST CLOSED BAR (ONE SOURCE OF TRUTH)
+            // =====================================================
+            int lastClosedIndex = ctx.M5.Count - 2;     // utolsó LEZÁRT bar
+            var lastBar = ctx.M5[lastClosedIndex];
+            double lastClose = lastBar.Close;
 
             // =====================================================
             // 1. EMA POSITION FILTER (FX-SAFE)
             // =====================================================
             int lastClosed = ctx.M5.Count - 2;
-            double lastClose = ctx.M5[lastClosed].Close;
-
+            
             double emaDistAtr = Math.Abs(lastClose - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (emaDistAtr < 0.10)
