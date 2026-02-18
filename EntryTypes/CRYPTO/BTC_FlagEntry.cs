@@ -14,8 +14,8 @@ namespace GeminiV26.EntryTypes.Crypto
         private const double BreakBufferAtr = 0.07;
         private const double MaxDistFromEmaAtr = 1.05;
 
-        private const int BaseScore = 75;
-        private const int MinScore = 55;
+        //private const int BaseScore = 75;
+        private const int MinScore = 20;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -23,6 +23,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "CTX_NOT_READY");
 
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
+            if (profile == null)
+                return Invalid(ctx, "NO_CRYPTO_PROFILE");
 
             // =========================
             // HTF / TREND GATE – FLAG ONLY IF DIRECTIONAL
@@ -57,10 +59,12 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "ATR_ZERO");
 
             // ===== SCORE =====
-            int score = BaseScore;
+            int score = 0;
 
-            if (!ctx.IsVolatilityAcceptable_Crypto)
-                score -= 15;
+            if (ctx.IsVolatilityAcceptable_Crypto)
+                score += 10;
+            else
+                score -= 10;
 
             // ===== EMA21 RECLAIM (SHORT SOFT BLOCK) =====
             bool ema21Reclaim =
@@ -68,6 +72,13 @@ namespace GeminiV26.EntryTypes.Crypto
                 bars[lastClosed - 1].Close <= ctx.Ema21_M5;
 
             if (dir == TradeDirection.Short && ema21Reclaim)
+                score -= 10;
+
+            bool ema21ReclaimLong =
+                bars[lastClosed].Close < ctx.Ema21_M5 &&
+                bars[lastClosed - 1].Close >= ctx.Ema21_M5;
+
+            if (dir == TradeDirection.Long && ema21ReclaimLong)
                 score -= 10;
 
             double hi = double.MinValue;
@@ -86,8 +97,10 @@ namespace GeminiV26.EntryTypes.Crypto
             double close = bars[lastClosed].Close;
             double distFromEma = Math.Abs(close - ctx.Ema21_M5);
 
-            if (distFromEma > ctx.AtrM5 * MaxDistFromEmaAtr)
-                score -= 10;
+            if (distFromEma <= ctx.AtrM5 * 0.6)
+                score += 8;
+            else if (distFromEma > ctx.AtrM5 * MaxDistFromEmaAtr)
+                score -= 8;
 
             double buf = ctx.AtrM5 * BreakBufferAtr;
             bool bullBreak = close > hi + buf;
@@ -112,16 +125,15 @@ namespace GeminiV26.EntryTypes.Crypto
 
             double open = bars[lastClosed].Open;
 
-            if (dir == TradeDirection.Long && close <= open)
-                return Invalid(ctx, "NO_BULL_BODY");
+            if (dir == TradeDirection.Long && close > open)
+                score += 6;
+            else if (dir == TradeDirection.Long)
+                score -= 6;
 
-            if (dir == TradeDirection.Short && close >= open)
-                return Invalid(ctx, "NO_BEAR_BODY");
-
-            if (ctx.M1TriggerInTrendDirection)
-                score += 5;
-
-            score += 3;
+            if (dir == TradeDirection.Short && close < open)
+                score += 6;
+            else if (dir == TradeDirection.Short)
+                score -= 6;
 
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE({score})");
