@@ -38,7 +38,7 @@ namespace GeminiV26.Instruments.USDCHF
 
             // FX – konzervatív, de skálázódó
             // 0.22% → 0.35%
-            return 0.22 + n * (0.35 - 0.22);
+            return 0.25 + n * (0.40 - 0.25);
         }
 
         // =========================
@@ -94,7 +94,7 @@ namespace GeminiV26.Instruments.USDCHF
 
             // FX: ne legyen azonnal full cap
             // 65% → 100%
-            return 0.65 + n * 0.35;
+            return 2.0 + n * 0.5;
         }
 
         private static double NormalizeScore(int score)
