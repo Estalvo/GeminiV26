@@ -28,10 +28,9 @@ namespace GeminiV26.Instruments.GER40
         // =====================================================
         public double GetRiskPercent(int score)
         {
-            // Indexeken óvatosabb, mint XAU
-            if (score >= 85) return 0.60;   // top quality
-            if (score >= 75) return 0.45;   // jó setup
-            return 0.35;                    // baseline
+            if (score >= 85) return 1.20;
+            if (score >= 75) return 0.90;
+            return 0.60;
         }
 
         // =====================================================
@@ -40,10 +39,9 @@ namespace GeminiV26.Instruments.GER40
         // =====================================================
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            // GER40 zajos, de trendelhető
-            if (score >= 85) return 1.8;    // tiszta trend
-            if (score >= 75) return 2.0;    // normál környezet
-            return 2.2;                     // zajosabb szakasz
+            if (score >= 85) return 2.3;
+            if (score >= 75) return 2.6;
+            return 3.0;
         }
 
         // =====================================================
@@ -56,26 +54,23 @@ namespace GeminiV26.Instruments.GER40
             out double tp2R,
             out double tp2Ratio)
         {
-            // GER40 – index mikrostruktúra
-            // cél: zaj felett biztosítás, jó trendnél nagy futás
-
             if (score >= 85)
             {
-                tp1R = 0.60;
-                tp1Ratio = 0.40;   // 60% runner
-                tp2R = 2.0;
+                tp1R = 0.9;
+                tp1Ratio = 0.30; // 70% runner
+                tp2R = 3.0;
             }
             else if (score >= 75)
             {
-                tp1R = 0.50;
-                tp1Ratio = 0.50;
-                tp2R = 1.6;
+                tp1R = 0.8;
+                tp1Ratio = 0.40;
+                tp2R = 2.6;
             }
             else
             {
-                tp1R = 0.45;
-                tp1Ratio = 0.60;
-                tp2R = 1.2;
+                tp1R = 0.7;
+                tp1Ratio = 0.50;
+                tp2R = 2.2;
             }
 
             tp2Ratio = 1.0 - tp1Ratio;
@@ -86,8 +81,9 @@ namespace GeminiV26.Instruments.GER40
         // =====================================================
         public double GetLotCap(int score)
         {
-            // Index cél: max 1 lot
-            return 1.0;
+            if (score >= 85) return 5.0;
+            if (score >= 75) return 3.0;
+            return 2.0;
         }
     }
 }
