@@ -12,10 +12,10 @@ namespace GeminiV26.Instruments.GBPUSD
     public class GbpUsdInstrumentRiskSizer : IInstrumentRiskSizer
     {
         // FX: konzervatívabb
-        private const double RiskLow = 0.25;
-        private const double RiskMed = 0.35;
-        private const double RiskHigh = 0.50;
-        private const double RiskMax = 0.65;
+        private const double RiskLow = 0.30;   // volt 0.25
+        private const double RiskMed = 0.42;   // volt 0.35
+        private const double RiskHigh = 0.58;  // volt 0.50
+        private const double RiskMax = 0.75;   // volt 0.65
 
         // GBPUSD: noise miatt SL kicsit szélesebb, mint USDJPY
         private const double SlBase = 1.65;
@@ -81,11 +81,11 @@ namespace GeminiV26.Instruments.GBPUSD
         {
             double n = NormalizeScore(score);
 
-            if (n < 0.30) return 0.55;
-            if (n < 0.50) return 0.65;
-            if (n < 0.70) return 0.75;
-            if (n < 0.85) return 0.85;
-            return 0.95;
+            if (n < 0.30) return 0.60;   // volt 0.55
+            if (n < 0.50) return 0.70;   // volt 0.65
+            if (n < 0.70) return 0.82;   // volt 0.75
+            if (n < 0.85) return 0.92;   // volt 0.85
+            return 1.00;                 // volt 0.95
         }
 
         private static double NormalizeScore(int score)
