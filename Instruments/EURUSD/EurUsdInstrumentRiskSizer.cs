@@ -37,8 +37,8 @@ namespace GeminiV26.Instruments.EURUSD
             double n = NormalizeScore(score);
 
             // FX – konzervatív, de skálázódó            
-            // 0.30% → 0.65%
-            return 0.30 + n * (0.85 - 0.30);
+            // 0.35% → 0.65%
+            return 0.35 + n * (0.95 - 0.35);
         }
 
         // =========================
@@ -93,8 +93,8 @@ namespace GeminiV26.Instruments.EURUSD
             double n = NormalizeScore(score);
 
             // FX: ne legyen azonnal full cap
-            // 0.80 → 1.00
-            return 0.80 + n * 0.20;
+            // 0.90 → 1.20
+            return 0.90 + n * 0.30;
         }
 
         private static double NormalizeScore(int score)

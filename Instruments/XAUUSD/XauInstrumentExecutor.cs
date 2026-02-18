@@ -192,6 +192,23 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.Tp2Ratio = tp2Ratio;
 
             // =====================================================
+            // 6️⃣ VOLUME POLICY – RISK SIZER (XAU)
+            // =====================================================
+            long volumeUnits = _riskSizer.CalculateVolumeInUnits(
+                _bot,
+                ctx.FinalConfidence,
+                slPriceDist
+            );
+
+            if (volumeUnits <= 0)
+            {
+                _bot.Print("[XAU EXEC] Volume invalid after RiskSizer → abort");
+                return;
+            }
+            // 🔎 DEBUG (EXECUTOR SZINT)
+            _bot.Print($"[XAU EXEC RISK] FC={ctx.FinalConfidence} slDist={slPriceDist:F2} units={volumeUnits} lot={(double)volumeUnits/_bot.Symbol.LotSize:F2}");
+/*
+            // =====================================================
             // 6 VOLUME POLICY – FIX LOT (Phase 3.7.x)
             // -----------------------------------------------------
             // Cél: tiszta statisztika TP1 / trailing validálásához.
@@ -205,7 +222,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 _bot.Print("[XAU EXEC] Volume invalid → abort");
                 return;
             }
-
+*/
             // =====================================================
             // 7 SL / TP → pips (pre-exec)
             // =====================================================
