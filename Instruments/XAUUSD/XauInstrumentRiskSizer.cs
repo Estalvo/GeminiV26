@@ -186,7 +186,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return 0;
 
             // NORMALIZE → LONG
-            long units = symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
+            long units = (long)symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
             if (units <= 0)
                 return 0;
 
@@ -194,7 +194,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // CAP (lot → units)
             // =========================================================
             double maxLot = GetLotCap(finalConfidence);
-            long maxUnits = symbol.NormalizeVolumeInUnits(
+            long maxUnits = (long)symbol.NormalizeVolumeInUnits(
                 maxLot * symbol.LotSize,
                 RoundingMode.Down
             );
@@ -207,7 +207,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =========================================================
             double minLot = 0.10;
 
-            long minUnits = symbol.NormalizeVolumeInUnits(
+            long minUnits = (long)symbol.NormalizeVolumeInUnits(
                 minLot * symbol.LotSize,
                 RoundingMode.Down
             );
