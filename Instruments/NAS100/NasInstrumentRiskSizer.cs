@@ -40,10 +40,10 @@ namespace GeminiV26.Instruments.NAS100
         // =====================================================
         public double GetStopLossAtrMultiplier(int score, EntryType entryType)
         {
-            // NAS zajos, de trendelhető
-            if (score >= 85) return 1.8;    // tiszta trend
-            if (score >= 75) return 2.0;    // normál környezet
-            return 2.2;                     // zajosabb szakasz
+            // NAS100 continuation model – adjunk levegőt a jó setupnak
+            if (score >= 85) return 2.2;
+            if (score >= 75) return 2.4;
+            return 2.6;
         }
 
         // =====================================================
@@ -56,26 +56,26 @@ namespace GeminiV26.Instruments.NAS100
             out double tp2R,
             out double tp2Ratio)
         {
-            // NAS100 – impulse-first, trend-following index
-            // cél: ne zajban zárjunk, jó setupnál hagyjuk futni
+            // NAS100 – continuation-first model
+            // Gyors biztosítás, de runner marad
 
             if (score >= 85)
             {
-                tp1R = 1.00;
-                tp1Ratio = 0.40;   // 60% runner
-                tp2R = 2.5;
+                tp1R = 0.80;
+                tp1Ratio = 0.50;
+                tp2R = 2.2;
             }
             else if (score >= 75)
             {
-                tp1R = 0.80;
-                tp1Ratio = 0.50;
-                tp2R = 2.0;
+                tp1R = 0.60;
+                tp1Ratio = 0.55;
+                tp2R = 1.8;
             }
             else
             {
-                tp1R = 0.60;
+                tp1R = 0.50;
                 tp1Ratio = 0.60;
-                tp2R = 1.4;
+                tp2R = 1.3;
             }
 
             tp2Ratio = 1.0 - tp1Ratio;
