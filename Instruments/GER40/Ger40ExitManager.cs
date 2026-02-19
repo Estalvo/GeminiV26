@@ -96,7 +96,7 @@ namespace GeminiV26.Instruments.GER40
             if (ctx.Tp1Hit)
                 return false;
 
-            double slDist = Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
+            double slDist = ctx.RiskPriceDistance;
             if (slDist <= 0)
                 return false;
 
@@ -137,7 +137,10 @@ namespace GeminiV26.Instruments.GER40
         // TP1 CORE (CTX-ALAPÚ)
         // =====================================================
         private bool CheckTp1Hit(Position pos, PositionContext ctx, double rDist)
-        {
+        {   
+            if (ctx.Tp1R <= 0)
+                return false;
+
             return pos.TradeType == TradeType.Buy
                 ? _bot.Symbol.Bid >= pos.EntryPrice + rDist * ctx.Tp1R
                 : _bot.Symbol.Ask <= pos.EntryPrice - rDist * ctx.Tp1R;
