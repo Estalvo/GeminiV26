@@ -50,7 +50,7 @@ namespace GeminiV26.Instruments.GBPJPY
 
             // GBPJPY: nagyon wickes
             // 3.5 → 3.0
-            return 3.5 - n * 0.5;
+            return 4.2 - n * 0.8;
         }
 
         // =========================
