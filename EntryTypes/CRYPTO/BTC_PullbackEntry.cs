@@ -36,21 +36,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 return Block(ctx, "CRYPTO_PULLBACK_NO_TREND", score);
             }
-    
-            // =========================
-            // BIAS ALIGNMENT GUARD (ANTI COUNTER-BIAS PULLBACK)
-            // =========================
-            if (ctx.LogicBiasDirection != TradeDirection.None &&
-                ctx.LogicBiasDirection != dir &&
-                ctx.LogicConfidence >= 55)
-            {
-                score -= 10;
-
-                Console.WriteLine(
-                    $"[BTC_PULLBACK][SOFT] BIAS_CONFLICT penalty=10 bias={ctx.LogicBiasDirection} dir={dir}"
-                );
-            }
-
+                
             // =========================
             // EMA RECLAIM
             // =========================
@@ -79,15 +65,16 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 return Block(ctx, "CRYPTO_PULLBACK_VOL_BLOCK_NO_IMPULSE", score, dir);
             }
-
+            
             // =========================
-            // LOW VOL + WEAK IMPULSE BLOCK
+            // LOW VOL + NO CLEAN REACTION HARD
             // =========================
             if (!ctx.IsVolatilityAcceptable_Crypto &&
-                !ctx.HasStrongImpulse_M5)
+                !ctx.IsPullbackDecelerating_M5 &&
+                !ctx.HasReactionCandle_M5)
             {
                 return Block(ctx,
-                    "CRYPTO_PULLBACK_LOW_VOL_WEAK_IMPULSE",
+                    "CRYPTO_PULLBACK_LOW_VOL_NO_REACTION",
                     score,
                     dir);
             }
@@ -113,12 +100,17 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // ADX ROLL OVER CONTINUATION BLOCK
             // =========================
-            if (ctx.Adx_M5 >= 35 &&
+            bool continuation =
+                ctx.BarsSinceImpulse_M5 > 2 &&
+                !ctx.IsPullbackDecelerating_M5;
+
+            if (continuation &&
+                ctx.Adx_M5 >= 38 &&
                 ctx.AdxSlope_M5 <= 0 &&
                 !ctx.IsAtrExpanding_M5)
             {
                 return Block(ctx,
-                    "CRYPTO_PULLBACK_ADX_ROLL_OVER",
+                    "CRYPTO_PULLBACK_ADX_ROLL_OVER_CONT",
                     score,
                     dir);
             }
@@ -189,12 +181,16 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
-            // HTF TRANSITION STRICT FILTER
+            // HTF TRANSITION STRICT FILTER (SAFE)
             // =========================
-            if (ctx.CryptoHtfAllowedDirection == TradeDirection.None &&
-                ctx.CryptoHtfState == CryptoHtfState.Transition)
+            bool isTransition =
+                ctx.CryptoHtfAllowedDirection == TradeDirection.None &&
+                ctx.CryptoHtfConfidence01 > 0.0;
+
+            if (isTransition)
             {
-                if (!validPullbackReaction || ctx.BarsSinceImpulse_M5 > 4)
+                if (!validPullbackReaction ||
+                    ctx.BarsSinceImpulse_M5 > 4)
                 {
                     return Block(ctx,
                         "CRYPTO_PULLBACK_TRANSITION_STRICT",
