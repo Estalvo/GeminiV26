@@ -38,6 +38,45 @@ namespace GeminiV26.EntryTypes.Crypto
             }
                 
             // =========================
+            // CRYPTO TREND ENERGY MINIMUM (CONTINUATION CORE)
+            // =========================
+
+            bool lowVol = !ctx.IsVolatilityAcceptable_Crypto;
+
+            // ---- BASE ENERGY CHECK ----
+            bool baseEnergyOk =
+                ctx.Adx_M5 >= 23 &&
+                ctx.AdxSlope_M5 > 0 &&
+                (ctx.IsAtrExpanding_M5 || ctx.BarsSinceImpulse_M5 <= 3);
+
+            // ---- LOW VOL STRICT MODE ----
+            if (lowVol)
+            {
+                bool strictEnergyOk =
+                    ctx.Adx_M5 >= 25 &&
+                    ctx.HasImpulse_M5 &&
+                    ctx.BarsSinceImpulse_M5 <= 3;
+
+                if (!strictEnergyOk)
+                {
+                    return Block(ctx,
+                        "CRYPTO_PULLBACK_LOWVOL_NO_ENERGY",
+                        score,
+                        dir);
+                }
+            }
+            else
+            {
+                if (!baseEnergyOk)
+                {
+                    return Block(ctx,
+                        "CRYPTO_PULLBACK_NO_TREND_ENERGY",
+                        score,
+                        dir);
+                }
+            }
+
+            // =========================
             // EMA RECLAIM
             // =========================
             if (dir == TradeDirection.Short && lastClosed >= 1)
