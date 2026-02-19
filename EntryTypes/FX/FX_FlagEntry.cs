@@ -100,29 +100,6 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            // =====================================================
-            // GLOBAL ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
-            // =====================================================
-            if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
-                (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
-                TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
-            {
-                bool noEnergy = !ctx.IsAtrExpanding_M5;
-
-                // Csak continuation esetén vizsgáljuk
-                bool isContinuation = !breakout && !hasM1Confirmation;
-
-                if (isContinuation &&
-                    adxNow >= 38.0 &&
-                    adxSlopeNow <= 0.0 &&
-                    noEnergy)
-                {
-                    return Invalid(ctx,
-                        $"ADX_ROLL_OVER_CONT adx={adxNow:F1} slope={adxSlopeNow:F3}",
-                        score);
-                }
-            }
-
             // --- HTF TRANSITION hardening (allow=None / transition zone) ---
             // We don't delete your existing min relax; we add a boost so transition doesn't auto-pass.
             bool htfTransitionZone =
@@ -395,6 +372,30 @@ namespace GeminiV26.EntryTypes.FX
             {
                 score -= 6;
                 minBoost += 2;
+            }
+
+
+            // =====================================================
+            // GLOBAL ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
+            // =====================================================
+            if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
+                (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
+                TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
+            {
+                bool noEnergy = !ctx.IsAtrExpanding_M5;
+
+                // Csak continuation esetén vizsgáljuk
+                bool isContinuation = !breakout && !hasM1Confirmation;
+
+                if (isContinuation &&
+                    adxNow >= 38.0 &&
+                    adxSlopeNow <= 0.0 &&
+                    noEnergy)
+                {
+                    return Invalid(ctx,
+                        $"ADX_ROLL_OVER_CONT adx={adxNow:F1} slope={adxSlopeNow:F3}",
+                        score);
+                }
             }
 
             // =====================================================
