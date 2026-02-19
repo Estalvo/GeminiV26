@@ -38,7 +38,7 @@ namespace GeminiV26.EntryTypes.METAL
         private const int LateBreakSoftPenalty_NewYork = 8;
         private const int LateBreakHardExtraPenalty_NY = 4; // only when very late + no signal
 
-        private const int TransitionMinScoreBoost = 3; // “HTF-transition proxy” (no new ctx props needed)
+        private const int TransitionMinScoreBoost = 5; // “HTF-transition proxy” (no new ctx props needed)
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -103,6 +103,15 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (trendFatigue)
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "TREND_FATIGUE", reasons);
+
+            // ===============================
+            // CONTINUATION STRENGTH FLOOR (NEW)
+            // ===============================
+            if (ctx.Adx_M5 < 23)
+            {
+                reasons.Add($"ADX_TOO_LOW({ctx.Adx_M5:F1}<23)");
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "WEAK_TREND_ADX", reasons);
+            }
 
             // ==========================================================
             // METAL LATE FILTER v1 – 1) CLIMAX ROLL HARD BLOCK (ADD-ONLY)
@@ -239,7 +248,7 @@ namespace GeminiV26.EntryTypes.METAL
             if (range > 0)
             {
                 double ratio = body / range;
-                if (ratio < 0.55)
+                if (ratio < 0.60)
                 {
                     score -= 4;
                     reasons.Add("WEAK_BODY(-4)");
