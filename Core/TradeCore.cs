@@ -1820,7 +1820,7 @@ namespace GeminiV26.Core
                     hardLimit = -200.0;
 
                 else if (sym.Contains("BTC") || sym.Contains("ETH"))
-                    hardLimit = -120.0;
+                    hardLimit = -200.0;
 
                 else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
                     hardLimit = -100.0;
