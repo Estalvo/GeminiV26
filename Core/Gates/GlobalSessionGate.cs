@@ -22,31 +22,26 @@ public class GlobalSessionGate
         TimeSpan utc = _bot.Server.Time.TimeOfDay;
 
         // =================================================
-        // 1. GLOBÁLIS, SZŰK FIX TILTÁSOK (AIRBAG)
+        // 1. GLOBÁLIS FIX TILTÁSOK (EVENT AIRBAG)
         // =================================================
 
-        // NY close / Asia open chaos – SZŰKÍTETT
+        // NY close / Asia open chaos
         if (IsInRange(utc, new TimeSpan(22, 0, 0), new TimeSpan(0, 30, 0)))
             return false;
 
-        // NY open körüli sweep – SZŰKÍTETT
-        if (IsInRange(utc, new TimeSpan(14, 25, 0), new TimeSpan(14, 45, 0)))
+        // NY PRE-OPEN positioning
+        if (IsInRange(utc, new TimeSpan(13, 50, 0), new TimeSpan(14, 30, 0)))
             return false;
 
-        // NY lunch chop – csak FX, rövidebb
-        if (IsFx(symbol) && IsInRange(utc, new TimeSpan(13, 30, 0), new TimeSpan(14, 30, 0)))
+        // NY CASH OPEN airbag
+        if (IsInRange(utc, new TimeSpan(14, 30, 0), new TimeSpan(14, 40, 0)))
             return false;
 
-        // =================================================
-        // 2. ASIA SESSION – SOFT SZŰRÉS
-        // =================================================
-        if (IsAsiaSession(utc) && IsFx(symbol))
-        {
-            // Asia-ban tiltjuk az EUR/GBP kereszteket (zajosak, lassúak)
-            if (ContainsAny(symbol, "EUR", "GBP"))
-                return false;
-        }
-
+        // NY LUNCH chop (csak FX)
+        /*if (IsFx(symbol) &&
+            IsInRange(utc, new TimeSpan(16, 30, 0), new TimeSpan(17, 30, 0)))
+            return false;
+*/
         // =================================================
         // 3. NEW YORK SESSION – AUD/NZD/JPY TILTÁS (LONDON SZABAD)
         // =================================================
