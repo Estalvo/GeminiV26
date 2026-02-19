@@ -157,13 +157,13 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, "ASIA_NO_ATR_EXPANSION", score);
 
                 // Late continuation (structure already old)
-                int barsSinceBreak =
+                int asiaBarsSinceBreak =
                     ctx.TrendDirection == TradeDirection.Long
-                        ? ctx.BarsSinceHighBreak_M5
-                        : ctx.BarsSinceLowBreak_M5;
+                    ? ctx.BarsSinceHighBreak_M5
+                    : ctx.BarsSinceLowBreak_M5;
 
-                if (barsSinceBreak > 2)
-                    return Invalid(ctx, $"ASIA_LATE_CONT({barsSinceBreak})", score);
+                if (asiaBarsSinceBreak > 2)
+                    return Invalid(ctx, $"ASIA_LATE_CONT({asiaBarsSinceBreak})", score);
 
                 // HTF transition + Asia = dangerous continuation
                 if (ctx.FxHtfAllowedDirection == TradeDirection.None &&
