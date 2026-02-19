@@ -36,6 +36,20 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 return Block(ctx, "CRYPTO_PULLBACK_NO_TREND", score);
             }
+    
+            // =========================
+            // BIAS ALIGNMENT GUARD (ANTI COUNTER-BIAS PULLBACK)
+            // =========================
+            if (ctx.LogicBiasDirection != TradeDirection.None &&
+                ctx.LogicBiasDirection != dir &&
+                ctx.LogicConfidence >= 55)
+            {
+                score -= 10;
+
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][SOFT] BIAS_CONFLICT penalty=10 bias={ctx.LogicBiasDirection} dir={dir}"
+                );
+            }
 
             // =========================
             // EMA RECLAIM
@@ -67,6 +81,18 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
+            // LOW VOL + WEAK IMPULSE BLOCK
+            // =========================
+            if (!ctx.IsVolatilityAcceptable_Crypto &&
+                !ctx.HasStrongImpulse_M5)
+            {
+                return Block(ctx,
+                    "CRYPTO_PULLBACK_LOW_VOL_WEAK_IMPULSE",
+                    score,
+                    dir);
+            }
+
+            // =========================
             // PULLBACK TOO DEEP HARD
             // =========================
             if (ctx.PullbackDepthAtr_M5 > 1.8)
@@ -83,6 +109,19 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (trendFatigue)
                 score -= 10;
+
+            // =========================
+            // ADX ROLL OVER CONTINUATION BLOCK
+            // =========================
+            if (ctx.Adx_M5 >= 35 &&
+                ctx.AdxSlope_M5 <= 0 &&
+                !ctx.IsAtrExpanding_M5)
+            {
+                return Block(ctx,
+                    "CRYPTO_PULLBACK_ADX_ROLL_OVER",
+                    score,
+                    dir);
+            }
 
             // =========================
             // REQUIRE IMPULSE HARD
@@ -147,6 +186,23 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01);
                 score -= htfPenalty;
+            }
+
+            // =========================
+            // HTF TRANSITION STRICT FILTER
+            // =========================
+            if (ctx.CryptoHtfAllowedDirection == TradeDirection.None &&
+                ctx.CryptoHtfState == CryptoHtfState.Transition)
+            {
+                if (!validPullbackReaction || ctx.BarsSinceImpulse_M5 > 4)
+                {
+                    return Block(ctx,
+                        "CRYPTO_PULLBACK_TRANSITION_STRICT",
+                        score,
+                        dir);
+                }
+
+                score -= 4;
             }
 
             // =========================
