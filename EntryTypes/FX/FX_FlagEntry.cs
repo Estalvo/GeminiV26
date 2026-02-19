@@ -109,10 +109,16 @@ namespace GeminiV26.EntryTypes.FX
             {
                 bool noEnergy = !ctx.IsAtrExpanding_M5;
 
-                if (adxNow >= 38.0 && adxSlopeNow <= 0.0 && noEnergy)
+                // Csak continuation esetén vizsgáljuk
+                bool isContinuation = !breakout && !hasM1Confirmation;
+
+                if (isContinuation &&
+                    adxNow >= 38.0 &&
+                    adxSlopeNow <= 0.0 &&
+                    noEnergy)
                 {
                     return Invalid(ctx,
-                        $"ADX_ROLL_OVER adx={adxNow:F1} slope={adxSlopeNow:F3} atrExp={ctx.IsAtrExpanding_M5}",
+                        $"ADX_ROLL_OVER_CONT adx={adxNow:F1} slope={adxSlopeNow:F3}",
                         score);
                 }
             }
@@ -380,6 +386,18 @@ namespace GeminiV26.EntryTypes.FX
              HasM1PullbackConfirm(ctx);
 
             // =====================================================
+            // LONDON HTF TRANSITION SWEEP GUARD
+            // =====================================================
+            if (ctx.Session == FxSession.London &&
+                htfTransitionZone &&
+                !breakout &&
+                !hasM1Confirmation)
+            {
+                score -= 6;
+                minBoost += 2;
+            }
+
+            // =====================================================
             // NY + HTF TRANSITION GUARD (must have breakout OR M1 confirmation)
             // =====================================================
             if (ctx.Session == FxSession.NewYork && htfTransitionZone && !breakout && !hasM1Confirmation)
@@ -467,9 +485,14 @@ namespace GeminiV26.EntryTypes.FX
                     score -= 2;
             }
 
-            if (!breakout && !hasM1Confirmation && !softM1 && ctx.Session != FxSession.NewYork)
+            if (!breakout && !hasM1Confirmation && !softM1)
             {
-                score -= 4;
+                if (ctx.Session == FxSession.Asia)
+                    score -= 5;
+                else if (ctx.Session == FxSession.London)
+                    score -= 3;
+                else
+                    score -= 4;
             }
 
             if (softM1 && !hasM1Confirmation)
