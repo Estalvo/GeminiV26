@@ -376,25 +376,38 @@ namespace GeminiV26.EntryTypes.FX
 
 
             // =====================================================
-            // GLOBAL ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
+            // GLOBAL ADX EXHAUSTION GUARD – v2 (SOFT & SMART)
             // =====================================================
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
             {
-                bool noEnergy = !ctx.IsAtrExpanding_M5;
-
-                // Csak continuation esetén vizsgáljuk
                 bool isContinuation = !breakout && !hasM1Confirmation;
 
-                if (isContinuation &&
-                    adxNow >= 38.0 &&
-                    adxSlopeNow <= 0.0 &&
-                    noEnergy)
+                if (isContinuation)
                 {
-                    return Invalid(ctx,
-                        $"ADX_ROLL_OVER_CONT adx={adxNow:F1} slope={adxSlopeNow:F3}",
-                        score);
+                    bool veryHighAdx = adxNow >= 45.0;
+                    bool rollingHard  = adxSlopeNow <= -2.0;
+                    bool noEnergy     = !ctx.IsAtrExpanding_M5;
+                    bool lateStructure =
+                        (ctx.TrendDirection == TradeDirection.Long
+                            ? ctx.BarsSinceHighBreak_M5
+                            : ctx.BarsSinceLowBreak_M5) > 3;
+
+                    // HARD BLOCK csak akkor, ha MINDEN exhaustion jel fennáll
+                    if (veryHighAdx && rollingHard && noEnergy && lateStructure)
+                    {
+                        return Invalid(ctx,
+                            $"ADX_EXHAUSTION_BLOCK adx={adxNow:F1} slope={adxSlopeNow:F2}",
+                            score);
+                    }
+
+                    // SOFT PENALTY ha csak részben exhaustion
+                    if (adxNow >= 42.0 && adxSlopeNow <= -1.0)
+                    {
+                        score -= 4;
+                        minBoost += 1;
+                    }
                 }
             }
 

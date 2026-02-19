@@ -24,9 +24,9 @@ namespace GeminiV26.Instruments.US30
         private const double RiskHigh = 0.45;
         private const double RiskMax = 0.55;
 
-        private const double SlBase = 2.0;
-        private const double SlWide = 2.4;
-        private const double SlTight = 1.8;
+        private const double SlBase = 2.4;
+        private const double SlWide = 2.8;
+        private const double SlTight = 2.1;
 
         // =========================
         // RISK %
