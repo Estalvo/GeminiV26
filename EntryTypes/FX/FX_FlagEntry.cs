@@ -101,16 +101,18 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // =====================================================
-            // ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
+            // GLOBAL ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
             // =====================================================
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
             {
-                if (adxNow > 35.0 && adxSlopeNow <= 0.0)
+                bool noEnergy = !ctx.IsAtrExpanding_M5;
+
+                if (adxNow >= 38.0 && adxSlopeNow <= 0.0 && noEnergy)
                 {
                     return Invalid(ctx,
-                        $"ADX_ROLL_OVER adx={adxNow:F1} slope={adxSlopeNow:F3}",
+                        $"ADX_ROLL_OVER adx={adxNow:F1} slope={adxSlopeNow:F3} atrExp={ctx.IsAtrExpanding_M5}",
                         score);
                 }
             }
