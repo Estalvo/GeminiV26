@@ -100,6 +100,21 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
+            // =====================================================
+            // ADX ROLL OVER BLOCK (ANTI CLIMAX REVERSAL)
+            // =====================================================
+            if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
+                (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
+                TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
+            {
+                if (adxNow > 35.0 && adxSlopeNow <= 0.0)
+                {
+                    return Invalid(ctx,
+                        $"ADX_ROLL_OVER adx={adxNow:F1} slope={adxSlopeNow:F3}",
+                        score);
+                }
+            }
+
             // --- HTF TRANSITION hardening (allow=None / transition zone) ---
             // We don't delete your existing min relax; we add a boost so transition doesn't auto-pass.
             bool htfTransitionZone =
@@ -128,6 +143,34 @@ namespace GeminiV26.EntryTypes.FX
                 // discourage first-spike continuation entries; still allow breakout+confirm later
                 score -= 3;
                 minBoost += 2;
+            }
+
+            // =====================================================
+            // ASIA CONTINUATION HARD FILTER (ANTI LATE GRIND)
+            // =====================================================
+            if (ctx.Session == FxSession.Asia)
+            {
+                // Low volatility continuation = trap
+                if (ctx.IsRange_M5 == false && ctx.IsAtrExpanding_M5 == false)
+                    return Invalid(ctx, "ASIA_NO_ATR_EXPANSION", score);
+
+                // Late continuation (structure already old)
+                int barsSinceBreak =
+                    ctx.TrendDirection == TradeDirection.Long
+                        ? ctx.BarsSinceHighBreak_M5
+                        : ctx.BarsSinceLowBreak_M5;
+
+                if (barsSinceBreak > 2)
+                    return Invalid(ctx, $"ASIA_LATE_CONT({barsSinceBreak})", score);
+
+                // HTF transition + Asia = dangerous continuation
+                if (ctx.FxHtfAllowedDirection == TradeDirection.None &&
+                    ctx.FxHtfConfidence01 >= 0.50)
+                {
+                    return Invalid(ctx,
+                        $"ASIA_HTF_TRANSITION_BLOCK conf={ctx.FxHtfConfidence01:F2}",
+                        score);
+                }
             }
 
             // =====================================================
