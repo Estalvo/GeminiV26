@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
@@ -10,10 +9,11 @@ namespace GeminiV26.Instruments.US30
     public class Us30ExitManager
     {
         private readonly Robot _bot;
-        private readonly Dictionary<long, PositionContext> _contexts = new();
 
-        // ===== TUNING =====
+        private readonly Dictionary<long, PositionContext> _contexts = new();
+                
         private const double BeOffsetR = 0.05;
+        private const double MinTrailImprovePips = 15;
 
         private const double TrailTight = 1.2;
         private const double TrailNormal = 1.6;
@@ -21,10 +21,6 @@ namespace GeminiV26.Instruments.US30
 
         private const int AtrPeriod = 14;
         private readonly AverageTrueRange _atrM5;
-
-        // Indexhez: ne legyen túl “ideges”
-        private const double MinImproveAtrFrac = 0.05;     // 5% ATR
-        private const double MinImprovePipsFrac = 0.5;     // 0.5 pip
 
         public Us30ExitManager(Robot bot)
         {
@@ -37,80 +33,68 @@ namespace GeminiV26.Instruments.US30
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
-        // =====================================================
-        // TICK-LEVEL LIFECYCLE (FX-SZERŰ)
-        // =====================================================
         public void OnTick()
         {
-            foreach (var ctx in _contexts.Values)
+            foreach (var pos in _bot.Positions)
             {
-                var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
-                if (pos == null || !pos.StopLoss.HasValue)
+                if (pos.SymbolName != _bot.SymbolName)
                     continue;
 
-                double rDist = Math.Abs(ctx.EntryPrice - pos.StopLoss.Value);
-                if (rDist <= 0)
-                    continue;
-
-                // =========================
-                // TP1 ELŐTT
-                // =========================
-                if (!ctx.Tp1Hit)
-                {
-                    // ---- TP1 CHECK (TICKEN!) ----
-                    if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
-                    {
-                        ExecuteTp1(pos, ctx);
-                        MoveToBreakEven(pos, ctx, rDist);
-
-                        ctx.Tp1Hit = true;
-
-                        // Trailing mód – maradjon kompatibilis a meglévő policy-vel
-                        if (ctx.TrailingMode == TrailingMode.None)
-                            ctx.TrailingMode = TrailingMode.Normal;
-
-                        continue;
-                    }
-
-                    // nincs TP1 → nincs trailing
-                    continue;
-                }
-
-                // =========================
-                // TP1 UTÁN: TRAILING
-                // =========================
-                if (ctx.TrailingMode != TrailingMode.None)
-                {
-                    ApplyTrailing(pos, ctx);
-                }
+                // szándékosan üres – tick exit később
             }
         }
 
-        // Bar hook maradhat, de nem kötelező
+        // Bar-level exit handling (TradeCore compatibility)
         public void OnBar(Position pos)
         {
-            // szándékosan üres vagy későbbi TVM-hez használható
+            Manage(pos);
         }
 
-        // =====================================================
-        // TP1 CHECK
-        // =====================================================
-        private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
+
+        public void Manage(Position pos)
         {
-            if (tp1R <= 0) return false;
+            long key = Convert.ToInt64(pos.Id);
 
-            double tp1Price = ctxPrice(pos) + Direction(pos) * rDist * tp1R;
+            if (!_contexts.TryGetValue(key, out var ctx))
+                return;
 
-            return pos.TradeType == TradeType.Buy
-                ? _bot.Symbol.Bid >= tp1Price
-                : _bot.Symbol.Ask <= tp1Price;
+            if (!pos.StopLoss.HasValue)
+                return;
 
-            double ctxPrice(Position p) => p.EntryPrice;
+            double stopLoss = pos.StopLoss.Value;
+
+            double rDist = Math.Abs(ctx.EntryPrice - stopLoss);
+            if (rDist <= 0)
+                return;
+
+            if (!ctx.Tp1Hit)
+            {
+                double tp1R = ctx.Tp1R;
+                if (tp1R <= 0)
+                    return;
+
+                double tp1Price =
+                    ctx.EntryPrice + Direction(pos) * rDist * tp1R;
+
+                bool reached =
+                    (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
+                    (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+
+                if (reached)
+                {
+                    ExecuteTp1(pos, ctx);
+                    MoveToBreakEven(pos, ctx, rDist);
+                    ctx.Tp1Hit = true;
+                    return;
+                }
+            }
+
+            if (ctx.Tp1Hit && ctx.TrailingMode != TrailingMode.None)
+            {
+                ApplyTrailing(pos, ctx);
+            }
         }
 
-        // =====================================================
-        // TP1 EXECUTION
-        // =====================================================
         private void ExecuteTp1(Position pos, PositionContext ctx)
         {
             double frac = ctx.Tp1CloseFraction;
@@ -136,19 +120,12 @@ namespace GeminiV26.Instruments.US30
 
             _bot.ClosePosition(pos, closeUnits);
 
-            ctx.Tp1ClosedVolumeInUnits = closeUnits;
-            ctx.RemainingVolumeInUnits = pos.VolumeInUnits - closeUnits;
+            ctx.Tp1ClosedVolumeInUnits = (double)closeUnits;
+            ctx.RemainingVolumeInUnits = (double)(pos.VolumeInUnits - closeUnits);
         }
 
-        // =====================================================
-        // BREAK EVEN
-        // =====================================================
         private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist)
         {
-            // ne fusson újra
-            if (ctx.BePrice > 0)
-                return;
-
             double bePrice = ctx.EntryPrice + Direction(pos) * rDist * BeOffsetR;
 
             bool improve =
@@ -164,9 +141,6 @@ namespace GeminiV26.Instruments.US30
             ctx.BeMode = BeMode.AfterTp1;
         }
 
-        // =====================================================
-        // TRAILING (FX-SZERŰ, INDEX TUNING)
-        // =====================================================
         private void ApplyTrailing(Position pos, PositionContext ctx)
         {
             double atr = _atrM5.Result.LastValue;
@@ -181,7 +155,6 @@ namespace GeminiV26.Instruments.US30
                     ? _bot.Symbol.Bid - trailDist
                     : _bot.Symbol.Ask + trailDist;
 
-            // BE floor
             if (ctx.BePrice > 0)
             {
                 desiredSl = pos.TradeType == TradeType.Buy
@@ -189,11 +162,7 @@ namespace GeminiV26.Instruments.US30
                     : Math.Min(desiredSl, ctx.BePrice);
             }
 
-            // Min improve: ATR + pip guard
-            double minImprove = Math.Max(
-                _bot.Symbol.PipSize * MinImprovePipsFrac,
-                atr * MinImproveAtrFrac
-            );
+            double minImprove = _bot.Symbol.PipSize * MinTrailImprovePips;
 
             bool improve =
                 (pos.TradeType == TradeType.Buy && desiredSl > pos.StopLoss.Value + minImprove) ||
