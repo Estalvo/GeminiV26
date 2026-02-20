@@ -48,10 +48,38 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "RANGE_NO_FLAG");
 
             // ===== CONTEXT =====
-            var bars = ctx.M5;
-            int lastClosed = bars.Count - 2;
-            int flagEnd = lastClosed - 1;
-            int flagStart = flagEnd - FlagBars + 1;
+            int bestFlagStart = -1;
+            double bestRange = double.MaxValue;
+
+            for (int len = MinFlagBars; len <= MaxFlagBars; len++)
+            {
+                int start = flagEnd - len + 1;
+                if (start < 2)
+                    continue;
+
+                double hiTmp = double.MinValue;
+                double loTmp = double.MaxValue;
+
+                for (int i = start; i <= flagEnd; i++)
+                {
+                    hiTmp = Math.Max(hiTmp, bars[i].High);
+                    loTmp = Math.Min(loTmp, bars[i].Low);
+                }
+
+                double r = hiTmp - loTmp;
+
+                if (r < bestRange)
+                {
+                    bestRange = r;
+                    bestFlagStart = start;
+                }
+            }
+
+if (bestFlagStart < 0)
+    return Invalid(ctx, "NO_VALID_FLAG_WINDOW");
+
+int flagStart = bestFlagStart;
+double range = bestRange;
 
             if (flagStart < 2)
                 return Invalid(ctx, "NOT_ENOUGH_FLAG_BARS");
