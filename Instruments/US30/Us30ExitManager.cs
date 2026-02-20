@@ -61,15 +61,14 @@ namespace GeminiV26.Instruments.US30
 
                 if (!ctx.Tp1Hit)
                 {
-                    // ===== SAFE TP1R FALLBACK =====
-                    double tp1R = ctx.Tp1R > 0 ? ctx.Tp1R : 0.5;   // <<< FONTOS
+                    double tp1R = ctx.Tp1R > 0 ? ctx.Tp1R : 0.5;
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
 
-                    if (CheckTp1Hit(pos, sym, rDist, tp1R))
+                    if (CheckTp1Hit(pos, rDist, tp1R))
                     {
-                        ExecuteTp1(pos, ctx, sym);
-                        MoveToBreakEven(pos, ctx, rDist, sym);
+                        ExecuteTp1(pos, ctx);
+                        MoveToBreakEven(pos, ctx, rDist);
 
                         ctx.Tp1Hit = true;
 
@@ -81,10 +80,9 @@ namespace GeminiV26.Instruments.US30
 
                     continue;
                 }
-
                 if (ctx.TrailingMode != TrailingMode.None)
                 {
-                    ApplyTrailing(pos, ctx, sym);
+                    ApplyTrailing(pos, ctx);
                 }
             }
         }
