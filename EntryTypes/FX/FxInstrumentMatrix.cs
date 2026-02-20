@@ -72,7 +72,12 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.4,
+                        maxContinuationBarsSinceBreak: 3,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["GBPUSD"] = Build(
@@ -137,7 +142,12 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.7,
+                        maxContinuationBarsSinceBreak: 4,
+                        requireHtfAlignmentForContinuation: false,
+                        allowContinuationDuringHtfTransition: true
                 ),
 
                 ["USDJPY"] = Build(
@@ -206,7 +216,12 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true,
                         RequireAtrSlopePositive = true,
                         RequireStrongEntryCandle = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.5,
+                        maxContinuationBarsSinceBreak: 3,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["GBPJPY"] = Build(
@@ -273,7 +288,12 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.8,
+                        maxContinuationBarsSinceBreak: 5,
+                        requireHtfAlignmentForContinuation: false,
+                        allowContinuationDuringHtfTransition: true
                 ),
 
                 ["EURJPY"] = Build(
@@ -343,7 +363,12 @@ namespace GeminiV26.Instruments.FX
                     AtrExpansionHardBlock = true,
                     RequireAtrSlopePositive = true,
                     RequireStrongEntryCandle = true
-                }
+                },
+                // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.6,
+                        maxContinuationBarsSinceBreak: 3,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
             ),
                 ["AUDUSD"] = Build(
                     "AUDUSD",
@@ -414,7 +439,12 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true,
                         RequireAtrSlopePositive = true,
                         RequireStrongEntryCandle = false
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.3,
+                        maxContinuationBarsSinceBreak: 2,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["NZDUSD"] = Build(
@@ -481,7 +511,12 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.3,
+                        maxContinuationBarsSinceBreak: 2,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["AUDNZD"] = Build(
@@ -548,7 +583,12 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.2,
+                        maxContinuationBarsSinceBreak: 2,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["USDCAD"] = Build(
@@ -619,7 +659,12 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true,
                         RequireAtrSlopePositive = true,
                         RequireStrongEntryCandle = true // ÚJ: Itt is kötelező
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.6,
+                        maxContinuationBarsSinceBreak: 4,
+                        requireHtfAlignmentForContinuation: false,
+                        allowContinuationDuringHtfTransition: true
                 ),
 
                 ["USDCHF"] = Build(
@@ -690,7 +735,12 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true,
                         RequireAtrSlopePositive = true,
                         RequireStrongEntryCandle = true
-                    }
+                    },
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.3,
+                        maxContinuationBarsSinceBreak: 3,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
             };
 
@@ -714,34 +764,63 @@ namespace GeminiV26.Instruments.FX
             Dictionary<FxSession, int> sessionScore,
             FxFlagSessionTuning asia,
             FxFlagSessionTuning london,
-            FxFlagSessionTuning ny)
+            FxFlagSessionTuning ny,
+
+            // ==================================================
+            // CONTINUATION CHARACTER (instrument-level override)
+            // ==================================================
+            double maxContinuationRatr = 1.5,
+            int maxContinuationBarsSinceBreak = 4,
+            bool requireHtfAlignmentForContinuation = false,
+            bool allowContinuationDuringHtfTransition = true
+        )
         {
             return new FxInstrumentProfile
             {
+                // ===== BASIC =====
                 Symbol = symbol,
                 Volatility = vol,
                 SessionBias = bias,
                 PullbackStyle = pb,
+
+                // ===== DAILY =====
                 TypicalAdrPips = adr,
+
+                // ===== IMPULSE =====
                 MinImpulseAtr = minImpulse,
                 MaxWickRatio = maxWick,
+
+                // ===== SESSION =====
                 AllowAsianSession = allowAsia,
                 MeanReversionFriendly = meanRev,
+
+                // ===== ENTRY SCALING =====
                 ImpulseAtrMult_M5 = atrM5,
                 ImpulseAtrMult_M1 = atrM1,
                 MaxFlagAtrMult = maxFlagAtr,
                 MinAdxTrend = minAdx,
                 MinAtrPips = minAtr,
+
+                // ===== SESSION SCORE =====
                 SessionScoreDelta = sessionScore,
+
+                // ===== FLAG TUNING =====
                 FlagTuning = new()
                 {
                     [FxSession.Asia] = asia,
                     [FxSession.London] = london,
                     [FxSession.NewYork] = ny
-                }
+                },
+
+                // ==================================================
+                // CONTINUATION CHARACTER (NOW MATRIX-DRIVEN)
+                // ==================================================
+                MaxContinuationRatr = maxContinuationRatr,
+                MaxContinuationBarsSinceBreak = maxContinuationBarsSinceBreak,
+                RequireHtfAlignmentForContinuation = requireHtfAlignmentForContinuation,
+                AllowContinuationDuringHtfTransition = allowContinuationDuringHtfTransition
             };
         }
-
         public static FxInstrumentProfile Get(string symbol)
         {
             if (_map.TryGetValue(symbol, out var profile))

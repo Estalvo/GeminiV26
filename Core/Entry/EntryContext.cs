@@ -155,6 +155,7 @@ namespace GeminiV26.Core.Entry
         public TradeDirection FxHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double FxHtfConfidence01 { get; set; } = 0.0;
         public string FxHtfReason { get; set; }
+        public double TotalMoveSinceBreakAtr { get; set; }
 
         // ===== CRYPTO HTF bias (lightweight) =====
         public TradeDirection CryptoHtfAllowedDirection { get; set; } = TradeDirection.None;

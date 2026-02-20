@@ -168,6 +168,17 @@ namespace GeminiV26.Instruments.FX
         public int PbNyFlagPriorityPenalty { get; init; } = 10;
 
         // ==================================================
+        // ===== CONTINUATION CHARACTER (Instrument-level)
+        // ==================================================
+        public double MaxContinuationRatr { get; init; } = 1.4;
+
+        public int MaxContinuationBarsSinceBreak { get; init; } = 3;
+
+        public bool RequireHtfAlignmentForContinuation { get; init; } = true;
+
+        public bool AllowContinuationDuringHtfTransition { get; init; } = false;
+
+        // ==================================================
         // ===== PULLBACK – False-Continuation / Viability filter (matrix-driven)
         // Goal: block low-MFE + stagnation + micro-structure degradation BEFORE TP1
         // without killing good continuation / winners.
