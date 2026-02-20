@@ -376,6 +376,10 @@ namespace GeminiV26.EntryTypes.FX
              HasM1PullbackConfirm(ctx);
 
             bool isContinuation = !breakout && !hasM1Confirmation;
+            int barsSinceBreak =
+                ctx.TrendDirection == TradeDirection.Long
+                    ? ctx.BarsSinceHighBreak_M5
+                    : ctx.BarsSinceLowBreak_M5;
 
             // =====================================================
             // LONDON HTF TRANSITION SWEEP GUARD
@@ -485,11 +489,6 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (!breakout && !hasM1Confirmation)
             {
-                int barsSinceBreak =
-                    ctx.TrendDirection == TradeDirection.Long
-                        ? ctx.BarsSinceHighBreak_M5
-                        : ctx.BarsSinceLowBreak_M5;
-
                 // --- 1️⃣ TOO LATE STRUCTURE ---
                 if (barsSinceBreak > fx.MaxContinuationBarsSinceBreak)
                     return Invalid(ctx, $"CONT_TOO_LATE({barsSinceBreak})", score);
