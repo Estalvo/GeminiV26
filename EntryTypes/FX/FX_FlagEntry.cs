@@ -375,6 +375,8 @@ namespace GeminiV26.EntryTypes.FX
              HasM1FollowThrough(ctx) ||
              HasM1PullbackConfirm(ctx);
 
+            bool isContinuation = !breakout && !hasM1Confirmation;
+
             // =====================================================
             // LONDON HTF TRANSITION SWEEP GUARD
             // =====================================================
@@ -394,9 +396,7 @@ namespace GeminiV26.EntryTypes.FX
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
-            {
-                bool isContinuation = !breakout && !hasM1Confirmation;
-
+            {                
                 if (isContinuation)
                 {
                     bool veryHighAdx = adxNow >= 45.0;
@@ -517,14 +517,9 @@ namespace GeminiV26.EntryTypes.FX
             // STRUCTURE FRESHNESS GUARD (ANTI MULTI-ENTRY)
             // =====================================================
 
-            int barsSinceBreak =
-                ctx.TrendDirection == TradeDirection.Long
-                    ? ctx.BarsSinceHighBreak_M5
-                    : ctx.BarsSinceLowBreak_M5;
-
-            // ha már túl sok gyertya eltelt a struktúra törés óta,
-            // és nincs friss breakout, akkor late continuation
-            if (barsSinceBreak > 3 && !breakout && !hasM1Confirmation)
+            // ✅ itt már NEM deklarálunk újra barsSinceBreak-et
+            // (már megvan a continuation filter blokkban)
+            if (barsSinceBreak > 3 && isContinuation)
             {
                 score -= 3;
 
@@ -535,8 +530,6 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // 4A. SESSION-AWARE CONTINUATION SCORING (FX CLEAN)
             // =====================================================
-
-            bool isContinuation = !breakout && !hasM1Confirmation;
 
             if (isContinuation)
             {
