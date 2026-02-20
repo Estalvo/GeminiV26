@@ -48,46 +48,47 @@ namespace GeminiV26.Instruments.US30
                 if (pos == null || !pos.StopLoss.HasValue)
                     continue;
 
-                double rDist = Math.Abs(ctx.EntryPrice - pos.StopLoss.Value);
+                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                if (sym == null)
+                    continue;
+
+                double rDist = ctx.RiskPriceDistance > 0
+                    ? ctx.RiskPriceDistance
+                    : Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
+
                 if (rDist <= 0)
                     continue;
 
-                // =========================
-                // TP1 ELŐTT
-                // =========================
                 if (!ctx.Tp1Hit)
                 {
-                    // ---- TP1 CHECK (TICKEN!) ----
-                    if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
+                    // ===== SAFE TP1R FALLBACK =====
+                    double tp1R = ctx.Tp1R > 0 ? ctx.Tp1R : 0.5;   // <<< FONTOS
+                    if (ctx.Tp1R <= 0)
+                        ctx.Tp1R = tp1R;
+
+                    if (CheckTp1Hit(pos, sym, rDist, tp1R))
                     {
-                        ExecuteTp1(pos, ctx);
-                        MoveToBreakEven(pos, ctx, rDist);
+                        ExecuteTp1(pos, ctx, sym);
+                        MoveToBreakEven(pos, ctx, rDist, sym);
 
                         ctx.Tp1Hit = true;
 
-                        // Trailing mód – maradjon kompatibilis a meglévő policy-vel
                         if (ctx.TrailingMode == TrailingMode.None)
                             ctx.TrailingMode = TrailingMode.Normal;
 
                         continue;
                     }
 
-                    // nincs TP1 → nincs trailing
                     continue;
                 }
 
-                // =========================
-                // TP1 UTÁN: TRAILING
-                // =========================
                 if (ctx.TrailingMode != TrailingMode.None)
                 {
-                    ApplyTrailing(pos, ctx);
+                    ApplyTrailing(pos, ctx, sym);
                 }
             }
         }
-
-        // Bar hook maradhat, de nem kötelező
-        public void OnBar(Position pos)
+                public void OnBar(Position pos)
         {
             // szándékosan üres vagy későbbi TVM-hez használható
         }
@@ -95,41 +96,43 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // TP1 CHECK
         // =====================================================
-        private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
+        private bool CheckTp1Hit(Position pos, Symbol sym, double rDist, double tp1R)
         {
-            if (tp1R <= 0) return false;
+            double tp1Price = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + rDist * tp1R
+                : pos.EntryPrice - rDist * tp1R;
 
-            double tp1Price = ctxPrice(pos) + Direction(pos) * rDist * tp1R;
+            double priceNow = pos.TradeType == TradeType.Buy
+                ? sym.Bid
+                : sym.Ask;
 
             return pos.TradeType == TradeType.Buy
-                ? _bot.Symbol.Bid >= tp1Price
-                : _bot.Symbol.Ask <= tp1Price;
-
-            double ctxPrice(Position p) => p.EntryPrice;
+                ? priceNow >= tp1Price
+                : priceNow <= tp1Price;
         }
 
         // =====================================================
         // TP1 EXECUTION
         // =====================================================
-        private void ExecuteTp1(Position pos, PositionContext ctx)
+        private void ExecuteTp1(Position pos, PositionContext ctx, Symbol sym)
         {
-            double frac = ctx.Tp1CloseFraction;
-            if (frac <= 0 || frac >= 1)
-                frac = 0.5;
+            double frac = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
+                ? ctx.Tp1CloseFraction
+                : 0.5;
 
-            long minUnits = Convert.ToInt64(_bot.Symbol.VolumeInUnitsMin);
+            long minUnits = (long)sym.VolumeInUnitsMin;
 
             long targetUnits = (long)Math.Floor(pos.VolumeInUnits * frac);
             if (targetUnits <= 0)
                 return;
 
-            long closeUnits = Convert.ToInt64(_bot.Symbol.NormalizeVolumeInUnits(targetUnits));
+            long closeUnits = (long)sym.NormalizeVolumeInUnits(targetUnits);
 
             if (closeUnits < minUnits)
                 return;
 
-            if (closeUnits >= Convert.ToInt64(pos.VolumeInUnits))
-                closeUnits = Convert.ToInt64(pos.VolumeInUnits - minUnits);
+            if (closeUnits >= pos.VolumeInUnits)
+                closeUnits = (long)(pos.VolumeInUnits - minUnits);
 
             if (closeUnits <= 0)
                 return;
@@ -143,13 +146,14 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // BREAK EVEN
         // =====================================================
-        private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist)
+        private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist, Symbol sym)
         {
-            // ne fusson újra
             if (ctx.BePrice > 0)
                 return;
 
-            double bePrice = ctx.EntryPrice + Direction(pos) * rDist * BeOffsetR;
+            double bePrice = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + rDist * BeOffsetR
+                : pos.EntryPrice - rDist * BeOffsetR;
 
             bool improve =
                 (pos.TradeType == TradeType.Buy && bePrice > pos.StopLoss.Value) ||
@@ -167,7 +171,7 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // TRAILING (FX-SZERŰ, INDEX TUNING)
         // =====================================================
-        private void ApplyTrailing(Position pos, PositionContext ctx)
+        private void ApplyTrailing(Position pos, PositionContext ctx, Symbol sym)
         {
             double atr = _atrM5.Result.LastValue;
             if (atr <= 0)
@@ -178,10 +182,9 @@ namespace GeminiV26.Instruments.US30
 
             double desiredSl =
                 pos.TradeType == TradeType.Buy
-                    ? _bot.Symbol.Bid - trailDist
-                    : _bot.Symbol.Ask + trailDist;
+                    ? sym.Bid - trailDist
+                    : sym.Ask + trailDist;
 
-            // BE floor
             if (ctx.BePrice > 0)
             {
                 desiredSl = pos.TradeType == TradeType.Buy
@@ -189,9 +192,8 @@ namespace GeminiV26.Instruments.US30
                     : Math.Min(desiredSl, ctx.BePrice);
             }
 
-            // Min improve: ATR + pip guard
             double minImprove = Math.Max(
-                _bot.Symbol.PipSize * MinImprovePipsFrac,
+                sym.PipSize * MinImprovePipsFrac,
                 atr * MinImproveAtrFrac
             );
 
