@@ -137,6 +137,43 @@ namespace GeminiV26.EntryTypes.Crypto
                 score -= 10;
 
             // =========================
+            // LATE IMPULSE / EXPANSION EXHAUSTION BLOCK
+            // =========================
+
+            // 1️⃣ Többlépcsős impulzus detektálás
+            bool lateImpulseStructure =
+                ctx.HasImpulse_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 2 &&
+                ctx.Adx_M5 >= 28;
+
+            // 2️⃣ ADX már nem gyorsul
+            bool adxStalling =
+                ctx.Adx_M5 >= 28 &&
+                ctx.AdxSlope_M5 <= 0.5;   // nem nő érdemben
+
+            // 3️⃣ ATR nem tágul már
+            bool atrNotExpanding =
+                !ctx.IsAtrExpanding_M5 ||
+                ctx.AtrSlope_M5 <= 0;
+
+            // 4️⃣ Pullback valójában continuation (nincs valódi lassulás)
+            bool noRealPullback =
+                !ctx.IsPullbackDecelerating_M5 &&
+                !ctx.HasReactionCandle_M5;
+
+            // === HARD BLOCK ===
+            if (lateImpulseStructure &&
+                adxStalling &&
+                atrNotExpanding &&
+                noRealPullback)
+            {
+                return Block(ctx,
+                    "CRYPTO_PULLBACK_LATE_IMPULSE_EXHAUSTION",
+                    score,
+                    dir);
+            }
+            
+            // =========================
             // ADX ROLL OVER CONTINUATION BLOCK
             // =========================
             bool continuation =
