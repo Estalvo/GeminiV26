@@ -29,6 +29,18 @@ namespace GeminiV26.Core
             if (risk <= 0)
                 return false;
 
+            bool isFx =
+                pos.SymbolName == "EURUSD" ||
+                pos.SymbolName == "GBPUSD" ||
+                pos.SymbolName == "USDJPY" ||
+                pos.SymbolName == "AUDNZD" ||
+                pos.SymbolName == "AUDUSD" ||
+                pos.SymbolName == "NZDUSD" ||
+                pos.SymbolName == "USDCHF" ||
+                pos.SymbolName == "USDCAD" ||
+                pos.SymbolName == "EURJPY" ||
+                pos.SymbolName == "GBPJPY";
+
             // =====================================================
             // 1️⃣ UPDATE MFE / MAE (core state)
             // =====================================================
@@ -59,14 +71,22 @@ namespace GeminiV26.Core
             // =====================================================
 
             // nincs valódi progress
-            bool noProgress = ctx.MfeR < 0.20;
+            bool noProgress =
+                isFx
+                    ? ctx.MfeR < 0.10
+                    : ctx.MfeR < 0.20;
 
             // jelentős ellenirányú mozgás
             bool adverseGrowing = ctx.MaeR > 0.35;
 
             // időablak (legalább 3 M5 bar)
+            double minutesOpen =
+                (DateTime.UtcNow - ctx.EntryTime).TotalMinutes;
+
             bool enoughTime =
-                (DateTime.UtcNow - ctx.EntryTime).TotalMinutes >= 15;
+                isFx
+                    ? minutesOpen >= 25   // FX: 5 bar
+                    : minutesOpen >= 15;  // index, crypto, metal
 
             // visszajött entry közelébe
             bool backToEntry =
@@ -102,7 +122,7 @@ namespace GeminiV26.Core
             // -----------------------------------------------------
 
             // ha teljesen dead trade: gyors kill
-            if (noProgress && adverseGrowing && enoughTime)
+            if (!isFx && noProgress && adverseGrowing && enoughTime)
             {
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "NO_PROGRESS_ADVERSE";
