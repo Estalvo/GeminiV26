@@ -181,8 +181,6 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
-            bool noFreshSignal = !m5Break && !m1;
-
             if (barsSinceBreak > 3 && noFreshSignal)
             {
                 int p = session == FxSession.NewYork ? LateBreakSoftPenalty_NewYork : LateBreakSoftPenalty_London;
