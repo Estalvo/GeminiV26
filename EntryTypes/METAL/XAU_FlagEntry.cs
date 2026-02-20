@@ -87,10 +87,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAG_FAIL", reasons);
-
-            if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAG_FAIL", reasons);
-
+            
             // ===== EARLY ENERGY CHECK (moved up for exhaustion logic) =====
             bool m5Break = BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer);
             bool m1 = ctx.M1TriggerInTrendDirection;
@@ -108,7 +105,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (exhaustionContext && IsImpulseExhaustedXau(ctx, 6, 1.4, 0.6))
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "IMPULSE_EXHAUSTED", reasons);
-                
+
             // ===============================
             // TREND FATIGUE (EXISTING)
             // ===============================
@@ -173,22 +170,7 @@ namespace GeminiV26.EntryTypes.METAL
                 score -= p;
                 reasons.Add($"FLAG_WIDE_SESSION(-{p})");
             }
-
-            // ===============================
-            // BREAKOUT / ENERGY (EXISTING)
-            // ===============================
-            bool m5Break = BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer);
-            bool m1 = ctx.M1TriggerInTrendDirection;
-            bool flagStruct = ctx.IsValidFlagStructure_M5;
-
-            bool energyOk = m5Break || m1 || ctx.IsAtrExpanding_M5;
-
-            if (!m5Break && !m1 && !flagStruct)
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "NO_BREAKOUT_SIGNAL", reasons);
-
-            if (flagStruct && !energyOk)
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAGSTRUCT_NO_ENERGY", reasons);
-
+            
             // ==========================================================
             // METAL LATE FILTER v1 – 2) LATE CONTINUATION PENALTY (ADD-ONLY)
             // ==========================================================
