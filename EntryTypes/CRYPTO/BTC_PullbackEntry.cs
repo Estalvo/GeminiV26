@@ -295,10 +295,30 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
+            // HTF DIRECTION CONFLICT BOOST
+            // =========================
+
+            int dynamicMinScore = MIN_SCORE;
+
+            bool htfConflict =
+                ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
+                ctx.CryptoHtfAllowedDirection != dir;
+
+            if (htfConflict)
+            {
+                int boost = (int)Math.Round(4 + 10 * ctx.CryptoHtfConfidence01);
+                dynamicMinScore += boost;
+
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][HTF_CONFLICT] boost={boost} newMin={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}"
+                );
+            }
+
+            // =========================
             // FINAL CHECK
             // =========================
-            if (score < MIN_SCORE)
-                return Block(ctx, $"SCORE_TOO_LOW_{score}", score, dir);
+            if (score < dynamicMinScore)
+                return Block(ctx, $"SCORE_TOO_LOW_{score}_MIN_{dynamicMinScore}", score, dir);
 
             return new EntryEvaluation
             {
