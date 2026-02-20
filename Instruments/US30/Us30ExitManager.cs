@@ -96,8 +96,12 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // TP1 CHECK
         // =====================================================
-        private bool CheckTp1Hit(Position pos, Symbol sym, double rDist, double tp1R)
+        private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return false;
+
             double tp1Price = pos.TradeType == TradeType.Buy
                 ? pos.EntryPrice + rDist * tp1R
                 : pos.EntryPrice - rDist * tp1R;
@@ -114,8 +118,12 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // TP1 EXECUTION
         // =====================================================
-        private void ExecuteTp1(Position pos, PositionContext ctx, Symbol sym)
+         private void ExecuteTp1(Position pos, PositionContext ctx)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return;
+
             double frac = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
                 ? ctx.Tp1CloseFraction
                 : 0.5;
@@ -146,8 +154,12 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // BREAK EVEN
         // =====================================================
-        private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist, Symbol sym)
+        private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return;
+
             if (ctx.BePrice > 0)
                 return;
 
@@ -167,12 +179,15 @@ namespace GeminiV26.Instruments.US30
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
         }
-
         // =====================================================
         // TRAILING (FX-SZERŰ, INDEX TUNING)
         // =====================================================
-        private void ApplyTrailing(Position pos, PositionContext ctx, Symbol sym)
+        private void ApplyTrailing(Position pos, PositionContext ctx)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return;
+
             double atr = _atrM5.Result.LastValue;
             if (atr <= 0)
                 return;
