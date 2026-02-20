@@ -9,7 +9,8 @@ namespace GeminiV26.EntryTypes.Crypto
         public EntryType Type => EntryType.Crypto_Flag;
 
         private const int MaxBarsSinceImpulse = 8;
-        private const int FlagBars = 3;
+        private const int MinFlagBars = 3;
+        private const int MaxFlagBars = 7;
         // private const double MaxFlagRangeAtr = 0.85;
         private const double BreakBufferAtr = 0.07;
         private const double MaxDistFromEmaAtr = 1.05;
@@ -34,8 +35,8 @@ namespace GeminiV26.EntryTypes.Crypto
             if (dir == TradeDirection.None)
                 return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
 
-            if (!ctx.HasImpulse_M5)
-                return Invalid(ctx, "NO_IMPULSE");
+            if (!ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 10)
+                return Invalid(ctx, "NO_RECENT_IMPULSE");
 
             if (ctx.BarsSinceImpulse_M5 > MaxBarsSinceImpulse)
                 return Invalid(ctx, "LATE_FLAG");
@@ -93,6 +94,16 @@ namespace GeminiV26.EntryTypes.Crypto
             double range = hi - lo;
             if (range > ctx.AtrM5 * profile.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE");
+
+            // =========================
+            // FLAG COMPRESSION CHECK
+            // =========================
+            bool compression =
+                ctx.AtrSlope_M5 <= 0.1 &&
+                ctx.AdxSlope_M5 <= 0.3;
+
+            if (!compression)
+                return Invalid(ctx, "FLAG_NO_COMPRESSION");
 
             double close = bars[lastClosed].Close;
             double distFromEma = Math.Abs(close - ctx.Ema21_M5);
