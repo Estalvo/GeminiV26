@@ -42,9 +42,23 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         public void OnTick()
         {
-            foreach (var ctx in _contexts.Values)
+            var keys = new List<long>(_contexts.Keys);
+
+            foreach (var key in keys)
             {
-                var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
+                if (!_contexts.TryGetValue(key, out var ctx))
+                    continue;
+
+                Position pos = null;
+                foreach (var p in _bot.Positions)
+                {
+                    if (Convert.ToInt64(p.Id) == key)
+                    {
+                        pos = p;
+                        break;
+                    }
+                }
+
                 if (pos == null || !pos.StopLoss.HasValue)
                     continue;
 
@@ -75,15 +89,13 @@ namespace GeminiV26.Instruments.US30
                         if (ctx.TrailingMode == TrailingMode.None)
                             ctx.TrailingMode = TrailingMode.Normal;
 
-                        continue;
+                        return; // <<< KRITIKUS
                     }
 
                     continue;
                 }
-                if (ctx.TrailingMode != TrailingMode.None)
-                {
-                    ApplyTrailing(pos, ctx);
-                }
+
+                ApplyTrailing(pos, ctx);
             }
         }
                 public void OnBar(Position pos)
