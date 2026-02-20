@@ -354,10 +354,23 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // 4. CONTINUATION SIGNAL
             // =====================================================
+            bool rawBreakout =
+            ctx.TrendDirection == TradeDirection.Long
+                ? lastClose > hi
+                : lastClose < lo;
+
+            // Body dominance check
+            double body = Math.Abs(lastBar.Close - lastBar.Open);
+            double range = lastBar.High - lastBar.Low;
+            bool strongBody = range > 0 && body / range >= 0.55;
+
+            // FX clean breakout
             bool breakout =
-                ctx.TrendDirection == TradeDirection.Long
-                    ? lastClose > hi
-                    : lastClose < lo;
+                rawBreakout &&
+                strongBody &&
+                ctx.IsAtrExpanding_M5 &&
+                ctx.LastClosedBarInTrendDirection;
+
             bool hasM1Confirmation =
              HasM1FollowThrough(ctx) ||
              HasM1PullbackConfirm(ctx);
@@ -468,6 +481,39 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // =====================================================
+            // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
+            // =====================================================
+            if (!breakout && !hasM1Confirmation)
+            {
+                int barsSinceBreak =
+                    ctx.TrendDirection == TradeDirection.Long
+                        ? ctx.BarsSinceHighBreak_M5
+                        : ctx.BarsSinceLowBreak_M5;
+
+                // --- 1️⃣ TOO LATE STRUCTURE ---
+                if (barsSinceBreak > fx.MaxContinuationBarsSinceBreak)
+                    return Invalid(ctx, $"CONT_TOO_LATE({barsSinceBreak})", score);
+
+                // --- 2️⃣ TOTAL MOVE STRETCH (NOT FLAG WIDTH!) ---
+                if (TryGetDouble(ctx, "TotalMoveSinceBreakAtr", out var totalMoveAtr))
+                {
+                    if (totalMoveAtr > fx.MaxContinuationRatr)
+                        return Invalid(ctx,
+                            $"CONT_STRETCHED({totalMoveAtr:F2}>{fx.MaxContinuationRatr})",
+                            score);
+                }
+
+                // --- 3️⃣ HTF TRANSITION CONTROL ---
+                if (htfTransitionZone && !fx.AllowContinuationDuringHtfTransition)
+                    return Invalid(ctx, "HTF_TRANSITION_BLOCK", score);
+
+                // --- 4️⃣ HTF ALIGNMENT REQUIREMENT ---
+                if (fx.RequireHtfAlignmentForContinuation &&
+                    ctx.FxHtfAllowedDirection != ctx.TrendDirection)
+                    return Invalid(ctx, "HTF_NOT_ALIGNED", score);
+            }
+
+            // =====================================================
             // STRUCTURE FRESHNESS GUARD (ANTI MULTI-ENTRY)
             // =====================================================
 
@@ -487,35 +533,66 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // =====================================================
-            // 4A. NEW YORK STRICT CONTINUATION RULE
+            // 4A. SESSION-AWARE CONTINUATION SCORING (FX CLEAN)
             // =====================================================
-            if (ctx.Session == FxSession.NewYork && !breakout && !hasM1Confirmation)
-            {
-                if (nyEarly)
-                    score -= 4;        // ne block, csak bünti
 
-                score -= 4;            // -8 túl sok volt
-                if (ctx.FxHtfAllowedDirection != TradeDirection.None && ctx.FxHtfConfidence01 >= 0.55)
+            bool isContinuation = !breakout && !hasM1Confirmation;
+
+            if (isContinuation)
+            {
+                // --- Session based base penalty ---
+                switch (ctx.Session)
+                {
+                    case FxSession.NewYork:
+                        score -= nyEarly ? 6 : 5;   // NY early spike veszélyesebb
+                        break;
+
+                    case FxSession.London:
+                        score -= 4;
+                        break;
+
+                    case FxSession.Asia:
+                        score -= 5;                 // Asia continuation gyengébb
+                        break;
+
+                    default:
+                        score -= 4;
+                        break;
+                }
+
+                // --- HTF conflict extra penalty ---
+                if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                    ctx.FxHtfConfidence01 >= 0.55)
+                {
                     score -= 2;
+                }
             }
 
-            if (!breakout && !hasM1Confirmation && !softM1)
+            // =====================================================
+            // SOFT M1 BONUS (csak borderline setupok)
+            // =====================================================
+
+            if (softM1 && isContinuation)
             {
-                if (ctx.Session == FxSession.Asia)
-                    score -= 5;
-                else if (ctx.Session == FxSession.London)
-                    score -= 3;
-                else
-                    score -= 4;
+                score += 1;
             }
 
-            if (softM1 && !hasM1Confirmation)
-                score += 1;
+            // =====================================================
+            // CONTINUATION SCORE REWARD
+            // =====================================================
 
-            // 🔧 CONTINUATION SCORE
-            if (breakout) score += 8;
-            else if (hasM1Confirmation) score += 5;
-            else if (ctx.LastClosedBarInTrendDirection) score += 2; // agresszív: M5 irányba zárás is kapjon kredit
+            if (breakout)
+            {
+                score += 8;
+            }
+            else if (hasM1Confirmation)
+            {
+                score += 5;
+            }
+            else if (ctx.LastClosedBarInTrendDirection)
+            {
+                score += 2;   // agresszív continuation, de már büntetve lett fentebb
+            }
 
             // =====================================================
             // 4B. FX HTF DIRECTION FILTER (ANTI COUNTER-HTF)

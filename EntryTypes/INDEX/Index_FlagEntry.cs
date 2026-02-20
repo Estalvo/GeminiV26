@@ -9,14 +9,14 @@ namespace GeminiV26.EntryTypes.INDEX
     {
         public EntryType Type => EntryType.Index_Flag;
 
-        private const int MaxBarsSinceImpulse = 4;
+        private const int MaxBarsSinceImpulse = 3;
         private const int FlagBars = 3;
 
-        private const double MaxFlagRangeAtr = 1.2;
+        private const double MaxFlagRangeAtr = 1.05;
         private const double BreakBufferAtr = 0.06;
-        private const double MaxDistFromEmaAtr = 0.90;
+        private const double MaxDistFromEmaAtr = 0.75;
 
-        private const double MaxBreakoutBodyToRangeMin = 0.45;
+        private const double MaxBreakoutBodyToRangeMin = 0.55;
         private const double MaxFlagSlopeAtr = 0.35;
 
         private const int BaseScore = 85;
@@ -94,12 +94,7 @@ namespace GeminiV26.EntryTypes.INDEX
             }
 
             if (ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse)
-            {
-                if (ctx.MarketState?.IsTrend == true)
-                    score -= 6;
-                else
-                    return Reject(ctx, "STALE_IMPULSE", score, dir);
-            }
+                return Reject(ctx, $"STALE_IMPULSE({ctx.BarsSinceImpulse_M5}>{maxBarsSinceImpulse})", score, dir);
 
             // =========================
             // MATRIX-DRIVEN FATIGUE
@@ -163,23 +158,50 @@ namespace GeminiV26.EntryTypes.INDEX
             double flagRange = hi - lo;
             double maxFlag = ctx.AtrM5 * maxFlagRangeAtr;
 
+            // =========================
+            // FLAG RANGE CHECK (score-only)
+            // =========================
             if (flagRange > maxFlag)
             {
-                if (flagRange <= maxFlag * 1.25)
-                    score -= 8;
-                else
-                    return Reject(ctx, "FLAG_TOO_WIDE", score, dir);
+                double flagAtrRatio = flagRange / ctx.AtrM5;
+
+                // Alap büntetés
+                score -= 10;
+
+                // Progresszív büntetés
+                double excess = flagAtrRatio - maxFlagRangeAtr;
+                int extraPenalty = (int)Math.Round(excess * 25);
+
+                score -= extraPenalty;
+
+                Console.WriteLine(
+                    $"[IDX_FLAG][WIDE_FLAG] flagATR={flagAtrRatio:F2} " +
+                    $"excess={excess:F2} penalty={10 + extraPenalty}"
+                );
             }
 
+            // =========================
+            // FLAG SLOPE
+            // =========================
             double netMove = Math.Abs(bars[flagEnd].Close - bars[flagStart].Open);
             if (netMove < ctx.AtrM5 * MaxFlagSlopeAtr)
                 score -= 8;
 
+            // =========================
+            // EMA DISTANCE (HARD REJECT)
+            // =========================
             double close = bars[lastClosed].Close;
             double distFromEma = Math.Abs(close - ctx.Ema21_M5);
-            if (distFromEma > ctx.AtrM5 * maxDistFromEmaAtr)
-                score -= 6;
 
+            if (distFromEma > ctx.AtrM5 * maxDistFromEmaAtr)
+                return Reject(ctx,
+                    $"OVEREXTENDED_EMA(dist={distFromEma:F1} atr={ctx.AtrM5:F1} max={maxDistFromEmaAtr:F2})",
+                    score,
+                    dir);
+
+            // =========================
+            // BREAKOUT CHECK
+            // =========================
             double buf = ctx.AtrM5 * breakoutBufferAtr;
             bool bullBreak = close > hi + buf;
             bool bearBreak = close < lo - buf;
@@ -190,6 +212,17 @@ namespace GeminiV26.EntryTypes.INDEX
             if (dir == TradeDirection.Short && !bearBreak)
                 score -= 10;
 
+            // =========================
+            // FOLLOW-THROUGH (HARD)
+            // =========================
+            double follow = ctx.AtrM5 * 0.12;
+
+            if (dir == TradeDirection.Long && close < hi + follow)
+                return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+
+            if (dir == TradeDirection.Short && close > lo - follow)
+                return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+            
             double o = bars[lastClosed].Open;
             double h = bars[lastClosed].High;
             double l = bars[lastClosed].Low;
