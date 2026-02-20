@@ -88,9 +88,27 @@ namespace GeminiV26.EntryTypes.METAL
             if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAG_FAIL", reasons);
 
-            if (IsImpulseExhaustedXau(ctx, 6, 1.4, 0.6))
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "IMPULSE_EXHAUSTED", reasons);
+            if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAG_FAIL", reasons);
 
+            // ===== EARLY ENERGY CHECK (moved up for exhaustion logic) =====
+            bool m5Break = BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer);
+            bool m1 = ctx.M1TriggerInTrendDirection;
+            bool flagStruct = ctx.IsValidFlagStructure_M5;
+
+            bool energyOk = m5Break || m1 || ctx.IsAtrExpanding_M5;
+
+            bool noFreshSignal = !m5Break && !m1;
+
+            bool exhaustionContext =
+                noFreshSignal &&
+                !ctx.IsAtrExpanding_M5 &&
+                (ctx.AdxSlope_M5 <= 0 || Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8) &&
+                ctx.BarsSinceImpulse_M5 >= 2;
+
+            if (exhaustionContext && IsImpulseExhaustedXau(ctx, 6, 1.4, 0.6))
+                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "IMPULSE_EXHAUSTED", reasons);
+                
             // ===============================
             // TREND FATIGUE (EXISTING)
             // ===============================
