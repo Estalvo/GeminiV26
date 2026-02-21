@@ -41,7 +41,8 @@ namespace GeminiV26.EntryTypes.Crypto
             // ===== CRYPTO STRICT CONTINUATION RULE =====
             if (dir == TradeDirection.None)
             {
-                return Block(ctx, "CRYPTO_PULLBACK_NO_TREND", score);
+                // soft mode: ne blockoljon, csak confidence csökkentés
+                score -= 6;
             }
                 
             // =========================
