@@ -45,7 +45,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             // ---- BASE ENERGY CHECK ----
             bool baseEnergyOk =
-                ctx.Adx_M5 >= profile.MinAdxForPullback
+                ctx.Adx_M5 >= profile.MinAdxForPullback &&
                 (
                     ctx.AdxSlope_M5 >= profile.MinAdxSlopeForPullback ||
                     ctx.IsAtrExpanding_M5 ||
