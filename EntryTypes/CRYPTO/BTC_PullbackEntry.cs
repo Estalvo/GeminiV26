@@ -317,12 +317,28 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
 
             int dynamicMinScore = MIN_SCORE;
+/*
+            if (htfConflict)
+            {
+                score -= (int)Math.Round(4 * ctx.CryptoHtfConfidence01);
+            }
+*/
 
             bool htfConflict =
                 ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
                 ctx.CryptoHtfAllowedDirection != dir;
 
             if (htfConflict)
+            {
+                int penalty = (int)Math.Round(6 * ctx.CryptoHtfConfidence01);
+                score -= penalty;
+
+                // extra szigor ha confidence > 0.8
+                if (ctx.CryptoHtfConfidence01 > 0.8)
+                    score -= 4;
+            }
+            
+/*            if (htfConflict)
             {
                 int boost = (int)Math.Round(4 + 10 * ctx.CryptoHtfConfidence01);
                 dynamicMinScore += boost;
@@ -331,6 +347,7 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             Console.WriteLine($"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}");
+*/
 
             // =========================
             // FINAL CHECK
