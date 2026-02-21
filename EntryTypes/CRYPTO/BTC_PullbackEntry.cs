@@ -336,9 +336,9 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             Console.WriteLine(
-                $"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore}"
+                $"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}"
             );
-            
+
             // =========================
             // FINAL CHECK
             // =========================
