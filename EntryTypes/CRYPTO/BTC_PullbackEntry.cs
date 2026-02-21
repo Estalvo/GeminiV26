@@ -5,7 +5,7 @@ using GeminiV26.EntryTypes.Crypto;
 namespace GeminiV26.EntryTypes.Crypto
 {
     public class BTC_PullbackEntry : IEntryType
-    {
+    {        
         public EntryType Type => EntryType.Crypto_Pullback;
         private const int MIN_SCORE = 28;
 
@@ -15,7 +15,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             void ScoreLog(string label, int delta, int current)
             {
-                _bot.Print($"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}");
+                Print($"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}");
             }
 
             if (ctx == null || !ctx.IsReady)
