@@ -13,6 +13,13 @@ namespace GeminiV26.EntryTypes.Crypto
         {
             int score = 22;
 
+            void ScoreLog(string label, int delta, int current)
+            {
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}"
+                );
+            }
+
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, "CTX_NOT_READY", score);
 
@@ -328,6 +335,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 );
             }
 
+            Console.WriteLine(
+                $"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore}"
+            );
+            
             // =========================
             // FINAL CHECK
             // =========================
