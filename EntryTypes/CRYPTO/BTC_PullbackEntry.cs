@@ -38,11 +38,16 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             TradeDirection dir = ctx.TrendDirection;
 
-            // ===== CRYPTO STRICT CONTINUATION RULE =====
-            if (dir == TradeDirection.None)
+            // Lokális intraday korrekció
+            if (ctx.HasImpulse_M5 && ctx.LastClosedBarInTrendDirection)
             {
-                // soft mode: ne blockoljon, csak confidence csökkentés
-                score -= 3;
+                if (ctx.Adx_M5 >= profile.MinAdxForPullback)
+                {
+                    // ha erős M5 impulse van, használjuk annak irányát
+                    dir = ctx.LastClosedBarInTrendDirection 
+                        ? TradeDirection.Long 
+                        : TradeDirection.Short;
+                }
             }
                 
             // =========================
