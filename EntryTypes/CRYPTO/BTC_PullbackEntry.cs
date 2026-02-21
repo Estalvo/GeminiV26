@@ -15,9 +15,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             void ScoreLog(string label, int delta, int current)
             {
-                Console.WriteLine(
-                    $"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}"
-                );
+                _bot.Print($"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}");
             }
 
             if (ctx == null || !ctx.IsReady)
@@ -226,9 +224,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 int agePenalty = Math.Min(3, (ctx.BarsSinceImpulse_M5 - 5));
                 score -= agePenalty;
 
-                Console.WriteLine(
-                    $"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}"
-                );
+                _bot.Print($"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}");
             }
 
             // =========================
@@ -310,9 +306,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 int ctPenalty = (int)Math.Round(6 + 10 * ctx.CryptoHtfConfidence01);
                 score -= ctPenalty;
 
-                Console.WriteLine(
-                    $"[BTC_PULLBACK][SOFT_COUNTER_TREND] penalty={ctPenalty} htfConf={ctx.CryptoHtfConfidence01:0.00}"
-                );
+                _bot.Print($"[BTC_PULLBACK][SOFT_COUNTER_TREND] penalty={ctPenalty} htfConf={ctx.CryptoHtfConfidence01:0.00}");
             }
 
             // =========================
@@ -330,14 +324,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 int boost = (int)Math.Round(4 + 10 * ctx.CryptoHtfConfidence01);
                 dynamicMinScore += boost;
 
-                Console.WriteLine(
-                    $"[BTC_PULLBACK][HTF_CONFLICT] boost={boost} newMin={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}"
-                );
+                _bot.Print($"[BTC_PULLBACK][HTF_CONFLICT] boost={boost} newMin={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}");
             }
 
-            Console.WriteLine(
-                $"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}"
-            );
+            _bot.Print($"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}");
 
             // =========================
             // FINAL CHECK
@@ -358,9 +348,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir = TradeDirection.None)
         {
-            Console.WriteLine(
-                $"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}"
-            );
+            _bot.Print($"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}");
 
             return new EntryEvaluation
             {
