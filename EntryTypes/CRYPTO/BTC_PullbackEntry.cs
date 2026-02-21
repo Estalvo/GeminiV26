@@ -7,7 +7,7 @@ namespace GeminiV26.EntryTypes.Crypto
     public class BTC_PullbackEntry : IEntryType
     {        
         public EntryType Type => EntryType.Crypto_Pullback;
-        private const int MIN_SCORE = 28;
+        private const int MIN_SCORE = 20;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -42,7 +42,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (dir == TradeDirection.None)
             {
                 // soft mode: ne blockoljon, csak confidence csökkentés
-                score -= 6;
+                score -= 3;
             }
                 
             // =========================
@@ -284,10 +284,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (isTransition)
             {
                 if (!validPullbackReaction)
-                    score -= 6;
-
-                if (ctx.BarsSinceImpulse_M5 > 5)
-                    score -= 4;
+                    score -= 3;
             }
 
             // =========================
@@ -299,7 +296,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (distAtr > 0.9)
                     score -= 4;
             }
-            
+/*
             // =========================
             // COUNTER-TREND SOFT PENALTY
             // =========================
@@ -311,7 +308,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 Console.WriteLine($"[BTC_PULLBACK][SOFT_COUNTER_TREND] penalty={ctPenalty} htfConf={ctx.CryptoHtfConfidence01:0.00}");
             }
-
+*/
             // =========================
             // HTF DIRECTION CONFLICT BOOST
             // =========================
@@ -337,7 +334,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (ctx.CryptoHtfConfidence01 > 0.8)
                     score -= 4;
             }
-            
+
 /*            if (htfConflict)
             {
                 int boost = (int)Math.Round(4 + 10 * ctx.CryptoHtfConfidence01);
