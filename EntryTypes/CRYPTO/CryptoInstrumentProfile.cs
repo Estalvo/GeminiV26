@@ -24,7 +24,12 @@
         public bool RequireStrongImpulseForPullback { get; set; }
 
         // Minimum ADX required for pullback continuation
-        public double MinAdxForPullback { get; set; }
+        // === Pullback entry thresholds ===
+        public double MinAdxForPullback { get; init; }
+        public double MinAdxSlopeForPullback { get; init; }
+        public int MaxBarsSinceImpulseForPullback { get; init; }
+        public bool AllowNeutralFlagWithStrongAdx { get; init; }
+        public double NeutralFlagMinAdx { get; init; }
 
         // Block pullback if HighVol but no strong impulse (BTC trap)
         public bool BlockPullbackOnHighVolWithoutImpulse { get; set; }

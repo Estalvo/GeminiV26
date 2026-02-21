@@ -45,9 +45,9 @@ namespace GeminiV26.EntryTypes.Crypto
 
             // ---- BASE ENERGY CHECK ----
             bool baseEnergyOk =
-                ctx.Adx_M5 >= 23 &&
+                ctx.Adx_M5 >= profile.MinAdxForPullback
                 (
-                    ctx.AdxSlope_M5 > 0 ||
+                    ctx.AdxSlope_M5 >= profile.MinAdxSlopeForPullback ||
                     ctx.IsAtrExpanding_M5 ||
                     ctx.BarsSinceImpulse_M5 <= 3
             );
@@ -97,7 +97,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // IMPULSE TOO OLD HARD
             // =========================
-            if (ctx.BarsSinceImpulse_M5 > 16)
+            if (ctx.BarsSinceImpulse_M5 > profile.MaxBarsSinceImpulseForPullback)
                 return Block(ctx, "IMPULSE_TOO_OLD", score, dir);
 
             // =========================

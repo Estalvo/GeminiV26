@@ -34,14 +34,15 @@ namespace GeminiV26.EntryTypes.Crypto
 
         if (dir == TradeDirection.None)
         {
+            if (!profile.AllowNeutralFlagWithStrongAdx)
+                return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
+
             bool localTrendStrong =
-                ctx.Adx_M5 >= 25 &&
-                ctx.AdxSlope_M5 > 0;
+                ctx.Adx_M5 >= profile.NeutralFlagMinAdx;
 
             if (!localTrendStrong)
                 return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
 
-            // Neutral HTF, but strong local trend -> derive direction from DI
             dir = ctx.PlusDI_M5 > ctx.MinusDI_M5
                 ? TradeDirection.Long
                 : TradeDirection.Short;
