@@ -46,7 +46,7 @@ namespace GeminiV26.Core.HtfBias
             double ema50Now = ema50.Result[i];
             double ema50Prev = ema50.Result[i - 8];
             double ema200Now = ema200.Result[i];
-            double adxVal = dms.ADX.Result[i];
+            double adxVal = dms.ADX[i];
             double price = bars.ClosePrices[i];
 
             var sym = _bot.Symbols.GetSymbol(symbolName);
