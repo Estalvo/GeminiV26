@@ -77,10 +77,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 if (!strictEnergyOk)
                 {
-                    return Block(ctx,
-                        "CRYPTO_PULLBACK_LOWVOL_NO_ENERGY",
-                        score,
-                        dir);
+                    // LowVol ne legyen hard block
+                    score -= 6;
                 }
             }
             else
@@ -146,8 +144,11 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // PULLBACK TOO DEEP HARD
             // =========================
-            if (ctx.PullbackDepthAtr_M5 > 1.8)
-                return Block(ctx, "PULLBACK_TOO_DEEP", score, dir);
+            if (ctx.PullbackDepthAtr_M5 > 2.2)
+                return Block(ctx, "PULLBACK_TOO_DEEP_EXTREME", score, dir);
+
+            if (ctx.PullbackDepthAtr_M5 > 1.6)
+                score -= 6;
 
             // =========================
             // TREND FATIGUE SOFT
