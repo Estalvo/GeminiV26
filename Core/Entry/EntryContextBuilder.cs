@@ -198,6 +198,18 @@ namespace GeminiV26.Core.Entry
                     ctx.TrendDirection = TradeDirection.Short;
             }
 
+            // =================================================
+            // CRYPTO TREND OVERRIDE (DI-dominant in strong trend)
+            // =================================================
+
+            if (isCrypto && ctx.Adx_M5 >= 25 && Math.Abs(ctx.DiSpread_M5) >= 4)
+            {
+                ctx.TrendDirection =
+                    ctx.DiSpread_M5 > 0
+                        ? TradeDirection.Long
+                        : TradeDirection.Short;
+            }
+
             // XAU/XAG fallback
             if (ctx.TrendDirection == TradeDirection.None && IsMetalSymbol(symbol))
             {
