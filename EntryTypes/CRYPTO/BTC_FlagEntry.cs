@@ -31,8 +31,21 @@ namespace GeminiV26.EntryTypes.Crypto
         // HTF / TREND GATE – FLAG ONLY IF DIRECTIONAL
         // =========================
         var dir = ctx.TrendDirection;
-            if (dir == TradeDirection.None)
-            return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
+
+        if (dir == TradeDirection.None)
+        {
+            bool localTrendStrong =
+                ctx.Adx_M5 >= 25 &&
+                ctx.AdxSlope_M5 > 0;
+
+            if (!localTrendStrong)
+                return Invalid(ctx, "HTF_NEUTRAL_FLAG_DISABLED");
+
+            // Neutral HTF, but strong local trend -> derive direction from DI
+            dir = ctx.PlusDI_M5 > ctx.MinusDI_M5
+                ? TradeDirection.Long
+                : TradeDirection.Short;
+        }
 
         if (!ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 10)
         return Invalid(ctx, "NO_RECENT_IMPULSE");
@@ -87,7 +100,7 @@ namespace GeminiV26.EntryTypes.Crypto
         }
 
         if (bestFlagStart < 2)
-        return Invalid(ctx, "NO_VALID_FLAG_WINDOW");
+            return Invalid(ctx, "NO_VALID_FLAG_WINDOW");
 
         int flagStart = bestFlagStart;
         double range = bestRange;
@@ -96,18 +109,18 @@ namespace GeminiV26.EntryTypes.Crypto
         // RANGE WIDTH CHECK
         // =========================
         if (range > ctx.AtrM5 * profile.MaxFlagAtrMult)
-        return Invalid(ctx, "FLAG_TOO_WIDE");
+            return Invalid(ctx, "FLAG_TOO_WIDE");
 
         // =========================
         // FLAG COMPRESSION CHECK
         // =========================
         // crypto-safe tolerances (tiny slopes are normal noise)
         bool compression =
-        ctx.AtrSlope_M5 <= 0.1 &&
-        ctx.AdxSlope_M5 <= 0.3;
+            ctx.AtrSlope_M5 <= 0.15 &&
+            ctx.AdxSlope_M5 <= 0.8;
 
         if (!compression)
-        return Invalid(ctx, "FLAG_NO_COMPRESSION");
+            return Invalid(ctx, "FLAG_NO_COMPRESSION");
 
         // =========================
         // SCORE
@@ -115,18 +128,18 @@ namespace GeminiV26.EntryTypes.Crypto
         int score = 0;
 
         if (ctx.IsVolatilityAcceptable_Crypto)
-        score += 10;
+            score += 10;
         else
-        score -= 10;
+            score -= 10;
 
         // ===== EMA21 reclaim soft penalty (both dirs) =====
         bool ema21ReclaimShort =
-        bars[lastClosed].Close > ctx.Ema21_M5 &&
-        bars[lastClosed - 1].Close <= ctx.Ema21_M5;
+            bars[lastClosed].Close > ctx.Ema21_M5 &&
+            bars[lastClosed - 1].Close <= ctx.Ema21_M5;
 
         bool ema21ReclaimLong =
-        bars[lastClosed].Close < ctx.Ema21_M5 &&
-        bars[lastClosed - 1].Close >= ctx.Ema21_M5;
+            bars[lastClosed].Close < ctx.Ema21_M5 &&
+            bars[lastClosed - 1].Close >= ctx.Ema21_M5;
 
         if (dir == TradeDirection.Short && ema21ReclaimShort) score -= 10;
         if (dir == TradeDirection.Long && ema21ReclaimLong)   score -= 10;
@@ -139,8 +152,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
         for (int i = flagStart; i <= flagEnd; i++)
         {
-        hi = Math.Max(hi, bars[i].High);
-        lo = Math.Min(lo, bars[i].Low);
+            hi = Math.Max(hi, bars[i].High);
+            lo = Math.Min(lo, bars[i].Low);
         }
 
         double close = bars[lastClosed].Close;
@@ -152,9 +165,9 @@ namespace GeminiV26.EntryTypes.Crypto
         double distFromEma = Math.Abs(close - ctx.Ema21_M5);
 
         if (distFromEma <= ctx.AtrM5 * 0.6)
-        score += 8;
+            score += 8;
         else if (distFromEma > ctx.AtrM5 * MaxDistFromEmaAtr)
-        score -= 8;
+            score -= 8;
 
         // =========================
         // BREAKOUT
@@ -165,17 +178,17 @@ namespace GeminiV26.EntryTypes.Crypto
 
         // Early-breakout wait: only if VERY fresh impulse
         if ((bullBreak || bearBreak) &&
-        ctx.BarsSinceImpulse_M5 <= 3 &&
-        !ctx.M1TriggerInTrendDirection)
+            ctx.BarsSinceImpulse_M5 <= 3 &&
+            !ctx.M1TriggerInTrendDirection)
         {
         return Invalid(ctx, "CRYPTO_FLAG_EARLY_BREAKOUT_WAIT");
         }
 
         if (dir == TradeDirection.Long && !bullBreak)
-        return Invalid(ctx, "NO_BREAKOUT_CLOSE_LONG");
+            return Invalid(ctx, "NO_BREAKOUT_CLOSE_LONG");
 
         if (dir == TradeDirection.Short && !bearBreak)
-        return Invalid(ctx, "NO_BREAKOUT_CLOSE_SHORT");
+            return Invalid(ctx, "NO_BREAKOUT_CLOSE_SHORT");
 
         // Breakout candle quality
         if (dir == TradeDirection.Long && close > open) score += 6;

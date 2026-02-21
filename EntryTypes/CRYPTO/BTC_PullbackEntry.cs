@@ -46,16 +46,21 @@ namespace GeminiV26.EntryTypes.Crypto
             // ---- BASE ENERGY CHECK ----
             bool baseEnergyOk =
                 ctx.Adx_M5 >= 23 &&
-                ctx.AdxSlope_M5 > 0 &&
-                (ctx.IsAtrExpanding_M5 || ctx.BarsSinceImpulse_M5 <= 3);
+                (
+                    ctx.AdxSlope_M5 > 0 ||
+                    ctx.IsAtrExpanding_M5 ||
+                    ctx.BarsSinceImpulse_M5 <= 3
+            );
 
             // ---- LOW VOL STRICT MODE ----
             if (lowVol)
             {
                 bool strictEnergyOk =
-                    ctx.Adx_M5 >= 25 &&
-                    ctx.HasImpulse_M5 &&
-                    ctx.BarsSinceImpulse_M5 <= 3;
+                    ctx.Adx_M5 >= 24 &&
+                    (
+                        ctx.HasImpulse_M5 ||
+                        ctx.IsPullbackDecelerating_M5
+                );
 
                 if (!strictEnergyOk)
                 {
@@ -109,13 +114,10 @@ namespace GeminiV26.EntryTypes.Crypto
             // LOW VOL + NO CLEAN REACTION HARD
             // =========================
             if (!ctx.IsVolatilityAcceptable_Crypto &&
-                !ctx.IsPullbackDecelerating_M5 &&
+               !ctx.IsPullbackDecelerating_M5 &&
                 !ctx.HasReactionCandle_M5)
             {
-                return Block(ctx,
-                    "CRYPTO_PULLBACK_LOW_VOL_NO_REACTION",
-                    score,
-                    dir);
+                score -= 10;
             }
 
             // =========================
@@ -265,16 +267,11 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (isTransition)
             {
-                if (!validPullbackReaction ||
-                    ctx.BarsSinceImpulse_M5 > 4)
-                {
-                    return Block(ctx,
-                        "CRYPTO_PULLBACK_TRANSITION_STRICT",
-                        score,
-                        dir);
-                }
+                if (!validPullbackReaction)
+                    score -= 6;
 
-                score -= 4;
+                if (ctx.BarsSinceImpulse_M5 > 5)
+                    score -= 4;
             }
 
             // =========================
