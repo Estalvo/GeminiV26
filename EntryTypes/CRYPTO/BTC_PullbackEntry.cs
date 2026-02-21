@@ -56,11 +56,11 @@ namespace GeminiV26.EntryTypes.Crypto
             if (lowVol)
             {
                 bool strictEnergyOk =
-                    ctx.Adx_M5 >= 24 &&
+                    ctx.Adx_M5 >= profile.MinAdxForPullback &&
                     (
                         ctx.HasImpulse_M5 ||
                         ctx.IsPullbackDecelerating_M5
-                );
+                    );
 
                 if (!strictEnergyOk)
                 {
@@ -98,7 +98,17 @@ namespace GeminiV26.EntryTypes.Crypto
             // IMPULSE TOO OLD HARD
             // =========================
             if (ctx.BarsSinceImpulse_M5 > profile.MaxBarsSinceImpulseForPullback)
-                return Block(ctx, "IMPULSE_TOO_OLD", score, dir);
+            {
+                // csak akkor hard block, ha energia is gyenge
+                if (ctx.Adx_M5 < profile.MinAdxForPullback &&
+                    !ctx.IsPullbackDecelerating_M5)
+                {
+                    return Block(ctx, "IMPULSE_TOO_OLD", score, dir);
+                }
+
+                // különben csak soft penalty
+                score -= 4;
+            }
 
             // =========================
             // HIGH VOL WITHOUT IMPULSE HARD
@@ -150,8 +160,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
             // 2️⃣ ADX már nem gyorsul
             bool adxStalling =
-                ctx.Adx_M5 >= 28 &&
-                ctx.AdxSlope_M5 <= 0.5;   // nem nő érdemben
+                ctx.Adx_M5 >= 30 &&
+                ctx.AdxSlope_M5 <= 0;   // nem nő érdemben
 
             // 3️⃣ ATR nem tágul már
             bool atrNotExpanding =
@@ -196,9 +206,9 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // REQUIRE IMPULSE HARD
             // =========================
-            if (!ctx.HasImpulse_M5)
+            if (!ctx.HasImpulse_M5 && ctx.Adx_M5 < profile.MinAdxForPullback)
             {
-                score -= 6;   // soft penalty instead of hard block
+                score -= 4;
             }
 
             // =========================
@@ -206,7 +216,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (ctx.BarsSinceImpulse_M5 > 3)
             {
-                int agePenalty = Math.Min(8, (ctx.BarsSinceImpulse_M5 - 3) * 1);
+                int agePenalty = Math.Min(6, (ctx.BarsSinceImpulse_M5 - 4));
                 score -= agePenalty;
 
                 Console.WriteLine(
