@@ -124,33 +124,35 @@ namespace GeminiV26.Core.HtfBias
             // ===== RULE #1: alignment dönti el az irányt =====
             if (bullAlign)
             {
-                // Ha energia gyenge → Transition (de nem Bear)
+                // ===== 1️⃣ Weak structure (EMA gap too small) =====
                 if (!energyOk)
                 {
                     SetState(
                         c.Snapshot,
                         HtfBiasState.Transition,
                         TradeDirection.None,
-                        $"FX_HTF TRANSITION (BULL weak energy) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                        0.60
+                        $"FX_HTF TRANSITION (BULL weak structure) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
+                        0.45   // ↓ csökkentett confidence
                     );
                     return;
                 }
 
-                // Ha a close EMA50 alatt van, FX-ben ez gyakori pullback:
-                // legyen Transition/Neutral, ne Bear.
+                // ===== 2️⃣ Healthy pullback (trend él, csak retrace) =====
                 if (close < e50)
                 {
+                    double pullbackConf = Math.Max(conf, UnderFastTransitionConf);
+
                     SetState(
                         c.Snapshot,
                         HtfBiasState.Transition,
                         TradeDirection.None,
-                        $"FX_HTF TRANSITION (BULL pullback) conf={Math.Max(conf, UnderFastTransitionConf):0.00} distATR={distFastAtr:0.00}",
-                        Math.Max(conf, UnderFastTransitionConf)
+                        $"FX_HTF TRANSITION (BULL pullback) conf={pullbackConf:0.00} distATR={distFastAtr:0.00}",
+                        pullbackConf
                     );
                     return;
                 }
 
+                // ===== 3️⃣ Clean bullish structure =====
                 SetState(
                     c.Snapshot,
                     HtfBiasState.Bull,
@@ -163,32 +165,35 @@ namespace GeminiV26.Core.HtfBias
 
             if (bearAlign)
             {
-                // Bear only when EMA alignment is bearish.
+                // ===== 1️⃣ Weak structure =====
                 if (!energyOk)
                 {
                     SetState(
                         c.Snapshot,
                         HtfBiasState.Transition,
                         TradeDirection.None,
-                        $"FX_HTF TRANSITION (BEAR weak energy) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                        0.60
+                        $"FX_HTF TRANSITION (BEAR weak structure) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
+                        0.45
                     );
                     return;
                 }
 
-                // Symmetric pullback handling: ha close EMA50 fölé jön, az még nem Bull.
+                // ===== 2️⃣ Healthy pullback =====
                 if (close > e50)
                 {
+                    double pullbackConf = Math.Max(conf, UnderFastTransitionConf);
+
                     SetState(
                         c.Snapshot,
                         HtfBiasState.Transition,
                         TradeDirection.None,
-                        $"FX_HTF TRANSITION (BEAR pullback) conf={Math.Max(conf, UnderFastTransitionConf):0.00} distATR={distFastAtr:0.00}",
-                        Math.Max(conf, UnderFastTransitionConf)
+                        $"FX_HTF TRANSITION (BEAR pullback) conf={pullbackConf:0.00} distATR={distFastAtr:0.00}",
+                        pullbackConf
                     );
                     return;
                 }
 
+                // ===== 3️⃣ Clean bearish structure =====
                 SetState(
                     c.Snapshot,
                     HtfBiasState.Bear,
