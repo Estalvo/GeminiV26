@@ -762,9 +762,9 @@ namespace GeminiV26.Instruments.FX
             double minAdx,
             double minAtr,
             Dictionary<FxSession, int> sessionScore,
-            FxFlagSessionTuning asia,
-            FxFlagSessionTuning london,
-            FxFlagSessionTuning ny,
+            FxFlagSessionTuning? asia = null,
+            FxFlagSessionTuning? london = null,
+            FxFlagSessionTuning? ny = null,
 
             // ==================================================
             // CONTINUATION CHARACTER (instrument-level override)
@@ -794,10 +794,10 @@ namespace GeminiV26.Instruments.FX
                 SessionScoreDelta = sessionScore,
                 FlagTuning = new Dictionary<FxSession, FxFlagSessionTuning>
                 {
-                    { FxSession.Asia, asia },
-                    { FxSession.London, london },
-                    { FxSession.NewYork, ny }
-                },
+                    { FxSession.Asia, asia ?? throw new ArgumentNullException(nameof(asia)) },
+                    { FxSession.London, london ?? throw new ArgumentNullException(nameof(london)) },
+                    { FxSession.NewYork, ny ?? throw new ArgumentNullException(nameof(ny)) }
+            },
 
                 // ==================================================
                 // CONTINUATION CHARACTER (NOW MATRIX-DRIVEN)
