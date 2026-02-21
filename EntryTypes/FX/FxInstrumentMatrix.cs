@@ -33,8 +33,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 62,               // SZIGORÍTÁS: 55-ről 62-re, kiöljük a bizonytalan trade-eket
+                        BaseScore = 52,
+                        MinScore = 68,               // SZIGORÍTÁS: 55-ről 62-re, kiöljük a bizonytalan trade-eket
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.6-ról 1.2-re, ne engedjük a túlnyúlt zászlókat
                         MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.95-ről 0.80-ra, csak szoros visszateszt
@@ -47,8 +47,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 50,               // SZIGORÍTÁS: 55-ről 58-ra
+                        BaseScore = 54,
+                        MinScore = 60,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
                         MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
@@ -61,8 +61,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 56,               // SZIGORÍTÁS: 55-ről 58-ra
+                        BaseScore = 54,
+                        MinScore = 64,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.90,
@@ -103,8 +103,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 55,
+                        BaseScore = 52,
+                        MinScore = 64,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.5,
                         MaxPullbackAtr = 1.00,
@@ -117,8 +117,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,
+                        BaseScore = 54,
+                        MinScore = 58,
                         FlagBars = 3,
                         MaxFlagAtrMult = 2.3,
                         MaxPullbackAtr = 1.35,
@@ -131,8 +131,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,
+                        BaseScore = 54,
+                        MinScore = 60,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.95,
@@ -173,8 +173,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 62,               // SZIGORÍTÁS: 55-ről 62-re (csak a betonbiztos setupok)
+                        BaseScore = 52,
+                        MinScore = 70,               // SZIGORÍTÁS: 55-ről 62-re (csak a betonbiztos setupok)
                         FlagBars = 3,                // STABILITÁS: 2-ről 3 bárra
                         MaxFlagAtrMult = 1.1,        // SZIGORÍTÁS: 1.4-ről 1.1-re (csak szoros zászlók)
                         MaxPullbackAtr = 0.70,       // SZIGORÍTÁS: 0.95-ről 0.70-re (ne engedjünk mély visszatesztet)
@@ -189,8 +189,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 56,               // SZIGORÍTÁS: 55-ről 58-ra
+                        BaseScore = 54,
+                        MinScore = 62,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.6,        // SZIGORÍTÁS: 2.0-ról 1.6-ra
                         MaxPullbackAtr = 0.90,       // SZIGORÍTÁS: 1.30-ról 0.90-re
@@ -203,8 +203,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,
+                        BaseScore = 54,
+                        MinScore = 66,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.90,
@@ -247,8 +247,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 60,               // SZIGORÍTÁS: 55 helyett 60, csak a legjobb setupok menjenek át
+                        BaseScore = 52,
+                        MinScore = 66,               // SZIGORÍTÁS: 55 helyett 60, csak a legjobb setupok menjenek át
                         FlagBars = 3,                // STABILITÁS: 2 helyett 3 bár, hogy a zajt jobban szűrjük
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: Kisebb zászló kiterjedés
                         MaxPullbackAtr = 1.20,       // LAZÍTÁS: 1.00-ról 1.20-ra - kell a tér a GBPJPY zajának
@@ -263,8 +263,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,
+                        BaseScore = 54,
+                        MinScore = 58,
                         FlagBars = 3,
                         MaxFlagAtrMult = 2.1,
                         MaxPullbackAtr = 1.40,
@@ -277,8 +277,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,
+                        BaseScore = 54,
+                        MinScore = 62,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.95,
@@ -319,8 +319,8 @@ namespace GeminiV26.Instruments.FX
                 },
                 asia: new FxFlagSessionTuning
                 {
-                    BaseScore = 42,
-                    MinScore = 60,               // SZIGORÍTÁS: 55-ről 60-ra (csak a legtisztább EMA21 bounce mehet)
+                    BaseScore = 52,
+                    MinScore = 68,               // SZIGORÍTÁS: 55-ről 60-ra (csak a legtisztább EMA21 bounce mehet)
                     FlagBars = 3,                // STABILITÁS: Több megerősítő gyertya kell
                     MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.3-ról 1.2-re (kisebb zászló = kisebb kockázat)
                     MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.85-ről 0.80-ra
@@ -335,8 +335,8 @@ namespace GeminiV26.Instruments.FX
                 },
                 london: new FxFlagSessionTuning
                 {
-                    BaseScore = 44,
-                    MinScore = 56,               // SZIGORÍTÁS: Londonban is magasabb küszöb
+                    BaseScore = 54,
+                    MinScore = 62,               // SZIGORÍTÁS: Londonban is magasabb küszöb
                     FlagBars = 3,
                     MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.0-ról 1.8-ra (kevesebb zajt engedünk)
                     MaxPullbackAtr = 1.10,       // SZIGORÍTÁS: 1.30-ról 1.10-re (ne engedjünk túl mély korrekciót)
@@ -350,8 +350,8 @@ namespace GeminiV26.Instruments.FX
                 ny: new FxFlagSessionTuning
                 {
                     // New York marad a -20-as bias miatt eleve tiltáshoz közeli állapotban
-                    BaseScore = 44,
-                    MinScore = 53,
+                    BaseScore = 54,
+                    MinScore = 70,
                     FlagBars = 2,
                     MaxFlagAtrMult = 1.1,
                     MaxPullbackAtr = 0.75,
@@ -393,8 +393,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 60,               // SZIGORÍTÁS: 55-ről 60-ra
+                        BaseScore = 52,
+                        MinScore = 68,               // SZIGORÍTÁS: 55-ről 60-ra
                         FlagBars = 3,                // STABILITÁS: 2 helyett 3 bár
                         MaxFlagAtrMult = 1.1,        // SZIGORÍTÁS: 1.4-ről 1.1-re (ne vegyünk túlnyúlt mozgást)
                         MaxPullbackAtr = 0.65,       // SZIGORÍTÁS: 0.75-ről 0.65-re
@@ -410,8 +410,8 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         // London marad szigorú, de itt is bekapcsoljuk a biztonsági fékeket
-                        BaseScore = 44,
-                        MinScore = 58,
+                        BaseScore = 54,
+                        MinScore = 64,
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.70,
@@ -426,8 +426,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 63,               // NY-ban szinte elérhetetlen szigor
+                        BaseScore = 54,
+                        MinScore = 72,               // NY-ban szinte elérhetetlen szigor
                         FlagBars = 1,
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.60,
@@ -470,8 +470,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 60,               // SZIGORÍTÁS: 55 -> 60
+                        BaseScore = 52,
+                        MinScore = 68,               // SZIGORÍTÁS: 55 -> 60
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.1,        // SZIGORÍTÁS: 1.7 -> 1.1 (csak kompakt alakzatok)
                         MaxPullbackAtr = 0.70,       // SZIGORÍTÁS: 1.05 -> 0.70
@@ -486,8 +486,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 58,
+                        BaseScore = 54,
+                        MinScore = 64,
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.3,        // SZIGORÍTÁS: 1.8 -> 1.3
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.35 -> 0.85
@@ -500,8 +500,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 57,
+                        BaseScore = 54,
+                        MinScore = 74,
                         FlagBars = 2,
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.85,
@@ -542,8 +542,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 62,               // SZIGORÍTÁS: 55 -> 62 (legyen nagyon válogatós)
+                        BaseScore = 52,
+                        MinScore = 72,               // SZIGORÍTÁS: 55 -> 62 (legyen nagyon válogatós)
                         FlagBars = 4,                // STABILITÁS: 2 -> 4 bár (építsen komoly bázist)
                         MaxFlagAtrMult = 1.0,        // SZIGORÍTÁS: 1.8 -> 1.0 (csak kompakt, sűrű bázis)
                         MaxPullbackAtr = 0.60,       // SZIGORÍTÁS: 1.10 -> 0.60 (ne engedjünk mély visszatesztet)
@@ -558,8 +558,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 63,               // Londonban szinte csak "véletlenül" lépjen be
+                        BaseScore = 54,
+                        MinScore = 75,               // Londonban szinte csak "véletlenül" lépjen be
                         FlagBars = 4,
                         MaxFlagAtrMult = 1.1,
                         MaxPullbackAtr = 0.70,
@@ -572,8 +572,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 68,               // Gyakorlatilag kikapcsolva
+                        BaseScore = 54,
+                        MinScore = 80,               // Gyakorlatilag kikapcsolva
                         FlagBars = 2,
                         MaxFlagAtrMult = 0.7,
                         MaxPullbackAtr = 0.50,
@@ -614,8 +614,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 60,               // SZIGORÍTÁS: 55 -> 60
+                        BaseScore = 52,
+                        MinScore = 68,               // SZIGORÍTÁS: 55 -> 60
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.4 -> 1.2
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 0.85 -> 0.75
@@ -630,8 +630,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 56,               // SZIGORÍTÁS: 55 -> 58
+                        BaseScore = 54,
+                        MinScore = 62,               // SZIGORÍTÁS: 55 -> 58
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.6,        // SZIGORÍTÁS: 2.0 -> 1.6 (megfogja a csúcson vételt)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30 -> 1.00
@@ -646,8 +646,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 53,               // NY-ban maradhat a 55, mert a +5 bónusszal együtt is szűrve lesz
+                        BaseScore = 54,
+                        MinScore = 58,               // NY-ban maradhat a 55, mert a +5 bónusszal együtt is szűrve lesz
                         FlagBars = 3,                // STABILITÁS: 2 -> 3 bár
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.90,
@@ -690,8 +690,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     asia: new FxFlagSessionTuning
                     {
-                        BaseScore = 42,
-                        MinScore = 65,               // SZIGORÍTÁS: 55 -> 65 (Csak extrém jó jel mehet át)
+                        BaseScore = 52,
+                        MinScore = 75,               // SZIGORÍTÁS: 55 -> 65 (Csak extrém jó jel mehet át)
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.0,        // SZIGORÍTÁS: 1.4 -> 1.0 (Csak nagyon szűk bázis)
                         MaxPullbackAtr = 0.60,       // SZIGORÍTÁS: 0.95 -> 0.60
@@ -706,8 +706,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 56,               // SZIGORÍTÁS: 55 -> 58
+                        BaseScore = 54,
+                        MinScore = 62,               // SZIGORÍTÁS: 55 -> 58
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.4,        // SZIGORÍTÁS: 2.0 -> 1.4 (Kompaktabb setupok)
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.30 -> 0.85
@@ -722,8 +722,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     ny: new FxFlagSessionTuning
                     {
-                        BaseScore = 44,
-                        MinScore = 56,
+                        BaseScore = 54,
+                        MinScore = 64,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.1,
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 0.90 -> 0.75
@@ -758,7 +758,7 @@ namespace GeminiV26.Instruments.FX
             bool meanRev,
             double atrM5,
             double atrM1,
-            double maxFlagAtr,
+            //double maxFlagAtr,
             double minAdx,
             double minAtr,
             Dictionary<FxSession, int> sessionScore,
@@ -777,39 +777,26 @@ namespace GeminiV26.Instruments.FX
         {
             return new FxInstrumentProfile
             {
-                // ===== BASIC =====
                 Symbol = symbol,
                 Volatility = vol,
                 SessionBias = bias,
                 PullbackStyle = pb,
-
-                // ===== DAILY =====
                 TypicalAdrPips = adr,
-
-                // ===== IMPULSE =====
                 MinImpulseAtr = minImpulse,
                 MaxWickRatio = maxWick,
-
-                // ===== SESSION =====
                 AllowAsianSession = allowAsia,
                 MeanReversionFriendly = meanRev,
-
-                // ===== ENTRY SCALING =====
                 ImpulseAtrMult_M5 = atrM5,
                 ImpulseAtrMult_M1 = atrM1,
-                MaxFlagAtrMult = maxFlagAtr,
+                //MaxFlagAtrMult = maxFlagAtr,
                 MinAdxTrend = minAdx,
                 MinAtrPips = minAtr,
-
-                // ===== SESSION SCORE =====
                 SessionScoreDelta = sessionScore,
-
-                // ===== FLAG TUNING =====
-                FlagTuning = new()
+                FlagTuning = new Dictionary<FxSession, FxFlagSessionTuning>
                 {
-                    [FxSession.Asia] = asia,
-                    [FxSession.London] = london,
-                    [FxSession.NewYork] = ny
+                    { FxSession.Asia, asia },
+                    { FxSession.London, london },
+                    { FxSession.NewYork, ny }
                 },
 
                 // ==================================================

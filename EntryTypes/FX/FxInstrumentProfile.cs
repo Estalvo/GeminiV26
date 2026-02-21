@@ -139,7 +139,6 @@ namespace GeminiV26.Instruments.FX
         // ==================================================
         public double ImpulseAtrMult_M5 { get; init; }
         public double ImpulseAtrMult_M1 { get; init; }
-
         public double MaxFlagAtrMult { get; init; }
         public double MinAdxTrend { get; init; }
         public double MinAtrPips { get; init; }
