@@ -44,9 +44,9 @@ namespace GeminiV26.Core.HtfBias
             double ema21Now = ema21.Result[i];
 
             double ema50Now = ema50.Result[i];
-            double ema50Prev = ema50.Result[i - 5];
+            double ema50Prev = ema50.Result[i - 8];
             double ema200Now = ema200.Result[i];
-            double adxVal = dms.ADX.LastValue;
+            double adxVal = dms.ADX.Result[i];
             double price = bars.ClosePrices[i];
 
             var sym = _bot.Symbols.GetSymbol(symbolName);
@@ -57,7 +57,10 @@ namespace GeminiV26.Core.HtfBias
             bool slopeDown = slope < -MinSlopePips;
 
             // ===== BULL TREND =====
-            if (ema50Now > ema200Now && slopeUp && strongTrend && price >= ema21Now)
+            if (ema50Now > ema200Now &&
+                slopeUp &&
+                strongTrend &&
+                (price >= ema21Now || adxVal >= 25))
             {
                 double x = Math.Max(0, adxVal - 15);
                 double confidence = Math.Min(1.0, Math.Pow(x / 25.0, 0.7));
@@ -72,7 +75,10 @@ namespace GeminiV26.Core.HtfBias
             }
 
             // ===== BEAR TREND =====
-            if (ema50Now < ema200Now && slopeDown && strongTrend && price <= ema21Now)
+            if (ema50Now < ema200Now &&
+                slopeDown &&
+                strongTrend &&
+                (price <= ema21Now || adxVal >= 25))
             {
                 double x = Math.Max(0, adxVal - 15);
                 double confidence = Math.Min(1.0, Math.Pow(x / 25.0, 0.7));
@@ -86,6 +92,32 @@ namespace GeminiV26.Core.HtfBias
                 };
             }
 
+            // ===== WEAK STRUCTURE CONTINUATION =====
+            if (strongTrend)
+            {
+                if (ema50Now > ema200Now && slopeUp)
+                {
+                    return new HtfBiasSnapshot
+                    {
+                        State = HtfBiasState.Bull,
+                        AllowedDirection = TradeDirection.Long,
+                        Confidence01 = 0.4,
+                        Reason = "HTF_WEAK_BULL"
+                    };
+                }
+
+                if (ema50Now < ema200Now && slopeDown)
+                {
+                    return new HtfBiasSnapshot
+                    {
+                        State = HtfBiasState.Bear,
+                        AllowedDirection = TradeDirection.Short,
+                        Confidence01 = 0.4,
+                        Reason = "HTF_WEAK_BEAR"
+                    };
+                }
+            }
+
             // ===== TRANSITION =====
             if (adxVal < MinAdxTrend)
             {
@@ -93,7 +125,7 @@ namespace GeminiV26.Core.HtfBias
                 {
                     State = HtfBiasState.Transition,
                     AllowedDirection = TradeDirection.None,
-                    Confidence01 = Math.Min(1.0, adxVal / 35.0),
+                    Confidence01 = 0.25,
                     Reason = "HTF_ADX_WEAK"
                 };
             }
