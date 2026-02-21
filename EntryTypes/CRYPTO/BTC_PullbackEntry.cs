@@ -11,7 +11,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 22;
+            int score = 35;
 
             void ScoreLog(string label, int delta, int current)
             {
@@ -351,6 +351,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
             Console.WriteLine($"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore} htfConf={ctx.CryptoHtfConfidence01:0.00}");
 */
+            if (score < 0)
+                score = 0;
 
             // =========================
             // FINAL CHECK
