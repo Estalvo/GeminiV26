@@ -16,7 +16,7 @@ namespace GeminiV26.EntryTypes.Crypto
             void ScoreLog(string label, int delta, int current)
             {
                 Console.WriteLine(
-                    $"[BTC_PULLBACK][FINAL] dir={dir} score={score} min={dynamicMinScore}"
+                    $"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}"
                 );
             }
 
