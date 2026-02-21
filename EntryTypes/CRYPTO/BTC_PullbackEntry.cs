@@ -293,14 +293,21 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (distAtr > 0.9)
                     score -= 4;
             }
-
-            // ===== COUNTER-TREND HARD BLOCK =====
-            if (ctx.TrendDirection != TradeDirection.None &&
-                dir != ctx.TrendDirection)
+            
+            // =========================
+            // COUNTER-TREND SOFT PENALTY
+            // =========================
+            if (ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
+                ctx.CryptoHtfAllowedDirection != dir)
             {
-                return Block(ctx, "CRYPTO_COUNTER_TREND_BLOCK", score, dir);
-            }
+                int ctPenalty = (int)Math.Round(6 + 10 * ctx.CryptoHtfConfidence01);
+                score -= ctPenalty;
 
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][SOFT_COUNTER_TREND] penalty={ctPenalty} htfConf={ctx.CryptoHtfConfidence01:0.00}"
+                );
+            }
+            
             // =========================
             // HTF DIRECTION CONFLICT BOOST
             // =========================
