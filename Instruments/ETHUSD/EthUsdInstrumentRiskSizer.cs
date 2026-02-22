@@ -40,10 +40,10 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            if (finalConfidence >= 90) return 0.95;
-            if (finalConfidence >= 80) return 0.75;
-            if (finalConfidence >= 70) return 0.55;
-            return 0.40;
+            if (finalConfidence >= 90) return 0.60;
+            if (finalConfidence >= 80) return 0.45;
+            if (finalConfidence >= 70) return 0.30;
+            return 0.22;
         }
 
         // =========================================================
@@ -96,9 +96,9 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            if (confidence >= 85) return 70000;
-            if (confidence >= 75) return 60000;
-            return 50000;
+            if (confidence >= 85) return 40000;
+            if (confidence >= 75) return 30000;
+            return 20000;
         }
     }
 }
