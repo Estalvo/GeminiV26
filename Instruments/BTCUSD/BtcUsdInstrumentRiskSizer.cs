@@ -40,9 +40,10 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            if (finalConfidence >= 85) return 1.25;  // 0.60 × 2.1 ≈ 1.26
-            if (finalConfidence >= 75) return 0.85;  // 0.40 × 2.1 ≈ 0.84
-            return 0.53;                             // 0.25 × 2.1 ≈ 0.52
+            if (finalConfidence >= 90) return 1.00;
+            if (finalConfidence >= 80) return 0.75;
+            if (finalConfidence >= 70) return 0.55;
+            return 0.40;
         }
 
         // =========================================================
@@ -50,10 +51,9 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            if (finalConfidence >= 85)
-                return 2.5;   // volt 1.8
-
-            return 3.1;       // volt 2.2
+            if (finalConfidence >= 85) return 2.4;
+            if (finalConfidence >= 75) return 2.7;
+            return 3.0;
         }
 
         // =========================================================
@@ -93,7 +93,9 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            return 100000; // units, nem lot
+            if (confidence >= 85) return 80000;
+            if (confidence >= 75) return 70000;
+            return 60000;
         }
     }
 }
