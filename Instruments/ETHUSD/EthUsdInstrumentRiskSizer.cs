@@ -49,7 +49,7 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         // STOP LOSS ATR MULTIPLIER
         // =========================================================               
-        }public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
             if (finalConfidence >= 85) return 1.9;
             if (finalConfidence >= 75) return 2.1;
