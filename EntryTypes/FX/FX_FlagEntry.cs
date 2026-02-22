@@ -13,9 +13,28 @@ namespace GeminiV26.EntryTypes.FX
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             int score = 0;
-
+            int penaltyBudget = 0;
+            
+            const int maxPenalty = 15;   // FX-en ennyi össz negatív korrekció lehet max
+            
             // === MIN SCORE DYNAMIC BOOST (no simplification, just additive) ===
             int minBoost = 0;
+
+            void ApplyPenalty(int p)
+            {
+                if (p <= 0) return;
+                int room = maxPenalty - penaltyBudget;
+                int use = Math.Min(room, p);
+                if (use <= 0) return;
+                score -= use;
+                penaltyBudget += use;
+            }
+
+            void ApplyReward(int r)
+            {
+                if (r <= 0) return;
+                score += r;
+            }
 
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
                 return Invalid(ctx, "CTX_NOT_READY", score);
@@ -75,17 +94,17 @@ namespace GeminiV26.EntryTypes.FX
                         {
                             if (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London)
                             {
-                                score -= 8;
+                                ApplyPenalty(8);
                                 minBoost += 2;   // kicsit magasabb léc
                             }
                             else
                             {
-                                score -= 6;
+                                ApplyPenalty(6);
                             }
                         }
                         else if (adxM5 >= 38.0 && adxSlope <= 0.0)
                         {
-                            score -= 5;
+                            ApplyPenalty(5);
                         }
                     }
                     else
@@ -94,7 +113,7 @@ namespace GeminiV26.EntryTypes.FX
                         if (adxM5 >= 42.0 &&
                             (ctx.Session == FxSession.NewYork || ctx.Session == FxSession.London))
                         {
-                            score -= 4;
+                            ApplyPenalty(4);
                         }
                     }
                 }
@@ -110,7 +129,7 @@ namespace GeminiV26.EntryTypes.FX
             {
                 // make it harder to pass borderline 50-score trades
                 minBoost += 2;     // raises the bar without hard-blocking
-                // score -= 2;        // small penalty to push only best setups through
+                // ApplyPenalty(2);        // small penalty to push only best setups through
             }
 
             // --- NY Session Impulse Delay (first bars after NY open if available) ---
@@ -126,7 +145,7 @@ namespace GeminiV26.EntryTypes.FX
             if (nyEarly)
             {
                 // discourage first-spike continuation entries; still allow breakout+confirm later
-                score -= 3;
+                ApplyPenalty(3);
                 minBoost += 2;
             }
 
@@ -166,6 +185,34 @@ namespace GeminiV26.EntryTypes.FX
             double lastClose = lastBar.Close;
 
             // =====================================================
+            // MATRIX-DRIVEN HARDENING (single place, no spaghetti)
+            // =====================================================
+
+            // 1) Strong entry candle requirement (session tuning)
+            double lastBody = Math.Abs(lastBar.Close - lastBar.Open);
+            double lastRange = lastBar.High - lastBar.Low;
+            bool lastStrongBody = lastRange > 0 && (lastBody / lastRange) >= 0.55;
+
+            bool lastClosesInDir =
+                (ctx.TrendDirection == TradeDirection.Long  && lastBar.Close > lastBar.Open) ||
+                (ctx.TrendDirection == TradeDirection.Short && lastBar.Close < lastBar.Open);
+
+            // 2) ATR slope requirement (if available -> use it, else fallback to IsAtrExpanding_M5)
+            if (tuning.RequireAtrSlopePositive)
+            {
+                double atrSlope = 0;
+                bool hasAtrSlope =
+                    TryGetDouble(ctx, "AtrSlope_M5", out atrSlope) ||
+                    TryGetDouble(ctx, "AtrSlope01_M5", out atrSlope);
+
+                bool atrOk =
+                    hasAtrSlope ? (atrSlope > 0.0) : ctx.IsAtrExpanding_M5;
+
+                if (!atrOk)
+                    return Invalid(ctx, "ATR_SLOPE_REQUIRED", score);
+            }
+
+            // =====================================================
             // 1. EMA POSITION FILTER (FX-SAFE)
             // =====================================================
             int lastClosed = ctx.M5.Count - 2;
@@ -173,39 +220,50 @@ namespace GeminiV26.EntryTypes.FX
             double emaDistAtr = Math.Abs(lastClose - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (emaDistAtr < 0.10)
-                score -= 3;   // ne öld meg, csak büntesd
+                ApplyPenalty(3);   // ne öld meg, csak büntesd
 
             if (emaDistAtr < 0.18 && ctx.HasImpulse_M5)
-                score += 2;
+                ApplyPenalty(2);
 
             // 🔧 OVEREXT ONLY IF NO IMPULSE (ANTI-CHASE)
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.5 && !ctx.HasImpulse_M5)
-                score -= 6;   // eddig kinyírta a setupok 30-40%-át
+                ApplyPenalty(6);   // eddig kinyírta a setupok 30-40%-át
 
             // 🔧 MOMENTUM CONTINUATION BONUS
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 && ctx.HasImpulse_M5)
-                score += 4;
+                ApplyPenalty(4);
 
             // 🔧 EMA + TREND CONTEXT BONUS (amit te ránézésre látsz)
             if (ctx.TrendDirection == TradeDirection.Short && lastClose < ctx.Ema21_M5)
-                score += 3;
+                ApplyReward(3);
             else if (ctx.TrendDirection == TradeDirection.Long && lastClose > ctx.Ema21_M5)
-                score += 3;
+                ApplyReward(3);
 
             // =====================================================
-            // 2. IMPULSE QUALITY – SCORE ONLY
+            // IMPULSE QUALITY – FX BALANCED VERSION
             // =====================================================
+
             if (ctx.HasImpulse_M5)
             {
                 double iq = GetImpulseQuality(ctx, 5);
-                if (iq > 0.70) score += 8;
-                else if (iq > 0.60) score += 5;
-                else if (iq > 0.50) score += 2;
-                else if (iq < 0.40) score -= 5;
+
+                if (iq > 0.70) ApplyPenalty(6);
+                else if (iq > 0.60) ApplyPenalty(4);
+                else if (iq > 0.50) ApplyPenalty(2);
+                else if (iq < 0.40) ApplyPenalty(4);
             }
             else
             {
-                score += 6; // agresszívebb kompressziós continuation engedés
+                // No impulse: only reward if structure + compression make sense
+                bool compressionValid =
+                    !ctx.IsRange_M5 &&
+                    ctx.LastClosedBarInTrendDirection &&
+                    emaDistAtr < tuning.MaxPullbackAtr;
+
+                if (compressionValid)
+                    ApplyReward(2);
+                else
+                    ApplyPenalty(2);
             }
 
             // =====================================================
@@ -215,10 +273,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 4)
             {
                 if (!ctx.IsAtrExpanding_M5)
-                    score -= 6;
+                    ApplyPenalty(6);
 
                 if (ctx.IsRange_M5)
-                    score -= 4;
+                    ApplyPenalty(4);
             }
 
             // =====================================================
@@ -228,7 +286,7 @@ namespace GeminiV26.EntryTypes.FX
                 !ctx.IsAtrExpanding_M5 &&
                 ctx.IsRange_M5)
             {
-                score -= 4; // chop-kompresszió kiszűrése
+                ApplyPenalty(4); // chop-kompresszió kiszűrése
             }
 
             // =====================================================
@@ -236,7 +294,7 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5)
             {
-                score -= 1; // enyhébb meh bünti
+                ApplyPenalty(1); // enyhébb meh bünti
             }
 
             // =====================================================
@@ -249,7 +307,7 @@ namespace GeminiV26.EntryTypes.FX
                     ctx.LastClosedBarInTrendDirection;
 
                 if (!hasReaction)
-                    score -= 3;
+                    ApplyPenalty(1);
             }
 
             // =====================================================
@@ -258,16 +316,16 @@ namespace GeminiV26.EntryTypes.FX
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return Invalid(ctx, "FLAG_FAIL", score);
 
-            if (rangeAtr > fx.MaxFlagAtrMult)
+            if (rangeAtr > tuning.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE", score);
 
             // 🔧 FLAG QUALITY SCORING
             if (rangeAtr < 0.6)
-                score += 4;
+                ApplyPenalty(4);
             else if (rangeAtr < 0.9)
-                score += 3;
+                ApplyPenalty(3);
             else
-                score += 1;
+                ApplyPenalty(1);
 
             // =====================================================
             // 3B. FLAG SLOPE VALIDATION
@@ -311,7 +369,7 @@ namespace GeminiV26.EntryTypes.FX
                 // Szép, lapos / enyhén csorgó flag
                 if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
                 {
-                    score += 2;
+                    ApplyReward(2);
                     slopeRewarded = true;
                 }
             }
@@ -333,7 +391,7 @@ namespace GeminiV26.EntryTypes.FX
                 // Szép compression / flat flag
                 if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
                 {
-                    score += 2;
+                    ApplyReward(2);
                     slopeRewarded = true;
                 }
             }
@@ -348,7 +406,7 @@ namespace GeminiV26.EntryTypes.FX
                 flagSlopeAtr <= 0.25 &&
                 !ctx.IsRange_M5)
             {
-                score += 2;
+                ApplyReward(2);
             }
 
             // =====================================================
@@ -364,18 +422,56 @@ namespace GeminiV26.EntryTypes.FX
             double range = lastBar.High - lastBar.Low;
             bool strongBody = range > 0 && body / range >= 0.55;
 
-            // FX clean breakout
-            bool breakout =
+            // ===========================================
+            // BREAKOUT LOGIC – FX SAFE VERSION
+            // ===========================================
+
+            // Level 1: Clean momentum breakout
+            bool cleanBreakout =
                 rawBreakout &&
                 strongBody &&
                 ctx.IsAtrExpanding_M5 &&
                 ctx.LastClosedBarInTrendDirection;
 
-            bool hasM1Confirmation =
-             HasM1FollowThrough(ctx) ||
-             HasM1PullbackConfirm(ctx);
+            // Level 2: Structural breakout (less strict, still safe)
+            bool structuralBreakout =
+                rawBreakout &&
+                ctx.LastClosedBarInTrendDirection &&
+                (
+                    strongBody ||
+                    (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5)
+                );
 
-            bool isContinuation = !breakout && !hasM1Confirmation;
+            bool breakout = cleanBreakout || structuralBreakout;
+
+            // --- M1 confirmation ELŐBB ---
+            bool hasM1Confirmation =
+                HasM1FollowThrough(ctx) ||
+                HasM1PullbackConfirm(ctx);
+
+            // --- trigger státusz ---
+            bool hasTrigger = breakout || hasM1Confirmation;
+            bool isPreTrigger = !hasTrigger;
+
+            if (tuning.RequireStrongEntryCandle)
+            {
+                // csak akkor érdekel, ha még nincs trigger
+                // (trigger esetén úgyis a breakout/M1 a minőség)
+                // -> ezt a blokkot tedd át AZUTÁNRA, hogy kiszámoltad hasTrigger-t
+                if (!hasTrigger)
+                {
+                    if (!lastStrongBody || !lastClosesInDir || !ctx.LastClosedBarInTrendDirection)
+                    {
+                        ApplyPenalty(8);
+                        minBoost += 1;
+                    }
+                }
+            }
+
+            // --- ha tuning szerint kell M1 trigger, akkor: ha nincs breakout, legyen M1 confirm ---
+            if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
+                return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
+
             int barsSinceBreak =
                 ctx.TrendDirection == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
@@ -389,7 +485,7 @@ namespace GeminiV26.EntryTypes.FX
                 !breakout &&
                 !hasM1Confirmation)
             {
-                score -= 6;
+                ApplyPenalty(6);
                 minBoost += 2;
             }
 
@@ -401,7 +497,7 @@ namespace GeminiV26.EntryTypes.FX
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
             {                
-                if (isContinuation)
+                if (hasTrigger)
                 {
                     bool veryHighAdx = adxNow >= 45.0;
                     bool rollingHard  = adxSlopeNow <= -2.0;
@@ -422,7 +518,7 @@ namespace GeminiV26.EntryTypes.FX
                     // SOFT PENALTY ha csak részben exhaustion
                     if (adxNow >= 42.0 && adxSlopeNow <= -1.0)
                     {
-                        score -= 4;
+                        ApplyPenalty(4);
                         minBoost += 1;
                     }
                 }
@@ -444,7 +540,7 @@ namespace GeminiV26.EntryTypes.FX
                 }
 
                 // Erősebb setup átmehet, de kap büntetést
-                score -= 3;
+                ApplyPenalty(3);
                 minBoost += 2;
             }
 
@@ -476,12 +572,12 @@ namespace GeminiV26.EntryTypes.FX
 
             if (needsRetestGuard && ctx.Session == FxSession.London)
             {
-                score -= 5; // ne blokkoljon, csak tolja fel a minőségi irányba
+                ApplyPenalty(5); // ne blokkoljon, csak tolja fel a minőségi irányba
             }
 
             if (needsRetestGuard && ctx.Session == FxSession.NewYork)
             {
-                score -= 6;
+                ApplyPenalty(6);
             }
 
             // =====================================================
@@ -503,8 +599,8 @@ namespace GeminiV26.EntryTypes.FX
                 }
 
                 // --- 3️⃣ HTF TRANSITION CONTROL ---
-                if (htfTransitionZone && !fx.AllowContinuationDuringHtfTransition)
-                    return Invalid(ctx, "HTF_TRANSITION_BLOCK", score);
+                if (htfTransitionZone && !hasTrigger)
+                    minBoost += 2;
 
                 // --- 4️⃣ HTF ALIGNMENT REQUIREMENT ---
                 if (fx.RequireHtfAlignmentForContinuation &&
@@ -518,45 +614,57 @@ namespace GeminiV26.EntryTypes.FX
 
             // ✅ itt már NEM deklarálunk újra barsSinceBreak-et
             // (már megvan a continuation filter blokkban)
-            if (barsSinceBreak > 3 && isContinuation)
+            if (barsSinceBreak > 3 && isPreTrigger)
             {
-                score -= 3;
+                ApplyPenalty(3);
 
                 if (barsSinceBreak > 5 && ctx.Session == FxSession.London && !hasM1Confirmation)
-                    score -= 2;
+                    ApplyPenalty(2);
             }
 
             // =====================================================
-            // 4A. SESSION-AWARE CONTINUATION SCORING (FX CLEAN)
+            // SESSION-AWARE CONTINUATION SCORING (VOLATILITY ADAPTIVE)
             // =====================================================
 
-            if (isContinuation)
+            if (isPreTrigger)
             {
-                // --- Session based base penalty ---
+                int basePenalty;
+
                 switch (ctx.Session)
                 {
                     case FxSession.NewYork:
-                        score -= nyEarly ? 6 : 5;   // NY early spike veszélyesebb
+                        basePenalty = 5;
                         break;
 
                     case FxSession.London:
-                        score -= 4;
+                        basePenalty = 4;
                         break;
 
                     case FxSession.Asia:
-                        score -= 5;                 // Asia continuation gyengébb
+                        basePenalty = 5;
                         break;
 
                     default:
-                        score -= 4;
+                        basePenalty = 4;
                         break;
                 }
 
-                // --- HTF conflict extra penalty ---
+                // Volatility adaptive scaling
+                double volMultiplier =
+                    fx.Volatility == FxVolatilityClass.High ? 1.2 :
+                    fx.Volatility == FxVolatilityClass.Medium ? 1.0 :
+                    fx.Volatility == FxVolatilityClass.Low ? 0.8 :
+                    0.7; // VeryLow
+
+                int finalPenalty = (int)Math.Round(basePenalty * volMultiplier);
+
+                ApplyPenalty(finalPenalty);
+
+                // HTF conflict soft penalty
                 if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
                     ctx.FxHtfConfidence01 >= 0.55)
                 {
-                    score -= 2;
+                    ApplyPenalty(2);
                 }
             }
 
@@ -564,52 +672,86 @@ namespace GeminiV26.EntryTypes.FX
             // SOFT M1 BONUS (csak borderline setupok)
             // =====================================================
 
-            if (softM1 && isContinuation)
+            if (softM1 && isPreTrigger)
             {
-                score += 1;
+                ApplyReward(1); 
             }
 
-            // =====================================================
-            // CONTINUATION SCORE REWARD
-            // =====================================================
+            // ===========================================
+            // TRIGGER REWARD – BALANCED FX VERSION
+            // ===========================================
 
             if (breakout)
             {
-                score += 8;
+                // breakout erős jel, de ne írja felül a teljes score-t
+                ApplyReward(3);
+
+                // extra reward csak ha van energia + alignment
+                if (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5)
+                    ApplyReward(2);
             }
             else if (hasM1Confirmation)
             {
-                score += 5;
+                ApplyReward(4);
             }
-            else if (ctx.LastClosedBarInTrendDirection)
-            {
-                score += 2;   // agresszív continuation, de már büntetve lett fentebb
-            }
-
+            
             // =====================================================
-            // 4B. FX HTF DIRECTION FILTER (ANTI COUNTER-HTF)
-            // =====================================================
-            // =====================================================
-            // 4B+. HTF CONFLICT HARDENING (both directions)
+            // HTF CONFLICT – ADAPTIVE FX VERSION
             // =====================================================
 
-            // Erős HTF bias ellenirányban: ne engedjük át (főleg NY/London)
             bool htfHasDir = ctx.FxHtfAllowedDirection != TradeDirection.None;
             bool htfConflict = htfHasDir && ctx.TrendDirection != ctx.FxHtfAllowedDirection;
 
             if (htfConflict)
             {
-                if (ctx.FxHtfConfidence01 >= 0.75 && ctx.Session == FxSession.London)
-                    return Invalid(ctx,
-                        $"FX_HTF_STRONG_BLOCK {ctx.FxHtfAllowedDirection} conf={ctx.FxHtfConfidence01:F2}",
-                        score);
+                double conf = ctx.FxHtfConfidence01;
 
-                if (ctx.FxHtfConfidence01 >= 0.60)
-                    score -= 10;
-                else if (ctx.FxHtfConfidence01 >= 0.45)
-                    score -= 6;
+                // Hard block only if:
+                // - strong HTF bias
+                // - no trigger yet
+                // - low volatility pair (less fake reversals)
+                if (conf >= 0.80 &&
+                    isPreTrigger &&
+                    fx.Volatility == FxVolatilityClass.Low)
+                {
+                    return Invalid(ctx,
+                        $"HTF_STRONG_BLOCK conf={conf:F2}",
+                        score);
+                }
+
+                int penalty;
+
+                if (conf >= 0.75)
+                {
+                    // Strong HTF bias against us → NO TRADE
+                    return Invalid(ctx,
+                        $"HTF_STRONG_CONFLICT_BLOCK conf={conf:F2}",
+                        score);
+                }
+                else if (conf >= 0.60)
+                {
+                    penalty = 8;
+                }
+                else if (conf >= 0.45)
+                {
+                    penalty = 5;
+                }
                 else
-                    score -= 3;
+                {
+                    penalty = 3;
+                }
+
+                // If breakout already happened, reduce penalty
+                if (hasTrigger)
+                    penalty -= 1;
+
+                // High volatility pairs tolerate HTF conflict better
+                if (fx.Volatility == FxVolatilityClass.High)
+                    penalty -= 1;
+
+                if (penalty < 0) penalty = 0;
+
+                ApplyPenalty(penalty);
             }
 
             // =====================================================
@@ -639,20 +781,22 @@ namespace GeminiV26.EntryTypes.FX
 
                     if (!transitionLong)
                     {
-                        score -= 8;
+                        ApplyPenalty(10); // egységes kemény bünti
 
                         if (ctx.FxHtfConfidence01 > 0.65)
-                            score -= 4;
+                            ApplyPenalty(3); // extra HTF bünti, de nem brutál
                     }
-
-                    score -= 6;
+                    else
+                    {
+                        ApplyReward(4); // transition esetben enyhébb bünti
+                    }
                 }
                 else
                 {
-                    score += 2;
+                    ApplyReward(2);
 
                     if (m15Bull)
-                        score += 2;
+                        ApplyReward(2);
                 }
             }
 
@@ -671,41 +815,51 @@ namespace GeminiV26.EntryTypes.FX
 
                     if (!transitionShort)
                     {
-                        score -= 5;
+                        ApplyPenalty(10);
 
                         if (ctx.FxHtfConfidence01 > 0.65 &&
                             ctx.FxHtfAllowedDirection == TradeDirection.Long)
                         {
-                            score -= 5;
+                            ApplyPenalty(3);
                         }
                     }
-
-                    // ✅ ezt ADD HOZZÁ (szimmetria + anti-wrong-structure)
-                    score -= 6;
+                    else
+                    {
+                        ApplyPenalty(4);
+                    }
                 }
                 else
                 {
-                    score += 2;
+                    ApplyReward(2);
 
                     if (m15Bear)
-                        score += 2;
+                        ApplyReward(2);
                 }
             }
 
             int min = tuning.MinScore;
 
+            // =====================================================
+            // A+ GATE: FX-en csak TRIGGER-rel mehetünk élesre
+            // (kevesebb trade, nagyobb winrate)
+            // =====================================================
+            if (!hasTrigger)
+                return Invalid(ctx, "A_PLUS_NEEDS_TRIGGER", score);
+
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
             // ===================================================== 
             // Session strictness
-            if (ctx.Session == FxSession.NewYork) min += 2;
-            if (ctx.Session == FxSession.London)  min += 1;
+            int sessionStrictness =
+                ctx.Session == FxSession.NewYork ? 2 :
+                ctx.Session == FxSession.London  ? 1 :
+                0;
 
-            if (htfTransitionZone)
-                min += 2;
+            min += sessionStrictness;
 
-            // Apply minBoost gently
-            min += Math.Min(4, minBoost);
+            // Controlled boost
+            int effectiveBoost = Math.Min(3, minBoost);
+            min += effectiveBoost;
 
             if (min < 0) min = 0;
 
