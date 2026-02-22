@@ -93,6 +93,73 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
+            // COMPOSITE MOMENTUM FUEL INDEX (NEW)
+            // =========================
+
+            int fuelScore = 0;
+
+            // ADX slope component
+            if (ctx.AdxSlope_M5 > 0.5)
+                fuelScore += 6;
+            else if (ctx.AdxSlope_M5 > 0)
+                fuelScore += 3;
+            else if (ctx.AdxSlope_M5 < -0.3)
+                fuelScore -= 6;
+            else
+                fuelScore -= 3;
+
+            // ATR expansion component
+            if (ctx.IsAtrExpanding_M5 && ctx.AtrSlope_M5 > 0)
+                fuelScore += 6;
+            else if (!ctx.IsAtrExpanding_M5 && ctx.AtrSlope_M5 <= 0)
+                fuelScore -= 6;
+            else
+                fuelScore -= 2;
+
+            // Impulse freshness
+            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2)
+                fuelScore += 5;
+            else if (!ctx.HasImpulse_M5)
+                fuelScore -= 4;
+
+            // Pullback quality as energy signal
+            if (ctx.IsPullbackDecelerating_M5 && ctx.HasReactionCandle_M5)
+                fuelScore += 4;
+            else
+                fuelScore -= 3;
+
+            // Low volatility scaling
+            if (!ctx.IsVolatilityAcceptable_Crypto)
+                fuelScore -= 4;
+
+            // =========================
+            // FUEL INTEGRATION
+            // =========================
+
+            // Hard exhaustion block
+            if (fuelScore <= -12)
+            {
+                return Block(ctx,
+                    "CRYPTO_PULLBACK_NO_FUEL",
+                    score,
+                    dir);
+            }
+
+            // Soft scaling
+            if (fuelScore < 0)
+            {
+                int penalty = Math.Abs(fuelScore) / 2;
+                score -= penalty;
+            }
+            else if (fuelScore > 8)
+            {
+                score += 4;
+            }
+
+            Console.WriteLine($"[BTC_PULLBACK][FUEL_APPLIED] fuel={fuelScore} newScore={score}");
+            Console.WriteLine($"[BTC_PULLBACK][FUEL] adxSlope={ctx.AdxSlope_M5:0.00} atrSlope={ctx.AtrSlope_M5:0.00} impulse={ctx.HasImpulse_M5} fuel={fuelScore}");
+
+            // =========================
             // EMA RECLAIM
             // =========================
             if (dir == TradeDirection.Short && lastClosed >= 1)
@@ -230,17 +297,13 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (ctx.BarsSinceImpulse_M5 > 3)
             {
-                int agePenalty = Math.Min(3, (ctx.BarsSinceImpulse_M5 - 5));
+                int raw = ctx.BarsSinceImpulse_M5 - 5;
+                int agePenalty = Math.Max(0, Math.Min(3, raw));
+                
                 score -= agePenalty;
 
                 Console.WriteLine($"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}");
             }
-
-            // =========================
-            // VOL SOFT
-            // =========================
-            if (!ctx.IsVolatilityAcceptable_Crypto)
-                score -= 2;
 
             // =========================
             // PULLBACK QUALITY
