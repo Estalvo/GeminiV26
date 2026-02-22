@@ -199,6 +199,19 @@ namespace GeminiV26.Core.Entry
             }
 
             // =================================================
+            // INSTRUMENT FLAGS
+            // =================================================
+            bool isIndex = IsIndexSymbol(symbol);
+            bool isCrypto = IsCryptoSymbol(symbol);
+            bool isMetal = IsMetalSymbol(symbol);
+
+            bool isFx =
+                !isIndex &&
+                !isCrypto &&
+                !isMetal &&
+                FxInstrumentMatrix.Contains(symbol);
+
+            // =================================================
             // CRYPTO TREND OVERRIDE (DI-dominant in strong trend)
             // =================================================
 
@@ -218,19 +231,6 @@ namespace GeminiV26.Core.Entry
                 else if (ctx.Ema21Slope_M15 < 0)
                     ctx.TrendDirection = TradeDirection.Short;
             }
-
-            // =================================================
-            // INSTRUMENT FLAGS
-            // =================================================
-            bool isIndex = IsIndexSymbol(symbol);
-            bool isCrypto = IsCryptoSymbol(symbol);
-            bool isMetal = IsMetalSymbol(symbol);
-
-            bool isFx =
-                !isIndex &&
-                !isCrypto &&
-                !isMetal &&
-                FxInstrumentMatrix.Contains(symbol);
                         
             // =================================================
             // PROFILES
