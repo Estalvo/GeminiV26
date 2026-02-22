@@ -660,8 +660,9 @@ namespace GeminiV26.EntryTypes.FX
 
                 ApplyPenalty(finalPenalty);
 
-                // HTF conflict soft penalty
+                // HTF conflict soft penalty (ONLY if conflict)
                 if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                    ctx.TrendDirection != ctx.FxHtfAllowedDirection &&
                     ctx.FxHtfConfidence01 >= 0.55)
                 {
                     ApplyPenalty(2);
@@ -694,7 +695,34 @@ namespace GeminiV26.EntryTypes.FX
             {
                 ApplyReward(4);
             }
+
+            // =====================================================
+            // HTF CONFLICT – SOFT ONLY (NO BLOCK) + NEW MAPPING
+            // =====================================================
+            bool htfHasDir = ctx.FxHtfAllowedDirection != TradeDirection.None;
+            bool htfConflict = htfHasDir && ctx.TrendDirection != ctx.FxHtfAllowedDirection;
+
+            if (htfConflict)
+            {
+                double conf = ctx.FxHtfConfidence01;
+
+                int penalty =
+                conf >= 0.75 ? 6 :
+                conf >= 0.60 ? 4 :
+                conf >= 0.45 ? 2 :
+                1;
+
+            if (hasTrigger)
+                penalty = Math.Max(0, penalty - 2);
+
+            // High volatility pairs tolerate HTF conflict better
+            if (fx.Volatility == FxVolatilityClass.High)
+                penalty = Math.Max(0, penalty - 1);
+
+            ApplyPenalty(penalty);
+            }
             
+            /*
             // =====================================================
             // HTF CONFLICT – ADAPTIVE FX VERSION
             // =====================================================
@@ -753,6 +781,7 @@ namespace GeminiV26.EntryTypes.FX
 
                 ApplyPenalty(penalty);
             }
+*/
 
             // =====================================================
             // 4C. STRUCTURAL TREND ALIGNMENT (EMA50 / EMA200 M5)
@@ -825,7 +854,7 @@ namespace GeminiV26.EntryTypes.FX
                     }
                     else
                     {
-                        ApplyPenalty(4);
+                        ApplyReward(4);
                     }
                 }
                 else
