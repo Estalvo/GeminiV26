@@ -230,6 +230,19 @@ namespace GeminiV26.EntryTypes.Crypto
                 score -= 10;
 
             // =========================
+            // ULTRA SOFT LATE TREND MICRO PENALTY
+            // =========================
+            bool ultraLateTrend =
+                ctx.Adx_M5 >= 50 &&
+                ctx.AdxSlope_M5 <= 0.2 &&
+                ctx.AtrSlope_M5 <= 0;
+
+            if (ultraLateTrend)
+            {
+                score -= 2;   // extrém finom korrekció
+            }
+            
+            // =========================
             // LATE IMPULSE / EXPANSION EXHAUSTION BLOCK
             // =========================
 
