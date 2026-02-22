@@ -764,12 +764,17 @@ namespace GeminiV26.EntryTypes.FX
 
         private static double GetImpulseQuality(EntryContext ctx, int lookback)
         {
+            if (ctx.M5 == null || ctx.M5.Count < lookback + 3) // kell lezárt lookback + safety
+                return 0;
+
+            int lastClosed = ctx.M5.Count - 2;
+
             double range = 0;
             double body = 0;
 
-            for (int i = 1; i <= lookback; i++)
+            for (int k = 0; k < lookback; k++)
             {
-                var bar = ctx.M5[ctx.M5.Count - i];
+                var bar = ctx.M5[lastClosed - k]; // csak LEZÁRT barok
                 range += bar.High - bar.Low;
                 body += Math.Abs(bar.Close - bar.Open);
             }
@@ -801,21 +806,20 @@ namespace GeminiV26.EntryTypes.FX
 
         private static bool HasM1FollowThrough(EntryContext ctx)
         {
-            if (ctx.M1 == null || ctx.M1.Count < 3)
+            if (ctx.M1 == null || ctx.M1.Count < 4) // kell lezárt last + lezárt prev + safety
                 return false;
 
-            var last = ctx.M1[ctx.M1.Count - 1];
-            var prev = ctx.M1[ctx.M1.Count - 2];
+            int lastClosed = ctx.M1.Count - 2;   // utolsó LEZÁRT
+            int prevClosed = ctx.M1.Count - 3;
+
+            var last = ctx.M1[lastClosed];
+            var prev = ctx.M1[prevClosed];
 
             double body = Math.Abs(last.Close - last.Open);
             double range = last.High - last.Low;
 
-            if (range <= 0)
-                return false;
-
-            // body dominance – ne doji legyen
-            if (body / range < 0.55)
-                return false;
+            if (range <= 0) return false;
+            if (body / range < 0.55) return false;
 
             if (ctx.TrendDirection == TradeDirection.Long)
                 return last.Close > prev.High && last.Close > last.Open;
@@ -828,17 +832,18 @@ namespace GeminiV26.EntryTypes.FX
 
         private static bool HasM1PullbackConfirm(EntryContext ctx)
         {
-            // meglévő, már bevált jel
             if (!ctx.M1TriggerInTrendDirection)
                 return false;
 
-            if (ctx.M1 == null || ctx.M1.Count < 2)
+            if (ctx.M1 == null || ctx.M1.Count < 3)
                 return false;
 
-            var last = ctx.M1[ctx.M1.Count - 1];
-            var prev = ctx.M1[ctx.M1.Count - 2];
+            int lastClosed = ctx.M1.Count - 2;
+            int prevClosed = ctx.M1.Count - 3;
 
-            // kis visszahúzás + irányba zárás
+            var last = ctx.M1[lastClosed];
+            var prev = ctx.M1[prevClosed];
+
             if (ctx.TrendDirection == TradeDirection.Long)
                 return last.Close > last.Open && last.Low > prev.Low;
 
@@ -847,7 +852,6 @@ namespace GeminiV26.EntryTypes.FX
 
             return false;
         }
-
 
         // =====================================================
         // REFLECTION-SAFE CTX ACCESSORS (NO MEMBER ASSUMPTIONS)
