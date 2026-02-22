@@ -40,20 +40,20 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            // Magas confidence → nagyobb risk (skálázódó)
-            if (finalConfidence >= 85) return 1.30;
-            if (finalConfidence >= 75) return 0.90;
-            return 0.55;
+            if (finalConfidence >= 90) return 0.95;
+            if (finalConfidence >= 80) return 0.75;
+            if (finalConfidence >= 70) return 0.55;
+            return 0.40;
         }
 
         // =========================================================
         // STOP LOSS ATR MULTIPLIER
-        // =========================================================
-        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
+        // =========================================================               
+        }public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            return finalConfidence >= 85
-                ? 1.8
-                : 2.2;
+            if (finalConfidence >= 85) return 1.9;
+            if (finalConfidence >= 75) return 2.1;
+            return 2.4;
         }
 
         // =========================================================
@@ -96,7 +96,9 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            return 100000; // units, nem lot
+            if (confidence >= 85) return 70000;
+            if (confidence >= 75) return 60000;
+            return 50000;
         }
     }
 }
