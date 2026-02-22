@@ -148,7 +148,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // Soft scaling
             if (fuelScore < 0)
             {
-                int penalty = Math.Abs(fuelScore) / 2;
+                int penalty = (int)Math.Round(Math.Abs(fuelScore) * 0.8);
                 score -= penalty;
             }
             else if (fuelScore > 8)
