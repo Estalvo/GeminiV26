@@ -172,7 +172,14 @@ namespace GeminiV26.Instruments.AUDUSD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
-                EntryScore = tempFinalConfidence,
+
+                // =========================
+                // RULEBOOK PIPELINE
+                // =========================
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence,
+                // FinalConfidence-t ComputeFinalConfidence tölti
+
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
                 RiskPriceDistance = slPriceDist,
@@ -183,7 +190,6 @@ namespace GeminiV26.Instruments.AUDUSD
                 Tp2Ratio = tp2Ratio,
                 BeOffsetR = 0.10,
 
-                // opcionális, de hasznos:
                 Tp1Price = tradeType == TradeType.Buy
                     ? entryPrice + slPriceDist * tp1R
                     : entryPrice - slPriceDist * tp1R,
@@ -192,6 +198,7 @@ namespace GeminiV26.Instruments.AUDUSD
                 Tp1CloseFraction = tp1Ratio,
                 BeMode = BeMode.AfterTp1,
 
+                // ⚠️ Trailing marad tempFinalConfidence alapján
                 TrailingMode =
                     tempFinalConfidence >= 85 ? TrailingMode.Loose :
                     tempFinalConfidence >= 75 ? TrailingMode.Normal :
@@ -202,9 +209,12 @@ namespace GeminiV26.Instruments.AUDUSD
                 Tp2Price = tp2Price
             };
 
+            // ✅ Kanonikus 70/30 FinalConfidence
+            ctx.ComputeFinalConfidence();
+
             _positionContexts[ctx.PositionId] = ctx;
             _exitManager.RegisterContext(ctx);
-
+            
             _bot.Print(
                 $"[AUDUSD EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}"

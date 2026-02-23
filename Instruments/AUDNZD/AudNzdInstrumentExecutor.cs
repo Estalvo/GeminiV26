@@ -172,7 +172,11 @@ namespace GeminiV26.Instruments.AUDNZD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
-                EntryScore = tempFinalConfidence,
+
+                // ✅ Rulebook-kompatibilis mezők
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence,
+
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
                 RiskPriceDistance = slPriceDist,
@@ -183,7 +187,6 @@ namespace GeminiV26.Instruments.AUDNZD
                 Tp2Ratio = tp2Ratio,
                 BeOffsetR = 0.10,
 
-                // opcionális, de hasznos:
                 Tp1Price = tradeType == TradeType.Buy
                     ? entryPrice + slPriceDist * tp1R
                     : entryPrice - slPriceDist * tp1R,
@@ -192,6 +195,7 @@ namespace GeminiV26.Instruments.AUDNZD
                 Tp1CloseFraction = tp1Ratio,
                 BeMode = BeMode.AfterTp1,
 
+                // ⚠️ Trailing marad tempFinalConfidence alapján (nem változtatunk működésen)
                 TrailingMode =
                     tempFinalConfidence >= 85 ? TrailingMode.Loose :
                     tempFinalConfidence >= 75 ? TrailingMode.Normal :
@@ -201,6 +205,9 @@ namespace GeminiV26.Instruments.AUDNZD
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
                 Tp2Price = tp2Price
             };
+
+            // ✅ Kanonikus FinalConfidence (70/30)
+            ctx.ComputeFinalConfidence();
 
             _positionContexts[ctx.PositionId] = ctx;
             _exitManager.RegisterContext(ctx);
