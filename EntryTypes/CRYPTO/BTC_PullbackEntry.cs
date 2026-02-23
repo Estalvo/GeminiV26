@@ -7,7 +7,7 @@ namespace GeminiV26.EntryTypes.Crypto
     public class BTC_PullbackEntry : IEntryType
     {        
         public EntryType Type => EntryType.Crypto_Pullback;
-        private const int MIN_SCORE = 20;
+        private const int MIN_SCORE = 26;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
