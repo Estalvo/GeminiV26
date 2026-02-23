@@ -1817,16 +1817,16 @@ namespace GeminiV26.Core
                 string sym = pos.SymbolName.ToUpper();
 
                 if (sym.Contains("XAU"))
-                    hardLimit = -200.0;
+                    hardLimit = -250.0;
 
                 else if (sym.Contains("BTC") || sym.Contains("ETH"))
-                    hardLimit = -200.0;
+                    hardLimit = -250.0;
 
                 else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
-                    hardLimit = -100.0;
+                    hardLimit = -150.0;
 
                 else
-                    hardLimit = -100.0; // default FX
+                    hardLimit = -150.0; // default FX
 
 
                 if (loss > hardLimit)
