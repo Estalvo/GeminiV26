@@ -91,17 +91,26 @@ namespace GeminiV26.Instruments.XAUUSD
         }
 
         // =========================================================
-        // LOT CAP (XAU specifikus)
+        // LOT CAP (XAU specifikus) – UPGRADED
         // =========================================================
         public double GetLotCap(int finalConfidence)
         {
+            // Alap skála:
+            // 0.30 → 1.00 lot
+
+            if (finalConfidence >= 90)
+                return 1.20;   // nagyon erős setup
+
             if (finalConfidence >= 85)
-                return 0.50;
+                return 0.90;   // komoly méret
+
+            if (finalConfidence >= 80)
+                return 0.70;
 
             if (finalConfidence >= 75)
-                return 0.30;
+                return 0.50;
 
-            return 0.20;
+            return 0.30;       // defenzív alapszint
         }
 
         // =========================================================
