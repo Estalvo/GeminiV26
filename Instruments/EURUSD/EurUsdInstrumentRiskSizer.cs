@@ -5,25 +5,26 @@ using System;
 namespace GeminiV26.Instruments.EURUSD
 {
     /// <summary>
-    /// EURUSD money-risk policy – Phase 3.8 (BASELINE, NAS 1:1 clone)
-    /// Policy szint:
-    /// - Risk% (score alapján)
-    /// - SL ATR multiplier (score + entryType alapján)
-    /// - TP1/TP2 R struktúra (score alapján)
-    /// - Lot cap (score alapján)
-    ///
-    /// Nem számol árat, nem nyit/zár, nem kezel lifecycle-t.
+    /// EURUSD money-risk policy – Phase 3.9 (Adaptive LotCap Upgrade)
+    /// 
+    /// Változás:
+    /// - Dinamikusabb LotCap skálázás
+    /// - Magas score esetén érezhető méretnövekedés
+    /// - Borderline tradek továbbra is kontroll alatt
+    /// 
+    /// NINCS egyszerűsítés.
+    /// NINCS logika törlés.
     /// </summary>
     public class EurUsdInstrumentRiskSizer : IInstrumentRiskSizer
     {
         // =========================
-        // TUNING (egy helyen) – baseline NAS
+        // TUNING – változatlan
         // =========================
         private const double RiskMin = 0.20;
         private const double RiskLow = 0.25;
         private const double RiskMed = 0.35;
         private const double RiskHigh = 0.45;
-        private const double RiskMax = 0.55;
+        private const double RiskMax = 0.65;   // kis emelés 0.55 → 0.65
 
         private const double SlBase = 2.0;
         private const double SlWide = 2.4;
@@ -36,9 +37,8 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            // EURUSD – kontrollált FX
-            // 0.35% → 0.65%
-            return 0.35 + n * (0.65 - 0.35);
+            // 0.40% → 0.75% (kicsit erősebb FX London trendhez)
+            return 0.40 + n * (0.75 - 0.40);
         }
 
         // =========================
@@ -48,13 +48,12 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            // EURUSD – realisztikus FX SL
-            // 1.9 → 1.5 ATR
+            // változatlan struktúra
             return 1.9 - n * 0.4;
         }
 
         // =========================
-        // TP struktúra (R + arány)
+        // TP struktúra
         // =========================
         public void GetTakeProfit(
             int score,
@@ -65,28 +64,40 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            tp1R = 0.50;                    // fix 0.5R
-            tp1Ratio = 0.60 - n * 0.15;     // 0.60 → 0.45
+            tp1R = 0.50;
+            tp1Ratio = 0.60 - n * 0.15;
 
-            tp2R = 1.2 + n * 0.6;           // 1.2 → 1.8
+            tp2R = 1.2 + n * 0.6;
             tp2Ratio = 1.0 - tp1Ratio;
         }
 
         // =========================
-        // LOT CAP
+        // LOT CAP – UPGRADED
         // =========================
         public double GetLotCap(int score)
         {
             double n = NormalizeScore(score);
 
-            // FX: ne legyen azonnal full cap
-            // 0.90 → 1.20
-            return 0.90 + n * 0.30;
+            // Dinamikusabb skálázás:
+            // 1.0 → 1.8 lineárisan
+            double baseCap = 1.0 + n * 0.8;
+
+            // Extra boost magas minőségű setupra
+            if (score >= 80)
+                baseCap += 0.3;   // max ~2.1
+
+            if (score >= 85)
+                baseCap += 0.2;   // max ~2.3
+
+            return baseCap;
         }
 
+        // =========================
+        // SCORE NORMALIZATION – változatlan
+        // =========================
         private static double NormalizeScore(int score)
         {
-            // FX új valós tartomány: ~55–90
+            // FX reális tartomány: 55–90
             return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
         }
     }
