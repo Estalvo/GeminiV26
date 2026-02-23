@@ -33,9 +33,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    20 },
-                        { FxSession.London,  23 },
-                        { FxSession.NewYork, 25 }
+                        { FxSession.Asia,    18 },
+                        { FxSession.London,  20 },
+                        { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -109,9 +109,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    22 },
-                        { FxSession.London,  24 },
-                        { FxSession.NewYork, 26 }
+                        { FxSession.Asia,    19 },
+                        { FxSession.London,  22 },
+                        { FxSession.NewYork, 22 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -185,9 +185,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    22 },
-                        { FxSession.London,  24 },
-                        { FxSession.NewYork, 26 }
+                        { FxSession.Asia,    17 },
+                        { FxSession.London,  19 },
+                        { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -265,9 +265,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    22 },
-                        { FxSession.London,  24 },
-                        { FxSession.NewYork, 26 }
+                        { FxSession.Asia,    20 },
+                        { FxSession.London,  23 },
+                        { FxSession.NewYork, 23 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -343,9 +343,9 @@ namespace GeminiV26.Instruments.FX
                 },
                 new()
                 {
-                    { FxSession.Asia,    22 },
-                    { FxSession.London,  24 },
-                    { FxSession.NewYork, 26 }
+                    { FxSession.Asia,    18 },
+                    { FxSession.London,  21 },
+                    { FxSession.NewYork, 21 }
                 },
                 asia: new FxFlagSessionTuning
                 {
@@ -423,8 +423,8 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    16 },
-                        { FxSession.London,  18 },
+                        { FxSession.Asia,    17 },
+                        { FxSession.London,  20 },
                         { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
@@ -506,9 +506,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    16 },
-                        { FxSession.London,  18 },
-                        { FxSession.NewYork, 20 }
+                        { FxSession.Asia,    17 },
+                        { FxSession.London,  19 },
+                        { FxSession.NewYork, 19 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -584,9 +584,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    16 },
-                        { FxSession.London,  18 },
-                        { FxSession.NewYork, 20 }
+                        { FxSession.Asia,    15 },
+                        { FxSession.London,  17 },
+                        { FxSession.NewYork, 17 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -662,9 +662,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    20 },
-                        { FxSession.London,  23 },
-                        { FxSession.NewYork, 25 }
+                        { FxSession.Asia,    17 },
+                        { FxSession.London,  19 },
+                        { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -744,9 +744,9 @@ namespace GeminiV26.Instruments.FX
                     },
                     new()
                     {
-                        { FxSession.Asia,    20 },
-                        { FxSession.London,  23 },
-                        { FxSession.NewYork, 25 }
+                        { FxSession.Asia,    16 },
+                        { FxSession.London,  18 },
+                        { FxSession.NewYork, 18 }
                     },
                     asia: new FxFlagSessionTuning
                     {
