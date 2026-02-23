@@ -158,7 +158,7 @@ namespace GeminiV26.Instruments.FX
                     // ===== CONTINUATION CHARACTER =====
                         maxContinuationRatr: 1.7,
                         maxContinuationBarsSinceBreak: 4,
-                        requireHtfAlignmentForContinuation: false,
+                        requireHtfAlignmentForContinuation: true,
                         allowContinuationDuringHtfTransition: true
                 ),
 
@@ -591,11 +591,11 @@ namespace GeminiV26.Instruments.FX
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 72,               // SZIGORÍTÁS: 55 -> 62 (legyen nagyon válogatós)
-                        FlagBars = 4,                // STABILITÁS: 2 -> 4 bár (építsen komoly bázist)
-                        MaxFlagAtrMult = 1.0,        // SZIGORÍTÁS: 1.8 -> 1.0 (csak kompakt, sűrű bázis)
-                        MaxPullbackAtr = 0.60,       // SZIGORÍTÁS: 1.10 -> 0.60 (ne engedjünk mély visszatesztet)
-                        BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb tizedelés a kitörésnél
+                        MinScore = 66,               // SZIGORÍTÁS: 55 -> 62 (legyen nagyon válogatós)
+                        FlagBars = 3,                // STABILITÁS: 2 -> 4 bár (építsen komoly bázist)
+                        MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.8 -> 1.0 (csak kompakt, sűrű bázis)
+                        MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 1.10 -> 0.60 (ne engedjünk mély visszatesztet)
+                        BreakoutAtrBuffer = 0.08,    // BIZTONSÁG: Nagyobb tizedelés a kitörésnél
                         BodyMisalignPenalty = 20,    // SZIGORÍTÁS: 6 -> 20 (csak tökéletes gyertyasorrend)
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 5,        // ÚJ: Extra bónusz, ha vizuálisan tiszta a setup
@@ -607,10 +607,10 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 75,               // Londonban szinte csak "véletlenül" lépjen be
-                        FlagBars = 4,
-                        MaxFlagAtrMult = 1.1,
-                        MaxPullbackAtr = 0.70,
+                        MinScore = 68,               // Londonban szinte csak "véletlenül" lépjen be
+                        FlagBars = 3,
+                        MaxFlagAtrMult = 1.3,
+                        MaxPullbackAtr = 0.85,
                         BreakoutAtrBuffer = 0.12,
                         BodyMisalignPenalty = 10,
                         M1TriggerBonus = 5,
@@ -633,8 +633,8 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true
                     },
                     // ===== CONTINUATION CHARACTER =====
-                        maxContinuationRatr: 1.2,
-                        maxContinuationBarsSinceBreak: 2,
+                        maxContinuationRatr: 1.4,
+                        maxContinuationBarsSinceBreak: 3,
                         requireHtfAlignmentForContinuation: true,
                         allowContinuationDuringHtfTransition: false
                 ),
