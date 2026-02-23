@@ -66,13 +66,14 @@ namespace GeminiV26.EntryTypes.FX
 
             if (TryGetDouble(ctx, "Adx_M5", out var adxCheck))
             {
-                double minAdx =
-                    ctx.Session == FxSession.NewYork ? 25.0 :
-                    ctx.Session == FxSession.London ? 23.0 :
-                    22.0;
-
-                if (adxCheck < minAdx)
-                    return Invalid(ctx, $"ADX_TOO_LOW {adxCheck:F1}<{minAdx}", score);
+                if (fx.MinAdxBySession != null &&
+                    fx.MinAdxBySession.TryGetValue(ctx.Session, out var minAdx))
+                {
+                    if (adxCheck < minAdx)
+                        return Invalid(ctx,
+                            $"ADX_TOO_LOW {adxCheck:F1}<{minAdx} [{ctx.Symbol}/{ctx.Session}]",
+                            score);
+                }
             }
 
             // --- ADX Climax / Rolling Guard (reflection-safe) ---
@@ -230,8 +231,12 @@ namespace GeminiV26.EntryTypes.FX
                 ApplyPenalty(6);   // eddig kinyírta a setupok 30-40%-át
 
             // 🔧 MOMENTUM CONTINUATION BONUS
-            if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 && ctx.HasImpulse_M5)
-                ApplyPenalty(4);
+            if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 &&
+                ctx.HasImpulse_M5 &&
+                !ctx.IsAtrExpanding_M5)
+            {
+                ApplyPenalty(4);   // chase only if energy fading
+            }
 
             // 🔧 EMA + TREND CONTEXT BONUS (amit te ránézésre látsz)
             if (ctx.TrendDirection == TradeDirection.Short && lastClose < ctx.Ema21_M5)
@@ -240,21 +245,28 @@ namespace GeminiV26.EntryTypes.FX
                 ApplyReward(3);
 
             // =====================================================
-            // IMPULSE QUALITY – FX BALANCED VERSION
+            // IMPULSE QUALITY – FX CONTINUATION SAFE
             // =====================================================
 
             if (ctx.HasImpulse_M5)
             {
                 double iq = GetImpulseQuality(ctx, 5);
 
-                if (iq > 0.70) ApplyPenalty(6);
-                else if (iq > 0.60) ApplyPenalty(4);
-                else if (iq > 0.50) ApplyPenalty(2);
-                else if (iq < 0.40) ApplyPenalty(4);
+                // 🔴 túl erős = chase danger
+                if (iq > 0.80)
+                    ApplyPenalty(5);
+                else if (iq > 0.72)
+                    ApplyPenalty(3);
+
+                // 🟡 középtartomány – NE büntesd
+                // 0.50–0.72 → ideális continuation impulse
+
+                // 🔴 gyenge impulse → nincs valódi struktúra
+                else if (iq < 0.38)
+                    ApplyPenalty(4);
             }
             else
             {
-                // No impulse: only reward if structure + compression make sense
                 bool compressionValid =
                     !ctx.IsRange_M5 &&
                     ctx.LastClosedBarInTrendDirection &&
@@ -319,13 +331,13 @@ namespace GeminiV26.EntryTypes.FX
             if (rangeAtr > tuning.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE", score);
 
-            // 🔧 FLAG QUALITY SCORING
+            // 🔧 FLAG QUALITY SCORING – CORRECTED
             if (rangeAtr < 0.6)
-                ApplyPenalty(4);
+                ApplyReward(2);          // kompakt, energikus
             else if (rangeAtr < 0.9)
-                ApplyPenalty(3);
+                ApplyReward(1);          // normál egészséges
             else
-                ApplyPenalty(1);
+                ApplyPenalty(2);         // kezd szétesni
 
             // =====================================================
             // 3B. FLAG SLOPE VALIDATION
@@ -344,7 +356,12 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // FX-SAFE THRESHOLDS (NO ADX DEPENDENCY)
             // -----------------------------------------------------
-            const double MaxDrift = 0.25;          // chase fölött
+            // Session-aware drift tolerance (FX adaptive)
+            double maxDrift =
+                ctx.Session == FxSession.London ? 0.35 :
+                ctx.Session == FxSession.NewYork ? 0.30 :
+                0.25;
+
             const double MaxOppositeSlope = 0.8;   // túl mély korrekció
 
             const double RewardZoneLow = -0.1;    // compression / flat
@@ -359,7 +376,7 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.TrendDirection == TradeDirection.Short)
             {
                 // Túl erős felfelé drift → chase
-                if (flagSlopeAtr > MaxDrift)
+                if (flagSlopeAtr > maxDrift)
                     return Invalid(ctx, "FLAG_TOO_UPWARD_SHORT", score);
 
                 // Túl mély lefelé csapás → nem flag
@@ -381,7 +398,7 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.TrendDirection == TradeDirection.Long)
             {
                 // Túl erős felfelé drift → chase
-                if (flagSlopeAtr > MaxDrift)
+                if (flagSlopeAtr > maxDrift)
                     return Invalid(ctx, "FLAG_TOO_UPWARD_LONG", score);
 
                 // Túl mély lefelé esés → nem egészséges pullback
@@ -412,10 +429,12 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // 4. CONTINUATION SIGNAL
             // =====================================================
+            double buffer = ctx.AtrM5 * tuning.BreakoutAtrBuffer;
+
             bool rawBreakout =
-            ctx.TrendDirection == TradeDirection.Long
-                ? lastClose > hi
-                : lastClose < lo;
+                ctx.TrendDirection == TradeDirection.Long
+                    ? lastClose > hi + buffer
+                    : lastClose < lo - buffer;
 
             // Body dominance check
             double body = Math.Abs(lastBar.Close - lastBar.Open);
@@ -684,16 +703,13 @@ namespace GeminiV26.EntryTypes.FX
 
             if (breakout)
             {
-                // breakout erős jel, de ne írja felül a teljes score-t
                 ApplyReward(3);
 
-                // extra reward csak ha van energia + alignment
                 if (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5)
                     ApplyReward(2);
-            }
-            else if (hasM1Confirmation)
-            {
-                ApplyReward(4);
+
+                if (strongBody)
+                    ApplyReward(1);
             }
 
             // =====================================================
@@ -810,7 +826,7 @@ namespace GeminiV26.EntryTypes.FX
 
                     if (!transitionLong)
                     {
-                        ApplyPenalty(10); // egységes kemény bünti
+                        ApplyPenalty(8); // egységes kemény bünti
 
                         if (ctx.FxHtfConfidence01 > 0.65)
                             ApplyPenalty(3); // extra HTF bünti, de nem brutál
@@ -844,7 +860,7 @@ namespace GeminiV26.EntryTypes.FX
 
                     if (!transitionShort)
                     {
-                        ApplyPenalty(10);
+                        ApplyPenalty(8);
 
                         if (ctx.FxHtfConfidence01 > 0.65 &&
                             ctx.FxHtfAllowedDirection == TradeDirection.Long)

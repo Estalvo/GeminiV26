@@ -133,6 +133,7 @@ namespace GeminiV26.Instruments.FX
         // ===== FX FLAG – TELJES SESSION TUNING
         // ==================================================
         public Dictionary<FxSession, FxFlagSessionTuning> FlagTuning { get; init; }
+        public Dictionary<FxSession, double> MinAdxBySession { get; set; }
 
         // ==================================================
         // ===== ENTRY CONTEXT skálázás

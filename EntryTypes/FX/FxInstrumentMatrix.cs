@@ -31,6 +31,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London,  +2 },
                         { FxSession.NewYork, +2 }
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    20 },
+                        { FxSession.London,  23 },
+                        { FxSession.NewYork, 25 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -101,6 +107,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London,  +6 },
                         { FxSession.NewYork, +3 }
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    22 },
+                        { FxSession.London,  24 },
+                        { FxSession.NewYork, 26 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -170,6 +182,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.Asia,    -5 }, // ÚJ: Hiába Asia bias, büntessük meg a JPY kockázat miatt
                         { FxSession.London,   0 },
                         { FxSession.NewYork, -5 }  // SZIGORÍTÁS: -2-ről -5-re (NY nyitáskor veszélyes)
+                    },
+                    new()
+                    {
+                        { FxSession.Asia,    22 },
+                        { FxSession.London,  24 },
+                        { FxSession.NewYork, 26 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -245,6 +263,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London,  +5 },
                         { FxSession.NewYork, -5 }
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    22 },
+                        { FxSession.London,  24 },
+                        { FxSession.NewYork, 26 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -316,6 +340,12 @@ namespace GeminiV26.Instruments.FX
                     { FxSession.Asia,    -5 }, // ÚJ: Minimális büntetés Ázsiára is a JPY kockázat miatt
                     { FxSession.London,  -5 },
                     { FxSession.NewYork, -20 }
+                },
+                new()
+                {
+                    { FxSession.Asia,    22 },
+                    { FxSession.London,  24 },
+                    { FxSession.NewYork, 26 }
                 },
                 asia: new FxFlagSessionTuning
                 {
@@ -390,6 +420,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.Asia,    -5 }, // ÚJ: Itt is bevezetünk egy kis szigort
                         { FxSession.London, -15 }, // SZIGORÍTÁS: -10 helyett -15
                         { FxSession.NewYork,-25 }  // SZIGORÍTÁS: -20 helyett -25
+                    },
+                    new()
+                    {
+                        { FxSession.Asia,    16 },
+                        { FxSession.London,  18 },
+                        { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -468,6 +504,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London, -15 }, // SZIGORÍTÁS: -10 -> -15
                         { FxSession.NewYork,-35 }  // SZIGORÍTÁS: -30 -> -35
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    16 },
+                        { FxSession.London,  18 },
+                        { FxSession.NewYork, 20 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -540,6 +582,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London,  -20 }, // SZIGORÍTÁS: Londonban ez a pár csak zaj
                         { FxSession.NewYork, -40 }  // TILTÁS KÖZELI: New Yorkban értelmezhetetlen
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    16 },
+                        { FxSession.London,  18 },
+                        { FxSession.NewYork, 20 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -611,6 +659,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.Asia,    -10 }, // SZIGORÍTÁS: -5 -> -10 (Ázsiában csak a CAD "véletlen" mozgásai vannak)
                         { FxSession.London,   0 },
                         { FxSession.NewYork, +5 }   // JUTALMAZÁS: +2 -> +5 (Ez a pár itt él igazán)
+                    },
+                    new()
+                    {
+                        { FxSession.Asia,    20 },
+                        { FxSession.London,  23 },
+                        { FxSession.NewYork, 25 }
                     },
                     asia: new FxFlagSessionTuning
                     {
@@ -688,6 +742,12 @@ namespace GeminiV26.Instruments.FX
                         { FxSession.London,  +4 },
                         { FxSession.NewYork, +2 }   // JUTALMAZÁS: 0 -> +2 (NY-ban is tud szépen mozogni)
                     },
+                    new()
+                    {
+                        { FxSession.Asia,    20 },
+                        { FxSession.London,  23 },
+                        { FxSession.NewYork, 25 }
+                    },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
@@ -759,9 +819,9 @@ namespace GeminiV26.Instruments.FX
             double atrM5,
             double atrM1,
             double maxFlagAtr,
-            double minAdx,
             double minAtr,
             Dictionary<FxSession, int> sessionScore,
+            Dictionary<FxSession, double> minAdxBySession,
             FxFlagSessionTuning? asia = null,
             FxFlagSessionTuning? london = null,
             FxFlagSessionTuning? ny = null,
@@ -789,7 +849,7 @@ namespace GeminiV26.Instruments.FX
                 ImpulseAtrMult_M5 = atrM5,
                 ImpulseAtrMult_M1 = atrM1,
                 MaxFlagAtrMult = maxFlagAtr,
-                MinAdxTrend = minAdx,
+                MinAdxBySession = minAdxBySession,
                 MinAtrPips = minAtr,
                 SessionScoreDelta = sessionScore,
                 FlagTuning = new Dictionary<FxSession, FxFlagSessionTuning>
