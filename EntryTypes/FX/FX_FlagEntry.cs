@@ -889,7 +889,9 @@ namespace GeminiV26.EntryTypes.FX
             // (kevesebb trade, nagyobb winrate)
             // =====================================================
             if (!hasTrigger)
-                return Invalid(ctx, "A_PLUS_NEEDS_TRIGGER", score);
+            {
+                ApplyPenalty(3);
+            }
 
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
