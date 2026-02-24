@@ -117,23 +117,6 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // =========================
-            // DYNAMIC MIN SCORE (XAU)
-            // =========================
-            int minScore = 68;
-
-            // közepesen mély pullback
-            if (ctx.PullbackDepthAtr_M5 > 1.2)
-                minScore += 4;
-
-            // extrém mély pullback – még szigorúbb küszöb
-            if (ctx.PullbackDepthAtr_M5 > 1.8)
-                minScore += 4;
-
-            // késői impulse
-            if (ctx.BarsSinceImpulse_M5 >= 4)
-                minScore += 4;
-                
-            // =========================
             // M1 TRIGGER
             // =========================
             if (ctx.M1TriggerInTrendDirection)
@@ -154,9 +137,24 @@ namespace GeminiV26.EntryTypes.METAL
                 score = 20;
             }
 
+            // =========================
+            // DYNAMIC MIN SCORE (XAU)
+            // =========================
+            int minScore = 68;
+
+            if (ctx.PullbackDepthAtr_M5 > 1.2)
+                minScore += 4;
+
+            if (ctx.PullbackDepthAtr_M5 > 1.8)
+                minScore += 4;
+
+            if (ctx.BarsSinceImpulse_M5 >= 4)
+                minScore += 4;
+
+            // FINAL CHECK
             if (score < minScore)
                 return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
-
+                
             // =========================
             // ACCEPT
             // =========================
