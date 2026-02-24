@@ -602,12 +602,19 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
             // =====================================================
-            // --- LOW ENERGY CONTINUATION BLOCK ---
-            if (!breakout &&
-                !hasM1Confirmation &&
-                !ctx.IsAtrExpanding_M5)
+            // --- LOW ENERGY CONTINUATION GUARD (balanced) ---
+            if (!breakout && !hasM1Confirmation && !ctx.IsAtrExpanding_M5)
             {
-                return Invalid(ctx, "LOW_ENERGY_CONT", score);
+                bool meh =
+                    ctx.IsRange_M5 ||
+                    (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !ctx.LastClosedBarInTrendDirection);
+
+                if (meh)
+                    return Invalid(ctx, "LOW_ENERGY_CONT", score);
+
+                // ha nem meh (pl. kompresszió+reakció), csak szigorítsunk
+                ApplyPenalty(3);
+                minBoost += 1;
             }
 
             if (!breakout && !hasM1Confirmation)
@@ -631,8 +638,11 @@ namespace GeminiV26.EntryTypes.FX
 
                 // --- 4️⃣ HTF ALIGNMENT REQUIREMENT ---
                 if (fx.RequireHtfAlignmentForContinuation &&
+                    ctx.FxHtfAllowedDirection != TradeDirection.None &&
                     ctx.FxHtfAllowedDirection != ctx.TrendDirection)
+                {
                     return Invalid(ctx, "HTF_NOT_ALIGNED", score);
+                }
             }
 
             // =====================================================
@@ -896,7 +906,7 @@ namespace GeminiV26.EntryTypes.FX
             // A+ GATE: FX-en csak TRIGGER-rel mehetünk élesre
             // (kevesebb trade, nagyobb winrate)
             // =====================================================
-            if (!hasTrigger)
+            if (!hasTrigger && !ctx.IsAtrExpanding_M5)
             {
                 ApplyPenalty(3);
             }
