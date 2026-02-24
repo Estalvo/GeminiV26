@@ -7,11 +7,11 @@ namespace GeminiV26.EntryTypes.Crypto
     public class BTC_PullbackEntry : IEntryType
     {        
         public EntryType Type => EntryType.Crypto_Pullback;
-        private const int MIN_SCORE = 36;
+        private const int MIN_SCORE = 34;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 35;
+            int score = 38;
 
             void ScoreLog(string label, int delta, int current)
             {
@@ -37,6 +37,20 @@ namespace GeminiV26.EntryTypes.Crypto
             
             if (dir != TradeDirection.Long && dir != TradeDirection.Short)
                 return Block(ctx, "NO_TREND_DIR", score);
+
+                // =========================
+                // HTF DIRECTION OVERRIDE (so TC doesn't kill everything)
+                // =========================
+                var allow = ctx.CryptoHtfAllowedDirection;
+                var htfConf = ctx.CryptoHtfConfidence01;
+
+                // csak erős HTF esetén igazodunk hozzá
+                if (allow != TradeDirection.None && htfConf >= 0.75 && dir != allow)
+                {
+                    dir = allow;
+                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
+                }
+                
             // =========================
             // IMPULSE DIRECTION LOCK (CRYPTO SAFETY)
             // =========================
@@ -446,7 +460,9 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (grayZone)
             {
-                return Block(ctx, $"GRAY_ZONE_{score}", score, dir);
+                // SOFT gray-zone: ne hard reject, csak tolja le a score-t
+                score -= 4;
+                Console.WriteLine($"[BTC_PULLBACK][SOFT] GRAY_ZONE(-4) score={score} validPb={validPullbackReaction} adx={ctx.Adx_M5:0.0} volOk={ctx.IsVolatilityAcceptable_Crypto}");
             }
 
             int dynamicMinScore = MIN_SCORE;
