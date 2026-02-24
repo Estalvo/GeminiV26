@@ -54,7 +54,7 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
 
             // túl friss impulzus → SOFT
-            if (ctx.BarsSinceImpulse_M5 < 1)
+            if (ctx.BarsSinceImpulse_M5 == 0)
             {
                 score -= FreshImpulsePenalty;
                 reasons.Add($"FRESH_IMPULSE(-{FreshImpulsePenalty})");
@@ -80,14 +80,16 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // IMPULSE REQUIREMENT
             // =========================
-            if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5)
+            if (ctx.HasImpulse_M5 || ctx.IsAtrExpanding_M5)
+            {
+                score += 10;
+                reasons.Add("+IMPULSE(10)");
+            }
+            else
             {
                 score -= 10;
                 reasons.Add("WEAK_IMPULSE(-10)");
             }
-
-            score += 10;
-            reasons.Add("+IMPULSE(10)");
 
             // =========================
             // PULLBACK QUALITY
@@ -115,6 +117,23 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // =========================
+            // DYNAMIC MIN SCORE (XAU)
+            // =========================
+            int minScore = 68;
+
+            // közepesen mély pullback
+            if (ctx.PullbackDepthAtr_M5 > 1.2)
+                minScore += 4;
+
+            // extrém mély pullback – még szigorúbb küszöb
+            if (ctx.PullbackDepthAtr_M5 > 1.8)
+                minScore += 4;
+
+            // késői impulse
+            if (ctx.BarsSinceImpulse_M5 >= 4)
+                minScore += 4;
+                
+            // =========================
             // M1 TRIGGER
             // =========================
             if (ctx.M1TriggerInTrendDirection)
@@ -131,17 +150,20 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // DYNAMIC MIN SCORE (XAU)
             // =========================
-            int minScore = 35;
+            int minScore = 68;
 
             if (ctx.PullbackDepthAtr_M5 > 1.2)
-                minScore += 5;
+                minScore += 4;
 
             if (ctx.BarsSinceImpulse_M5 >= 4)
-                minScore += 5;
+                minScore += 4;
 
             // Router floor kompatibilitás
             if (score > 0 && score < 20)
+            {
+                reasons.Add($"FLOOR_TO_20(from {score})");
                 score = 20;
+            }
 
             if (score < minScore)
                 return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
