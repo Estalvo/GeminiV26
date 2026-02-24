@@ -50,7 +50,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     dir = allow;
                     Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
                 }
-                
+
             // =========================
             // IMPULSE DIRECTION LOCK (CRYPTO SAFETY)
             // =========================
@@ -420,7 +420,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
                 ctx.CryptoHtfAllowedDirection != dir;
 
-            double htfConf = ctx.CryptoHtfConfidence01;
+            htfConf = ctx.CryptoHtfConfidence01;
 
             if (htfConflict && htfConf > 0)
             {
