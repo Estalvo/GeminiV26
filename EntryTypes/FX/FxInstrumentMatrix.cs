@@ -316,8 +316,9 @@ namespace GeminiV26.Instruments.FX
                     // ===== CONTINUATION CHARACTER =====
                         maxContinuationRatr: 1.8,
                         maxContinuationBarsSinceBreak: 5,
-                        requireHtfAlignmentForContinuation: false,
-                        allowContinuationDuringHtfTransition: true
+                        AllowContinuationInLowVol = false,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["EURJPY"] = Build(

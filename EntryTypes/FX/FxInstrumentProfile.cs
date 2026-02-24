@@ -178,6 +178,8 @@ namespace GeminiV26.Instruments.FX
 
         public bool AllowContinuationDuringHtfTransition { get; init; } = false;
 
+        public bool AllowContinuationInLowVol { get; init; } = true;
+
         // ==================================================
         // ===== PULLBACK – False-Continuation / Viability filter (matrix-driven)
         // Goal: block low-MFE + stagnation + micro-structure degradation BEFORE TP1
