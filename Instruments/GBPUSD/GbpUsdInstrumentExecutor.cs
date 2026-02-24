@@ -8,10 +8,6 @@ using cAlgo.API.Indicators;
 
 namespace GeminiV26.Instruments.GBPUSD
 {
-    /// <summary>
-    /// GBPUSD Instrument Executor – Phase 3.7
-    /// FX executor with HARD MarketState gate
-    /// </summary>
     public class GbpUsdInstrumentExecutor
     {
         private readonly Robot _bot;
@@ -23,9 +19,15 @@ namespace GeminiV26.Instruments.GBPUSD
         private readonly GbpUsdEntryLogic _entryLogic;
         private AverageTrueRange _atr14;
 
+        // =========================
+        // HARD GUARDS (Phase 3.7.1 hotfix)
+        // =========================
+        private const double MinAtrPips = 5.5; // under this: NO TRADE (kills micro-FX)
+        private const double MinSlPips  = 8.0; // floor SL so TP1 isn't 2-3 pips
+
         public GbpUsdInstrumentExecutor(
             Robot bot,
-            GbpUsdEntryLogic entryLogic,          // ← ÚJ
+            GbpUsdEntryLogic entryLogic,
             GbpUsdInstrumentRiskSizer riskSizer,
             GbpUsdExitManager exitManager,
             FxMarketStateDetector marketStateDetector,
@@ -33,14 +35,14 @@ namespace GeminiV26.Instruments.GBPUSD
             string botLabel)
         {
             _bot = bot;
-            _entryLogic = entryLogic;             // ← ÚJ
+            _entryLogic = entryLogic;
             _riskSizer = riskSizer;
             _exitManager = exitManager;
             _marketStateDetector = marketStateDetector;
             _positionContexts = positionContexts;
             _botLabel = botLabel;
-            _atr14 = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Exponential);
 
+            _atr14 = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Exponential);
         }
 
         public void ExecuteEntry(EntryEvaluation entry)
@@ -49,7 +51,7 @@ namespace GeminiV26.Instruments.GBPUSD
             // FX MARKET STATE – SOFT GATE (GBPUSD / FX)
             // =====================================================
             int statePenalty = 0;
-            
+
             if (_marketStateDetector == null)
             {
                 _bot.Print("[GBP EXEC] WARN: MarketStateDetector NULL");
@@ -92,7 +94,24 @@ namespace GeminiV26.Instruments.GBPUSD
                 ));
 
             // =====================================================
-            // EXECUTION LOGIC (UNCHANGED CORE)
+            // HARD ATR GATE (GBPUSD) – NO MICRO VOL
+            // =====================================================
+            double atr = _atr14.Result.LastValue;
+            if (atr <= 0)
+            {
+                _bot.Print("[GBP EXEC] ATR_NOT_READY");
+                return;
+            }
+
+            double atrPips = atr / _bot.Symbol.PipSize;
+            if (atrPips < MinAtrPips)
+            {
+                _bot.Print($"[GBP EXEC] ATR_GATE block atrPips={atrPips:F2} < {MinAtrPips:F2}");
+                return;
+            }
+
+            // =====================================================
+            // EXECUTION LOGIC
             // =====================================================
             var tradeType =
                 entry.Direction == TradeDirection.Long
@@ -100,14 +119,22 @@ namespace GeminiV26.Instruments.GBPUSD
                     : TradeType.Sell;
 
             double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
-
             if (riskPercent <= 0)
                 return;
 
             double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
-
             if (slPriceDist <= 0)
                 return;
+
+            // =====================================================
+            // HARD SL FLOOR (GBPUSD) – keep TP/BE/trailing consistent
+            // =====================================================
+            double slPipsRaw = slPriceDist / _bot.Symbol.PipSize;
+            if (slPipsRaw < MinSlPips)
+            {
+                _bot.Print($"[GBP EXEC] SL_FLOOR applied slPips {slPipsRaw:F1} -> {MinSlPips:F1}");
+                slPriceDist = MinSlPips * _bot.Symbol.PipSize;
+            }
 
             _riskSizer.GetTakeProfit(
                 tempFinalConfidence,
@@ -116,8 +143,8 @@ namespace GeminiV26.Instruments.GBPUSD
                 out double tp2R,
                 out double tp2Ratio);
 
+            // sizing MUST use the same slPriceDist we will actually place
             long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
-
             if (volumeUnits <= 0)
                 return;
 
@@ -144,10 +171,10 @@ namespace GeminiV26.Instruments.GBPUSD
                 _botLabel,
                 slPips,
                 tp2Pips);
-                        
+
             if (!result.IsSuccessful || result.Position == null)
                 return;
-                        
+
             long positionKey = result.Position.Id;
 
             var ctx = new PositionContext
@@ -159,8 +186,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
 
-                // 🔴 KRITIKUS – TP / BE / TRAILING ALAPJA (1R)
-                RiskPriceDistance = slPriceDist,
+                RiskPriceDistance = slPriceDist, // now consistent with sizing & SL & TP
 
                 Tp1R = tp1R,
                 Tp1Hit = false,
@@ -196,10 +222,8 @@ namespace GeminiV26.Instruments.GBPUSD
                 return 0;
 
             double slPips = slPriceDist / _bot.Symbol.PipSize;
-
-            // GBPUSD minimum SL
-            if (slPips < 10)
-                slPips = 10;
+            if (slPips <= 0)
+                return 0;
 
             double pipValuePerLot =
                 _bot.Symbol.TickValue / _bot.Symbol.TickSize * _bot.Symbol.PipSize;
@@ -213,9 +237,7 @@ namespace GeminiV26.Instruments.GBPUSD
 
             double rawUnits = finalLots * _bot.Symbol.LotSize;
 
-            long units = (long)_bot.Symbol.NormalizeVolumeInUnits(
-                rawUnits,
-                RoundingMode.Down);
+            long units = (long)_bot.Symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
 
             if (units < _bot.Symbol.VolumeInUnitsMin)
                 return 0;
