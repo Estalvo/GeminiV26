@@ -28,7 +28,10 @@ namespace GeminiV26.EntryTypes.METAL
                 return Reject(ctx, "XAU_NO_TREND_STATE");
 
             if (ctx.MarketState.Adx < 16.0)
-                return Reject(ctx, "XAU_ADX_TOO_LOW");
+            {
+                score -= 8;
+                reasons.Add("ADX_LOW_SOFT(-8)");
+            }
 
             // =========================
             // DIRECTION (TREND ONLY)
@@ -73,7 +76,10 @@ namespace GeminiV26.EntryTypes.METAL
             // IMPULSE REQUIREMENT
             // =========================
             if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5)
-                return RejectDecision(ctx, score, "NO_IMPULSE", reasons);
+            {
+                score -= 10;
+                reasons.Add("WEAK_IMPULSE(-10)");
+            }
 
             score += 10;
             reasons.Add("+IMPULSE(10)");
