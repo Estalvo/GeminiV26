@@ -602,14 +602,14 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
             // =====================================================
-            // --- LOW VOL CONTINUATION BLOCK ---
+            // --- LOW ENERGY CONTINUATION BLOCK ---
             if (!breakout &&
-                ctx.FxMarketStateLowVol &&
-                !fx.AllowContinuationInLowVol)
+                !hasM1Confirmation &&
+                !ctx.IsAtrExpanding_M5)
             {
-                return Invalid(ctx, "LOW_VOL_CONT_DISABLED", score);
+                return Invalid(ctx, "LOW_ENERGY_CONT", score);
             }
-            
+
             if (!breakout && !hasM1Confirmation)
             {
                 // --- 1️⃣ TOO LATE STRUCTURE ---
