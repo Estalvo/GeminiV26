@@ -147,17 +147,6 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add($"NO_M1(-{NoM1Penalty})");
             }
 
-            // =========================
-            // DYNAMIC MIN SCORE (XAU)
-            // =========================
-            int minScore = 68;
-
-            if (ctx.PullbackDepthAtr_M5 > 1.2)
-                minScore += 4;
-
-            if (ctx.BarsSinceImpulse_M5 >= 4)
-                minScore += 4;
-
             // Router floor kompatibilitás
             if (score > 0 && score < 20)
             {
