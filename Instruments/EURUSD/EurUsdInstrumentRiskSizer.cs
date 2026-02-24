@@ -64,10 +64,19 @@ namespace GeminiV26.Instruments.EURUSD
         {
             double n = NormalizeScore(score);
 
-            tp1R = 0.50;
-            tp1Ratio = 0.60 - n * 0.15;
+            // FX: gyors biztosítás
+            tp1R = 0.40;
 
-            tp2R = 1.2 + n * 0.6;
+            // FX: több partial zárás, főleg alacsonyabb score-nál
+            // n=0  -> 0.72
+            // n=1  -> 0.58
+            tp1Ratio = 0.72 - n * 0.14;
+
+            // FX: reális continuation cél, plafonnal (ne üldözzön 1.8R+)
+            // n=0  -> 1.05
+            // n=1  -> 1.55
+            tp2R = 1.05 + n * 0.50;
+
             tp2Ratio = 1.0 - tp1Ratio;
         }
 

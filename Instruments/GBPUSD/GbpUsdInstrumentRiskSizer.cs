@@ -55,25 +55,21 @@ namespace GeminiV26.Instruments.GBPUSD
             out double tp2R,
             out double tp2Ratio)
         {
-            // GBPUSD: biztosabb TP1 – marad
-            tp1R = 0.45;
-
-            // =====================================================
-            // TP1 RATIO – DINAMIKUS
-            // Jó score → több runner
-            // =====================================================
             double n = NormalizeScore(score);
 
-            // TP1 mindig biztos, de jobb score → több runner
-            tp1Ratio = 0.60 - n * 0.20; // 0.70 → 0.45
+            // FX: gyors biztosítás
+            tp1R = 0.40;
 
-            // =====================================================
-            // TP2 R – HELYES JUTALMAZÓ GÖRBE
-            // AUDNZD kicsit „lustább”, mint EURUSD
-            // =====================================================
-            tp2R = 1.0 + n * 0.6; // 1.0 → 1.6
+            // FX: több partial zárás, főleg alacsonyabb score-nál
+            // n=0  -> 0.72
+            // n=1  -> 0.58
+            tp1Ratio = 0.72 - n * 0.14;
 
-            // TP2 a maradékra
+            // FX: reális continuation cél, plafonnal (ne üldözzön 1.8R+)
+            // n=0  -> 1.05
+            // n=1  -> 1.55
+            tp2R = 1.05 + n * 0.50;
+
             tp2Ratio = 1.0 - tp1Ratio;
         }
 
@@ -85,7 +81,7 @@ namespace GeminiV26.Instruments.GBPUSD
             if (n < 0.50) return 0.70;   // volt 0.65
             if (n < 0.70) return 0.82;   // volt 0.75
             if (n < 0.85) return 0.92;   // volt 0.85
-            return 1.00;                 // volt 0.95
+            return 2.00;                 // volt 0.95
         }
 
         private static double NormalizeScore(int score)

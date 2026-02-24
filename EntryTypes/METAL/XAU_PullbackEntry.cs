@@ -22,18 +22,6 @@ namespace GeminiV26.EntryTypes.METAL
             var reasons = new List<string>(8);
 
             // =========================
-            // HARD MARKET STATE GATES (XAU)
-            // =========================
-            if (ctx.MarketState == null || !ctx.MarketState.IsTrend)
-                return Reject(ctx, "XAU_NO_TREND_STATE");
-
-            if (ctx.MarketState.Adx < 16.0)
-            {
-                score -= 8;
-                reasons.Add("ADX_LOW_SOFT(-8)");
-            }
-
-            // =========================
             // DIRECTION (TREND ONLY)
             // =========================
             TradeDirection dir = ctx.TrendDirection;
@@ -43,6 +31,23 @@ namespace GeminiV26.EntryTypes.METAL
             int baseScore = 60;
             int score = baseScore;
             reasons.Add($"Base={baseScore}");
+
+            // =========================
+            // HARD MARKET STATE GATES (XAU)
+            // =========================
+            if (ctx.MarketState == null || !ctx.MarketState.IsTrend)
+                return Reject(ctx, "XAU_NO_TREND_STATE");
+
+            if (ctx.MarketState.Adx < 16.0)
+            {
+                if (!ctx.HasImpulse_M5)
+                {
+                    return Reject(ctx, "ADX_LOW_NO_IMPULSE");
+                }
+
+                score -= 12;
+                reasons.Add("ADX_LOW_WITH_IMPULSE(-12)");
+            }
 
             // =========================
             // TIME MEMORY (XAU)

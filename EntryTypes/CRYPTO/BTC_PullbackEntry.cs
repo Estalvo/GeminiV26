@@ -38,18 +38,71 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             TradeDirection dir = ctx.TrendDirection;
 
-            // Lokális intraday korrekció
-            if (ctx.HasImpulse_M5 && ctx.LastClosedBarInTrendDirection)
+            // (Opcionális) HTF align: ha van tiltott irány, igazítsuk
+            if (ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
+                ctx.CryptoHtfAllowedDirection != dir)
             {
-                if (ctx.Adx_M5 >= profile.MinAdxForPullback)
+                // itt dönthetsz: vagy block, vagy csak marad trend és később penalty
+                // én PB-nél inkább alignolnék:
+                dir = ctx.CryptoHtfAllowedDirection;
+            }
+
+            // =========================
+            // IMPULSE DIRECTION LOCK (CRYPTO SAFETY)
+            // =========================
+
+            TradeDirection lastClosedDir = TradeDirection.None;
+            if (lastClosed >= 0)
+            {
+                var c = bars[lastClosed];
+                if (c.Close > c.Open) lastClosedDir = TradeDirection.Long;
+                else if (c.Close < c.Open) lastClosedDir = TradeDirection.Short;
+            }
+
+            // "Strong impulse" proxy (ha nincs külön flag)
+            // - HasImpulse_M5 már megvan nálad
+            // - a veszélyes ablak: friss impulse után 1-2 bar
+            bool freshImpulse = ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2;
+
+            if (freshImpulse && lastClosedDir != TradeDirection.None)
+            {
+                // 1) Counter-trend lock (ez fogja meg a squeeze-t)
+                if (dir != lastClosedDir)
                 {
-                    // ha erős M5 impulse van, használjuk annak irányát
-                    dir = ctx.LastClosedBarInTrendDirection 
-                        ? TradeDirection.Long 
-                        : TradeDirection.Short;
+                    return Block(ctx,
+                        $"IMPULSE_LOCK_CT dir={dir} lastClosedDir={lastClosedDir} barsSinceImpulse={ctx.BarsSinceImpulse_M5}",
+                        score,
+                        dir);
+                }
+
+                // 2) Cooldown: ne nyiss azonnal új PB-t impulse után (whipsaw védelem)
+                if (ctx.BarsSinceImpulse_M5 <= 1 &&
+                    (!ctx.IsPullbackDecelerating_M5 || !ctx.HasReactionCandle_M5))
+                {
+                    return Block(ctx,
+                        $"IMPULSE_COOLDOWN barsSinceImpulse={ctx.BarsSinceImpulse_M5} pbDecel={ctx.IsPullbackDecelerating_M5} react={ctx.HasReactionCandle_M5}",
+                        score,
+                        dir);
                 }
             }
-                
+
+            // =========================
+            // BREAKOUT IMPULSE BLOCK
+            // =========================
+
+            bool breakoutImpulse =
+                freshImpulse &&
+                ctx.AtrM5 > 0 &&
+                Math.Abs(bars[lastClosed].Close - bars[lastClosed].Open) > 1.2 * ctx.AtrM5;
+
+            if (breakoutImpulse && ctx.BarsSinceImpulse_M5 <= 3)
+            {
+                return Block(ctx,
+                    $"PB_BLOCK_AFTER_BREAKOUT_IMPULSE body>1.2ATR bars={ctx.BarsSinceImpulse_M5}",
+                    score,
+                    dir);
+            }
+
             // =========================
             // CRYPTO TREND ENERGY MINIMUM (CONTINUATION CORE)
             // =========================
@@ -117,10 +170,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 fuelScore -= 2;
 
             // Impulse freshness
-            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2)
+            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2 && dir == lastClosedDir)
                 fuelScore += 5;
-            else if (!ctx.HasImpulse_M5)
-                fuelScore -= 4;
+            else if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2 && dir != lastClosedDir)
+                fuelScore -= 8; // CT impulse büntetés
 
             // Pullback quality as energy signal
             if (ctx.IsPullbackDecelerating_M5 && ctx.HasReactionCandle_M5)

@@ -36,9 +36,9 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            if (finalConfidence >= 85) return 0.55;
-            if (finalConfidence >= 75) return 0.35;
-            return 0.20;
+            if (finalConfidence >= 85) return 0.40;
+            if (finalConfidence >= 75) return 0.30;
+            return 0.18;
         }
 
         // =========================================================
@@ -71,21 +71,21 @@ namespace GeminiV26.Instruments.XAUUSD
             // TP1 RATIO – DINAMIKUS
             // =========================
             if (finalConfidence >= 85)
-                tp1Ratio = 0.45;   // 55% fut
+                tp1Ratio = 0.55;   // 55% fut
             else if (finalConfidence >= 75)
-                tp1Ratio = 0.55;
+                tp1Ratio = 0.65;
             else
-                tp1Ratio = 0.70;   // védekező
+                tp1Ratio = 0.80;   // védekező
 
             // =========================
             // TP2 R – HELYES IRÁNY
             // =========================
             if (finalConfidence >= 85)
-                tp2R = 1.6;
+                tp2R = 1.25;
             else if (finalConfidence >= 75)
-                tp2R = 1.2;
+                tp2R = 0.95;
             else
-                tp2R = 0.9;
+                tp2R = 0.75;
 
             tp2Ratio = 1.0 - tp1Ratio;
         }
@@ -99,18 +99,18 @@ namespace GeminiV26.Instruments.XAUUSD
             // 0.30 → 1.00 lot
 
             if (finalConfidence >= 90)
-                return 1.20;   // nagyon erős setup
+                return 1.10;   // nagyon erős setup
 
             if (finalConfidence >= 85)
-                return 0.90;   // komoly méret
+                return 0.80;   // komoly méret
 
             if (finalConfidence >= 80)
-                return 0.70;
+                return 0.55;
 
             if (finalConfidence >= 75)
-                return 0.50;
+                return 0.40;
 
-            return 0.30;       // defenzív alapszint
+            return 0.25;       // defenzív alapszint
         }
 
         // =========================================================
