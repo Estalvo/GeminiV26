@@ -99,9 +99,10 @@ namespace GeminiV26.EntryTypes.METAL
 
             bool exhaustionContext =
                 noFreshSignal &&
-                !ctx.IsAtrExpanding_M5 &&
-                (ctx.AdxSlope_M5 <= 0 || Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8) &&
-                ctx.BarsSinceImpulse_M5 >= 2;
+                ctx.AtrSlope_M5 < 0 &&
+                ctx.AdxSlope_M5 < -0.02 &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 6 &&
+                ctx.BarsSinceImpulse_M5 >= 3;
 
             if (exhaustionContext && IsImpulseExhaustedXau(ctx, 6, 1.4, 0.6))
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "IMPULSE_EXHAUSTED", reasons);
@@ -111,8 +112,8 @@ namespace GeminiV26.EntryTypes.METAL
             // ===============================
             bool trendFatigue =
                 ctx.Adx_M5 > 40 &&
-                ctx.AdxSlope_M5 <= 0 &&
-                ctx.AtrSlope_M5 <= 0 &&
+                ctx.AdxSlope_M5 < -0.02 &&
+                ctx.AtrSlope_M5 < 0 &&
                 Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 6 &&
                 ctx.BarsSinceImpulse_M5 > 3;
 
@@ -124,8 +125,8 @@ namespace GeminiV26.EntryTypes.METAL
             // ===============================
             if (ctx.Adx_M5 < 23)
             {
-                reasons.Add($"ADX_TOO_LOW({ctx.Adx_M5:F1}<23)");
-                return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "WEAK_TREND_ADX", reasons);
+                score -= 5;
+                reasons.Add("ADX_LOW_SOFT(-5)");
             }
 
             // ==========================================================
@@ -137,7 +138,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             bool climaxRoll =
                 ctx.Adx_M5 >= adxClimax &&
-                ctx.AdxSlope_M5 <= 0 &&
+                ctx.AdxSlope_M5 < -0.02 &&
                 ctx.BarsSinceImpulse_M5 >= ClimaxMinBarsSinceImpulse &&
                 !ctx.IsAtrExpanding_M5; // expanding ATR can still be a valid continuation in metals
 
@@ -181,14 +182,14 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
-            if (barsSinceBreak > 3 && noFreshSignal)
+            if (barsSinceBreak > 4 && noFreshSignal)
             {
                 int p = session == FxSession.NewYork ? LateBreakSoftPenalty_NewYork : LateBreakSoftPenalty_London;
                 score -= p;
                 reasons.Add($"LATE_BREAK(-{p}) bsb={barsSinceBreak} m5Break={m5Break} m1={m1}");
 
                 // NY extra hardening only if very late AND no struct energy
-                if (session == FxSession.NewYork && barsSinceBreak > 5 && !flagStruct)
+                if (session == FxSession.NewYork && barsSinceBreak > 6 && !flagStruct)
                 {
                     score -= LateBreakHardExtraPenalty_NY;
                     reasons.Add($"LATE_BREAK_NY_EXTRA(-{LateBreakHardExtraPenalty_NY}) bsb={barsSinceBreak} flagStruct={flagStruct}");
@@ -204,13 +205,14 @@ namespace GeminiV26.EntryTypes.METAL
             int minScoreAdj = tuning.MinScore;
 
             bool transitionRisk =
-                (ctx.Adx_M5 >= 28 && ctx.AdxSlope_M5 <= 0 && Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8 && !ctx.IsAtrExpanding_M5)
+                (ctx.Adx_M5 >= 28 && ctx.AdxSlope_M5 < -0.02 && Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8 && !ctx.IsAtrExpanding_M5)
                 || (ctx.IsRange_M5 && !ctx.IsAtrExpanding_M5 && ctx.BarsSinceImpulse_M5 > 2);
 
-            if (transitionRisk)
+            if (transitionRisk && !m1 && !m5Break)
             {
-                minScoreAdj += TransitionMinScoreBoost;
-                reasons.Add($"TRANSITION_MIN+{TransitionMinScoreBoost}(min={tuning.MinScore}->{minScoreAdj}) adx={ctx.Adx_M5:F1} slope={ctx.AdxSlope_M5:F3} diΔ={Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5):F1} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}");
+                int before = minScoreAdj;
+                minScoreAdj += 3;
+                reasons.Add($"TRANSITION_MIN+3(min={before}->{minScoreAdj}) adx={ctx.Adx_M5:F1} slope={ctx.AdxSlope_M5:F3} diΔ={Math.Abs(ctx.PlusDI_M5-ctx.MinusDI_M5):F1} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}");
             }
 
             // ===============================
@@ -246,7 +248,7 @@ namespace GeminiV26.EntryTypes.METAL
             if (range > 0)
             {
                 double ratio = body / range;
-                if (ratio < 0.60)
+                if (ratio < 0.55)
                 {
                     score -= 4;
                     reasons.Add("WEAK_BODY(-4)");
