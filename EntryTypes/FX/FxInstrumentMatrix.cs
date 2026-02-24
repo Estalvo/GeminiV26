@@ -68,7 +68,7 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 64,               // SZIGORÍTÁS: 55-ről 58-ra
+                        MinScore = 60,               
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.90,
