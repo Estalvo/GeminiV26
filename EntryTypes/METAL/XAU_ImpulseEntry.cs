@@ -3,64 +3,108 @@
 namespace GeminiV26.EntryTypes.METAL
 {
     /// <summary>
-    /// XAU Impulse – CONTEXT ONLY
-    /// Nem nyit pozíciót.
-    /// Csak információt ad a rendszernek és a lognak.
+    /// XAU Impulse Continuation Entry – LIVE VERSION
+    /// Phase 3.9 – Momentum continuation for metals
+    ///
+    /// Belép, ha:
+    /// - M5 ATR expanzió
+    /// - M5 impulse
+    /// - ADX minimum szint
+    /// - EMA alignment irányba
+    /// - M1 trigger megerősítés
     /// </summary>
     public class XAU_ImpulseEntry : IEntryType
     {
         public EntryType Type => EntryType.XAU_Impulse;
 
         private const double SlopeEps = 0.0;
+        private const int MinScore = 65;
+        private const double MinAdx = 18.0;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady || ctx.M5 == null)
                 return Reject(ctx, "CTX_NOT_READY");
 
+            int score = 60; // base impulse score
+
             // =====================================================
-            // 1️⃣ IRÁNY MEGHATÁROZÁS (XAU-specifikus)
+            // 1️⃣ IRÁNY
             // =====================================================
             TradeDirection dir = ResolveXauDirection(ctx);
             if (dir == TradeDirection.None)
-                return Context(ctx, "NO_CLEAR_DIRECTION");
+                return Reject(ctx, "NO_CLEAR_DIRECTION");
 
             // =====================================================
             // 2️⃣ ATR EXPANSION
             // =====================================================
-            bool atrExp = ctx.IsAtrExpanding_M5;
+            if (!ctx.IsAtrExpanding_M5)
+                return Reject(ctx, "ATR_NOT_EXPANDING");
+
+            score += 5;
 
             // =====================================================
             // 3️⃣ IMPULSE M5
             // =====================================================
-            bool impulse = ctx.HasImpulse_M5;
+            if (!ctx.HasImpulse_M5)
+                return Reject(ctx, "NO_M5_IMPULSE");
+
+            score += 5;
 
             // =====================================================
-            // 4️⃣ M1 trigger
+            // 4️⃣ ADX FILTER
             // =====================================================
-            bool m1 = ctx.M1TriggerInTrendDirection;
+            if (ctx.Adx_M5 < MinAdx)
+                return Reject(ctx, $"ADX_TOO_LOW({ctx.Adx_M5:F1})");
+
+            if (ctx.Adx_M5 > 25)
+                score += 5;
 
             // =====================================================
-            // CONTEXT LOG (mindig Reject, de informatív)
+            // 5️⃣ EMA ALIGNMENT
             // =====================================================
+            if (dir == TradeDirection.Long)
+            {
+                if (ctx.Ema8_M5 > ctx.Ema21_M5)
+                    score += 5;
+            }
+            else
+            {
+                if (ctx.Ema8_M5 < ctx.Ema21_M5)
+                    score += 5;
+            }
+
+            // =====================================================
+            // 6️⃣ M1 TRIGGER (Continuation confirmation)
+            // =====================================================
+            if (!ctx.M1TriggerInTrendDirection)
+                return Reject(ctx, "NO_M1_TRIGGER");
+
+            score += 5;
+
+            // =====================================================
+            // FINAL DECISION
+            // =====================================================
+            if (score < MinScore)
+                return Reject(ctx, $"LOW_SCORE({score})");
+
             string note =
-                $"[XAU_IMPULSE_CTX] {ctx.Symbol} dir={dir} " +
-                $"ATR_EXP={atrExp} IMPULSE={impulse} M1={m1} " +
-                $"Decision=CONTEXT_ONLY";
+                $"[XAU_IMPULSE_CONT] {ctx.Symbol} dir={dir} " +
+                $"Score={score} ADX={ctx.Adx_M5:F1} ATR_EXP=True IMPULSE=True";
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
                 Direction = dir,
-                Score = 0,
-                IsValid = false, // SOHA nem enged entryt
+                Score = score,
+                IsValid = true,
                 Reason = note
             };
         }
 
         // =====================================================
-        // IRÁNY MEGHATÁROZÁS – változatlan logika
+        // IRÁNY MEGHATÁROZÁS – változatlan
         // =====================================================
         private TradeDirection ResolveXauDirection(EntryContext ctx)
         {
@@ -97,19 +141,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Symbol = ctx?.Symbol,
                 Type = Type,
                 IsValid = false,
-                Reason = reason
-            };
-        }
-
-        private EntryEvaluation Context(EntryContext ctx, string reason)
-        {
-            return new EntryEvaluation
-            {
-                Symbol = ctx?.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                IsValid = false,
-                Reason = $"[XAU_IMPULSE_CTX] {ctx?.Symbol} {reason}"
+                Reason = $"[XAU_IMPULSE_REJECT] {reason}"
             };
         }
     }
