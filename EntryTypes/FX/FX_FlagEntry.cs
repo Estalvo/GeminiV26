@@ -66,7 +66,7 @@ namespace GeminiV26.EntryTypes.FX
 
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow))
             {
-                double atrPips = ctx.AtrM5 / ctx.SymbolPipSize;
+                double atrPips = ctx.AtrM5 / ctx.PipSize;
 
                 double dynamicMinAdx;
 
@@ -541,8 +541,7 @@ namespace GeminiV26.EntryTypes.FX
             if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
             {
                 bool strongContext =
-                    score >= tuning.MinScore + 4 &&
-                    ctx.LogicConfidence >= 80 &&
+                    score >= tuning.MinScore + 4 &&                    
                     !ctx.IsRange_M5;
 
                 if (!strongContext)
@@ -573,13 +572,13 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // GLOBAL ADX EXHAUSTION GUARD – v2 (SOFT & SMART)
             // =====================================================
-            if (TryGetDouble(ctx, "Adx_M5", out var adxNow) &&
+            if (TryGetDouble(ctx, "Adx_M5", out var adxNow2) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
             {                
                 if (hasTrigger)
                 {
-                    bool veryHighAdx = adxNow >= 45.0;
+                    bool veryHighAdx = adxNow2 >= 45.0;
                     bool rollingHard  = adxSlopeNow <= -2.0;
                     bool noEnergy     = !ctx.IsAtrExpanding_M5;
                     bool lateStructure =

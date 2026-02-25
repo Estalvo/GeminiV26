@@ -25,7 +25,7 @@ namespace GeminiV26.Core.Entry
         public int BarsSinceHighBreak_M5 { get; set; }
         public int BarsSinceLowBreak_M5 { get; set; }
         public int BarsSinceImpulse_M5 { get; set; }
-
+        public double PipSize { get; set; }
         // =========================
         // EMA
         // =========================

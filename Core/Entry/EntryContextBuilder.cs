@@ -126,6 +126,8 @@ namespace GeminiV26.Core.Entry
             var sym = _bot.Symbols.GetSymbol(symbol);
             double pipSize = sym?.PipSize ?? 0;
 
+            ctx.PipSize = pipSize;   // <<< EZ AZ ÚJ SOR
+
             ctx.AtrPips_M5 = (pipSize > 0)
                 ? (ctx.AtrM5 / pipSize)
                 : 0;
