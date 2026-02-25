@@ -665,16 +665,30 @@ namespace GeminiV26.EntryTypes.FX
             // --- LOW ENERGY CONTINUATION GUARD (balanced) ---
             if (isPreTrigger && !ctx.IsAtrExpanding_M5)
             {
+                bool strongTrendContext =
+                    ctx.IsRange_M5 == false &&
+                    ctx.LastClosedBarInTrendDirection &&
+                    TryGetDouble(ctx, "Adx_M5", out var adxNow3) &&
+                    adxNow3 >= 28;
+
                 bool meh =
                     ctx.IsRange_M5 ||
                     (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !ctx.LastClosedBarInTrendDirection);
 
+                // Chop marad block
                 if (meh)
                     return Invalid(ctx, "LOW_ENERGY_CONT", score);
 
-                // ha nem meh (pl. kompresszió+reakció), csak szigorítsunk
-                ApplyPenalty(3);
-                minBoost += 1;
+                // Erős trend grind → csak soft penalty
+                if (strongTrendContext)
+                {
+                    ApplyPenalty(1);   // nem 3
+                }
+                else
+                {
+                    ApplyPenalty(3);
+                    minBoost += 1;
+                }
             }
 
             if (!breakout && !hasM1Confirmation)
@@ -981,7 +995,11 @@ namespace GeminiV26.EntryTypes.FX
             min += sessionStrictness;
 
             // Controlled boost
-            int effectiveBoost = Math.Min(3, minBoost);
+            int effectiveBoost =
+                (TryGetDouble(ctx, "Adx_M5", out var adxNow4) && adxNow4 >= 30)
+                ? Math.Min(1, minBoost)
+                : Math.Min(3, minBoost);
+            
             min += effectiveBoost;
 
             if (min < 0) min = 0;
