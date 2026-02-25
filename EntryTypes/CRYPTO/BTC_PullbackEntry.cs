@@ -45,10 +45,23 @@ namespace GeminiV26.EntryTypes.Crypto
                 var htfConf = ctx.CryptoHtfConfidence01;
 
                 // csak erős HTF esetén igazodunk hozzá
-                if (allow != TradeDirection.None && htfConf >= 0.75 && dir != allow)
+                if (allow != TradeDirection.None && dir != allow)
                 {
-                    dir = allow;
-                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
+                    // ha HTF domináns → igazodunk
+                    if (htfConf >= 0.7)
+                    {
+                        dir = allow;
+                        Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
+                    }
+                    else
+                    {
+                        // ha nem domináns → ne adjunk vissza ellentétes irányt
+                        // hanem blokkoljuk itt
+                        return Block(ctx,
+                            $"HTF_SOFT_CONFLICT conf={htfConf:0.00}",
+                            score,
+                            dir);
+                    }
                 }
 
             // =========================
