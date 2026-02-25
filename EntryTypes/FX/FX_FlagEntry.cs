@@ -66,7 +66,7 @@ namespace GeminiV26.EntryTypes.FX
 
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow))
             {
-                double atrPips = ctx.AtrM5 / ctx.PipSize;
+                double atrPips = ctx.AtrPips_M5;
 
                 double dynamicMinAdx;
 
