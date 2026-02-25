@@ -61,21 +61,58 @@ namespace GeminiV26.EntryTypes.FX
             // - delay NY continuation in first bars after session open (if the context exposes it)
 
             // =====================================================
-            // LOW ADX HARD FILTER (ANTI WEAK TREND CONTINUATION)
+            // LOW ADX HARD FILTER – ATR AWARE + HYSTERESIS
             // =====================================================
 
-            if (TryGetDouble(ctx, "Adx_M5", out var adxCheck))
+            if (TryGetDouble(ctx, "Adx_M5", out var adxNow))
             {
-                if (fx.MinAdxBySession != null &&
-                    fx.MinAdxBySession.TryGetValue(ctx.Session, out var minAdx))
+                double atrPips = ctx.AtrM5 / Symbol.PipSize;
+
+                double dynamicMinAdx;
+
+                // Volatility based baseline
+                if (atrPips <= 2.5)
+                    dynamicMinAdx = 18.0;
+                else if (atrPips <= 4.0)
+                    dynamicMinAdx = 20.0;
+                else
+                    dynamicMinAdx = 22.0;
+
+                // Session tightening (NY only)
+                if (ctx.Session == FxSession.NewYork)
+                    dynamicMinAdx += 1.0;
+
+                // -------------------------------------------------
+                // LOW ENERGY CONTEXT CHECK
+                // -------------------------------------------------
+                bool lowEnergy =
+                    !ctx.IsAtrExpanding_M5 &&
+                    !ctx.HasImpulse_M5 &&
+                    ctx.IsRange_M5;
+
+                if (lowEnergy && adxNow < dynamicMinAdx)
+                    return Invalid(ctx,
+                        $"LOW_ENERGY_NO_TREND {adxNow:F1}<{dynamicMinAdx:F1}",
+                        score);
+
+                // -------------------------------------------------
+                // HARD FLOOR (extreme weak trend only)
+                // -------------------------------------------------
+                if (adxNow < dynamicMinAdx - 2.0)
+                    return Invalid(ctx,
+                        $"VERY_LOW_ADX {adxNow:F1}<{dynamicMinAdx - 2:F1}",
+                        score);
+
+                // -------------------------------------------------
+                // HYSTERESIS BAND (knife-edge smoothing)
+                // -------------------------------------------------
+                if (adxNow >= dynamicMinAdx - 1.0 &&
+                    adxNow < dynamicMinAdx)
                 {
-                    if (adxCheck < minAdx)
-                        return Invalid(ctx,
-                            $"ADX_TOO_LOW {adxCheck:F1}<{minAdx} [{ctx.Symbol}/{ctx.Session}]",
-                            score);
+                    ApplyPenalty(2);   // ne block, csak szigoríts
                 }
             }
-
+            
             // --- ADX Climax / Rolling Guard (reflection-safe) ---
             // Uses (if present): Adx_M5 (double), AdxSlope_M5 (double) OR AdxSlope01_M5 (double)
             if (TryGetDouble(ctx, "Adx_M5", out var adxM5))
@@ -328,7 +365,21 @@ namespace GeminiV26.EntryTypes.FX
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return Invalid(ctx, "FLAG_FAIL", score);
 
-            if (rangeAtr > tuning.MaxFlagAtrMult)
+            double maxFlagAtr = tuning.MaxFlagAtrMult;
+
+            // London: kicsit több levegő
+            if (ctx.Session == FxSession.London)
+                maxFlagAtr += 0.10;
+
+            // NY: még picit több, mert fake spike gyakori
+            if (ctx.Session == FxSession.NewYork)
+                maxFlagAtr += 0.15;
+
+            // Low vol FX (EURUSD tipikusan)
+            if (fx.Volatility == FxVolatilityClass.Low)
+                maxFlagAtr += 0.10;
+                
+            if (rangeAtr > maxFlagAtr)
                 return Invalid(ctx, "FLAG_TOO_WIDE", score);
 
             // 🔧 FLAG QUALITY SCORING – CORRECTED
@@ -487,9 +538,19 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            // --- ha tuning szerint kell M1 trigger, akkor: ha nincs breakout, legyen M1 confirm ---
             if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
-                return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
+            {
+                bool strongContext =
+                    score >= tuning.MinScore + 4 &&
+                    ctx.LogicConfidence >= 80 &&
+                    !ctx.IsRange_M5;
+
+                if (!strongContext)
+                    return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
+
+                // strong context esetén csak büntessünk
+                ApplyPenalty(3);
+            }
 
             int barsSinceBreak =
                 ctx.TrendDirection == TradeDirection.Long
@@ -504,7 +565,7 @@ namespace GeminiV26.EntryTypes.FX
                 !breakout &&
                 !hasM1Confirmation)
             {
-                ApplyPenalty(6);
+                ApplyPenalty(4);
                 minBoost += 2;
             }
 
@@ -603,7 +664,7 @@ namespace GeminiV26.EntryTypes.FX
             // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
             // =====================================================
             // --- LOW ENERGY CONTINUATION GUARD (balanced) ---
-            if (!breakout && !hasM1Confirmation && !ctx.IsAtrExpanding_M5)
+            if (isPreTrigger && !ctx.IsAtrExpanding_M5)
             {
                 bool meh =
                     ctx.IsRange_M5 ||
@@ -663,7 +724,7 @@ namespace GeminiV26.EntryTypes.FX
             // SESSION-AWARE CONTINUATION SCORING (VOLATILITY ADAPTIVE)
             // =====================================================
 
-            if (isPreTrigger)
+            if (isPreTrigger && !ctx.IsAtrExpanding_M5)
             {
                 int basePenalty;
 
@@ -906,10 +967,8 @@ namespace GeminiV26.EntryTypes.FX
             // A+ GATE: FX-en csak TRIGGER-rel mehetünk élesre
             // (kevesebb trade, nagyobb winrate)
             // =====================================================
-            if (!hasTrigger && !ctx.IsAtrExpanding_M5)
-            {
+            if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < tuning.MinScore + 2)
                 ApplyPenalty(3);
-            }
 
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
