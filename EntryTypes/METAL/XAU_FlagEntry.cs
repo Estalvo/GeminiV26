@@ -223,7 +223,8 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (ctx.TrendDirection == TradeDirection.Long)
             {
-                if (bars[last].Close <= hi)
+                // csak akkor kérünk M5 breaket, ha nincs M1 trigger
+                if (!m1 && bars[last].Close <= hi)
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
 
                 if (IsLowerHighSequence(bars, last))
@@ -232,7 +233,8 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (ctx.TrendDirection == TradeDirection.Short)
             {
-                if (bars[last].Close >= lo)
+                // csak akkor kérünk M5 breaket, ha nincs M1 trigger
+                if (!m1 && bars[last].Close >= lo)
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
 
                 if (IsHigherLowSequence(bars, last))
