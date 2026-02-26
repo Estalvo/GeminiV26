@@ -56,16 +56,12 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             // 4️⃣ M1 REVERSAL TRIGGER
             // =====================================================
-            if (ctx.M1ReversalTrigger)
-            {
-                score += 15;
-                reasons.Add("+M1_REV(15)");
-            }
-            else
-            {
-                score -= NoM1Penalty;
-                reasons.Add($"NO_M1_REV(-{NoM1Penalty})");
-            }
+            // XAU reversalhez kötelező az M1 trigger
+            if (!ctx.M1ReversalTrigger)
+                return RejectDecision(ctx, dir, score, "NO_M1_REV", reasons);
+
+            score += 15;
+            reasons.Add("+M1_REV(15)");
 
             // =====================================================
             // 5️⃣ MIN SCORE GATE
