@@ -52,6 +52,16 @@ namespace GeminiV26.EntryTypes.FX
 
             score = tuning.BaseScore + 6;
 
+            ctx.Log?.Invoke(
+                $"[FX_FLAG START] sym={ctx.Symbol} sess={ctx.Session} " +
+                $"trendDir={ctx.TrendDirection} " +
+                $"htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} " +
+                $"ema50>200={(ctx.Ema50_M5 > ctx.Ema200_M5)} " +
+                $"ema8>21={(ctx.Ema8_M5 > ctx.Ema21_M5)} " +
+                $"ema21Slope={ctx.Ema21Slope_M5:F4} " +
+                $"impulse={ctx.HasImpulse_M5} range={ctx.IsRange_M5}"
+            );
+
             // =====================================================
             // 0. LATE TREND FILTER v1 – (ADD ONLY, NO DELETE)
             // =====================================================
@@ -376,6 +386,10 @@ namespace GeminiV26.EntryTypes.FX
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return Invalid(ctx, "FLAG_FAIL", score);
 
+            ctx.Log?.Invoke(
+                $"[FX_FLAG RANGE] bars={tuning.FlagBars} rangeATR={rangeAtr:F2}"
+            );
+
             double maxFlagAtr = tuning.MaxFlagAtrMult;
 
             // London: kicsit több levegő
@@ -390,6 +404,10 @@ namespace GeminiV26.EntryTypes.FX
             if (fx.Volatility == FxVolatilityClass.Low)
                 maxFlagAtr += 0.20;
                 
+            ctx.Log?.Invoke(
+                $"[FX_FLAG RANGE] maxAllowed={maxFlagAtr:F2}"
+            );
+
             if (rangeAtr > maxFlagAtr)
                 return Invalid(ctx, "FLAG_TOO_WIDE", score);
 
@@ -583,6 +601,10 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // GLOBAL ADX EXHAUSTION GUARD – v2 (SOFT & SMART)
             // =====================================================
+            ctx.Log?.Invoke(
+                $"[FX_FLAG ADX] adx={adxNow2:F1}"
+            );
+
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow2) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
@@ -612,6 +634,10 @@ namespace GeminiV26.EntryTypes.FX
                         minBoost += 1;
                     }
                 }
+
+                ctx.Log?.Invoke(
+                    $"[FX_FLAG ADX] slope={adxSlopeNow:F2} atrExp={ctx.IsAtrExpanding_M5}"
+                );
             }
 
             // =====================================================
@@ -792,6 +818,10 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyPenalty(2);
                 }
             }
+
+            ctx.Log?.Invoke(
+                $"[FX_FLAG TRIGGER] breakout={breakout} m1={hasM1Confirmation} hasTrigger={hasTrigger}"
+            );
 
             // =====================================================
             // SOFT M1 BONUS (csak borderline setupok)
@@ -1025,6 +1055,10 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             if (min < 0) min = 0;
+
+            ctx.Log?.Invoke(
+                $"[FX_FLAG FINAL] score={score} min={min}"
+            );
 
             if (score < min)
                 return Invalid(ctx,
