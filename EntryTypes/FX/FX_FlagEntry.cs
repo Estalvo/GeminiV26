@@ -985,8 +985,6 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            int min = tuning.MinScore;
-
             // =====================================================
             // A+ GATE: FX-en csak TRIGGER-rel mehetünk élesre
             // (kevesebb trade, nagyobb winrate)
@@ -997,7 +995,8 @@ namespace GeminiV26.EntryTypes.FX
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
             // ===================================================== 
-            
+            int min = tuning.MinScore;
+
             // Session strictness csak akkor, ha VAN trigger (breakout/M1 confirm)
             int sessionStrictness =
                 ctx.Session == FxSession.NewYork ? 2 :
