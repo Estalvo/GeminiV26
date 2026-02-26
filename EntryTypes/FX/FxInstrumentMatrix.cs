@@ -40,7 +40,7 @@ namespace GeminiV26.Instruments.FX
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 68,               // SZIGORÍTÁS: 55-ről 62-re, kiöljük a bizonytalan trade-eket
+                        MinScore = 66,               // SZIGORÍTÁS: 55-ről 62-re, kiöljük a bizonytalan trade-eket
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.6-ról 1.2-re, ne engedjük a túlnyúlt zászlókat
                         MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.95-ről 0.80-ra, csak szoros visszateszt
@@ -54,7 +54,7 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 60,               // SZIGORÍTÁS: 55-ről 58-ra
+                        MinScore = 59,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
                         MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
@@ -68,7 +68,7 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 60,               
+                        MinScore = 62,               
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.90,
@@ -88,12 +88,12 @@ namespace GeminiV26.Instruments.FX
 
                 ["GBPUSD"] = Build(
                     "GBPUSD",
-                    FxVolatilityClass.High,
+                    FxVolatilityClass.Medium,
                     FxSessionBias.London,
                     FxPullbackStyle.EMA21,
                     110,
                     1.4,
-                    0.28,
+                    0.32,
                     false,
                     false,
                     0.48,
@@ -116,16 +116,16 @@ namespace GeminiV26.Instruments.FX
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 64,
-                        FlagBars = 2,
+                        MinScore = 66,
+                        FlagBars = 3,
                         MaxFlagAtrMult = 1.5,
-                        MaxPullbackAtr = 1.00,
+                        MaxPullbackAtr = 0.08,
                         BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 0,
                         RequireM1Trigger = false,
-                        AtrExpansionHardBlock = false
+                        AtrExpansionHardBlock = true
                     },
                     london: new FxFlagSessionTuning
                     {
@@ -144,7 +144,7 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,
+                        MinScore = 63,
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.7,
                         MaxPullbackAtr = 1.00,
@@ -202,8 +202,8 @@ namespace GeminiV26.Instruments.FX
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,     // KRITIKUS: Itt is kötelező az M1 trigger!
                         AtrExpansionHardBlock = true,
-                        RequireAtrSlopePositive = true,
-                        RequireStrongEntryCandle = true
+                        RequireAtrSlopePositive = false,
+                        RequireStrongEntryCandle = false
                     },
                     london: new FxFlagSessionTuning
                     {
