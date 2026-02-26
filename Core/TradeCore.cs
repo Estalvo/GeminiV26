@@ -834,6 +834,9 @@ namespace GeminiV26.Core
             _ctx = _contextBuilder.Build(_bot.SymbolName);
 
             // ADDED: context must be ready
+            if (_ctx != null)
+                _ctx.Log = _bot.Print;
+            
             if (_ctx == null || !_ctx.IsReady)
             {
                 _bot.Print("[TC] BLOCKED: EntryContext not ready");
