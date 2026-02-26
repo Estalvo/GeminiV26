@@ -997,28 +997,39 @@ namespace GeminiV26.EntryTypes.FX
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
             // ===================================================== 
-            // Session strictness
+            int min = tuning.MinScore;
+
+            // Session strictness csak akkor, ha VAN trigger (breakout/M1 confirm)
             int sessionStrictness =
                 ctx.Session == FxSession.NewYork ? 2 :
                 ctx.Session == FxSession.London  ? 1 :
                 0;
 
-            min += sessionStrictness;
-
-            // Controlled boost
+            // Controlled boost (marad a logikád)
             int effectiveBoost =
                 (TryGetDouble(ctx, "Adx_M5", out var adxNow4) && adxNow4 >= 30)
                 ? Math.Min(1, minBoost)
                 : Math.Min(3, minBoost);
-            
-            min += effectiveBoost;
+
+            // ✅ Pretrigger flag-vadászat: NE legyen dupla szigor
+            if (hasTrigger)
+            {
+                min += sessionStrictness;
+                min += effectiveBoost;          // trigger után lehet szigor
+            }
+            else
+            {
+                // pretrigger: csak minimális “minBoost” hasson
+                min += Math.Min(1, effectiveBoost);
+                // sessionStrictness = 0 pretriggerben
+            }
 
             if (min < 0) min = 0;
 
             if (score < min)
                 return Invalid(ctx,
                     $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost}",
-                score);
+                    score);
 
             // HARD SYSTEM SAFETY
             if (ctx.TrendDirection == TradeDirection.None)
