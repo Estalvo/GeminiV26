@@ -590,7 +590,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (hasTrigger)
                 {
                     bool veryHighAdx = adxNow2 >= 45.0;
-                    bool rollingHard  = adxSlopeNow <= -2.0;
+                    bool rollingHard  = adxSlopeNow <= -0.5;
                     bool noEnergy     = !ctx.IsAtrExpanding_M5;
                     bool lateStructure =
                         (ctx.TrendDirection == TradeDirection.Long
@@ -606,9 +606,9 @@ namespace GeminiV26.EntryTypes.FX
                     }
 
                     // SOFT PENALTY ha csak részben exhaustion
-                    if (adxNow >= 42.0 && adxSlopeNow <= -1.0)
+                    if (adxNow >= 40.0 && adxSlopeNow <= -0.5)
                     {
-                        ApplyPenalty(4);
+                        ApplyPenalty(6);
                         minBoost += 1;
                     }
                 }
