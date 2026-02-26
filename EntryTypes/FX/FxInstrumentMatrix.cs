@@ -15,7 +15,16 @@ namespace GeminiV26.Instruments.FX
                     FxVolatilityClass.Low,
                     FxSessionBias.London,
                     FxPullbackStyle.EMA21,
-                    /* a többi fix paraméter marad ahogy van nálad… */ 
+                    70,
+                    1.1,
+                    0.30,
+                    false,
+                    true,
+                    0.42,
+                    0.15,
+                    2.2,
+                    15,
+                    1.9,
                     new()
                     {
                         { FxSession.Asia,    -10 },
@@ -31,161 +40,183 @@ namespace GeminiV26.Instruments.FX
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 66,              // 68 -> 66 (a gate már nem “ráemel” pretriggerben)
+                        MinScore = 68,               // SZIGORÍTÁS: 55-ről 62-re, kiöljük a bizonytalan trade-eket
                         FlagBars = 3,
-                        MaxFlagAtrMult = 1.25,      // EURUSD low vol: marad szoros
-                        MaxPullbackAtr = 0.85,
+                        MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.6-ról 1.2-re, ne engedjük a túlnyúlt zászlókat
+                        MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.95-ről 0.80-ra, csak szoros visszateszt
                         BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = 12,
+                        BodyMisalignPenalty = 12,    // SZIGORÍTÁS: 6-ról 12-re, precíz gyertyák kellenek
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,    // Asia: maradhat kötelező
-                        AtrExpansionHardBlock = true
+                        RequireM1Trigger = true,     // ÚJ: Ázsiában kötelező az M1 trigger!
+                        AtrExpansionHardBlock = true // ÚJ: Blokkoljuk a hirtelen kiugrást
                     },
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 59,              // 60 -> 59 (flag-vadász)
-                        FlagBars = 3,
-                        MaxFlagAtrMult = 1.70,
-                        MaxPullbackAtr = 1.00,
-                        BreakoutAtrBuffer = 0.10,
+                        MinScore = 60,               // SZIGORÍTÁS: 55-ről 58-ra
+                        FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
+                        MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
+                        MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
+                        BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = false,   // ✅ itt a kulcs (amit te is jeleztél)
+                        RequireM1Trigger = false,     // ÚJ: Londonban is kötelező az M1, hogy ne vegyünk csúcsot! -< vissza false-ra
                         AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,              // NY kicsit szigorúbb, mert ott “minden spike”
+                        MinScore = 60,               
                         FlagBars = 2,
-                        MaxFlagAtrMult = 1.60,
+                        MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.90,
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,    // NY: confirm kötelező
+                        RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
                     },
-                    maxContinuationRatr: 1.35,
-                    maxContinuationBarsSinceBreak: 3,
-                    requireHtfAlignmentForContinuation: true,
-                    allowContinuationDuringHtfTransition: false
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.4,
+                        maxContinuationBarsSinceBreak: 3,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["GBPUSD"] = Build(
                     "GBPUSD",
-                    FxVolatilityClass.Medium,
+                    FxVolatilityClass.High,
                     FxSessionBias.London,
                     FxPullbackStyle.EMA21,
-                    /* többi fix paraméter marad… */
+                    110,
+                    1.4,
+                    0.28,
+                    false,
+                    false,
+                    0.48,
+                    0.18,
+                    2.2,
+                    17,
+                    2.3,
                     new()
                     {
                         { FxSession.Asia,    -10 },
-                        { FxSession.London,  +2 },
-                        { FxSession.NewYork, +2 }
+                        { FxSession.London,  +6 },
+                        { FxSession.NewYork, +3 }
                     },
                     new()
                     {
-                        { FxSession.Asia,    18 },
-                        { FxSession.London,  20 },
-                        { FxSession.NewYork, 20 }
+                        { FxSession.Asia,    19 },
+                        { FxSession.London,  22 },
+                        { FxSession.NewYork, 22 }
                     },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 66,
-                        FlagBars = 3,
-                        MaxFlagAtrMult = 1.35,
-                        MaxPullbackAtr = 0.95,
-                        BreakoutAtrBuffer = 0.08,
-                        BodyMisalignPenalty = 12,
+                        MinScore = 64,
+                        FlagBars = 2,
+                        MaxFlagAtrMult = 1.5,
+                        MaxPullbackAtr = 1.00,
+                        BreakoutAtrBuffer = 0.05,
+                        BodyMisalignPenalty = 6,
                         M1TriggerBonus = 4,
-                        FlagQualityBonus = 3,
-                        RequireM1Trigger = true,
-                        AtrExpansionHardBlock = true
+                        FlagQualityBonus = 0,
+                        RequireM1Trigger = false,
+                        AtrExpansionHardBlock = false
                     },
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 61,              // zajosabb mint EURUSD -> picit magasabb
+                        MinScore = 62,
                         FlagBars = 3,
-                        MaxFlagAtrMult = 1.90,
-                        MaxPullbackAtr = 1.10,      // GBPUSD “szúr”
-                        BreakoutAtrBuffer = 0.12,   // hamis breakout ellen
+                        MaxFlagAtrMult = 1.9,
+                        MaxPullbackAtr = 1.10,
+                        BreakoutAtrBuffer = 0.12,
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = false,   // ✅ hunter London
+                        RequireM1Trigger = false,
                         AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 63,
+                        MinScore = 62,
                         FlagBars = 2,
-                        MaxFlagAtrMult = 1.70,
+                        MaxFlagAtrMult = 1.7,
                         MaxPullbackAtr = 1.00,
                         BreakoutAtrBuffer = 0.12,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,    // NY: confirm
+                        RequireM1Trigger = true,
                         AtrExpansionHardBlock = true
                     },
-                    maxContinuationRatr: 1.70,
-                    maxContinuationBarsSinceBreak: 4,
-                    requireHtfAlignmentForContinuation: true,
-                    allowContinuationDuringHtfTransition: false
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.7,
+                        maxContinuationBarsSinceBreak: 4,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: false
                 ),
 
                 ["USDJPY"] = Build(
                     "USDJPY",
                     FxVolatilityClass.Medium,
                     FxSessionBias.Asia,
-                    FxPullbackStyle.EMA21,
-                    /* többi fix paraméter marad… */
+                    FxPullbackStyle.Shallow,
+                    80,
+                    1.0,
+                    0.40,
+                    true,
+                    false,
+                    0.40,
+                    0.12,
+                    2.0,
+                    15,
+                    1.6,
                     new()
                     {
-                        { FxSession.Asia,    +2 },
-                        { FxSession.London,  +1 },
-                        { FxSession.NewYork, +1 }
+                        { FxSession.Asia,    -5 }, // ÚJ: Hiába Asia bias, büntessük meg a JPY kockázat miatt
+                        { FxSession.London,   0 },
+                        { FxSession.NewYork, -5 }  // SZIGORÍTÁS: -2-ről -5-re (NY nyitáskor veszélyes)
                     },
                     new()
                     {
-                        { FxSession.Asia,    20 },
-                        { FxSession.London,  20 },
+                        { FxSession.Asia,    17 },
+                        { FxSession.London,  19 },
                         { FxSession.NewYork, 20 }
                     },
                     asia: new FxFlagSessionTuning
                     {
                         BaseScore = 52,
-                        MinScore = 60,              // ✅ itt a trade count kulcsa
-                        FlagBars = 3,
-                        MaxFlagAtrMult = 1.50,
-                        MaxPullbackAtr = 0.95,
-                        BreakoutAtrBuffer = 0.07,   // JPY-n gyakran “kicsi” buffer is elég
-                        BodyMisalignPenalty = 10,
+                        MinScore = 60,               // SZIGORÍTÁS: 55-ről 62-re (csak a betonbiztos setupok)
+                        FlagBars = 3,                // STABILITÁS: 2-ről 3 bárra
+                        MaxFlagAtrMult = 1.5,        // SZIGORÍTÁS: 1.4-ről 1.1-re (csak szoros zászlók)
+                        MaxPullbackAtr = 0.95,       // SZIGORÍTÁS: 0.95-ről 0.70-re (ne engedjünk mély visszatesztet)
+                        BreakoutAtrBuffer = 0.07,    // BIZTONSÁG: Nagyobb buffer a fals kitörések ellen
+                        BodyMisalignPenalty = 10,    // SZIGORÍTÁS: 6-ról 15-re
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = false,   // ✅ Asia hunter
-                        AtrExpansionHardBlock = true
+                        RequireM1Trigger = false,     // KRITIKUS: Itt is kötelező az M1 trigger!
+                        AtrExpansionHardBlock = true,
+                        RequireAtrSlopePositive = true,
+                        RequireStrongEntryCandle = true
                     },
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,
+                        MinScore = 62,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,
-                        MaxFlagAtrMult = 1.70,
-                        MaxPullbackAtr = 1.00,
+                        MaxFlagAtrMult = 1.7,        // SZIGORÍTÁS: 2.0-ról 1.6-ra
+                        MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 0.90-re
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,
+                        RequireM1Trigger = true,     // KRITIKUS: Londonban is kötelező az M1 trigger!
                         AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
@@ -193,19 +224,22 @@ namespace GeminiV26.Instruments.FX
                         BaseScore = 54,
                         MinScore = 62,
                         FlagBars = 2,
-                        MaxFlagAtrMult = 1.60,
+                        MaxFlagAtrMult = 1.6,
                         MaxPullbackAtr = 0.95,
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
-                        AtrExpansionHardBlock = true
+                        AtrExpansionHardBlock = true,
+                        RequireAtrSlopePositive = true,
+                        RequireStrongEntryCandle = true
                     },
-                    maxContinuationRatr: 1.60,
-                    maxContinuationBarsSinceBreak: 4,
-                    requireHtfAlignmentForContinuation: true,
-                    allowContinuationDuringHtfTransition: true   // ✅ USDJPY-n hasznos (grind)
+                    // ===== CONTINUATION CHARACTER =====
+                        maxContinuationRatr: 1.6,
+                        maxContinuationBarsSinceBreak: 4,
+                        requireHtfAlignmentForContinuation: true,
+                        allowContinuationDuringHtfTransition: true
                 ),
 
                 ["GBPJPY"] = Build(
