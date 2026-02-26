@@ -601,9 +601,6 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // GLOBAL ADX EXHAUSTION GUARD – v2 (SOFT & SMART)
             // =====================================================
-            ctx.Log?.Invoke(
-                $"[FX_FLAG ADX] adx={adxNow2:F1}"
-            );
 
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow2) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
@@ -634,7 +631,9 @@ namespace GeminiV26.EntryTypes.FX
                         minBoost += 1;
                     }
                 }
-
+                ctx.Log?.Invoke(
+                    $"[FX_FLAG ADX] adx={adxNow2:F1}"
+                );
                 ctx.Log?.Invoke(
                     $"[FX_FLAG ADX] slope={adxSlopeNow:F2} atrExp={ctx.IsAtrExpanding_M5}"
                 );
