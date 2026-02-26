@@ -979,6 +979,28 @@ namespace GeminiV26.Core
             // ===== IDE TEDD =====
             _bot.Print($"[DBG ENTRY] total candidates={symbolSignals.Count}");
 
+            // ===== ENTRY CONTEXT DEBUG (WHY NO LONG / WHY dir=None) =====
+            try
+            {
+                _bot.Print(
+                    $"[DBG CTX] sym={ctx.Symbol} sess={ctx.Session} trendDir={ctx.TrendDirection} " +
+                    $"m5Bull={(ctx.Ema50_M5 > ctx.Ema200_M5)} m5Bear={(ctx.Ema50_M5 < ctx.Ema200_M5)} " +
+                    $"ema8>21={(ctx.Ema8_M5 > ctx.Ema21_M5)} ema8<21={(ctx.Ema8_M5 < ctx.Ema21_M5)} " +
+                    $"ema21Slope={ctx.Ema21Slope_M5:F4} " +
+                    $"range={ctx.IsRange_M5} impulse={ctx.HasImpulse_M5} atrExp={ctx.IsAtrExpanding_M5} " +
+                    $"lastInDir={ctx.LastClosedBarInTrendDirection} react={ctx.HasReactionCandle_M5} " +
+                    $"barsHiBreak={ctx.BarsSinceHighBreak_M5} barsLoBreak={ctx.BarsSinceLowBreak_M5} " +
+                    $"htfAllow={ctx.FxHtfAllowedDirection} htfConf={ctx.FxHtfConfidence01:F2}"
+                );
+
+                // optional: ADX debug, only if you have it via reflection helpers somewhere accessible
+                _bot.Print($"[DBG ADX] adx={ctx.Adx_M5:F1} slope={ctx.AdxSlope_M5:F2}");
+            }
+            catch (Exception ex)
+            {
+                _bot.Print($"[DBG CTX] EX={ex.GetType().Name}: {ex.Message}");
+            }
+
             foreach (var e in symbolSignals)
             {
                 _bot.Print(
