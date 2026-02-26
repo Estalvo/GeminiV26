@@ -52,12 +52,19 @@ namespace GeminiV26.EntryTypes.METAL
             score += 5;
 
             // =====================================================
-            // 4️⃣ ADX FILTER
+            // 4️⃣ ADX FILTER (XAU stricter momentum control)
             // =====================================================
-            if (ctx.Adx_M5 < MinAdx)
+
+            double minAdxRequired = 18.0;
+
+            // XAU impulse continuationhez erősebb trend kell
+            if (ctx.Symbol != null && ctx.Symbol.ToUpper().Contains("XAU"))
+                minAdxRequired = 28.0;
+
+            if (ctx.Adx_M5 < minAdxRequired)
                 return Reject(ctx, $"ADX_TOO_LOW({ctx.Adx_M5:F1})");
 
-            if (ctx.Adx_M5 > 25)
+            if (ctx.Adx_M5 >= 30)
                 score += 5;
 
             // =====================================================
