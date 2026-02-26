@@ -43,6 +43,10 @@ namespace GeminiV26.EntryTypes.METAL
 
             reasons.Add("RANGE_OK");
 
+            // extra kontroll XAU-ra – ne kontrázzunk még élő trendet
+            if (ctx.Adx_M5 > 22)
+                return RejectDecision(ctx, dir, 0, $"RANGE_BUT_ADX_STRONG({ctx.Adx_M5:F1})", reasons);
+
             // =====================================================
             // 3️⃣ REVERSAL EVIDENCE
             // =====================================================
