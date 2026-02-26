@@ -54,10 +54,10 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 59,               // SZIGORÍTÁS: 55-ről 58-ra
+                        MinScore = 57,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
                         MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
-                        MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
+                        MaxPullbackAtr = 1.10,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
                         BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
@@ -130,10 +130,10 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,
+                        MinScore = 58,
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.9,
-                        MaxPullbackAtr = 1.10,
+                        MaxPullbackAtr = 1.15,
                         BreakoutAtrBuffer = 0.12,
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
@@ -144,15 +144,15 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 63,
-                        FlagBars = 2,
+                        MinScore = 60,
+                        FlagBars = 3,
                         MaxFlagAtrMult = 1.7,
-                        MaxPullbackAtr = 1.00,
+                        MaxPullbackAtr = 1.10,
                         BreakoutAtrBuffer = 0.12,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,
+                        RequireM1Trigger = false,
                         AtrExpansionHardBlock = true
                     },
                     // ===== CONTINUATION CHARACTER =====
@@ -208,29 +208,29 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,               // SZIGORÍTÁS: 55-ről 58-ra
+                        MinScore = 57,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.7,        // SZIGORÍTÁS: 2.0-ról 1.6-ra
-                        MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30-ról 0.90-re
+                        MaxPullbackAtr = 1.05,       // SZIGORÍTÁS: 1.30-ról 0.90-re
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,     // KRITIKUS: Londonban is kötelező az M1 trigger!
+                        RequireM1Trigger = false,     // KRITIKUS: Londonban is kötelező az M1 trigger!
                         AtrExpansionHardBlock = true
                     },
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,
-                        FlagBars = 2,
-                        MaxFlagAtrMult = 1.6,
-                        MaxPullbackAtr = 0.95,
+                        MinScore = 59,
+                        FlagBars = 3,
+                        MaxFlagAtrMult = 1.65,
+                        MaxPullbackAtr = 1.05,
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,
+                        RequireM1Trigger = false,
                         AtrExpansionHardBlock = true,
                         RequireAtrSlopePositive = true,
                         RequireStrongEntryCandle = true
