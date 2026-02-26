@@ -384,11 +384,11 @@ namespace GeminiV26.EntryTypes.FX
 
             // NY: még picit több, mert fake spike gyakori
             if (ctx.Session == FxSession.NewYork)
-                maxFlagAtr += 0.15;
+                maxFlagAtr += 0.30;
 
             // Low vol FX (EURUSD tipikusan)
             if (fx.Volatility == FxVolatilityClass.Low)
-                maxFlagAtr += 0.10;
+                maxFlagAtr += 0.20;
                 
             if (rangeAtr > maxFlagAtr)
                 return Invalid(ctx, "FLAG_TOO_WIDE", score);
