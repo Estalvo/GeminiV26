@@ -216,28 +216,85 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // ===============================
-            // STRUCTURE CONFIRM (EXISTING)
+            // STRUCTURE CONFIRM (EXISTING) + DEBUG
             // ===============================
             var bars = ctx.M5;
             int last = bars.Count - 2;
 
+            // --- safety ---
+            if (bars == null || bars.Count < 5 || last < 2)
+                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "BARS_NOT_READY", reasons);
+
+            // --- snapshot (common) ---
+            double lastClose = bars[last].Close;
+            double lastHigh  = bars[last].High;
+            double lastLow   = bars[last].Low;
+
+            // NOTE: ctx.AtrM5 a helyes property nálad
+            double atr = ctx.AtrM5;
+
+            // DEBUG: alap state (minden esetben)
+            reasons.Add(
+                $"DBG_FLAG_STRUCT dir={ctx.TrendDirection} m1={m1} " +
+                $"lastClose={lastClose:F2} lastHigh={lastHigh:F2} lastLow={lastLow:F2} " +
+                $"hi={hi:F2} lo={lo:F2} atrM5={atr:F5}"
+            );
+
             if (ctx.TrendDirection == TradeDirection.Long)
             {
+                // DEBUG: break státusz (close + wick)
+                bool closeBreak = lastClose > hi;
+                bool wickBreak  = lastHigh >= hi;
+
+                reasons.Add(
+                    $"DBG_FLAG_BREAK_LONG closeBreak={closeBreak} wickBreak={wickBreak} " +
+                    $"(lastClose>hi={lastClose:F2}>{hi:F2}) (lastHigh>=hi={lastHigh:F2}>={hi:F2})"
+                );
+
                 // csak akkor kérünk M5 breaket, ha nincs M1 trigger
                 if (!m1 && bars[last].Close <= hi)
+                {
+                    reasons.Add(
+                        $"DBG_FLAG_REJECT_LONG reason=NO_FLAG_HIGH_BREAK " +
+                        $"m1={m1} lastClose={lastClose:F2} hi={hi:F2} (need close>hi when m1=false)"
+                    );
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
+                }
 
-                if (IsLowerHighSequence(bars, last))
+                // DEBUG: sequence check
+                bool lowerHighSeq = IsLowerHighSequence(bars, last);
+                reasons.Add($"DBG_FLAG_SEQ_LONG lowerHighSeq={lowerHighSeq}");
+
+                if (lowerHighSeq)
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
             }
 
             if (ctx.TrendDirection == TradeDirection.Short)
             {
+                // DEBUG: break státusz (close + wick)
+                bool closeBreak = lastClose < lo;
+                bool wickBreak  = lastLow <= lo;
+
+                reasons.Add(
+                    $"DBG_FLAG_BREAK_SHORT closeBreak={closeBreak} wickBreak={wickBreak} " +
+                    $"(lastClose<lo={lastClose:F2}<{lo:F2}) (lastLow<=lo={lastLow:F2}<={lo:F2})"
+                );
+
                 // csak akkor kérünk M5 breaket, ha nincs M1 trigger
                 if (!m1 && bars[last].Close >= lo)
+                {
+                    reasons.Add(
+                        $"DBG_FLAG_REJECT_SHORT reason=NO_FLAG_LOW_BREAK " +
+                        $"m1={m1} lastClose={lastClose:F2} lo={lo:F2} (need close<lo when m1=false)"
+                    );
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
+                }
 
-                if (IsHigherLowSequence(bars, last))
+                // DEBUG: sequence check
+                bool higherLowSeq = IsHigherLowSequence(bars, last);
+                reasons.Add($"DBG_FLAG_SEQ_SHORT higherLowSeq={higherLowSeq}");
+
+                if (higherLowSeq)
                     return InvalidDecision(ctx, session, tag, score, minScoreAdj, "HIGHER_LOW_SEQUENCE", reasons);
             }
 

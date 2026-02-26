@@ -96,12 +96,23 @@ namespace GeminiV26.EntryTypes.FX
                         score);
 
                 // -------------------------------------------------
-                // HARD FLOOR (extreme weak trend only)
+                // HARD FLOOR (extreme weak trend only) - SOFTENED
                 // -------------------------------------------------
-                if (adxNow < dynamicMinAdx - 2.0)
-                    return Invalid(ctx,
-                        $"VERY_LOW_ADX {adxNow:F1}<{dynamicMinAdx - 2:F1}",
-                        score);
+                double hardFloor = dynamicMinAdx - 4.0;
+
+                bool strongContextForAdx =
+                    score >= (tuning.MinScore + 6) &&     // kell, hogy tényleg jó legyen
+                    !ctx.IsRange_M5;                      // range-ben ne engedjünk
+
+                if (adxNow < hardFloor)
+                {
+                    if (!strongContextForAdx)
+                        return Invalid(ctx, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor:F1}", score);
+
+                    // strong context: ne öljük meg, csak fájjon
+                    ApplyPenalty(4);
+                    Console.WriteLine($"[{ctx.Symbol}][A_ADX_SOFT] adx={adxNow:F1} < {hardFloor:F1} but strongContext => penalty=4 score={score}");
+                }
 
                 // -------------------------------------------------
                 // HYSTERESIS BAND (knife-edge smoothing)
@@ -541,14 +552,14 @@ namespace GeminiV26.EntryTypes.FX
             if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
             {
                 bool strongContext =
-                    score >= tuning.MinScore + 4 &&                    
+                    score >= tuning.MinScore + 2 &&      // +4 helyett +2
                     !ctx.IsRange_M5;
 
                 if (!strongContext)
                     return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
 
-                // strong context esetén csak büntessünk
-                ApplyPenalty(3);
+                ApplyPenalty(2); // 3 -> 2
+                Console.WriteLine($"[{ctx.Symbol}][B_M1_SOFT] no M1 trigger, strongContext => penalty=2 score={score}");
             }
 
             int barsSinceBreak =
