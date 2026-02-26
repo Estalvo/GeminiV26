@@ -997,8 +997,7 @@ namespace GeminiV26.EntryTypes.FX
             // ===================================================== 
             // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
             // ===================================================== 
-            int min = tuning.MinScore;
-
+            
             // Session strictness csak akkor, ha VAN trigger (breakout/M1 confirm)
             int sessionStrictness =
                 ctx.Session == FxSession.NewYork ? 2 :
