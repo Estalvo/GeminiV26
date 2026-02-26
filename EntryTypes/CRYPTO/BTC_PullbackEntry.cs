@@ -32,37 +32,71 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Block(ctx, "M5_NOT_READY", score);
 
             int lastClosed = bars.Count - 2;
-            
+           
             TradeDirection dir = ctx.TrendDirection;
-            
+
+            // =========================
+            // HTF DIRECTION OVERRIDE / PRACTICAL GATE
+            // =========================
+            var allow = ctx.CryptoHtfAllowedDirection;
+            var htfConf = ctx.CryptoHtfConfidence01;
+
+            // --- practical knobs ---
+            const double HTF_STRONG = 0.70;
+            const double HTF_SOFT_MIN = 0.40;          // ez alatt HTF-t ignoráljuk
+            const int SOFT_CONFLICT_EXTRA_SCORE = 8;   // ennyivel legyen erősebb a setup soft ellentétben
+            const int SOFT_CONFLICT_PENALTY = 4;       // opcionális: ha mégis engedjük, picit büntetjük
+
+            // 0) Ha nincs trend dir, próbáljuk HTF-ből pótolni (csak ha strong)
             if (dir != TradeDirection.Long && dir != TradeDirection.Short)
-                return Block(ctx, "NO_TREND_DIR", score);
-
-                // =========================
-                // HTF DIRECTION OVERRIDE (so TC doesn't kill everything)
-                // =========================
-                var allow = ctx.CryptoHtfAllowedDirection;
-                var htfConf = ctx.CryptoHtfConfidence01;
-
-                // csak erős HTF esetén igazodunk hozzá
-                if (allow != TradeDirection.None && dir != allow)
+            {
+                if (allow != TradeDirection.None && htfConf >= HTF_STRONG)
                 {
-                    // ha HTF domináns → igazodunk
-                    if (htfConf >= 0.7)
+                    dir = allow;
+                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_FALLBACK] conf={htfConf:0.00} dir-> {dir}");
+                }
+                else
+                {
+                    return Block(ctx, "NO_TREND_DIR", score);
+                }
+            }
+
+            // 1) Ha van HTF allow és mismatch
+            if (allow != TradeDirection.None && dir != allow)
+            {
+                // 1a) STRONG HTF -> override
+                if (htfConf >= HTF_STRONG)
+                {
+                    dir = allow;
+                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
+                }
+                // 1b) SOFT HTF -> practical gate (csak erős setup átmehet)
+                else if (htfConf >= HTF_SOFT_MIN)
+                {
+                    // itt kell egy fix MIN_SCORE a file-odban (pl. 40)
+                    // feltétel: score >= MIN_SCORE + EXTRA
+                    if (score >= MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE)
                     {
-                        dir = allow;
-                        Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
+                        score -= SOFT_CONFLICT_PENALTY; // opcionális, hogy a conflict “fájjon” kicsit
+                        Console.WriteLine(
+                            $"[BTC_PULLBACK][HTF_SOFT_CONFLICT_ALLOW] conf={htfConf:0.00} allow={allow} keepDir={dir} " +
+                            $"scoreOk (>= {MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE}) scoreAdj=-{SOFT_CONFLICT_PENALTY}"
+                        );
                     }
                     else
                     {
-                        // ha nem domináns → ne adjunk vissza ellentétes irányt
-                        // hanem blokkoljuk itt
                         return Block(ctx,
-                            $"HTF_SOFT_CONFLICT conf={htfConf:0.00}",
+                            $"HTF_SOFT_CONFLICT_NEED_STRONGER_SETUP conf={htfConf:0.00} allow={allow} needScore>={MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE}",
                             score,
                             dir);
                     }
                 }
+                // 1c) very weak HTF -> ignore, no action
+                else
+                {
+                    Console.WriteLine($"[BTC_PULLBACK][HTF_WEAK_IGNORED] conf={htfConf:0.00} allow={allow} keepDir={dir}");
+                }
+            }
 
             // =========================
             // IMPULSE DIRECTION LOCK (CRYPTO SAFETY)
