@@ -674,7 +674,9 @@ namespace GeminiV26.EntryTypes.FX
             // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
             // =====================================================
             // --- LOW ENERGY CONTINUATION GUARD (balanced) ---
-            if (isPreTrigger && !ctx.IsAtrExpanding_M5)
+            if (isPreTrigger &&
+                !ctx.IsAtrExpanding_M5 &&
+                ctx.IsRange_M5)   // <-- EZ AZ EGYETLEN ÚJ FELTÉTEL
             {
                 bool strongTrendContext =
                     ctx.IsRange_M5 == false &&
