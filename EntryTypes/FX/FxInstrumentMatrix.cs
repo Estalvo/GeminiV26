@@ -68,15 +68,15 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 62,               
-                        FlagBars = 2,
+                        MinScore = 60,               
+                        FlagBars = 4,
                         MaxFlagAtrMult = 1.6,
-                        MaxPullbackAtr = 0.90,
+                        MaxPullbackAtr = 1.05,
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
-                        RequireM1Trigger = true,
+                        RequireM1Trigger = false,
                         AtrExpansionHardBlock = true
                     },
                     // ===== CONTINUATION CHARACTER =====
