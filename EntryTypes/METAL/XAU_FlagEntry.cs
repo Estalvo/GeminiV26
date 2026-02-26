@@ -240,63 +240,89 @@ namespace GeminiV26.EntryTypes.METAL
                 $"hi={hi:F2} lo={lo:F2} atrM5={atr:F5}"
             );
 
-            if (ctx.TrendDirection == TradeDirection.Long)
+        if (ctx.TrendDirection == TradeDirection.Long)
+        {
+            bool closeBreak = lastClose > hi;
+            bool wickBreak  = lastHigh >= hi;
+
+            reasons.Add(
+                $"DBG_FLAG_BREAK_LONG closeBreak={closeBreak} wickBreak={wickBreak} " +
+                $"(lastClose>hi={lastClose:F2}>{hi:F2}) (lastHigh>=hi={lastHigh:F2}>={hi:F2})"
+            );
+
+            // ===== XAU SOFT WICK CONTINUATION (VERY CONTROLLED) =====
+            bool isXau = ctx.Symbol.ToUpper().Contains("XAU");
+
+            bool strongBullBody =
+                bars[last].Close > bars[last].Open;
+
+            bool xauSoftBreak =
+                isXau &&
+                wickBreak &&
+                strongBullBody &&
+                ctx.Adx_M5 >= 24;   // finom erőszűrő
+
+            reasons.Add(
+                $"DBG_XAU_SOFT_LONG isXau={isXau} soft={xauSoftBreak} adx={ctx.Adx_M5:F1}"
+            );
+
+            if (!m1 && !closeBreak && !xauSoftBreak)
             {
-                // DEBUG: break státusz (close + wick)
-                bool closeBreak = lastClose > hi;
-                bool wickBreak  = lastHigh >= hi;
-
                 reasons.Add(
-                    $"DBG_FLAG_BREAK_LONG closeBreak={closeBreak} wickBreak={wickBreak} " +
-                    $"(lastClose>hi={lastClose:F2}>{hi:F2}) (lastHigh>=hi={lastHigh:F2}>={hi:F2})"
+                    $"DBG_FLAG_REJECT_LONG reason=NO_FLAG_HIGH_BREAK " +
+                    $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
                 );
-
-                // csak akkor kérünk M5 breaket, ha nincs M1 trigger
-                if (!m1 && bars[last].Close <= hi)
-                {
-                    reasons.Add(
-                        $"DBG_FLAG_REJECT_LONG reason=NO_FLAG_HIGH_BREAK " +
-                        $"m1={m1} lastClose={lastClose:F2} hi={hi:F2} (need close>hi when m1=false)"
-                    );
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
-                }
-
-                // DEBUG: sequence check
-                bool lowerHighSeq = IsLowerHighSequence(bars, last);
-                reasons.Add($"DBG_FLAG_SEQ_LONG lowerHighSeq={lowerHighSeq}");
-
-                if (lowerHighSeq)
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
+                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
             }
 
-            if (ctx.TrendDirection == TradeDirection.Short)
+            bool lowerHighSeq = IsLowerHighSequence(bars, last);
+            reasons.Add($"DBG_FLAG_SEQ_LONG lowerHighSeq={lowerHighSeq}");
+
+            if (lowerHighSeq)
+                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
+        }
+
+        if (ctx.TrendDirection == TradeDirection.Short)
+        {
+            bool closeBreak = lastClose < lo;
+            bool wickBreak  = lastLow <= lo;
+
+            reasons.Add(
+                $"DBG_FLAG_BREAK_SHORT closeBreak={closeBreak} wickBreak={wickBreak} " +
+                $"(lastClose<lo={lastClose:F2}<{lo:F2}) (lastLow<=lo={lastLow:F2}<={lo:F2})"
+            );
+
+            // ===== XAU SOFT WICK CONTINUATION (VERY CONTROLLED) =====
+            bool isXau = ctx.Symbol.ToUpper().Contains("XAU");
+
+            bool strongBearBody =
+                bars[last].Close < bars[last].Open;
+
+            bool xauSoftBreak =
+                isXau &&
+                wickBreak &&
+                strongBearBody &&
+                ctx.Adx_M5 >= 24;   // finom erőszűrő
+
+            reasons.Add(
+                $"DBG_XAU_SOFT_SHORT isXau={isXau} soft={xauSoftBreak} adx={ctx.Adx_M5:F1}"
+            );
+
+            if (!m1 && !closeBreak && !xauSoftBreak)
             {
-                // DEBUG: break státusz (close + wick)
-                bool closeBreak = lastClose < lo;
-                bool wickBreak  = lastLow <= lo;
-
                 reasons.Add(
-                    $"DBG_FLAG_BREAK_SHORT closeBreak={closeBreak} wickBreak={wickBreak} " +
-                    $"(lastClose<lo={lastClose:F2}<{lo:F2}) (lastLow<=lo={lastLow:F2}<={lo:F2})"
+                    $"DBG_FLAG_REJECT_SHORT reason=NO_FLAG_LOW_BREAK " +
+                    $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
                 );
-
-                // csak akkor kérünk M5 breaket, ha nincs M1 trigger
-                if (!m1 && bars[last].Close >= lo)
-                {
-                    reasons.Add(
-                        $"DBG_FLAG_REJECT_SHORT reason=NO_FLAG_LOW_BREAK " +
-                        $"m1={m1} lastClose={lastClose:F2} lo={lo:F2} (need close<lo when m1=false)"
-                    );
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
-                }
-
-                // DEBUG: sequence check
-                bool higherLowSeq = IsHigherLowSequence(bars, last);
-                reasons.Add($"DBG_FLAG_SEQ_SHORT higherLowSeq={higherLowSeq}");
-
-                if (higherLowSeq)
-                    return InvalidDecision(ctx, session, tag, score, minScoreAdj, "HIGHER_LOW_SEQUENCE", reasons);
+                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
             }
+
+            bool higherLowSeq = IsHigherLowSequence(bars, last);
+            reasons.Add($"DBG_FLAG_SEQ_SHORT higherLowSeq={higherLowSeq}");
+
+            if (higherLowSeq)
+                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "HIGHER_LOW_SEQUENCE", reasons);
+        }
 
             // ===============================
             // BODY DOMINANCE (EXISTING)
