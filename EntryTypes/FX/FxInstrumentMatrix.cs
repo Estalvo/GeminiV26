@@ -156,7 +156,7 @@ namespace GeminiV26.Instruments.FX
                         AtrExpansionHardBlock = true
                     },
                     // ===== CONTINUATION CHARACTER =====
-                        maxContinuationRatr: 1.7,
+                        maxContinuationRatr: 1.45,
                         maxContinuationBarsSinceBreak: 4,
                         requireHtfAlignmentForContinuation: true,
                         allowContinuationDuringHtfTransition: false
