@@ -15,6 +15,8 @@ namespace GeminiV26.Core.Entry
         // =========================
         public string Symbol;
 
+        public Action<string> Log { get; set; }
+
         // =========================
         // Bars
         // =========================
