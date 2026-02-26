@@ -144,7 +144,7 @@ namespace GeminiV26.Instruments.FX
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 60,
+                        MinScore = 58,
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.7,
                         MaxPullbackAtr = 1.10,
