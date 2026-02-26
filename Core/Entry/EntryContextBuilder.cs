@@ -548,9 +548,10 @@ namespace GeminiV26.Core.Entry
             // instrument-aware compression
             double compressionMult =
                 isCrypto ? 0.35 :
+                isMetal && symbol.ToUpper().Contains("XAU") ? 0.50 :
                 isMetal ? 0.40 :
                 isIndex ? 0.45 :
-                           0.50;   // FX default
+                        0.50;
 
             bool isCompressed =
                 ctx.AtrM5 > 0 &&
