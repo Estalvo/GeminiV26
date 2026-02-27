@@ -34,7 +34,11 @@ namespace GeminiV26.EntryTypes.FX
             else score -= 12; // nincs tiszta trend
 
             if (dir == TradeDirection.None)
-                score -= 6;
+            {
+                // FlagEntry parity: ha nincs tiszta trend irány, NE erőltessünk pullback belépőt.
+                Console.WriteLine($"[FX_PB] BLOCK NO_TREND_DIR | {ctx.Symbol} | Session={ctx.Session} | score={score:0.0}");
+                return Block(ctx, "NO_TREND_DIR", (int)Math.Round(score));
+            }
 
             // =========================
             // IMPULSE QUALITY
@@ -96,6 +100,23 @@ namespace GeminiV26.EntryTypes.FX
                 !ctx.IsAtrExpanding_M5)
             {
                 return Block(ctx, "TREND_EXHAUSTION", score);
+            // FlagEntry parity: low-energy hard blocks (ne nyissunk "lecsorgó/chop" környezetben)
+            // LOW_ENERGY_NO_TREND: ADX már a saját átlag alatt, és meredeken esik → gyakran range/chop.
+            var dynamicMinAdx = 14.0;
+            if (ctx.Session == FxSession.Asia) dynamicMinAdx = 18.0;
+            if (!ctx.HasImpulseM5) dynamicMinAdx += 2.0;
+
+            if (ctx.Adx_M5 < dynamicMinAdx * 0.85 && ctx.AdxSlope_M5 < -0.02)
+                return Block(ctx, "LOW_ENERGY_NO_TREND", score);
+
+            // VERY_LOW_ADX: hard floor
+            if (ctx.Adx_M5 < Math.Max(7.0, dynamicMinAdx * 0.65))
+                return Block(ctx, "VERY_LOW_ADX", score);
+
+            // ADX_EXHAUSTION_BLOCK: ha extrém magas volt az energia és hirtelen kifullad (FlagEntry küszöb)
+            if (ctx.Adx_M5 > 45.0 && ctx.AdxSlope_M5 < -0.06)
+                return Block(ctx, "ADX_EXHAUSTION_BLOCK", score);
+
             }
 
             // =========================
