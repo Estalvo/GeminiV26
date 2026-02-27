@@ -217,7 +217,7 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, TradeDirection.None, "ASIA_NO_ATR_EXPANSION", score);
 
                 int asiaBarsSinceBreak =
-                    ctx.TrendDirection == TradeDirection.Long
+                    flagDir == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
