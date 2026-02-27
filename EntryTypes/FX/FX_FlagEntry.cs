@@ -217,12 +217,21 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, TradeDirection.None, "ASIA_NO_ATR_EXPANSION", score);
 
                 int asiaBarsSinceBreak =
-                    flagDir == TradeDirection.Long
+                    ctx.TrendDirection == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
                 if (asiaBarsSinceBreak > 2)
-                    return Invalid(ctx, TradeDirection.None, $"ASIA_LATE_CONT({asiaBarsSinceBreak})", score);
+                {
+                    ctx.Log?.Invoke(
+                        $"[FX_FLAG ASIA_PRECHECK] lateCont trendDir={ctx.TrendDirection} barsSinceBreak={asiaBarsSinceBreak} (soft only)"
+                    );
+
+                    // opcionális: nagyon enyhe büntetés, hogy ne teljesen ignoráljuk
+                    ApplyPenalty(1);
+
+                    // NINCS return itt – a valódi irányalapú Asia check lent történik flagDir-rel
+                }
 
                 if (ctx.FxHtfAllowedDirection == TradeDirection.None &&
                     ctx.FxHtfConfidence01 >= 0.50)
@@ -421,6 +430,17 @@ namespace GeminiV26.EntryTypes.FX
             if (flagDir == TradeDirection.None)
                 return Invalid(ctx, TradeDirection.None, "NO_FLAG_DIR", score);
 
+            if (ctx.Session == FxSession.Asia)
+            {
+                int asiaBarsSinceBreak2 =
+                    flagDir == TradeDirection.Long ? ctx.BarsSinceHighBreak_M5 :
+                    flagDir == TradeDirection.Short ? ctx.BarsSinceLowBreak_M5 :
+                    int.MaxValue;
+
+                if (asiaBarsSinceBreak2 > 2)
+                    return Invalid(ctx, flagDir, $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})", score);
+            }
+            
             // =====================================================
             // 3B. FLAG SLOPE VALIDATION (use flagDir)
             // =====================================================
