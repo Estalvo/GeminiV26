@@ -748,12 +748,35 @@ namespace GeminiV26.EntryTypes.FX
                 if (htfTransitionZone && !hasTrigger)
                     minBoost += 2;
 
-                // --- 4️⃣ HTF ALIGNMENT REQUIREMENT ---
+                // --- 4️⃣ HTF ALIGNMENT REQUIREMENT (SOFT VERSION) ---
                 if (fx.RequireHtfAlignmentForContinuation &&
                     ctx.FxHtfAllowedDirection != TradeDirection.None &&
                     ctx.FxHtfAllowedDirection != ctx.TrendDirection)
                 {
-                    return Invalid(ctx, "HTF_NOT_ALIGNED", score);
+                    double conf = ctx.FxHtfConfidence01;
+
+                    int penalty =
+                        conf >= 0.75 ? 6 :
+                        conf >= 0.60 ? 4 :
+                        conf >= 0.45 ? 3 :
+                        2;
+
+                    // Ha már van trigger (breakout / M1 confirm), enyhítsük
+                    if (hasTrigger)
+                        penalty = Math.Max(0, penalty - 2);
+
+                    // High volatility FX toleránsabb
+                    if (fx.Volatility == FxVolatilityClass.High)
+                        penalty = Math.Max(0, penalty - 1);
+
+                    ApplyPenalty(penalty);
+
+                    // Emeljük kicsit a minimum lécet continuation esetén
+                    minBoost += 1;
+
+                    ctx.Log?.Invoke(
+                        $"[FX_FLAG HTF_SOFT_ALIGN] conf={conf:F2} penalty={penalty}"
+                    );
                 }
             }
 
