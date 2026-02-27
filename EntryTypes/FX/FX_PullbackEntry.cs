@@ -30,7 +30,7 @@ namespace GeminiV26.EntryTypes.FX
                 return Block(ctx, "NO_FX_PROFILE", score);
 
             // FlagEntry-style penalty budget (prevents "death by a thousand cuts")
-            int penaltyBudget = Math.Max(0, fx.EntryPenaltyBudget);
+            int penaltyBudget = 10;   // vagy 8–12, amit a FlagEntry-ben használsz
 
             // =========================
             // TREND RESOLUTION (HARD)
