@@ -1,13 +1,3 @@
-// =========================================================
-// FX_FlagEntry – Phase 3.9 PATCH
-// Goal: KEEP EVERYTHING (score system, ATR/ADX gates, penalties, boosts, etc.)
-// Change ONLY:
-//  1) Introduce flagDir (pattern-driven direction)
-//  2) Replace direction-dependent logic that uses ctx.TrendDirection with flagDir
-//  3) Ensure Valid()/Invalid() + logs send flagDir toward TR/TC
-//  4) TrendDirection remains SOFT bias only (reward/penalty/risk context), not direction of the entry
-// =========================================================
-
 using System;
 using cAlgo.API;
 using GeminiV26.Core;
@@ -24,9 +14,9 @@ namespace GeminiV26.EntryTypes.FX
         {
             int score = 0;
             int penaltyBudget = 0;
-
+            
             const int maxPenalty = 15;   // FX-en ennyi össz negatív korrekció lehet max
-
+            
             // === MIN SCORE DYNAMIC BOOST (no simplification, just additive) ===
             int minBoost = 0;
 
@@ -47,18 +37,18 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
-                return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY", score);
+                return Invalid(ctx, "CTX_NOT_READY", score);
 
             // 🔒 ATR SAFETY GUARD – IDE
             if (ctx.AtrM5 <= 0)
-                return Invalid(ctx, TradeDirection.None, "ATR_NOT_READY", score);
+                return Invalid(ctx, "ATR_NOT_READY", score);
 
             var fx = FxInstrumentMatrix.Get(ctx.Symbol);
             if (fx == null)
-                return Invalid(ctx, TradeDirection.None, "NO_FX_PROFILE", score);
+                return Invalid(ctx, "NO_FX_PROFILE", score);
 
             if (fx.FlagTuning == null || !fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
-                return Invalid(ctx, TradeDirection.None, "NO_FLAG_TUNING", score);
+                return Invalid(ctx, "NO_FLAG_TUNING", score);
 
             score = tuning.BaseScore + 6;
 
@@ -71,6 +61,14 @@ namespace GeminiV26.EntryTypes.FX
                 $"ema21Slope={ctx.Ema21Slope_M5:F4} " +
                 $"impulse={ctx.HasImpulse_M5} range={ctx.IsRange_M5}"
             );
+
+            // =====================================================
+            // 0. LATE TREND FILTER v1 – (ADD ONLY, NO DELETE)
+            // =====================================================
+            // Goal:
+            // - block/penalize "late continuation" in NY/London when ADX is climactic and rolling
+            // - harden HTF transition (allow=None style)
+            // - delay NY continuation in first bars after session open (if the context exposes it)
 
             // =====================================================
             // LOW ADX HARD FILTER – ATR AWARE + HYSTERESIS
@@ -103,7 +101,7 @@ namespace GeminiV26.EntryTypes.FX
                     ctx.IsRange_M5;
 
                 if (lowEnergy && adxNow < dynamicMinAdx)
-                    return Invalid(ctx, TradeDirection.None,
+                    return Invalid(ctx,
                         $"LOW_ENERGY_NO_TREND {adxNow:F1}<{dynamicMinAdx:F1}",
                         score);
 
@@ -119,7 +117,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (adxNow < hardFloor)
                 {
                     if (!strongContextForAdx)
-                        return Invalid(ctx, TradeDirection.None, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor:F1}", score);
+                        return Invalid(ctx, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor:F1}", score);
 
                     // strong context: ne öljük meg, csak fájjon
                     ApplyPenalty(4);
@@ -135,7 +133,7 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyPenalty(2);   // ne block, csak szigoríts
                 }
             }
-
+            
             // --- ADX Climax / Rolling Guard (reflection-safe) ---
             // Uses (if present): Adx_M5 (double), AdxSlope_M5 (double) OR AdxSlope01_M5 (double)
             if (TryGetDouble(ctx, "Adx_M5", out var adxM5))
@@ -181,16 +179,21 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // --- HTF TRANSITION hardening (allow=None / transition zone) ---
+            // We don't delete your existing min relax; we add a boost so transition doesn't auto-pass.
             bool htfTransitionZone =
                 ctx.FxHtfAllowedDirection == TradeDirection.None &&
                 ctx.FxHtfConfidence01 >= 0.50;
 
             if (htfTransitionZone)
             {
+                // make it harder to pass borderline 50-score trades
                 minBoost += 2;     // raises the bar without hard-blocking
+                // ApplyPenalty(2);        // small penalty to push only best setups through
             }
 
             // --- NY Session Impulse Delay (first bars after NY open if available) ---
+            // Uses (if present): BarsSinceSessionOpen_M5 (int) or SessionBarIndex_M5 (int)
+            // We apply later too (after breakout/confirm), but we can set a pre-penalty here.
             int nyBars = int.MaxValue;
             bool hasNyBars =
                 TryGetInt(ctx, "BarsSinceSessionOpen_M5", out nyBars) ||
@@ -200,6 +203,7 @@ namespace GeminiV26.EntryTypes.FX
 
             if (nyEarly)
             {
+                // discourage first-spike continuation entries; still allow breakout+confirm later
                 ApplyPenalty(3);
                 minBoost += 2;
             }
@@ -207,27 +211,26 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // ASIA CONTINUATION HARD FILTER (ANTI LATE GRIND)
             // =====================================================
-            // NOTE: in Phase 3.9 patch, Asia logic must use flagDir once we have it,
-            // BUT we calculate flagDir AFTER we compute hi/lo (pattern). So keep this block
-            // as-is for now, but we will re-run the Asia barsSinceBreak check after flagDir is known.
-            // (No delete, we ADD a second Asia check later.)
             if (ctx.Session == FxSession.Asia)
             {
+                // Low volatility continuation = trap
                 if (ctx.IsRange_M5 == false && ctx.IsAtrExpanding_M5 == false)
-                    return Invalid(ctx, TradeDirection.None, "ASIA_NO_ATR_EXPANSION", score);
+                    return Invalid(ctx, "ASIA_NO_ATR_EXPANSION", score);
 
+                // Late continuation (structure already old)
                 int asiaBarsSinceBreak =
                     ctx.TrendDirection == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
                 if (asiaBarsSinceBreak > 2)
-                    return Invalid(ctx, TradeDirection.None, $"ASIA_LATE_CONT({asiaBarsSinceBreak})", score);
+                    return Invalid(ctx, $"ASIA_LATE_CONT({asiaBarsSinceBreak})", score);
 
+                // HTF transition + Asia = dangerous continuation
                 if (ctx.FxHtfAllowedDirection == TradeDirection.None &&
                     ctx.FxHtfConfidence01 >= 0.50)
                 {
-                    return Invalid(ctx, TradeDirection.None,
+                    return Invalid(ctx,
                         $"ASIA_HTF_TRANSITION_BLOCK conf={ctx.FxHtfConfidence01:F2}",
                         score);
                 }
@@ -249,9 +252,8 @@ namespace GeminiV26.EntryTypes.FX
             double lastRange = lastBar.High - lastBar.Low;
             bool lastStrongBody = lastRange > 0 && (lastBody / lastRange) >= 0.55;
 
-            // ---- Phase 3.9: keep TrendDirection here only as SOFT context for pre-trigger quality ----
-            bool lastClosesInTrendDir =
-                (ctx.TrendDirection == TradeDirection.Long && lastBar.Close > lastBar.Open) ||
+            bool lastClosesInDir =
+                (ctx.TrendDirection == TradeDirection.Long  && lastBar.Close > lastBar.Open) ||
                 (ctx.TrendDirection == TradeDirection.Short && lastBar.Close < lastBar.Open);
 
             // 2) ATR slope requirement (if available -> use it, else fallback to IsAtrExpanding_M5)
@@ -266,33 +268,35 @@ namespace GeminiV26.EntryTypes.FX
                     hasAtrSlope ? (atrSlope > 0.0) : ctx.IsAtrExpanding_M5;
 
                 if (!atrOk)
-                    return Invalid(ctx, TradeDirection.None, "ATR_SLOPE_REQUIRED", score);
+                    return Invalid(ctx, "ATR_SLOPE_REQUIRED", score);
             }
 
             // =====================================================
             // 1. EMA POSITION FILTER (FX-SAFE)
             // =====================================================
             int lastClosed = ctx.M5.Count - 2;
-
+            
             double emaDistAtr = Math.Abs(lastClose - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (emaDistAtr < 0.10)
-                ApplyPenalty(3);
+                ApplyPenalty(3);   // ne öld meg, csak büntesd
 
             if (emaDistAtr < 0.18 && ctx.HasImpulse_M5)
                 ApplyPenalty(2);
 
+            // 🔧 OVEREXT ONLY IF NO IMPULSE (ANTI-CHASE)
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.5 && !ctx.HasImpulse_M5)
-                ApplyPenalty(6);
+                ApplyPenalty(6);   // eddig kinyírta a setupok 30-40%-át
 
+            // 🔧 MOMENTUM CONTINUATION BONUS
             if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 &&
                 ctx.HasImpulse_M5 &&
                 !ctx.IsAtrExpanding_M5)
             {
-                ApplyPenalty(4);
+                ApplyPenalty(4);   // chase only if energy fading
             }
 
-            // ✅ KEEP: TrendDirection remains soft bias reward
+            // 🔧 EMA + TREND CONTEXT BONUS (amit te ránézésre látsz)
             if (ctx.TrendDirection == TradeDirection.Short && lastClose < ctx.Ema21_M5)
                 ApplyReward(3);
             else if (ctx.TrendDirection == TradeDirection.Long && lastClose > ctx.Ema21_M5)
@@ -306,9 +310,18 @@ namespace GeminiV26.EntryTypes.FX
             {
                 double iq = GetImpulseQuality(ctx, 5);
 
-                if (iq > 0.80) ApplyPenalty(5);
-                else if (iq > 0.72) ApplyPenalty(3);
-                else if (iq < 0.38) ApplyPenalty(4);
+                // 🔴 túl erős = chase danger
+                if (iq > 0.80)
+                    ApplyPenalty(5);
+                else if (iq > 0.72)
+                    ApplyPenalty(3);
+
+                // 🟡 középtartomány – NE büntesd
+                // 0.50–0.72 → ideális continuation impulse
+
+                // 🔴 gyenge impulse → nincs valódi struktúra
+                else if (iq < 0.38)
+                    ApplyPenalty(4);
             }
             else
             {
@@ -317,8 +330,10 @@ namespace GeminiV26.EntryTypes.FX
                     ctx.LastClosedBarInTrendDirection &&
                     emaDistAtr < tuning.MaxPullbackAtr;
 
-                if (compressionValid) ApplyReward(2);
-                else ApplyPenalty(2);
+                if (compressionValid)
+                    ApplyReward(2);
+                else
+                    ApplyPenalty(2);
             }
 
             // =====================================================
@@ -327,8 +342,11 @@ namespace GeminiV26.EntryTypes.FX
 
             if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 4)
             {
-                if (!ctx.IsAtrExpanding_M5) ApplyPenalty(6);
-                if (ctx.IsRange_M5) ApplyPenalty(4);
+                if (!ctx.IsAtrExpanding_M5)
+                    ApplyPenalty(6);
+
+                if (ctx.IsRange_M5)
+                    ApplyPenalty(4);
             }
 
             // =====================================================
@@ -338,19 +356,19 @@ namespace GeminiV26.EntryTypes.FX
                 !ctx.IsAtrExpanding_M5 &&
                 ctx.IsRange_M5)
             {
-                ApplyPenalty(4);
+                ApplyPenalty(4); // chop-kompresszió kiszűrése
             }
 
             // =====================================================
-            // 2C. LOW ENERGY COMPRESSION PENALTY
+            // 2C. LOW ENERGY COMPRESSION PENALTY (anti "meh" flags)
             // =====================================================
             if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5)
             {
-                ApplyPenalty(1);
+                ApplyPenalty(1); // enyhébb meh bünti
             }
 
             // =====================================================
-            // 2D. NO-IMPULSE REQUIRES REACTION
+            // 2D. NO-IMPULSE REQUIRES REACTION (both directions)
             // =====================================================
             if (!ctx.HasImpulse_M5)
             {
@@ -366,93 +384,86 @@ namespace GeminiV26.EntryTypes.FX
             // 3. FLAG RANGE (SIMPLE)
             // =====================================================
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
-                return Invalid(ctx, TradeDirection.None, "FLAG_FAIL", score);
+                return Invalid(ctx, "FLAG_FAIL", score);
 
-            ctx.Log?.Invoke($"[FX_FLAG RANGE] bars={tuning.FlagBars} rangeATR={rangeAtr:F2}");
+            ctx.Log?.Invoke(
+                $"[FX_FLAG RANGE] bars={tuning.FlagBars} rangeATR={rangeAtr:F2}"
+            );
 
             double maxFlagAtr = tuning.MaxFlagAtrMult;
 
-            if (ctx.Session == FxSession.London) maxFlagAtr += 0.10;
-            if (ctx.Session == FxSession.NewYork) maxFlagAtr += 0.30;
-            if (fx.Volatility == FxVolatilityClass.Low) maxFlagAtr += 0.20;
+            // London: kicsit több levegő
+            if (ctx.Session == FxSession.London)
+                maxFlagAtr += 0.10;
 
-            ctx.Log?.Invoke($"[FX_FLAG RANGE] maxAllowed={maxFlagAtr:F2}");
+            // NY: még picit több, mert fake spike gyakori
+            if (ctx.Session == FxSession.NewYork)
+                maxFlagAtr += 0.30;
 
-            if (rangeAtr > maxFlagAtr)
-                return Invalid(ctx, TradeDirection.None, "FLAG_TOO_WIDE", score);
-
-            if (rangeAtr < 0.6) ApplyReward(2);
-            else if (rangeAtr < 0.9) ApplyReward(1);
-            else ApplyPenalty(2);
-
-            // =====================================================
-            // Phase 3.9: FLAG DIRECTION (pattern-driven, not ctx.TrendDirection)
-            // Priority:
-            //  1) M1 breakout direction
-            //  2) M1 impulse direction
-            //  3) RangeBreakDirection
-            //  4) fallback from M5 flag boundaries (if price is breaking one side)
-            // =====================================================
-            TradeDirection flagDir = TradeDirection.None;
-            string flagDirReason = "NONE";
-
-            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection != TradeDirection.None)
-            {
-                flagDir = ctx.BreakoutDirection;
-                flagDirReason = "M1_BREAKOUT";
-            }
-            else if (ctx.HasImpulse_M1 && ctx.ImpulseDirection != TradeDirection.None)
-            {
-                flagDir = ctx.ImpulseDirection;
-                flagDirReason = "M1_IMPULSE";
-            }
-            else if (ctx.RangeBreakDirection != TradeDirection.None)
-            {
-                flagDir = ctx.RangeBreakDirection;
-                flagDirReason = "RANGE_BREAK_DIR";
-            }
-
+            // Low vol FX (EURUSD tipikusan)
+            if (fx.Volatility == FxVolatilityClass.Low)
+                maxFlagAtr += 0.20;
+                
             ctx.Log?.Invoke(
-                $"[FX_FLAG DIR] trendDir={ctx.TrendDirection} flagDir={flagDir} reason={flagDirReason} " +
-                $"m1Breakout={ctx.HasBreakout_M1}/{ctx.BreakoutDirection} m1Impulse={ctx.HasImpulse_M1}/{ctx.ImpulseDirection} rangeDir={ctx.RangeBreakDirection}"
+                $"[FX_FLAG RANGE] maxAllowed={maxFlagAtr:F2}"
             );
 
-            // HARD SAFETY: if we cannot determine pattern direction, it's NOT a valid flag entry
-            if (flagDir == TradeDirection.None)
-                return Invalid(ctx, TradeDirection.None, "NO_FLAG_DIR", score);
+            if (rangeAtr > maxFlagAtr)
+                return Invalid(ctx, "FLAG_TOO_WIDE", score);
+
+            // 🔧 FLAG QUALITY SCORING – CORRECTED
+            if (rangeAtr < 0.6)
+                ApplyReward(2);          // kompakt, energikus
+            else if (rangeAtr < 0.9)
+                ApplyReward(1);          // normál egészséges
+            else
+                ApplyPenalty(2);         // kezd szétesni
 
             // =====================================================
-            // 3B. FLAG SLOPE VALIDATION (use flagDir)
+            // 3B. FLAG SLOPE VALIDATION
             // =====================================================
 
             int firstFlagIndex = lastClosedIndex - tuning.FlagBars + 1;
+
             if (firstFlagIndex < 0)
-                return Invalid(ctx, flagDir, "FLAG_SLOPE_FAIL", score);
+                return Invalid(ctx, "FLAG_SLOPE_FAIL", score);
 
             double firstClose = ctx.M5[firstFlagIndex].Close;
             double lastFlagClose = ctx.M5[lastClosedIndex].Close;
 
             double flagSlopeAtr = (lastFlagClose - firstClose) / ctx.AtrM5;
 
+            // -----------------------------------------------------
+            // FX-SAFE THRESHOLDS (NO ADX DEPENDENCY)
+            // -----------------------------------------------------
+            // Session-aware drift tolerance (FX adaptive)
             double maxDrift =
                 ctx.Session == FxSession.London ? 0.35 :
                 ctx.Session == FxSession.NewYork ? 0.30 :
                 0.25;
 
-            const double MaxOppositeSlope = 0.8;
-            const double RewardZoneLow = -0.1;
+            const double MaxOppositeSlope = 0.8;   // túl mély korrekció
+
+            const double RewardZoneLow = -0.1;    // compression / flat
             const double RewardZoneHigh = 0.15;
 
             bool slopeRewarded = false;
 
-            if (flagDir == TradeDirection.Short)
+            // =====================================================
+            // BEAR FLAG (SHORT)
+            // Enyhén felfelé csorgó korrekció
+            // =====================================================
+            if (ctx.TrendDirection == TradeDirection.Short)
             {
+                // Túl erős felfelé drift → chase
                 if (flagSlopeAtr > maxDrift)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_UPWARD_SHORT", score);
+                    return Invalid(ctx, "FLAG_TOO_UPWARD_SHORT", score);
 
+                // Túl mély lefelé csapás → nem flag
                 if (flagSlopeAtr < -MaxOppositeSlope)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_SHORT", score);
+                    return Invalid(ctx, "FLAG_TOO_STEEP_SHORT", score);
 
+                // Szép, lapos / enyhén csorgó flag
                 if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
                 {
                     ApplyReward(2);
@@ -460,14 +471,21 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            if (flagDir == TradeDirection.Long)
+            // =====================================================
+            // BULL FLAG (LONG)
+            // Enyhén lefelé csorgó vagy lapos korrekció
+            // =====================================================
+            if (ctx.TrendDirection == TradeDirection.Long)
             {
+                // Túl erős felfelé drift → chase
                 if (flagSlopeAtr > maxDrift)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_UPWARD_LONG", score);
+                    return Invalid(ctx, "FLAG_TOO_UPWARD_LONG", score);
 
+                // Túl mély lefelé esés → nem egészséges pullback
                 if (flagSlopeAtr < -MaxOppositeSlope)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_LONG", score);
+                    return Invalid(ctx, "FLAG_TOO_STEEP_LONG", score);
 
+                // Szép compression / flat flag
                 if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
                 {
                     ApplyReward(2);
@@ -475,7 +493,11 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            if (flagDir == TradeDirection.Long &&
+            // =====================================================
+            // EXTRA FX REWARD – bull continuation compression
+            // (csak ha még nem kaptunk slope rewardot)
+            // =====================================================
+            if (ctx.TrendDirection == TradeDirection.Long &&
                 !slopeRewarded &&
                 flagSlopeAtr >= -0.1 &&
                 flagSlopeAtr <= 0.25 &&
@@ -485,41 +507,35 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // =====================================================
-            // 4. CONTINUATION SIGNAL (breakout computed from hi/lo, then mapped to direction)
+            // 4. CONTINUATION SIGNAL
             // =====================================================
             double buffer = ctx.AtrM5 * tuning.BreakoutAtrBuffer;
 
-            bool brokeUp = lastClose > hi + buffer;
-            bool brokeDown = lastClose < lo - buffer;
+            bool rawBreakout =
+                ctx.TrendDirection == TradeDirection.Long
+                    ? lastClose > hi + buffer
+                    : lastClose < lo - buffer;
 
-            TradeDirection m5BreakoutDir = TradeDirection.None;
-            if (brokeUp && !brokeDown) m5BreakoutDir = TradeDirection.Long;
-            else if (brokeDown && !brokeUp) m5BreakoutDir = TradeDirection.Short;
-
-            bool rawBreakout = m5BreakoutDir != TradeDirection.None;
-
+            // Body dominance check
             double body = Math.Abs(lastBar.Close - lastBar.Open);
             double range = lastBar.High - lastBar.Low;
             bool strongBody = range > 0 && body / range >= 0.55;
 
-            // Phase 3.9: direction-aware "closes in dir" for breakout quality
-            bool lastClosesInFlagDir =
-                (flagDir == TradeDirection.Long && lastBar.Close > lastBar.Open) ||
-                (flagDir == TradeDirection.Short && lastBar.Close < lastBar.Open);
+            // ===========================================
+            // BREAKOUT LOGIC – FX SAFE VERSION
+            // ===========================================
 
             // Level 1: Clean momentum breakout
             bool cleanBreakout =
                 rawBreakout &&
-                (m5BreakoutDir == flagDir) &&
                 strongBody &&
                 ctx.IsAtrExpanding_M5 &&
-                lastClosesInFlagDir;
+                ctx.LastClosedBarInTrendDirection;
 
-            // Level 2: Structural breakout
+            // Level 2: Structural breakout (less strict, still safe)
             bool structuralBreakout =
                 rawBreakout &&
-                (m5BreakoutDir == flagDir) &&
-                lastClosesInFlagDir &&
+                ctx.LastClosedBarInTrendDirection &&
                 (
                     strongBody ||
                     (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5)
@@ -527,20 +543,23 @@ namespace GeminiV26.EntryTypes.FX
 
             bool breakout = cleanBreakout || structuralBreakout;
 
-            // --- M1 confirmation uses flagDir (NOT TrendDirection) ---
+            // --- M1 confirmation ELŐBB ---
             bool hasM1Confirmation =
-                HasM1FollowThrough(ctx, flagDir) ||
-                HasM1PullbackConfirm(ctx, flagDir);
+                HasM1FollowThrough(ctx) ||
+                HasM1PullbackConfirm(ctx);
 
+            // --- trigger státusz ---
             bool hasTrigger = breakout || hasM1Confirmation;
             bool isPreTrigger = !hasTrigger;
 
             if (tuning.RequireStrongEntryCandle)
             {
+                // csak akkor érdekel, ha még nincs trigger
+                // (trigger esetén úgyis a breakout/M1 a minőség)
+                // -> ezt a blokkot tedd át AZUTÁNRA, hogy kiszámoltad hasTrigger-t
                 if (!hasTrigger)
                 {
-                    // NOTE: keep your original "strong candle" intent, but evaluate candle vs flagDir
-                    if (!lastStrongBody || !lastClosesInFlagDir)
+                    if (!lastStrongBody || !lastClosesInDir || !ctx.LastClosedBarInTrendDirection)
                     {
                         ApplyPenalty(8);
                         minBoost += 1;
@@ -551,32 +570,20 @@ namespace GeminiV26.EntryTypes.FX
             if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
             {
                 bool strongContext =
-                    score >= tuning.MinScore + 2 &&
+                    score >= tuning.MinScore + 2 &&      // +4 helyett +2
                     !ctx.IsRange_M5;
 
                 if (!strongContext)
-                    return Invalid(ctx, flagDir, "M1_TRIGGER_REQUIRED", score);
+                    return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
 
-                ApplyPenalty(2);
+                ApplyPenalty(2); // 3 -> 2
                 Console.WriteLine($"[{ctx.Symbol}][B_M1_SOFT] no M1 trigger, strongContext => penalty=2 score={score}");
             }
 
-            // Phase 3.9: barsSinceBreak must follow flagDir
             int barsSinceBreak =
-                flagDir == TradeDirection.Long
+                ctx.TrendDirection == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
-
-            // =====================================================
-            // Phase 3.9 ADD: ASIA late continuation must follow flagDir
-            // (no delete of earlier block; this is the corrected direction-based check)
-            // =====================================================
-            if (ctx.Session == FxSession.Asia)
-            {
-                int asiaBarsSinceBreak2 = barsSinceBreak;
-                if (asiaBarsSinceBreak2 > 2)
-                    return Invalid(ctx, flagDir, $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})", score);
-            }
 
             // =====================================================
             // LONDON HTF TRANSITION SWEEP GUARD
@@ -590,53 +597,64 @@ namespace GeminiV26.EntryTypes.FX
                 minBoost += 2;
             }
 
+
             // =====================================================
             // GLOBAL ADX EXHAUSTION GUARD – v2 (SOFT & SMART)
             // =====================================================
 
             if (TryGetDouble(ctx, "Adx_M5", out var adxNow2) &&
                 (TryGetDouble(ctx, "AdxSlope_M5", out var adxSlopeNow) ||
-                 TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
-            {
+                TryGetDouble(ctx, "AdxSlope01_M5", out adxSlopeNow)))
+            {                
                 if (hasTrigger)
                 {
                     bool veryHighAdx = adxNow2 >= 45.0;
-                    bool rollingHard = adxSlopeNow <= -0.5;
-                    bool noEnergy = !ctx.IsAtrExpanding_M5;
-                    bool lateStructure = barsSinceBreak > 3; // Phase 3.9: use barsSinceBreak (flagDir)
+                    bool rollingHard  = adxSlopeNow <= -0.5;
+                    bool noEnergy     = !ctx.IsAtrExpanding_M5;
+                    bool lateStructure =
+                        (ctx.TrendDirection == TradeDirection.Long
+                            ? ctx.BarsSinceHighBreak_M5
+                            : ctx.BarsSinceLowBreak_M5) > 3;
 
+                    // HARD BLOCK csak akkor, ha MINDEN exhaustion jel fennáll
                     if (veryHighAdx && rollingHard && noEnergy && lateStructure)
                     {
-                        return Invalid(ctx, flagDir,
+                        return Invalid(ctx,
                             $"ADX_EXHAUSTION_BLOCK adx={adxNow:F1} slope={adxSlopeNow:F2}",
                             score);
                     }
 
+                    // SOFT PENALTY ha csak részben exhaustion
                     if (adxNow >= 40.0 && adxSlopeNow <= -0.5)
                     {
                         ApplyPenalty(6);
                         minBoost += 1;
                     }
                 }
-
-                ctx.Log?.Invoke($"[FX_FLAG ADX] adx={adxNow2:F1}");
-                ctx.Log?.Invoke($"[FX_FLAG ADX] slope={adxSlopeNow:F2} atrExp={ctx.IsAtrExpanding_M5}");
+                ctx.Log?.Invoke(
+                    $"[FX_FLAG ADX] adx={adxNow2:F1}"
+                );
+                ctx.Log?.Invoke(
+                    $"[FX_FLAG ADX] slope={adxSlopeNow:F2} atrExp={ctx.IsAtrExpanding_M5}"
+                );
             }
 
             // =====================================================
-            // NY + HTF TRANSITION GUARD
+            // NY + HTF TRANSITION GUARD (must have breakout OR M1 confirmation)
             // =====================================================
             if (ctx.Session == FxSession.NewYork && htfTransitionZone && !breakout && !hasM1Confirmation)
             {
+                // Csak borderline setupokat tiltsunk
                 int strictMin = tuning.MinScore + 6;
 
                 if (score < strictMin)
                 {
-                    return Invalid(ctx, flagDir,
+                    return Invalid(ctx,
                         $"NY_HTF_TRANSITION_NEEDS_CONFIRM conf={ctx.FxHtfConfidence01:F2}",
                         score);
                 }
 
+                // Erősebb setup átmehet, de kap büntetést
                 ApplyPenalty(3);
                 minBoost += 2;
             }
@@ -646,27 +664,30 @@ namespace GeminiV26.EntryTypes.FX
                 score >= tuning.MinScore + 2 &&
                 !ctx.IsRange_M5;
 
-            // =====================================================
-            // EARLY ENTRY RETEST GUARD (use flagDir + hi/lo)
-            // =====================================================
+            // 🔴 EARLY ENTRY RETEST GUARD
+            // Ne lépjünk be, ha a flag széle / EMA21 még nem volt rendesen visszatesztelve
+            // és nincs M5-ös irányba záró reakció
+            
             bool needsRetestGuard =
                 !breakout &&
                 !ctx.HasReactionCandle_M5 &&
-                !lastClosesInFlagDir
+                !ctx.LastClosedBarInTrendDirection
                 &&
                 (
-                    (flagDir == TradeDirection.Long &&
-                        lastClose > lo &&
-                        lastBar.Low > lo)
+                    (ctx.TrendDirection == TradeDirection.Long &&
+                    lastClose > lo &&
+                    lastBar.Low > lo)
+
                     ||
-                    (flagDir == TradeDirection.Short &&
-                        lastClose < hi &&
-                        lastBar.High < hi)
+
+                    (ctx.TrendDirection == TradeDirection.Short &&
+                    lastClose < hi &&
+                    lastBar.High < hi)
                 );
 
             if (needsRetestGuard && ctx.Session == FxSession.London)
             {
-                ApplyPenalty(5);
+                ApplyPenalty(5); // ne blokkoljon, csak tolja fel a minőségi irányba
             }
 
             if (needsRetestGuard && ctx.Session == FxSession.NewYork)
@@ -677,26 +698,29 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // CONTINUATION CHARACTER FILTER (ANTI LATE FX)
             // =====================================================
+            // --- LOW ENERGY CONTINUATION GUARD (balanced) ---
             if (isPreTrigger &&
                 !ctx.IsAtrExpanding_M5 &&
-                ctx.IsRange_M5)
+                ctx.IsRange_M5)   // <-- EZ AZ EGYETLEN ÚJ FELTÉTEL
             {
                 bool strongTrendContext =
                     ctx.IsRange_M5 == false &&
-                    lastClosesInFlagDir &&
+                    ctx.LastClosedBarInTrendDirection &&
                     TryGetDouble(ctx, "Adx_M5", out var adxNow3) &&
                     adxNow3 >= 28;
 
                 bool meh =
                     ctx.IsRange_M5 ||
-                    (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !lastClosesInFlagDir);
+                    (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !ctx.LastClosedBarInTrendDirection);
 
+                // Chop marad block
                 if (meh)
-                    return Invalid(ctx, flagDir, "LOW_ENERGY_CONT", score);
+                    return Invalid(ctx, "LOW_ENERGY_CONT", score);
 
+                // Erős trend grind → csak soft penalty
                 if (strongTrendContext)
                 {
-                    ApplyPenalty(1);
+                    ApplyPenalty(1);   // nem 3
                 }
                 else
                 {
@@ -707,23 +731,27 @@ namespace GeminiV26.EntryTypes.FX
 
             if (!breakout && !hasM1Confirmation)
             {
+                // --- 1️⃣ TOO LATE STRUCTURE ---
                 if (barsSinceBreak > fx.MaxContinuationBarsSinceBreak)
-                    return Invalid(ctx, flagDir, $"CONT_TOO_LATE({barsSinceBreak})", score);
+                    return Invalid(ctx, $"CONT_TOO_LATE({barsSinceBreak})", score);
 
+                // --- 2️⃣ TOTAL MOVE STRETCH (NOT FLAG WIDTH!) ---
                 if (TryGetDouble(ctx, "TotalMoveSinceBreakAtr", out var totalMoveAtr))
                 {
                     if (totalMoveAtr > fx.MaxContinuationRatr)
-                        return Invalid(ctx, flagDir,
+                        return Invalid(ctx,
                             $"CONT_STRETCHED({totalMoveAtr:F2}>{fx.MaxContinuationRatr})",
                             score);
                 }
 
+                // --- 3️⃣ HTF TRANSITION CONTROL ---
                 if (htfTransitionZone && !hasTrigger)
                     minBoost += 2;
 
+                // --- 4️⃣ HTF ALIGNMENT REQUIREMENT (SOFT VERSION) ---
                 if (fx.RequireHtfAlignmentForContinuation &&
                     ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                    ctx.FxHtfAllowedDirection != flagDir) // Phase 3.9: compare to flagDir
+                    ctx.FxHtfAllowedDirection != ctx.TrendDirection)
                 {
                     double conf = ctx.FxHtfConfidence01;
 
@@ -733,22 +761,31 @@ namespace GeminiV26.EntryTypes.FX
                         conf >= 0.45 ? 3 :
                         2;
 
+                    // Ha már van trigger (breakout / M1 confirm), enyhítsük
                     if (hasTrigger)
                         penalty = Math.Max(0, penalty - 2);
 
+                    // High volatility FX toleránsabb
                     if (fx.Volatility == FxVolatilityClass.High)
                         penalty = Math.Max(0, penalty - 1);
 
                     ApplyPenalty(penalty);
+
+                    // Emeljük kicsit a minimum lécet continuation esetén
                     minBoost += 1;
 
-                    ctx.Log?.Invoke($"[FX_FLAG HTF_SOFT_ALIGN] conf={conf:F2} penalty={penalty}");
+                    ctx.Log?.Invoke(
+                        $"[FX_FLAG HTF_SOFT_ALIGN] conf={conf:F2} penalty={penalty}"
+                    );
                 }
             }
 
             // =====================================================
             // STRUCTURE FRESHNESS GUARD (ANTI MULTI-ENTRY)
             // =====================================================
+
+            // ✅ itt már NEM deklarálunk újra barsSinceBreak-et
+            // (már megvan a continuation filter blokkban)
             if (barsSinceBreak > 3 && isPreTrigger)
             {
                 ApplyPenalty(3);
@@ -770,41 +807,56 @@ namespace GeminiV26.EntryTypes.FX
                     case FxSession.NewYork:
                         basePenalty = 5;
                         break;
+
                     case FxSession.London:
                         basePenalty = 4;
                         break;
+
                     case FxSession.Asia:
                         basePenalty = 5;
                         break;
+
                     default:
                         basePenalty = 4;
                         break;
                 }
 
+                // Volatility adaptive scaling
                 double volMultiplier =
                     fx.Volatility == FxVolatilityClass.High ? 1.2 :
                     fx.Volatility == FxVolatilityClass.Medium ? 1.0 :
                     fx.Volatility == FxVolatilityClass.Low ? 0.8 :
-                    0.7;
+                    0.7; // VeryLow
 
                 int finalPenalty = (int)Math.Round(basePenalty * volMultiplier);
 
                 ApplyPenalty(finalPenalty);
 
+                // HTF conflict soft penalty (ONLY if conflict)
                 if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                    flagDir != ctx.FxHtfAllowedDirection &&
+                    ctx.TrendDirection != ctx.FxHtfAllowedDirection &&
                     ctx.FxHtfConfidence01 >= 0.55)
                 {
                     ApplyPenalty(2);
                 }
             }
 
-            ctx.Log?.Invoke($"[FX_FLAG TRIGGER] breakout={breakout} m1={hasM1Confirmation} hasTrigger={hasTrigger}");
+            ctx.Log?.Invoke(
+                $"[FX_FLAG TRIGGER] breakout={breakout} m1={hasM1Confirmation} hasTrigger={hasTrigger}"
+            );
+
+            // =====================================================
+            // SOFT M1 BONUS (csak borderline setupok)
+            // =====================================================
 
             if (softM1 && isPreTrigger)
             {
-                ApplyReward(1);
+                ApplyReward(1); 
             }
+
+            // ===========================================
+            // TRIGGER REWARD – BALANCED FX VERSION
+            // ===========================================
 
             if (breakout)
             {
@@ -821,58 +873,124 @@ namespace GeminiV26.EntryTypes.FX
             // HTF CONFLICT – SOFT ONLY (NO BLOCK) + NEW MAPPING
             // =====================================================
             bool htfHasDir = ctx.FxHtfAllowedDirection != TradeDirection.None;
-            bool htfConflict = htfHasDir && flagDir != ctx.FxHtfAllowedDirection; // Phase 3.9: use flagDir
+            bool htfConflict = htfHasDir && ctx.TrendDirection != ctx.FxHtfAllowedDirection;
 
             if (htfConflict)
             {
                 double conf = ctx.FxHtfConfidence01;
 
                 int penalty =
-                    conf >= 0.75 ? 6 :
-                    conf >= 0.60 ? 4 :
-                    conf >= 0.45 ? 2 :
-                    1;
+                conf >= 0.75 ? 6 :
+                conf >= 0.60 ? 4 :
+                conf >= 0.45 ? 2 :
+                1;
 
+            if (hasTrigger)
+                penalty = Math.Max(0, penalty - 2);
+
+            // High volatility pairs tolerate HTF conflict better
+            if (fx.Volatility == FxVolatilityClass.High)
+                penalty = Math.Max(0, penalty - 1);
+
+            ApplyPenalty(penalty);
+            }
+            
+            /*
+            // =====================================================
+            // HTF CONFLICT – ADAPTIVE FX VERSION
+            // =====================================================
+
+            bool htfHasDir = ctx.FxHtfAllowedDirection != TradeDirection.None;
+            bool htfConflict = htfHasDir && ctx.TrendDirection != ctx.FxHtfAllowedDirection;
+
+            if (htfConflict)
+            {
+                double conf = ctx.FxHtfConfidence01;
+
+                // Hard block only if:
+                // - strong HTF bias
+                // - no trigger yet
+                // - low volatility pair (less fake reversals)
+                if (conf >= 0.80 &&
+                    isPreTrigger &&
+                    fx.Volatility == FxVolatilityClass.Low)
+                {
+                    return Invalid(ctx,
+                        $"HTF_STRONG_BLOCK conf={conf:F2}",
+                        score);
+                }
+
+                int penalty;
+
+                if (conf >= 0.75)
+                {
+                    // Strong HTF bias against us → NO TRADE
+                    return Invalid(ctx,
+                        $"HTF_STRONG_CONFLICT_BLOCK conf={conf:F2}",
+                        score);
+                }
+                else if (conf >= 0.60)
+                {
+                    penalty = 8;
+                }
+                else if (conf >= 0.45)
+                {
+                    penalty = 5;
+                }
+                else
+                {
+                    penalty = 3;
+                }
+
+                // If breakout already happened, reduce penalty
                 if (hasTrigger)
-                    penalty = Math.Max(0, penalty - 2);
+                    penalty -= 1;
 
+                // High volatility pairs tolerate HTF conflict better
                 if (fx.Volatility == FxVolatilityClass.High)
-                    penalty = Math.Max(0, penalty - 1);
+                    penalty -= 1;
+
+                if (penalty < 0) penalty = 0;
 
                 ApplyPenalty(penalty);
             }
+*/
 
             // =====================================================
             // 4C. STRUCTURAL TREND ALIGNMENT (EMA50 / EMA200 M5)
-            // KEEP as SOFT bias BUT evaluate against flagDir for the entry direction correctness.
             // =====================================================
 
+            // Valódi M5 trend struktúra
             bool m5Bull = ctx.Ema50_M5 > ctx.Ema200_M5;
             bool m5Bear = ctx.Ema50_M5 < ctx.Ema200_M5;
 
+            // Opciós: M15 csak soft megerősítés
             bool m15Bull = ctx.Ema50_M15 > ctx.Ema200_M15;
             bool m15Bear = ctx.Ema50_M15 < ctx.Ema200_M15;
 
-            if (flagDir == TradeDirection.Long)
+            // -----------------------------------------------------
+            // LONG
+            // -----------------------------------------------------
+            if (ctx.TrendDirection == TradeDirection.Long)
             {
                 if (!m5Bull)
                 {
                     bool transitionLong =
                         ctx.Ema8_M5 > ctx.Ema21_M5 &&
                         ctx.Ema21Slope_M5 > 0 &&
-                        lastClosesInFlagDir &&
+                        ctx.LastClosedBarInTrendDirection &&
                         (ctx.HasImpulse_M5 || hasM1Confirmation);
 
                     if (!transitionLong)
                     {
-                        ApplyPenalty(8);
+                        ApplyPenalty(8); // egységes kemény bünti
 
                         if (ctx.FxHtfConfidence01 > 0.65)
-                            ApplyPenalty(3);
+                            ApplyPenalty(3); // extra HTF bünti, de nem brutál
                     }
                     else
                     {
-                        ApplyReward(4);
+                        ApplyReward(4); // transition esetben enyhébb bünti
                     }
                 }
                 else
@@ -884,14 +1002,17 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            if (flagDir == TradeDirection.Short)
+            // -----------------------------------------------------
+            // SHORT
+            // -----------------------------------------------------
+            if (ctx.TrendDirection == TradeDirection.Short)
             {
                 if (!m5Bear)
                 {
                     bool transitionShort =
                         ctx.Ema8_M5 < ctx.Ema21_M5 &&
                         ctx.Ema21Slope_M5 < 0 &&
-                        lastClosesInFlagDir &&
+                        ctx.LastClosedBarInTrendDirection &&
                         (ctx.HasImpulse_M5 || hasM1Confirmation);
 
                     if (!transitionShort)
@@ -920,49 +1041,57 @@ namespace GeminiV26.EntryTypes.FX
 
             // =====================================================
             // A+ GATE: FX-en csak TRIGGER-rel mehetünk élesre
+            // (kevesebb trade, nagyobb winrate)
             // =====================================================
             if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < tuning.MinScore + 2)
                 ApplyPenalty(3);
 
-            // =====================================================
-            // 5. FINAL MIN SCORE
-            // =====================================================
+            // ===================================================== 
+            // 5. FINAL MIN SCORE (FIX: NY + HTF transition must be STRICTER, not looser)
+            // ===================================================== 
             int min = tuning.MinScore;
 
+            // Session strictness csak akkor, ha VAN trigger (breakout/M1 confirm)
             int sessionStrictness =
                 ctx.Session == FxSession.NewYork ? 2 :
-                ctx.Session == FxSession.London ? 1 :
+                ctx.Session == FxSession.London  ? 1 :
                 0;
 
+            // Controlled boost (marad a logikád)
             int effectiveBoost =
                 (TryGetDouble(ctx, "Adx_M5", out var adxNow4) && adxNow4 >= 30)
                 ? Math.Min(1, minBoost)
                 : Math.Min(3, minBoost);
 
+            // ✅ Pretrigger flag-vadászat: NE legyen dupla szigor
             if (hasTrigger)
             {
                 min += sessionStrictness;
-                min += effectiveBoost;
+                min += effectiveBoost;          // trigger után lehet szigor
             }
             else
             {
+                // pretrigger: csak minimális “minBoost” hasson
                 min += Math.Min(1, effectiveBoost);
+                // sessionStrictness = 0 pretriggerben
             }
 
             if (min < 0) min = 0;
 
-            ctx.Log?.Invoke($"[FX_FLAG FINAL] score={score} min={min}");
+            ctx.Log?.Invoke(
+                $"[FX_FLAG FINAL] score={score} min={min}"
+            );
 
             if (score < min)
-                return Invalid(ctx, flagDir,
-                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost} flagDir={flagDir}({flagDirReason})",
+                return Invalid(ctx,
+                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost}",
                     score);
 
-            // HARD SYSTEM SAFETY – keep existing gate, but it is NOT used for direction anymore
+            // HARD SYSTEM SAFETY
             if (ctx.TrendDirection == TradeDirection.None)
-                return Invalid(ctx, flagDir, "NO_TREND_DIR", score);
+                return Invalid(ctx, "NO_TREND_DIR", score);
 
-            return Valid(ctx, flagDir, score, rangeAtr, $"FX_FLAG_V2_{ctx.Session}", flagDirReason, hi, lo, flagSlopeAtr, barsSinceBreak);
+            return Valid(ctx, score, rangeAtr, $"FX_FLAG_V2_{ctx.Session}");
         }
 
         // =====================================================
@@ -979,13 +1108,14 @@ namespace GeminiV26.EntryTypes.FX
             hi = double.MinValue;
             lo = double.MaxValue;
 
+            // kell legalább: bars db lezárt + 1 futó + 1 biztonság
             if (ctx.M5 == null || ctx.M5.Count < bars + 3)
             {
                 rangeAtr = 0;
                 return false;
             }
 
-            int lastClosed = ctx.M5.Count - 2;
+            int lastClosed = ctx.M5.Count - 2;          // utolsó LEZÁRT
             int first = lastClosed - bars + 1;
 
             if (first < 0)
@@ -1007,7 +1137,7 @@ namespace GeminiV26.EntryTypes.FX
 
         private static double GetImpulseQuality(EntryContext ctx, int lookback)
         {
-            if (ctx.M5 == null || ctx.M5.Count < lookback + 3)
+            if (ctx.M5 == null || ctx.M5.Count < lookback + 3) // kell lezárt lookback + safety
                 return 0;
 
             int lastClosed = ctx.M5.Count - 2;
@@ -1017,7 +1147,7 @@ namespace GeminiV26.EntryTypes.FX
 
             for (int k = 0; k < lookback; k++)
             {
-                var bar = ctx.M5[lastClosed - k];
+                var bar = ctx.M5[lastClosed - k]; // csak LEZÁRT barok
                 range += bar.High - bar.Low;
                 body += Math.Abs(bar.Close - bar.Open);
             }
@@ -1025,55 +1155,34 @@ namespace GeminiV26.EntryTypes.FX
             return range > 0 ? body / range : 0;
         }
 
-        // =====================================================
-        // Phase 3.9: Valid/Invalid must carry flagDir to TR/TC
-        // =====================================================
-
-        private static EntryEvaluation Valid(
-            EntryContext ctx,
-            TradeDirection flagDir,
-            int score,
-            double rangeAtr,
-            string tag,
-            string flagDirReason,
-            double hi,
-            double lo,
-            double flagSlopeAtr,
-            int barsSinceBreak)
+        private static EntryEvaluation Valid(EntryContext ctx, int score, double rangeAtr, string tag)
             => new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = EntryType.FX_Flag,
-                Direction = flagDir,
+                Direction = ctx.TrendDirection,
                 Score = score,
                 IsValid = true,
-                Reason =
-                    $"{tag} score={score} rATR={rangeAtr:F2} " +
-                    $"flagDir={flagDir}({flagDirReason}) trendDir={ctx.TrendDirection} " +
-                    $"hi={hi:F5} lo={lo:F5} slopeATR={flagSlopeAtr:F2} bSinceBreak={barsSinceBreak}"
+                Reason = $"{tag} score={score} rATR={rangeAtr:F2}"
             };
 
-        private static EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason, int score)
             => new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.FX_Flag,
-                Direction = dir,
+                Direction = ctx?.TrendDirection ?? TradeDirection.None,
                 Score = score,
                 IsValid = false,
                 Reason = $"{reason} raw={score}"
             };
 
-        // =====================================================
-        // Phase 3.9: M1 confirmation must use flagDir (not TrendDirection)
-        // =====================================================
-
-        private static bool HasM1FollowThrough(EntryContext ctx, TradeDirection dir)
+        private static bool HasM1FollowThrough(EntryContext ctx)
         {
-            if (ctx.M1 == null || ctx.M1.Count < 4)
+            if (ctx.M1 == null || ctx.M1.Count < 4) // kell lezárt last + lezárt prev + safety
                 return false;
 
-            int lastClosed = ctx.M1.Count - 2;
+            int lastClosed = ctx.M1.Count - 2;   // utolsó LEZÁRT
             int prevClosed = ctx.M1.Count - 3;
 
             var last = ctx.M1[lastClosed];
@@ -1085,16 +1194,16 @@ namespace GeminiV26.EntryTypes.FX
             if (range <= 0) return false;
             if (body / range < 0.55) return false;
 
-            if (dir == TradeDirection.Long)
+            if (ctx.TrendDirection == TradeDirection.Long)
                 return last.Close > prev.High && last.Close > last.Open;
 
-            if (dir == TradeDirection.Short)
+            if (ctx.TrendDirection == TradeDirection.Short)
                 return last.Close < prev.Low && last.Close < last.Open;
 
             return false;
         }
 
-        private static bool HasM1PullbackConfirm(EntryContext ctx, TradeDirection dir)
+        private static bool HasM1PullbackConfirm(EntryContext ctx)
         {
             if (!ctx.M1TriggerInTrendDirection)
                 return false;
@@ -1108,10 +1217,10 @@ namespace GeminiV26.EntryTypes.FX
             var last = ctx.M1[lastClosed];
             var prev = ctx.M1[prevClosed];
 
-            if (dir == TradeDirection.Long)
+            if (ctx.TrendDirection == TradeDirection.Long)
                 return last.Close > last.Open && last.Low > prev.Low;
 
-            if (dir == TradeDirection.Short)
+            if (ctx.TrendDirection == TradeDirection.Short)
                 return last.Close < last.Open && last.High < prev.High;
 
             return false;
