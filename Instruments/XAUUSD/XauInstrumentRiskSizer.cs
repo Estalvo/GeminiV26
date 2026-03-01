@@ -65,7 +65,7 @@ namespace GeminiV26.Instruments.XAUUSD
         )
         {
             // XAU: impulse-first, momentum sensitive
-            tp1R = 0.30;
+            tp1R = 0.60; // <-- volt 0.30
 
             // =========================
             // TP1 RATIO – DINAMIKUS
