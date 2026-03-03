@@ -308,6 +308,10 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // FLAG RANGE (SIMPLE)
             // =====================================================
+            double hi;
+            double lo;
+            double rangeAtr;
+            
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return Invalid(ctx, flagDir, "FLAG_FAIL", score);
 
