@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
+    private readonly Robot _bot;
+        public Index_FlagEntry(Robot bot)
+        {
+            _bot = bot;
+        }
+
     public class Index_FlagEntry : IEntryType
     {
         public EntryType Type => EntryType.Index_Flag;
@@ -51,7 +57,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             double scoreMultiplier = p.ScoreWeightMultiplier > 0 ? p.ScoreWeightMultiplier : 1.0;
 
-            Console.WriteLine(
+            _bot.Print(
                 $"[IDX_FLAG][PROFILE] sym={ctx.Symbol} norm={p.Symbol} " +
                 $"minAdx={minAdxTrend} chopAdx={chopAdxThreshold} fatigueTh={fatigueThreshold} " +
                 $"scoreMult={scoreMultiplier:F2}"
@@ -232,7 +238,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
                 score -= extraPenalty;
 
-                Console.WriteLine(
+                _bot.Print(
                     $"[IDX_FLAG][WIDE_FLAG] dir={dir} flagATR={flagAtrRatio:F2} " +
                     $"excess={excess:F2} penalty={10 + extraPenalty}"
                 );
@@ -341,7 +347,7 @@ namespace GeminiV26.EntryTypes.INDEX
             int score,
             TradeDirection dir)
         {
-            Console.WriteLine(
+            _bot.Print(
                 $"[IDX_FLAG][REJECT] {reason} | score={score} | dir={dir} | " +
                 $"ADX={ctx?.Adx_M5:F1} Impulse={ctx?.HasImpulse_M5}"
             );
