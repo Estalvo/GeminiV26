@@ -117,11 +117,11 @@ namespace GeminiV26.EntryTypes.Crypto
         // =========================
         // crypto-safe tolerances (tiny slopes are normal noise)
         bool compression =
-            ctx.AtrSlope_M5 <= 0.15 &&
-            ctx.AdxSlope_M5 <= 0.8;
+            ctx.AtrSlope_M5 <= 0.30 &&
+            ctx.AdxSlope_M5 <= 1.50;
 
         if (!compression)
-            return Invalid(ctx, "FLAG_NO_COMPRESSION");
+            score -= 8;
 
         // =========================
         // SCORE
