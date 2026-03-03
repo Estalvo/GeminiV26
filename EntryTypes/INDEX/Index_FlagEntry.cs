@@ -13,7 +13,7 @@ namespace GeminiV26.EntryTypes.INDEX
         {
             _bot = bot;
         }
-        
+
         public EntryType Type => EntryType.Index_Flag;
 
         private const int MaxBarsSinceImpulse = 3;
@@ -57,7 +57,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             double scoreMultiplier = p.ScoreWeightMultiplier > 0 ? p.ScoreWeightMultiplier : 1.0;
 
-            _bot.Print(
+            ctx.Log?.Invoke(
                 $"[IDX_FLAG][PROFILE] sym={ctx.Symbol} norm={p.Symbol} " +
                 $"minAdx={minAdxTrend} chopAdx={chopAdxThreshold} fatigueTh={fatigueThreshold} " +
                 $"scoreMult={scoreMultiplier:F2}"
@@ -238,7 +238,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
                 score -= extraPenalty;
 
-                _bot.Print(
+                ctx.Log?.Invoke(
                     $"[IDX_FLAG][WIDE_FLAG] dir={dir} flagATR={flagAtrRatio:F2} " +
                     $"excess={excess:F2} penalty={10 + extraPenalty}"
                 );
@@ -347,7 +347,7 @@ namespace GeminiV26.EntryTypes.INDEX
             int score,
             TradeDirection dir)
         {
-            _bot.Print(
+            ctx.Log?.Invoke(
                 $"[IDX_FLAG][REJECT] {reason} | score={score} | dir={dir} | " +
                 $"ADX={ctx?.Adx_M5:F1} Impulse={ctx?.HasImpulse_M5}"
             );
