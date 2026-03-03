@@ -6,14 +6,14 @@ using System.Linq;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
-    private readonly Robot _bot;
+    public class Index_FlagEntry : IEntryType
+    {
+        private readonly Robot _bot;
         public Index_FlagEntry(Robot bot)
         {
             _bot = bot;
         }
-
-    public class Index_FlagEntry : IEntryType
-    {
+        
         public EntryType Type => EntryType.Index_Flag;
 
         private const int MaxBarsSinceImpulse = 3;
