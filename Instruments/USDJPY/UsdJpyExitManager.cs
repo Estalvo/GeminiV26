@@ -13,6 +13,7 @@ namespace GeminiV26.Instruments.USDJPY
 
         // PositionId → Context
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly TradeViabilityMonitor _tvm;
 
         // =========================
         // PARAMÉTEREK
@@ -29,6 +30,7 @@ namespace GeminiV26.Instruments.USDJPY
         public UsdJpyExitManager(Robot bot)
         {
             _bot = bot;
+            _tvm = new TradeViabilityMonitor(bot);
         }
 
         // TradeCore hívja entry után
@@ -48,27 +50,23 @@ namespace GeminiV26.Instruments.USDJPY
             if (ctx.Tp1Hit)
                 return;
 
-            int bars = BarsSinceEntry(ctx);
-            if (bars > 2)
+            if (!pos.StopLoss.HasValue)
                 return;
 
-            double currentR = GetCurrentR(pos, ctx);
-            ctx.MaxFavorableR = Math.Max(ctx.MaxFavorableR, currentR);
+            var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
-            bool momentumFail =
-                ctx.FinalConfidence < 70 &&
-                ctx.MaxFavorableR < 0.1 &&
-                currentR < -0.05;
+            if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+            {
+                _bot.Print(
+                    $"[USDJPY TVM EXIT] pos={pos.Id} " +
+                    $"reason={ctx.DeadTradeReason} " +
+                    $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
+                );
 
-            if (!momentumFail)
-                return;
-
-            _bot.ClosePosition(pos);
-            ctx.ExitReason = ExitReason.MomentumFail;
-
-            _bot.Print(
-                $"[USDJPY EXIT] MOMENTUM FAIL bars={bars} R={currentR:F2} MFE={ctx.MaxFavorableR:F2}"
-            );
+                _bot.ClosePosition(pos);
+                ctx.ExitReason = ExitReason.EarlyExit;
+            }
         }
 
         // =====================================================
@@ -91,31 +89,6 @@ namespace GeminiV26.Instruments.USDJPY
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
-                    // ---------- EARLY EXIT ----------
-                    double currentR = GetCurrentR(pos, ctx);
-
-                    // MFE frissítés (kötelező)
-                    ctx.MaxFavorableR = Math.Max(ctx.MaxFavorableR, currentR);
-
-                    bool earlyExit =
-                        ctx.FinalConfidence < 65 &&
-                        ctx.MaxFavorableR < 0.2 &&
-                        BarsSinceEntry(ctx) >= 8;
-
-                    if (earlyExit)
-                    {
-                        _bot.ClosePosition(pos);
-                        ctx.ExitReason = ExitReason.EarlyExit;
-
-                        _bot.Print(
-                            $"[USDJPY EXIT] EARLY EXIT " +
-                            $"conf={ctx.FinalConfidence} mfeR={ctx.MaxFavorableR:F2}"
-                        );
-
-                        continue;
-                    }
-
-                    // ---------- TP1 ----------
                     if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
                     {
                         ExecuteTp1(pos, ctx);
