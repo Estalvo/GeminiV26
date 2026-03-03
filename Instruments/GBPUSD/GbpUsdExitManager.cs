@@ -13,6 +13,7 @@ namespace GeminiV26.Instruments.GBPUSD
         private readonly Robot _bot;
 
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly TradeViabilityMonitor _tvm;
 
         private const double BeOffsetR = 0.10;
 
@@ -23,6 +24,7 @@ namespace GeminiV26.Instruments.GBPUSD
         public GbpUsdExitManager(Robot bot)
         {
             _bot = bot;
+            _tvm = new TradeViabilityMonitor(bot);
         }
 
         public void RegisterContext(PositionContext ctx)
@@ -41,14 +43,25 @@ namespace GeminiV26.Instruments.GBPUSD
             if (ctx.Tp1Hit)
                 return;
 
-            // =========================
-            // FX EARLY EXIT TILTÁS
-            // =========================
-            _bot.Print(
-                $"[{ctx.Symbol} EXIT SKIP] FX ExitManager – no momentum exit before TP1"
-            );
-            return;
+            if (!pos.StopLoss.HasValue)
+                return;
+
+            var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+            if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+            {
+                _bot.Print(
+                    $"[GBPUSD TVM EXIT] pos={pos.Id} " +
+                    $"reason={ctx.DeadTradeReason} " +
+                    $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
+                );
+
+                _bot.ClosePosition(pos);
+                ctx.ExitReason = ExitReason.EarlyExit;
+            }
         }
+
         // =====================================================
         // TICK EXIT
         // =====================================================
@@ -68,16 +81,6 @@ namespace GeminiV26.Instruments.GBPUSD
 
                 if (!ctx.Tp1Hit)
                 {
-                    double currentR = GetCurrentR(pos, ctx);
-                    ctx.MaxFavorableR = Math.Max(ctx.MaxFavorableR, currentR);
-
-                    if (ctx.FinalConfidence < 65 && ctx.MaxFavorableR < 0.2 && BarsSinceEntry(ctx) >= 8)
-                    {
-                        _bot.ClosePosition(pos);
-                        ctx.ExitReason = ExitReason.EarlyExit;
-                        continue;
-                    }
-
                     double tp1Trigger =
                         pos.TradeType == TradeType.Buy
                             ? pos.EntryPrice + rDist * ctx.Tp1R
