@@ -395,40 +395,102 @@ namespace GeminiV26.EntryTypes.FX
             else ApplyPenalty(2);
 
             // =====================================================
-            // Phase 3.9: FLAG DIRECTION (pattern-driven, not ctx.TrendDirection)
-            // Priority:
-            //  1) M1 breakout direction
-            //  2) M1 impulse direction
-            //  3) RangeBreakDirection
-            //  4) fallback from M5 flag boundaries (if price is breaking one side)
+            // Phase 3.9.1 – FLAG PATTERN + BREAKOUT SEPARATION
+            // -----------------------------------------------------
+            // 1) Pattern direction = impulse/trend alapú
+            // 2) Breakout csak ENTRY trigger
+            // 3) Setup létezhet breakout nélkül (debugolható)
             // =====================================================
-            TradeDirection flagDir = TradeDirection.None;
-            string flagDirReason = "NONE";
 
-            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection != TradeDirection.None)
+            // -----------------------------------------------------
+            // 1️⃣ PATTERN DIRECTION (strukturális irány)
+            // -----------------------------------------------------
+            TradeDirection patternDir = TradeDirection.None;
+            string patternDirReason = "NONE";
+
+            // Elsődleges: M5 / fő impulse irány
+            if (ctx.TrendDirection != TradeDirection.None)
             {
-                flagDir = ctx.BreakoutDirection;
-                flagDirReason = "M1_BREAKOUT";
+                patternDir = ctx.TrendDirection;
+                patternDirReason = "TREND_DIR";
             }
-            else if (ctx.HasImpulse_M1 && ctx.ImpulseDirection != TradeDirection.None)
+
+            // Másodlagos fallback: M1 impulse (ha nincs trend)
+            if (patternDir == TradeDirection.None &&
+                ctx.HasImpulse_M1 &&
+                ctx.ImpulseDirection != TradeDirection.None)
             {
-                flagDir = ctx.ImpulseDirection;
-                flagDirReason = "M1_IMPULSE";
-            }
-            else if (ctx.RangeBreakDirection != TradeDirection.None)
-            {
-                flagDir = ctx.RangeBreakDirection;
-                flagDirReason = "RANGE_BREAK_DIR";
+                patternDir = ctx.ImpulseDirection;
+                patternDirReason = "M1_IMPULSE_FALLBACK";
             }
 
             ctx.Log?.Invoke(
-                $"[FX_FLAG DIR] trendDir={ctx.TrendDirection} flagDir={flagDir} reason={flagDirReason} " +
-                $"m1Breakout={ctx.HasBreakout_M1}/{ctx.BreakoutDirection} m1Impulse={ctx.HasImpulse_M1}/{ctx.ImpulseDirection} rangeDir={ctx.RangeBreakDirection}"
+                $"[FX_FLAG PATTERN] trendDir={ctx.TrendDirection} " +
+                $"m1Impulse={ctx.HasImpulse_M1}/{ctx.ImpulseDirection} " +
+                $"patternDir={patternDir} reason={patternDirReason}"
             );
 
-            // HARD SAFETY: if we cannot determine pattern direction, it's NOT a valid flag entry
-            if (flagDir == TradeDirection.None)
-                return Invalid(ctx, TradeDirection.None, "NO_FLAG_DIR", score);
+            // Ha még így sincs irány → nincs flag struktúra
+            if (patternDir == TradeDirection.None)
+                return Invalid(ctx, TradeDirection.None, "NO_PATTERN_DIR", score);
+
+            // -----------------------------------------------------
+            // 2️⃣ BREAKOUT CONFIRMATION (ENTRY TRIGGER)
+            // -----------------------------------------------------
+            bool breakoutConfirmed = false;
+            TradeDirection breakoutDir = TradeDirection.None;
+            string breakoutReason = "NONE";
+
+            // Prioritás 1: M1 breakout
+            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection != TradeDirection.None)
+            {
+                breakoutConfirmed = true;
+                breakoutDir = ctx.BreakoutDirection;
+                breakoutReason = "M1_BREAKOUT";
+            }
+            // Prioritás 2: Range break
+            else if (ctx.RangeBreakDirection != TradeDirection.None)
+            {
+                breakoutConfirmed = true;
+                breakoutDir = ctx.RangeBreakDirection;
+                breakoutReason = "RANGE_BREAK_DIR";
+            } 
+
+            ctx.Log?.Invoke(
+                $"[FX_FLAG BREAKOUT] confirmed={breakoutConfirmed} " +
+                $"dir={breakoutDir} reason={breakoutReason} " +
+                $"m1Breakout={ctx.HasBreakout_M1}/{ctx.BreakoutDirection} " +
+                $"rangeDir={ctx.RangeBreakDirection}"
+            );
+
+            // -----------------------------------------------------
+            // 3️⃣ ENTRY VALIDÁLÁS
+            // -----------------------------------------------------
+
+            // Ha még nincs breakout → várunk
+            if (!breakoutConfirmed)
+            {
+                return Invalid(ctx, patternDir, "WAIT_BREAKOUT", score);
+            }
+
+            // Biztonsági check: breakout irány egyezzen pattern iránnyal
+            if (breakoutDir != patternDir)
+            {
+                ctx.Log?.Invoke(
+                   $"[FX_FLAG BLOCK] breakoutDir {breakoutDir} != patternDir {patternDir}"
+                ); 
+
+                return Invalid(ctx, patternDir, "BREAKOUT_AGAINST_PATTERN", score);
+            }
+
+            // -----------------------------------------------------
+            // 4️⃣ VÉGLEGES FLAG DIRECTION = patternDir
+            // -----------------------------------------------------
+            TradeDirection flagDir = patternDir;
+
+            ctx.Log?.Invoke(
+                $"[FX_FLAG FINAL] dir={flagDir} pattern={patternDirReason} breakout={breakoutReason}"
+            );
 
             if (ctx.Session == FxSession.Asia)
             {
