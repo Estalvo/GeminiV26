@@ -87,14 +87,79 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (!TryComputeFlag(ctx, tuning.FlagBars, out var hi, out var lo, out var rangeAtr))
                 return InvalidDecision(ctx, session, tag, score, tuning.MinScore, "FLAG_FAIL", reasons);
-            
-            // ===== EARLY ENERGY CHECK (moved up for exhaustion logic) =====
-            bool m5Break = BreakoutClose(ctx, hi, lo, tuning.BreakoutAtrBuffer);
-            bool m1 = ctx.M1TriggerInTrendDirection;
+
+            // =====================================================
+            // Phase XAU FlagDir Patch (FX_FlagEntry Phase 3.9 mintára)
+            // Goal:
+            //  1) patternDir (strukturális irány) -> flagDir alapja
+            //  2) breakoutDir (trigger irány) -> csak belépési trigger
+            //  3) TrendDirection marad SOFT bias (nem entry dir)
+            // NOTE: XAU ctx-ben nincs irányos M1 breakout -> itt a breakoutDir M5-re épül.
+            // =====================================================
+
+            // --- COMMON last closed bar (ONE source of truth) ---
+            var bars = ctx.M5;
+            int lastClosedIndex = bars.Count - 2;
+            var lastBar = bars[lastClosedIndex];
+            double lastClose = lastBar.Close;
+
+            // --- 1) PATTERN DIRECTION (strukturális irány) ---
+            // XAU-ban most még nincs “pattern-dir” külön: induljunk TrendDirection-ból (bias),
+            // később finomítható (flag slope / pole dir / M1 impulse dir).
+            TradeDirection patternDir = ctx.TrendDirection;
+            string patternDirReason = "TREND_DIR";
+
+            // Ha nincs irány, nincs flag setup (ugyanaz a policy mint FX-ben)
+            if (patternDir == TradeDirection.None)
+                return InvalidDecisionDir(ctx, session, tag, score, tuning.MinScore, TradeDirection.None, "NO_PATTERN_DIR", reasons);
+
+            // --- 2) BREAKOUT CONFIRMATION (ENTRY TRIGGER) ---
+            // M5 breakout direction számítás: hi/lo + ATR buffer
+            double buf = ctx.AtrM5 * tuning.BreakoutAtrBuffer;
+
+            bool brokeUp = lastClose > hi + buf;
+            bool brokeDown = lastClose < lo - buf;
+
+            TradeDirection m5BreakoutDir =
+                (brokeUp && !brokeDown) ? TradeDirection.Long :
+                (brokeDown && !brokeUp) ? TradeDirection.Short :
+                TradeDirection.None;
+
+            bool breakoutConfirmed = m5BreakoutDir != TradeDirection.None;
+            TradeDirection breakoutDir = m5BreakoutDir;
+            string breakoutReason = breakoutConfirmed ? "M5_RANGE_BREAK" : "NONE";
+
+            // M1 trigger nálad csak bool és “trend irányban” értelmezett -> itt csak debug és későbbi bonus/confirm.
+            // (Ellenirányú micro flaghez majd kell irányos M1 jel a ctx-ben.)
+            bool m1TrendBool = ctx.M1TriggerInTrendDirection;
+
+            // Debug – tisztán lássuk mi a pattern vs breakout
+            reasons.Add($"DBG_FLAGDIR patternDir={patternDir}({patternDirReason}) breakout={breakoutConfirmed} breakoutDir={breakoutDir}({breakoutReason}) m1TrendBool={m1TrendBool}");
+
+            // Ha nincs breakout -> WAIT (FX mintára)
+            if (!breakoutConfirmed)
+                return InvalidDecisionDir(ctx, session, tag, score, tuning.MinScore, patternDir, "WAIT_BREAKOUT", reasons);
+
+            // Biztonság: breakout irány egyezzen pattern iránnyal (FX policy)
+            if (breakoutDir != patternDir)
+                return InvalidDecisionDir(ctx, session, tag, score, tuning.MinScore, patternDir, "BREAKOUT_AGAINST_PATTERN", reasons);
+
+            // --- 3) FINAL FLAG DIRECTION = patternDir ---
+            TradeDirection flagDir = patternDir;
+            string flagDirReason = $"{patternDirReason}|{breakoutReason}";
+
+            // Flag-struct/energy jellegű információk (későbbi scoringhoz)
             bool flagStruct = ctx.IsValidFlagStructure_M5;
 
-            bool energyOk = m5Break || m1 || ctx.IsAtrExpanding_M5;
+            // M5 breakout bool (flagDir-hez kötve)
+            bool m5Break = breakoutConfirmed && breakoutDir == flagDir;
 
+            // M1 confirm csak akkor “érvényes”, ha a flagDir megegyezik a trend/bias iránnyal.
+            // (mert a bool nem irányos, csak “trend irányban” igaz)
+            bool m1 = (flagDir == ctx.TrendDirection) && m1TrendBool;
+
+            // FX-szerű “energyOk”
+            bool energyOk = m5Break || m1 || ctx.IsAtrExpanding_M5;
             bool noFreshSignal = !m5Break && !m1;
 
             bool exhaustionContext =
@@ -178,9 +243,9 @@ namespace GeminiV26.EntryTypes.METAL
             // Goal: if structure break is not fresh AND no breakout / no M1 confirmation,
             // penalize heavily (NY stronger), but do NOT fully block -> not "no trading".
             int barsSinceBreak =
-                ctx.TrendDirection == TradeDirection.Long
-                    ? ctx.BarsSinceHighBreak_M5
-                    : ctx.BarsSinceLowBreak_M5;
+            flagDir == TradeDirection.Long
+                ? ctx.BarsSinceHighBreak_M5
+                : ctx.BarsSinceLowBreak_M5;
 
             if (barsSinceBreak > 4 && noFreshSignal)
             {
@@ -218,18 +283,14 @@ namespace GeminiV26.EntryTypes.METAL
             // ===============================
             // STRUCTURE CONFIRM (EXISTING) + DEBUG
             // ===============================
-            var bars = ctx.M5;
-            int last = bars.Count - 2;
-
+            int last = lastClosedIndex;
+            double lastHigh = lastBar.High;
+            double lastLow  = lastBar.Low;
+            
             // --- safety ---
-            if (bars == null || bars.Count < 5 || last < 2)
+            if (last < 2)
                 return InvalidDecision(ctx, session, tag, score, minScoreAdj, "BARS_NOT_READY", reasons);
-
-            // --- snapshot (common) ---
-            double lastClose = bars[last].Close;
-            double lastHigh  = bars[last].High;
-            double lastLow   = bars[last].Low;
-
+            
             // NOTE: ctx.AtrM5 a helyes property nálad
             double atr = ctx.AtrM5;
 
@@ -240,7 +301,7 @@ namespace GeminiV26.EntryTypes.METAL
                 $"hi={hi:F2} lo={lo:F2} atrM5={atr:F5}"
             );
 
-        if (ctx.TrendDirection == TradeDirection.Long)
+        if (flagDir == TradeDirection.Long)
         {
             bool closeBreak = lastClose > hi;
             bool wickBreak  = lastHigh >= hi;
@@ -272,7 +333,7 @@ namespace GeminiV26.EntryTypes.METAL
                     $"DBG_FLAG_REJECT_LONG reason=NO_FLAG_HIGH_BREAK " +
                     $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
                 );
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_HIGH_BREAK", reasons);
+                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "NO_FLAG_HIGH_BREAK", reasons);
             }
 
             bool lowerHighSeq = IsLowerHighSequence(bars, last);
@@ -282,7 +343,7 @@ namespace GeminiV26.EntryTypes.METAL
                 return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
         }
 
-        if (ctx.TrendDirection == TradeDirection.Short)
+        if (flagDir == TradeDirection.Short)
         {
             bool closeBreak = lastClose < lo;
             bool wickBreak  = lastLow <= lo;
@@ -314,7 +375,7 @@ namespace GeminiV26.EntryTypes.METAL
                     $"DBG_FLAG_REJECT_SHORT reason=NO_FLAG_LOW_BREAK " +
                     $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
                 );
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "NO_FLAG_LOW_BREAK", reasons);
+                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "NO_FLAG_LOW_BREAK", reasons);
             }
 
             bool higherLowSeq = IsHigherLowSequence(bars, last);
@@ -340,13 +401,17 @@ namespace GeminiV26.EntryTypes.METAL
                 }
             }
 
-            if (!BodyAligned(ctx))
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "BODY_MISMATCH", reasons);
+            if (!BodyAligned(ctx, flagDir))
+                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "BODY_MISMATCH", reasons);
 
             if (m1)
             {
                 score += tuning.M1TriggerBonus;
                 reasons.Add($"+M1({tuning.M1TriggerBonus})");
+            }
+            else if (ctx.M1TriggerInTrendDirection && flagDir != ctx.TrendDirection)
+            {
+                reasons.Add("DBG_M1_IGNORED(oppositeDir_noDirectionalM1)");
             }
 
             if (flagStruct)
@@ -360,7 +425,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             reasons.Add("ACCEPT");
 
-            return ValidDecision(ctx, session, tag, score, minScoreAdj, rangeAtr, reasons);
+            return ValidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, rangeAtr, reasons);
         }
 
         // ===============================
@@ -426,12 +491,11 @@ namespace GeminiV26.EntryTypes.METAL
             rangeAtr = 999;
 
             var bars = ctx.M5;
-            int lastClosed = bars.Count - 2;
-            int end = lastClosed - 1;
-            int start = end - flagBars + 1;
+            int lastClosed = bars.Count - 2;      // utolsó lezárt
+            int start = lastClosed - flagBars + 1;
             if (start < 2) return false;
 
-            for (int i = start; i <= end; i++)
+            for (int i = start; i <= lastClosed; i++)
             {
                 hi = Math.Max(hi, bars[i].High);
                 lo = Math.Min(lo, bars[i].Low);
@@ -478,29 +542,18 @@ namespace GeminiV26.EntryTypes.METAL
             return false;
         }
 
-        private static EntryEvaluation ValidDecision(
-            EntryContext ctx,
-            FxSession session,
-            string tag,
-            int score,
-            int minScore,
-            double rangeAtr,
-            List<string> reasons)
+        private static bool BodyAligned(EntryContext ctx, TradeDirection dir)
         {
-            string note =
-                $"[{tag}] {ctx.Symbol} {session} dir={ctx.TrendDirection} " +
-                $"Score={score} Min={minScore} RangeATR={rangeAtr:F2} " +
-                $"Decision=ACCEPT | " + string.Join(" | ", reasons);
+            var bars = ctx.M5;
+            int i = bars.Count - 2;
 
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = EntryType.XAU_Flag,
-                Direction = ctx.TrendDirection,
-                Score = score,
-                IsValid = true,
-                Reason = note
-            };
+            if (dir == TradeDirection.Long)
+                return bars[i].Close > bars[i].Open;
+
+            if (dir == TradeDirection.Short)
+                return bars[i].Close < bars[i].Open;
+
+            return false;
         }
 
         private static EntryEvaluation InvalidDecision(
@@ -522,6 +575,58 @@ namespace GeminiV26.EntryTypes.METAL
                 Symbol = ctx?.Symbol,
                 Type = EntryType.XAU_Flag,
                 Direction = ctx?.TrendDirection ?? TradeDirection.None,
+                Score = Math.Max(0, score),
+                IsValid = false,
+                Reason = note
+            };
+        }
+
+        private static EntryEvaluation ValidDecisionDir(
+            EntryContext ctx,
+            FxSession session,
+            string tag,
+            int score,
+            int minScore,
+            TradeDirection dir,
+            double rangeAtr,
+            List<string> reasons)
+        {
+            string note =
+                $"[{tag}] {ctx.Symbol} {session} trendDir={ctx.TrendDirection} flagDir={dir} " +
+                $"Score={score} Min={minScore} RangeATR={rangeAtr:F2} " +
+                $"Decision=ACCEPT | " + string.Join(" | ", reasons);
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = EntryType.XAU_Flag,
+                Direction = dir,
+                Score = score,
+                IsValid = true,
+                Reason = note
+            };
+        }
+
+        private static EntryEvaluation InvalidDecisionDir(
+            EntryContext ctx,
+            FxSession session,
+            string tag,
+            int score,
+            int minScore,
+            TradeDirection dir,
+            string reason,
+            List<string> reasons)
+        {
+            string note =
+                $"[{tag}] {ctx?.Symbol} {session} trendDir={ctx?.TrendDirection} flagDir={dir} " +
+                $"Score={score} Min={minScore} Decision=REJECT Reason={reason} | " +
+                string.Join(" | ", reasons);
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.XAU_Flag,
+                Direction = dir,
                 Score = Math.Max(0, score),
                 IsValid = false,
                 Reason = note
