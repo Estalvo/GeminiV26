@@ -8,18 +8,32 @@ using GeminiV26.Instruments.FX;
 namespace GeminiV26.EntryTypes.METAL
 {
     /// <summary>
-    /// XAU FlagEntry V2 (B-mode): 2-sided eval (BUY+SELL), HTF-against allowed with penalty.
-    /// Stable, fewer trades: Impulse required, stale impulse hard reject, breakout-only trigger,
-    /// ATR-normalized flag width guard, body dominance, simple structure sanity.
+    /// XAU FlagEntry V2 (B-mode):
+    /// - 2-sided eval (BUY+SELL)
+    /// - HTF-against allowed with SMALL penalty
+    /// - HTF-against requires STRONGER breakout quality (closeBreak + ATR margin + slightly higher body ratio)
+    /// - Spike/ambiguous wick-break both sides is rejected (prevents "felül short / alul long" noise)
+    /// - Decision: prefer valid; if both valid choose best (soft HTF preference only in small score band);
+    ///            if none valid -> return aggregated invalid (Direction=None) for clean logs.
     /// </summary>
     public class XAU_FlagEntry : IEntryType
     {
         public EntryType Type => EntryType.XAU_Flag;
 
         // ===== simple, stable knobs =====
-        private const int HtfAgainstPenalty = 6;          // score penalty only (NO hard block)
+        private const int HtfAgainstPenalty = 6;          // small score penalty only (NO hard block)
         private const double MinBodyRatio = 0.55;         // body dominance floor (body/range)
         private const int BarsNotReadyMin = 20;
+
+        // HTF-against quality requirements (NOT huge penalty; stronger definition)
+        private const double HtfAgainstMinCloseBreakAtr = 0.08; // close must be this far beyond hi/lo in ATR units
+        private const double HtfAgainstMinBodyRatio = 0.60;     // slightly stricter than MinBodyRatio
+
+        // Ambiguous spike guard: wick breaks BOTH sides but no close break
+        private const bool RejectAmbiguousWickBothSides = true;
+
+        // Soft preference when both sides valid and scores are close
+        private const int BothValidScoreDeadband = 2;
 
         // Optional global/session wide penalties kept minimal (use your matrix if exists)
         private const int GlobalWidePenaltyPer01Atr = 2;
@@ -29,7 +43,7 @@ namespace GeminiV26.EntryTypes.METAL
         private const int SessionWidePenaltyCap = 10;
         private const double SessionWideHardFactor = 1.6;
 
-        private const string VersionTag = "XAU_FLAG_V2B";
+        private const string VersionTag = "XAU_FLAG_V2B_STRONGHTF";
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -81,15 +95,57 @@ namespace GeminiV26.EntryTypes.METAL
             int last = bars.Count - 2;
             var lastBar = bars[last];
 
+            // ===== optional ambiguity guard at session-level (cheap early exit) =====
+            // If the candle wicked both sides but did not close out, it's likely a spike, not a clean flag breakout.
+            if (RejectAmbiguousWickBothSides)
+            {
+                bool wickBoth = lastBar.High >= hi && lastBar.Low <= lo;
+                bool closeUp = lastBar.Close > hi;
+                bool closeDn = lastBar.Close < lo;
+
+                if (wickBoth && !closeUp && !closeDn)
+                {
+                    var reasons = new List<string>(baseReasons.Count + 8);
+                    reasons.AddRange(baseReasons);
+                    reasons.Add($"DBG_AMBIG wickBoth=True hi={hi:F2} lo={lo:F2} close={lastBar.Close:F2} high={lastBar.High:F2} low={lastBar.Low:F2}");
+                    return InvalidDecision(ctx, session, tag, tuning.BaseScore, tuning.MinScore, "AMBIGUOUS_SPIKE_WICKS", reasons);
+                }
+            }
+
             // ===== evaluate both sides (HTF against allowed) =====
             var buyEval = EvaluateSide(TradeDirection.Long, ctx, session, tag, tuning, profile, hi, lo, rangeAtr, lastBar, last, baseReasons);
             var sellEval = EvaluateSide(TradeDirection.Short, ctx, session, tag, tuning, profile, hi, lo, rangeAtr, lastBar, last, baseReasons);
 
-            // ===== decision: prefer valid; if both valid pick higher score; if none valid pick higher score (for debug usefulness) =====
+            // ===== decision =====
             if (buyEval.IsValid && !sellEval.IsValid) return buyEval;
             if (!buyEval.IsValid && sellEval.IsValid) return sellEval;
 
-            return buyEval.Score >= sellEval.Score ? buyEval : sellEval;
+            if (buyEval.IsValid && sellEval.IsValid)
+            {
+                // If scores are close, softly prefer HTF-aligned direction (NOT a block, not a huge penalty).
+                int diff = buyEval.Score - sellEval.Score;
+
+                bool buyAligned = (ctx.TrendDirection == TradeDirection.None) || (buyEval.Direction == ctx.TrendDirection);
+                bool sellAligned = (ctx.TrendDirection == TradeDirection.None) || (sellEval.Direction == ctx.TrendDirection);
+
+                if (Math.Abs(diff) <= BothValidScoreDeadband)
+                {
+                    if (buyAligned && !sellAligned) return buyEval;
+                    if (!buyAligned && sellAligned) return sellEval;
+                }
+
+                return diff >= 0 ? buyEval : sellEval;
+            }
+
+            // none valid -> aggregated invalid for clean logs (Direction=None)
+            return InvalidDecisionNone(
+                ctx, session, tag,
+                tuning.BaseScore, tuning.MinScore,
+                "NO_VALID_SIDE",
+                baseReasons,
+                buyEval,
+                sellEval
+            );
         }
 
         private EntryEvaluation EvaluateSide(
@@ -110,7 +166,7 @@ namespace GeminiV26.EntryTypes.METAL
             int minScore = (int)tuning.MinScore;
 
             // copy base reasons
-            var reasons = new List<string>(baseReasons.Count + 16);
+            var reasons = new List<string>(baseReasons.Count + 24);
             reasons.AddRange(baseReasons);
 
             // ===== wide-flag guard (keeps out garbage ranges) =====
@@ -153,8 +209,14 @@ namespace GeminiV26.EntryTypes.METAL
 
             bool breakout = closeBreak || (wickBreak && strongBodyDir);
 
+            // distance beyond breakout boundary (for HTF-against quality)
+            double breakDist = dir == TradeDirection.Long ? (lastClose - hi) : (lo - lastClose);
+            double breakAtr = (ctx.AtrM5 > 0) ? (breakDist / ctx.AtrM5) : 0;
+
+            bool isHtfAgainst = (ctx.TrendDirection != TradeDirection.None && dir != ctx.TrendDirection);
+
             reasons.Add($"DBG_SIDE dir={dir} hi={hi:F2} lo={lo:F2} close={lastClose:F2} open={lastOpen:F2} high={lastHigh:F2} low={lastLow:F2}");
-            reasons.Add($"DBG_BREAK closeBreak={closeBreak} wickBreak={wickBreak} strongBodyDir={strongBodyDir} bodyRatio={bodyRatio:F2} bodyDom>={MinBodyRatio:F2}={bodyDominant}");
+            reasons.Add($"DBG_BREAK closeBreak={closeBreak} wickBreak={wickBreak} strongBodyDir={strongBodyDir} bodyRatio={bodyRatio:F2} bodyDom>={MinBodyRatio:F2}={bodyDominant} breakAtr={breakAtr:F2} htf={ctx.TrendDirection} htfAgainst={isHtfAgainst}");
 
             if (!breakout)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "NO_BREAK", reasons);
@@ -165,16 +227,28 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add("WEAK_BODY(-4)");
             }
 
-            // ===== HTF bias handling: penalty only =====
-            // ctx.TrendDirection = HTF bias proxy in your system
-            if (ctx.TrendDirection != TradeDirection.None && dir != ctx.TrendDirection)
+            // ===== HTF bias handling: small penalty + stronger breakout quality when against =====
+            if (isHtfAgainst)
             {
+                // HTF-against requires stronger definition:
+                // - MUST be closeBreak (not just wick)
+                // - MUST exceed boundary by a minimum ATR margin
+                // - MUST have slightly higher body ratio
+                if (!closeBreak)
+                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "HTF_AGAINST_NEEDS_CLOSEBREAK", reasons);
+
+                if (breakAtr < HtfAgainstMinCloseBreakAtr)
+                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, $"HTF_AGAINST_WEAK_BREAK(minAtr={HtfAgainstMinCloseBreakAtr:F2})", reasons);
+
+                if (bodyRatio < HtfAgainstMinBodyRatio)
+                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, $"HTF_AGAINST_WEAK_BODY(minBody={HtfAgainstMinBodyRatio:F2})", reasons);
+
                 score -= HtfAgainstPenalty;
-                reasons.Add($"HTF_AGAINST(-{HtfAgainstPenalty}) htf={ctx.TrendDirection}");
+                reasons.Add($"HTF_AGAINST(-{HtfAgainstPenalty})");
             }
             else
             {
-                reasons.Add($"HTF_OK htf={ctx.TrendDirection}");
+                reasons.Add("HTF_OK");
             }
 
             // ===== basic structure sanity (cheap anti-stupidity) =====
@@ -193,7 +267,10 @@ namespace GeminiV26.EntryTypes.METAL
                     reasons.Add($"+FQ({(int)tuning.FlagQualityBonus})");
                 }
             }
-            catch { /* ignore if field not present */ }
+            catch
+            {
+                // ignore if field not present
+            }
 
             if (score < minScore)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "LOW_SCORE", reasons);
@@ -264,7 +341,37 @@ namespace GeminiV26.EntryTypes.METAL
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.XAU_Flag,
-                Direction = ctx?.TrendDirection ?? TradeDirection.None,
+                Direction = TradeDirection.None,
+                Score = Math.Max(0, score),
+                IsValid = false,
+                Reason = note
+            };
+        }
+
+        private static EntryEvaluation InvalidDecisionNone(
+            EntryContext ctx, FxSession session, string tag,
+            int score, int minScore,
+            string reason,
+            List<string> baseReasons,
+            EntryEvaluation buyEval,
+            EntryEvaluation sellEval)
+        {
+            var reasons = new List<string>(baseReasons.Count + 8);
+            reasons.AddRange(baseReasons);
+
+            // Keep it readable: just summarize outcomes, do not embed full long notes twice.
+            reasons.Add($"BUY: valid={buyEval.IsValid} score={buyEval.Score}");
+            reasons.Add($"SELL: valid={sellEval.IsValid} score={sellEval.Score}");
+
+            string note =
+                $"[{tag}] {ctx?.Symbol} {session} Score={score} Min={minScore} Decision=REJECT Reason={reason} | " +
+                string.Join(" | ", reasons);
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.XAU_Flag,
+                Direction = TradeDirection.None,
                 Score = Math.Max(0, score),
                 IsValid = false,
                 Reason = note
