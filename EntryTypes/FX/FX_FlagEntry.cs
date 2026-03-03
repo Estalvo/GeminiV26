@@ -487,7 +487,8 @@ namespace GeminiV26.EntryTypes.FX
             // 4️⃣ VÉGLEGES FLAG DIRECTION = patternDir
             // -----------------------------------------------------
             TradeDirection flagDir = patternDir;
-
+            string flagDirReason = $"{patternDirReason}|{breakoutReason}";
+            
             ctx.Log?.Invoke(
                 $"[FX_FLAG FINAL] dir={flagDir} pattern={patternDirReason} breakout={breakoutReason}"
             );
