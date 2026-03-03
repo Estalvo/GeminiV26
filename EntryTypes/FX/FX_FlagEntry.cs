@@ -128,7 +128,7 @@ namespace GeminiV26.EntryTypes.FX
                         return Invalid(ctx, flagDir, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor:F1}", score);
 
                     ApplyPenalty(4);
-                    Console.WriteLine($"[{ctx.Symbol}][A_ADX_SOFT] dir={flagDir} adx={adxNow:F1} < {hardFloor:F1} strongContext => penalty=4 score={score}");
+                    ctx.Log?.Invoke($"[{ctx.Symbol}][A_ADX_SOFT] candDir={flagDir} adx={adxNow:F1} < {hardFloor:F1} strongContext => penalty=4 score={score}");
                 }
 
                 if (adxNow >= dynamicMinAdx - 1.0 && adxNow < dynamicMinAdx)
@@ -308,6 +308,9 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // FLAG RANGE (SIMPLE)
             // =====================================================
+            double hi = 0;
+            double lo = 0;
+            double rangeAtr = 0;
 
             if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out hi, out lo, out rangeAtr))
                 return Invalid(ctx, flagDir, "FLAG_FAIL", score);
@@ -497,7 +500,7 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, flagDir, "M1_TRIGGER_REQUIRED", score);
 
                 ApplyPenalty(2);
-                Console.WriteLine($"[{ctx.Symbol}][B_M1_SOFT] dir={flagDir} no M1 trigger, strongContext => penalty=2 score={score}");
+                ctx.Log?.Invoke($"[{ctx.Symbol}][B_M1_SOFT] candDir={flagDir} no M1 trigger, strongContext => penalty=2 score={score}");
             }
 
             int barsSinceBreak =
@@ -822,7 +825,6 @@ namespace GeminiV26.EntryTypes.FX
                     score);
 
             // ✅ IMPORTANT: NO HARD GATE on ctx.TrendDirection anymore
-            // TrendDirection is soft bias only.
 
             return Valid(ctx, flagDir, score, rangeAtr, $"FX_FLAG_V2_{ctx.Session}", flagDirReason, hi, lo, flagSlopeAtr, barsSinceBreak);
         }
