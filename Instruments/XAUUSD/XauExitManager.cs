@@ -164,7 +164,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (hit)
                     {
                         ExecuteTp1(pos, ctx, rDist);
-                        continue; // TP1 után trailing a következő tickben indul
+                        return; 
                     }
 
                     continue; // TP1 előtt trailing tilos
