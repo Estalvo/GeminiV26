@@ -14,7 +14,7 @@ namespace GeminiV26.Instruments.ETHUSD
     public class EthUsdExitManager
     {        
         private readonly Robot _bot;
-
+        private readonly TradeViabilityMonitor _tvm;
         // PositionId -> context
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
@@ -35,6 +35,7 @@ namespace GeminiV26.Instruments.ETHUSD
         public EthUsdExitManager(Robot bot)
         {
             _bot = bot;
+            _tvm = new TradeViabilityMonitor(bot);
             _atrM5 = _bot.Indicators.AverageTrueRange(
                 AtrPeriod,
                 MovingAverageType.Exponential
@@ -57,7 +58,16 @@ namespace GeminiV26.Instruments.ETHUSD
         // =========================================================
         public void OnBar(Position position)
         {
-            // szándékosan üres
+            if (position == null)
+                return;
+
+            long key = Convert.ToInt64(position.Id);
+
+            if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                return;
+
+            // M5 bar counter (TVM / rescue / viability window)
+            ctx.BarsSinceEntryM5++;
         }
 
         // ==============================
@@ -67,15 +77,18 @@ namespace GeminiV26.Instruments.ETHUSD
         // hogy tick-pontos végrehajtás legyen
         public void OnTick()
         {
-            foreach (var kv in _contexts)
+            // Snapshot kulcsok: ne enumeráljuk a dict-et úgy, hogy közben módosítjuk
+            var keys = new List<long>(_contexts.Keys);
+
+            foreach (var key in keys)
             {
-                long key = kv.Key;
-                var ctx = kv.Value;
+                if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                    continue;
 
                 Position pos = null;
                 foreach (var p in _bot.Positions)
                 {
-                    if (p.Id == kv.Key)
+                    if (Convert.ToInt64(p.Id) == key)
                     {
                         pos = p;
                         break;
@@ -88,9 +101,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                double stopLoss = pos.StopLoss.Value;
-
-                // R-distance az eredeti SL alapján (ctx.EntryPrice vs aktuális SL)
+                // R-distance az eredeti SL alapján
                 double rDist = ctx.RiskPriceDistance;
                 if (rDist <= 0)
                     continue;
@@ -100,6 +111,31 @@ namespace GeminiV26.Instruments.ETHUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
+                    // =========================
+                    // TVM – Early Exit (TP1 előtt)
+                    // =========================
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        {
+                            _bot.Print(
+                                $"[ETHUSD TVM EXIT] pos={pos.Id} " +
+                                $"reason={ctx.DeadTradeReason} " +
+                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
+                                $"barsM5={ctx.BarsSinceEntryM5}"
+                            );
+
+                            _bot.ClosePosition(pos);
+
+                            // cleanup: ne maradjon ctx egy már zárt pos-hoz
+                            _contexts.Remove(key);
+
+                            return;
+                        }
+                    }
+
                     double tp1Price =
                         ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
 
@@ -111,7 +147,9 @@ namespace GeminiV26.Instruments.ETHUSD
                     {
                         _bot.Print("[ETHUSD][TP1][HIT] TP1 HIT (OnTick)");
                         ExecuteTp1(pos, ctx, rDist);
-                        continue;
+
+                        // TP1 után ne fussunk tovább ebben a tickben (BTC-vel konzisztens)
+                        return;
                     }
 
                     // 🔒 TP1 előtt trailing TILOS
