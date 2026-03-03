@@ -39,7 +39,7 @@ namespace GeminiV26.Instruments.XAUUSD
         private AverageTrueRange _atr;
 
         private const bool DebugTp1 = false;
-
+        private readonly TradeViabilityMonitor _tvm;
         // PositionId → Context
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
@@ -47,6 +47,7 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             _bot = bot;
             _eventLogger = new EventLogger(bot.SymbolName);
+            _tvm = new TradeViabilityMonitor(bot);
 
             // Profile betöltés (SSOT policy)
             _profile = XAU_InstrumentMatrix.Get(bot.SymbolName);
@@ -72,6 +73,11 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             if (!_contexts.TryGetValue(pos.Id, out var ctx))
                 return;
+
+            // =====================================================
+            // M5 bar counter (TVM / rescue / viability window)
+            // =====================================================
+            ctx.BarsSinceEntryM5++;
 
             if (ctx.Tp1Hit)
                 TryEarlyExit(pos, ctx);
@@ -121,6 +127,39 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (rDist <= 0)
                     continue;
                 
+                // =========================
+                // TVM – Early Exit (TP1 előtt)
+                // =========================
+                {
+                    var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                    var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                    if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                    {
+                        _bot.Print(
+                            $"[XAU TVM EXIT] pos={pos.Id} " +
+                            $"reason={ctx.DeadTradeReason} " +
+                            $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
+                        );
+
+                        _bot.ClosePosition(pos);
+
+                        _eventLogger.Log(new EventRecord
+                        {
+                            EventTimestamp = DateTime.UtcNow,
+                            Symbol = _bot.SymbolName,
+                            EventType = "EXIT_TVM",
+                            PositionId = ctx.PositionId,
+                            Confidence = ctx.FinalConfidence,
+                            Reason = ctx.DeadTradeReason,
+                            Extra = "TVM",
+                            RValue = ctx.MaeR
+                        });
+
+                        return;
+                    }
+                }
+
                 // =========================
                 // TP1 (TP1 előtt nincs trailing)
                 // =========================
