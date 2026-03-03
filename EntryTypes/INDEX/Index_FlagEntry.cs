@@ -2,6 +2,7 @@
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.INDEX;
 using System;
+using System.Linq;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
@@ -30,6 +31,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "CTX_NOT_READY", score, TradeDirection.None);
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
+            if (p == null)
+                return Reject(ctx, "NO_INDEX_PROFILE", score, TradeDirection.None);
 
             int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : MaxBarsSinceImpulse;
             int flagBars = p.FlagBars > 0 ? p.FlagBars : FlagBars;
@@ -54,13 +57,70 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"scoreMult={scoreMultiplier:F2}"
             );
 
+            // ---------- Dual evaluation ----------
+            var longEval = EvaluateDir(
+                ctx,
+                TradeDirection.Long,
+                flagBars,
+                maxBarsSinceImpulse,
+                maxFlagRangeAtr,
+                breakoutBufferAtr,
+                maxDistFromEmaAtr,
+                requireStructure,
+                chopAdxThreshold,
+                chopDiDiff,
+                fatigueThreshold,
+                fatigueAdxLevel,
+                scoreMultiplier
+            );
+
+            var shortEval = EvaluateDir(
+                ctx,
+                TradeDirection.Short,
+                flagBars,
+                maxBarsSinceImpulse,
+                maxFlagRangeAtr,
+                breakoutBufferAtr,
+                maxDistFromEmaAtr,
+                requireStructure,
+                chopAdxThreshold,
+                chopDiDiff,
+                fatigueThreshold,
+                fatigueAdxLevel,
+                scoreMultiplier
+            );
+
+            // Winner selection: valid > invalid, score desc
+            if (longEval.IsValid && shortEval.IsValid)
+                return (longEval.Score >= shortEval.Score) ? longEval : shortEval;
+
+            if (longEval.IsValid) return longEval;
+            if (shortEval.IsValid) return shortEval;
+
+            // both invalid -> return the one with higher score (debug-friendly)
+            return (longEval.Score >= shortEval.Score) ? longEval : shortEval;
+        }
+
+        private EntryEvaluation EvaluateDir(
+            EntryContext ctx,
+            TradeDirection dir,
+            int flagBars,
+            int maxBarsSinceImpulse,
+            double maxFlagRangeAtr,
+            double breakoutBufferAtr,
+            double maxDistFromEmaAtr,
+            bool requireStructure,
+            double chopAdxThreshold,
+            double chopDiDiff,
+            int fatigueThreshold,
+            double fatigueAdxLevel,
+            double scoreMultiplier)
+        {
+            int score = BaseScore;
+
             var bars = ctx.M5;
-            var dir = ctx.TrendDirection;
-
-            if (dir == TradeDirection.None)
-                return Reject(ctx, "NO_TREND_DIR", score, TradeDirection.None);
-
-            score = BaseScore;
+            if (bars == null || bars.Count < 30)
+                return Reject(ctx, "CTX_BARS_NOT_READY", 0, dir);
 
             // =========================
             // MARKET STATE
@@ -83,7 +143,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 6;
 
             // =========================
-            // IMPULSE GATE
+            // IMPULSE GATE (dir-independent)
             // =========================
             if (!ctx.HasImpulse_M5)
             {
@@ -97,7 +157,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, $"STALE_IMPULSE({ctx.BarsSinceImpulse_M5}>{maxBarsSinceImpulse})", score, dir);
 
             // =========================
-            // MATRIX-DRIVEN FATIGUE
+            // MATRIX-DRIVEN FATIGUE (dir-independent)
             // =========================
             bool adxExhausted = ctx.Adx_M5 > fatigueAdxLevel && ctx.AdxSlope_M5 <= 0;
             bool atrContracting = ctx.AtrSlope_M5 <= 0;
@@ -114,7 +174,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
 
             // =========================
-            // CONTINUATION STRUCTURE
+            // CONTINUATION STRUCTURE (dir-dependent, but NOT TrendDirection-based)
             // =========================
             if (dir == TradeDirection.Long)
             {
@@ -125,7 +185,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 else
                     score -= 10;
             }
-            else
+            else // Short
             {
                 if (ctx.BrokeLastSwingLow_M5)
                     score += 8;
@@ -165,23 +225,21 @@ namespace GeminiV26.EntryTypes.INDEX
             {
                 double flagAtrRatio = flagRange / ctx.AtrM5;
 
-                // Alap büntetés
                 score -= 10;
 
-                // Progresszív büntetés
                 double excess = flagAtrRatio - maxFlagRangeAtr;
                 int extraPenalty = (int)Math.Round(excess * 25);
 
                 score -= extraPenalty;
 
                 Console.WriteLine(
-                    $"[IDX_FLAG][WIDE_FLAG] flagATR={flagAtrRatio:F2} " +
+                    $"[IDX_FLAG][WIDE_FLAG] dir={dir} flagATR={flagAtrRatio:F2} " +
                     $"excess={excess:F2} penalty={10 + extraPenalty}"
                 );
             }
 
             // =========================
-            // FLAG SLOPE
+            // FLAG SLOPE (as originally: net move minimum)
             // =========================
             double netMove = Math.Abs(bars[flagEnd].Close - bars[flagStart].Open);
             if (netMove < ctx.AtrM5 * MaxFlagSlopeAtr)
@@ -200,7 +258,7 @@ namespace GeminiV26.EntryTypes.INDEX
                     dir);
 
             // =========================
-            // BREAKOUT CHECK
+            // BREAKOUT CHECK (dir-dependent)
             // =========================
             double buf = ctx.AtrM5 * breakoutBufferAtr;
             bool bullBreak = close > hi + buf;
@@ -222,7 +280,10 @@ namespace GeminiV26.EntryTypes.INDEX
 
             if (dir == TradeDirection.Short && close > lo - follow)
                 return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
-            
+
+            // =========================
+            // BREAKOUT CANDLE QUALITY (dir-dependent)
+            // =========================
             double o = bars[lastClosed].Open;
             double h = bars[lastClosed].High;
             double l = bars[lastClosed].Low;
@@ -243,6 +304,9 @@ namespace GeminiV26.EntryTypes.INDEX
             if (dir == TradeDirection.Short && close >= o)
                 score -= 8;
 
+            // =========================
+            // Extras (as original)
+            // =========================
             if (ctx.M1TriggerInTrendDirection)
                 score += 5;
 
