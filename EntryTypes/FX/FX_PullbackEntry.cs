@@ -87,6 +87,17 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "IMPULSE_TOO_OLD");
             }
 
+            // HARD STRUCTURE CHECK (ne éljen túl 2 gyengeséget)
+            int weakCount = 0;
+
+            if (!ctx.PullbackTouchedEma21_M5) weakCount++;
+            if (!ctx.IsPullbackDecelerating_M5) weakCount++;
+            if (!ctx.HasReactionCandle_M5) weakCount++;
+            if (!ctx.LastClosedBarInTrendDirection) weakCount++;
+
+            if (weakCount >= 2)
+                return Block(ctx, "PB_WEAK_STRUCTURE", score);
+                
             // =========================
             // PULLBACK QUALITY (mostly HARD)
             // =========================
@@ -150,10 +161,21 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // =========================
-            // FLAG PRIORITY (avoid collision)
+            // FLAG COLLISION (SOFT BUT STRONG)
             // =========================
             if (ctx.IsValidFlagStructure_M5)
-                ApplyPenalty(ref score, ref penalty, fx.PbLondonFlagPriorityPenalty, penaltyBudget, ctx, "FLAG_PRIORITY_PEN");
+            {
+                int flagPenalty = ctx.M1TriggerInTrendDirection ? 6 : 10;
+
+                ApplyPenalty(
+                    ref score,
+                    ref penalty,
+                    flagPenalty,
+                    penaltyBudget,
+                    ctx,
+                    ctx.M1TriggerInTrendDirection ? "FLAG_ACTIVE_WITH_M1" : "FLAG_ACTIVE_NO_M1"
+                );
+            }
 
             // =========================
             // HTF SOFT
