@@ -54,30 +54,30 @@ namespace GeminiV26.Instruments.FX
                     london: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 57,               // SZIGORÍTÁS: 55-ről 58-ra
+                        MinScore = 52,               // SZIGORÍTÁS: 55-ről 58-ra
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
-                        MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.2-ről 1.6-ra (ez fogja meg a csúcson való vétel ellen!)
-                        MaxPullbackAtr = 1.10,       // SZIGORÍTÁS: 1.30-ról 1.00-ra
+                        MaxFlagAtrMult = 3.2,      // ideiglenesen lazítjuk
+                        MaxPullbackAtr = 1.35,     // vissza engedjük
                         BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,     // ÚJ: Londonban is kötelező az M1, hogy ne vegyünk csúcsot! -< vissza false-ra
-                        AtrExpansionHardBlock = true
+                        AtrExpansionHardBlock = false
                     },
                     ny: new FxFlagSessionTuning
                     {
                         BaseScore = 54,
-                        MinScore = 60,               
+                        MinScore = 54,               
                         FlagBars = 4,
-                        MaxFlagAtrMult = 1.6,
-                        MaxPullbackAtr = 1.05,
+                        MaxFlagAtrMult = 3.0,
+                        MaxPullbackAtr = 1.30,
                         BreakoutAtrBuffer = 0.10,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,
-                        AtrExpansionHardBlock = true
+                        AtrExpansionHardBlock = false
                     },
                     // ===== CONTINUATION CHARACTER =====
                         maxContinuationRatr: 1.4,
