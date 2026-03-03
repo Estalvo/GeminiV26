@@ -136,13 +136,8 @@ namespace GeminiV26.EntryTypes.METAL
             // Debug – tisztán lássuk mi a pattern vs breakout
             reasons.Add($"DBG_FLAGDIR patternDir={patternDir}({patternDirReason}) breakout={breakoutConfirmed} breakoutDir={breakoutDir}({breakoutReason}) m1TrendBool={m1TrendBool}");
 
-            // Ha nincs breakout -> WAIT (FX mintára)
-            if (!breakoutConfirmed)
-                return InvalidDecisionDir(ctx, session, tag, score, tuning.MinScore, patternDir, "WAIT_BREAKOUT", reasons);
-
-            // Biztonság: breakout irány egyezzen pattern iránnyal (FX policy)
-            if (breakoutDir != patternDir)
-                return InvalidDecisionDir(ctx, session, tag, score, tuning.MinScore, patternDir, "BREAKOUT_AGAINST_PATTERN", reasons);
+            // csak debug, nincs return itt
+            reasons.Add($"DBG_M5BREAK dir={m5BreakoutDir} confirmed={breakoutConfirmed} buf={buf:F5}");
 
             // --- 3) FINAL FLAG DIRECTION = patternDir ---
             TradeDirection flagDir = patternDir;
@@ -243,9 +238,9 @@ namespace GeminiV26.EntryTypes.METAL
             // Goal: if structure break is not fresh AND no breakout / no M1 confirmation,
             // penalize heavily (NY stronger), but do NOT fully block -> not "no trading".
             int barsSinceBreak =
-            flagDir == TradeDirection.Long
-                ? ctx.BarsSinceHighBreak_M5
-                : ctx.BarsSinceLowBreak_M5;
+                flagDir == TradeDirection.Long
+                    ? ctx.BarsSinceHighBreak_M5
+                    : ctx.BarsSinceLowBreak_M5;
 
             if (barsSinceBreak > 4 && noFreshSignal)
             {
@@ -281,109 +276,60 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // ===============================
-            // STRUCTURE CONFIRM (EXISTING) + DEBUG
+            // STRUCTURE CONFIRM – HARD SPLIT BUY / SELL
             // ===============================
+
             int last = lastClosedIndex;
+            if (last < 3)
+                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "BARS_NOT_READY", reasons);
+
             double lastHigh = lastBar.High;
             double lastLow  = lastBar.Low;
-            
-            // --- safety ---
-            if (last < 2)
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "BARS_NOT_READY", reasons);
-            
-            // NOTE: ctx.AtrM5 a helyes property nálad
-            double atr = ctx.AtrM5;
-
-            // DEBUG: alap state (minden esetben)
-            reasons.Add(
-                $"DBG_FLAG_STRUCT dir={ctx.TrendDirection} m1={m1} " +
-                $"lastClose={lastClose:F2} lastHigh={lastHigh:F2} lastLow={lastLow:F2} " +
-                $"hi={hi:F2} lo={lo:F2} atrM5={atr:F5}"
-            );
-
-        if (flagDir == TradeDirection.Long)
-        {
-            bool closeBreak = lastClose > hi;
-            bool wickBreak  = lastHigh >= hi;
+            double lastOpen = lastBar.Open;
+            double lastBody = Math.Abs(lastClose - lastOpen);
 
             reasons.Add(
-                $"DBG_FLAG_BREAK_LONG closeBreak={closeBreak} wickBreak={wickBreak} " +
-                $"(lastClose>hi={lastClose:F2}>{hi:F2}) (lastHigh>=hi={lastHigh:F2}>={hi:F2})"
+                $"DBG_STRUCT trendDir={ctx.TrendDirection} flagDir={flagDir} " +
+                $"close={lastClose:F2} high={lastHigh:F2} low={lastLow:F2} hi={hi:F2} lo={lo:F2}"
             );
 
-            // ===== XAU SOFT WICK CONTINUATION (VERY CONTROLLED) =====
-            bool isXau = ctx.Symbol.ToUpper().Contains("XAU");
-
-            bool strongBullBody =
-                bars[last].Close > bars[last].Open;
-
-            bool xauSoftBreak =
-                isXau &&
-                wickBreak &&
-                strongBullBody &&
-                ctx.Adx_M5 >= 24;   // finom erőszűrő
-
-            reasons.Add(
-                $"DBG_XAU_SOFT_LONG isXau={isXau} soft={xauSoftBreak} adx={ctx.Adx_M5:F1}"
-            );
-
-            if (!m1 && !closeBreak && !xauSoftBreak)
+            //
+            // ===============================
+            // BUY BRANCH
+            // ===============================
+            if (flagDir == TradeDirection.Long)
             {
-                reasons.Add(
-                    $"DBG_FLAG_REJECT_LONG reason=NO_FLAG_HIGH_BREAK " +
-                    $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
-                );
-                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "NO_FLAG_HIGH_BREAK", reasons);
+                bool closeBreak = lastClose > hi;
+                bool wickBreak  = lastHigh >= hi;
+                bool strongBull = lastClose > lastOpen;
+
+                reasons.Add($"DBG_BUY closeBreak={closeBreak} wickBreak={wickBreak} strongBull={strongBull}");
+
+                if (!closeBreak && !(wickBreak && strongBull))
+                    return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "BUY_NO_BREAK", reasons);
+
+                if (IsLowerHighSequence(bars, last))
+                    return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "BUY_LOWER_HIGH_SEQ", reasons);
             }
 
-            bool lowerHighSeq = IsLowerHighSequence(bars, last);
-            reasons.Add($"DBG_FLAG_SEQ_LONG lowerHighSeq={lowerHighSeq}");
-
-            if (lowerHighSeq)
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "LOWER_HIGH_SEQUENCE", reasons);
-        }
-
-        if (flagDir == TradeDirection.Short)
-        {
-            bool closeBreak = lastClose < lo;
-            bool wickBreak  = lastLow <= lo;
-
-            reasons.Add(
-                $"DBG_FLAG_BREAK_SHORT closeBreak={closeBreak} wickBreak={wickBreak} " +
-                $"(lastClose<lo={lastClose:F2}<{lo:F2}) (lastLow<=lo={lastLow:F2}<={lo:F2})"
-            );
-
-            // ===== XAU SOFT WICK CONTINUATION (VERY CONTROLLED) =====
-            bool isXau = ctx.Symbol.ToUpper().Contains("XAU");
-
-            bool strongBearBody =
-                bars[last].Close < bars[last].Open;
-
-            bool xauSoftBreak =
-                isXau &&
-                wickBreak &&
-                strongBearBody &&
-                ctx.Adx_M5 >= 24;   // finom erőszűrő
-
-            reasons.Add(
-                $"DBG_XAU_SOFT_SHORT isXau={isXau} soft={xauSoftBreak} adx={ctx.Adx_M5:F1}"
-            );
-
-            if (!m1 && !closeBreak && !xauSoftBreak)
+            //
+            // ===============================
+            // SELL BRANCH
+            // ===============================
+            if (flagDir == TradeDirection.Short)
             {
-                reasons.Add(
-                    $"DBG_FLAG_REJECT_SHORT reason=NO_FLAG_LOW_BREAK " +
-                    $"m1={m1} closeBreak={closeBreak} soft={xauSoftBreak}"
-                );
-                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "NO_FLAG_LOW_BREAK", reasons);
+                bool closeBreak = lastClose < lo;
+                bool wickBreak  = lastLow <= lo;
+                bool strongBear = lastClose < lastOpen;
+
+                reasons.Add($"DBG_SELL closeBreak={closeBreak} wickBreak={wickBreak} strongBear={strongBear}");
+
+                if (!closeBreak && !(wickBreak && strongBear))
+                    return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "SELL_NO_BREAK", reasons);
+
+                if (IsHigherLowSequence(bars, last))
+                    return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "SELL_HIGHER_LOW_SEQ", reasons);
             }
-
-            bool higherLowSeq = IsHigherLowSequence(bars, last);
-            reasons.Add($"DBG_FLAG_SEQ_SHORT higherLowSeq={higherLowSeq}");
-
-            if (higherLowSeq)
-                return InvalidDecision(ctx, session, tag, score, minScoreAdj, "HIGHER_LOW_SEQUENCE", reasons);
-        }
 
             // ===============================
             // BODY DOMINANCE (EXISTING)
@@ -400,9 +346,6 @@ namespace GeminiV26.EntryTypes.METAL
                     reasons.Add("WEAK_BODY(-4)");
                 }
             }
-
-            if (!BodyAligned(ctx, flagDir))
-                return InvalidDecisionDir(ctx, session, tag, score, minScoreAdj, flagDir, "BODY_MISMATCH", reasons);
 
             if (m1)
             {
