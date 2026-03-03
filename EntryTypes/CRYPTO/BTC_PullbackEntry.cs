@@ -11,7 +11,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 38;
+            int score = 30;
 
             void ScoreLog(string label, int delta, int current)
             {
