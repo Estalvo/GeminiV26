@@ -16,6 +16,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
         // PositionId -> context
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly TradeViabilityMonitor _tvm;
 
         // ===== TP1 / BE =====
         private const double BeOffsetR = 0.05;
@@ -34,6 +35,7 @@ namespace GeminiV26.Instruments.BTCUSD
         public BtcUsdExitManager(Robot bot)
         {
             _bot = bot;
+            _tvm = new TradeViabilityMonitor(bot);
             _atrM5 = _bot.Indicators.AverageTrueRange(
                 AtrPeriod,
                 MovingAverageType.Exponential
@@ -55,7 +57,18 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public void OnBar(Position position)
         {
-            // szándékosan üres
+            if (position == null)
+                return;
+
+            long key = Convert.ToInt64(position.Id);
+
+            if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                return;
+
+            // =====================================================
+            // M5 bar counter (TVM / rescue / viability window)
+            // =====================================================
+            ctx.BarsSinceEntryM5++;
         }
 
         // ==============================
@@ -102,6 +115,33 @@ namespace GeminiV26.Instruments.BTCUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
+                    // =========================
+                    // TVM – Early Exit (TP1 előtt)
+                    // - csak EXIT-nél logol
+                    // - nem fut TP1 után
+                    // =========================
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        {
+                            _bot.Print(
+                                $"[BTCUSD TVM EXIT] pos={pos.Id} " +
+                                $"reason={ctx.DeadTradeReason} " +
+                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
+                                $"barsM5={ctx.BarsSinceEntryM5}"
+                            );
+
+                            _bot.ClosePosition(pos);
+
+                            // cleanup: ne maradjon ctx egy már zárt pos-hoz
+                            _contexts.Remove(key);
+
+                            return;
+                        }
+                    }
+
                     double tp1Price =
                         ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
 
