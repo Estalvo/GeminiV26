@@ -488,7 +488,7 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             TradeDirection flagDir = patternDir;
             string flagDirReason = $"{patternDirReason}|{breakoutReason}";
-            
+
             ctx.Log?.Invoke(
                 $"[FX_FLAG FINAL] dir={flagDir} pattern={patternDirReason} breakout={breakoutReason}"
             );
@@ -505,7 +505,7 @@ namespace GeminiV26.EntryTypes.FX
             }
             
             // =====================================================
-            // 3B. FLAG SLOPE VALIDATION (use flagDir)
+            // 3B. FLAG SLOPE VALIDATION (use flagDir) — FIXED (bull/bear flag slope symmetry)
             // =====================================================
 
             int firstFlagIndex = lastClosedIndex - tuning.FlagBars + 1;
@@ -517,56 +517,62 @@ namespace GeminiV26.EntryTypes.FX
 
             double flagSlopeAtr = (lastFlagClose - firstClose) / ctx.AtrM5;
 
+            // "Drift" = konszolidáció irányú kúszás (nem a retrace mértéke)
             double maxDrift =
                 ctx.Session == FxSession.London ? 0.35 :
                 ctx.Session == FxSession.NewYork ? 0.30 :
                 0.25;
 
-            const double MaxOppositeSlope = 0.8;
-            const double RewardZoneLow = -0.1;
-            const double RewardZoneHigh = 0.15;
+            // túl meredek retrace / túl vad visszahúzás
+            const double MaxSteep = 0.8;
 
+            // Reward: közel vízszintes / enyhe konszolidáció a várt irányban
             bool slopeRewarded = false;
-
-            if (flagDir == TradeDirection.Short)
-            {
-                if (flagSlopeAtr > maxDrift)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_UPWARD_SHORT", score);
-
-                if (flagSlopeAtr < -MaxOppositeSlope)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_SHORT", score);
-
-                if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
-                {
-                    ApplyReward(2);
-                    slopeRewarded = true;
-                }
-            }
 
             if (flagDir == TradeDirection.Long)
             {
+                // Bull flag: enyhén lefelé vagy lapos; túl nagy felfelé drift = gyanús
                 if (flagSlopeAtr > maxDrift)
                     return Invalid(ctx, flagDir, "FLAG_TOO_UPWARD_LONG", score);
 
-                if (flagSlopeAtr < -MaxOppositeSlope)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_LONG", score);
+                // túl meredek lefelé retrace (túl nagy visszahúzás)
+                if (flagSlopeAtr < -MaxSteep)
+                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_DOWN_LONG", score);
 
-                if (flagSlopeAtr >= RewardZoneLow && flagSlopeAtr <= RewardZoneHigh)
+                // Reward zóna: lapos / enyhén lefelé
+                if (flagSlopeAtr >= -0.35 && flagSlopeAtr <= 0.10)
+                {
+                    ApplyReward(2);
+                    slopeRewarded = true;
+                }
+            }
+            else if (flagDir == TradeDirection.Short)
+            {
+                // Bear flag: enyhén felfelé vagy lapos; túl nagy lefelé drift = gyanús
+                if (flagSlopeAtr < -maxDrift)
+                    return Invalid(ctx, flagDir, "FLAG_TOO_DOWNWARD_SHORT", score);
+
+                // túl meredek felfelé retrace (túl nagy visszahúzás)
+                if (flagSlopeAtr > MaxSteep)
+                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_UP_SHORT", score);
+
+                // Reward zóna: lapos / enyhén felfelé
+                if (flagSlopeAtr >= -0.10 && flagSlopeAtr <= 0.35)
                 {
                     ApplyReward(2);
                     slopeRewarded = true;
                 }
             }
 
-            if (flagDir == TradeDirection.Long &&
-                !slopeRewarded &&
-                flagSlopeAtr >= -0.1 &&
-                flagSlopeAtr <= 0.25 &&
-                !ctx.IsRange_M5)
+            // Extra kis reward, ha nem range és „szép” (opcionális, meghagyja a karaktert)
+            if (!slopeRewarded && !ctx.IsRange_M5)
             {
-                ApplyReward(2);
-            }
+                if (flagDir == TradeDirection.Long && flagSlopeAtr >= -0.25 && flagSlopeAtr <= 0.15)
+                    ApplyReward(1);
 
+                if (flagDir == TradeDirection.Short && flagSlopeAtr >= -0.15 && flagSlopeAtr <= 0.25)
+                    ApplyReward(1);
+            }
             // =====================================================
             // 4. CONTINUATION SIGNAL (breakout computed from hi/lo, then mapped to direction)
             // =====================================================
