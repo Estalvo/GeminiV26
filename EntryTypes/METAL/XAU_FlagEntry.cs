@@ -207,8 +207,8 @@ namespace GeminiV26.EntryTypes.METAL
 */
 
             double candleRange = lastHigh - lastLow;
-            double bodyRatio = candleRange > 0 ? body / candleRange : 0;
             double body = Math.Abs(lastClose - lastOpen);
+            double bodyRatio = candleRange > 0 ? body / candleRange : 0;
             
             bool bodyDominant = bodyRatio >= MinBodyRatio;
 
@@ -230,7 +230,7 @@ namespace GeminiV26.EntryTypes.METAL
             bool isHtfAgainst = (ctx.TrendDirection != TradeDirection.None && dir != ctx.TrendDirection);
 
             reasons.Add($"DBG_SIDE dir={dir} hi={hi:F2} lo={lo:F2} close={lastClose:F2} open={lastOpen:F2} high={lastHigh:F2} low={lastLow:F2}");
-            reasons.Add($"DBG_BREAK closeBreak={closeBreak} wickBreak={wickBreak} strongBodyDir={strongBodyDir} bodyRatio={bodyRatio:F2} bodyDom>={MinBodyRatio:F2}={bodyDominant} breakAtr={breakAtr:F2} htf={ctx.TrendDirection} htfAgainst={isHtfAgainst}");
+            reasons.Add($"DBG_BREAK closeBreak={closeBreak} bodyRatio={bodyRatio:F2} bodyDom>={MinBodyRatio:F2}={bodyDominant} breakAtr={breakAtr:F2} htf={ctx.TrendDirection} htfAgainst={isHtfAgainst}");
 
             if (!breakout)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "NO_BREAK", reasons);
