@@ -207,7 +207,8 @@ namespace GeminiV26.EntryTypes.METAL
 
             bool bodyDominant = bodyRatio >= MinBodyRatio;
 
-            bool breakout = closeBreak || (wickBreak && strongBodyDir);
+            const double MinCloseBreakAtr = 0.05; // 0.03–0.08 között érdemes tesztelni XAU-n
+            bool breakout = closeBreak && breakAtr >= MinCloseBreakAtr;
 
             // distance beyond breakout boundary (for HTF-against quality)
             double breakDist = dir == TradeDirection.Long ? (lastClose - hi) : (lo - lastClose);
