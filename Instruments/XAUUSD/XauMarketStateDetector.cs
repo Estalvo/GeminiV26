@@ -31,7 +31,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
         public XauMarketState Evaluate(EntryContext ctx)
         {
-            int i = _m5.ClosePrices.Count - 1;
+            int i = _m5.Count - 1;
 
             if (i < Math.Max(ATR_PERIOD, ADX_PERIOD))
                 return new XauMarketState();
@@ -94,7 +94,8 @@ namespace GeminiV26.Instruments.XAUUSD
 
             bool isTrend =
                 adx >= _p.MinAdxTrend
-                && !isCompression;
+                && !isCompression
+                && wickRatio < 0.35;
 
             bool isHardRange =
                 widthAtr <= _p.RangeMaxWidthAtr
