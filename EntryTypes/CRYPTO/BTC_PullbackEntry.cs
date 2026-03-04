@@ -8,6 +8,7 @@ namespace GeminiV26.EntryTypes.Crypto
     {        
         public EntryType Type => EntryType.Crypto_Pullback;
         private const int MIN_SCORE = 34;
+        private const int BiasAgainstPenalty = 8;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
