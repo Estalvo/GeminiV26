@@ -115,29 +115,29 @@ namespace GeminiV26.Instruments.ETHUSD
                     // TVM – Early Exit (TP1 előtt)
                     // =========================
                     {
-                        // TVM only after at least N closed M5 bars
                         const int MinBarsBeforeTvm = 2;
-                        if (ctx.BarsSinceEntryM5 < MinBarsBeforeTvm)
-                            goto SkipTVM;
 
-                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
-
-                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
-                            _bot.Print(
-                                $"[ETHUSD TVM EXIT] pos={pos.Id} " +
-                                $"reason={ctx.DeadTradeReason} " +
-                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
-                                $"barsM5={ctx.BarsSinceEntryM5}"
-                            );
+                            var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
-                            _bot.ClosePosition(pos);
+                            if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                            {
+                                _bot.Print(
+                                    $"[BTCUSD TVM EXIT] pos={pos.Id} " +
+                                    $"reason={ctx.DeadTradeReason} " +
+                                    $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
+                                    $"barsM5={ctx.BarsSinceEntryM5}"
+                                );
 
-                            // cleanup: ne maradjon ctx egy már zárt pos-hoz
-                            _contexts.Remove(key);
+                                _bot.ClosePosition(pos);
 
-                            return;
+                                // cleanup
+                                _contexts.Remove(key);
+
+                                return;
+                            }
                         }
                     }
 
