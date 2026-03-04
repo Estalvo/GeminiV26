@@ -15,7 +15,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
         private const int ATR_PERIOD = 14;
         private const int ADX_PERIOD = 14;
-
+        
         private readonly XAU_InstrumentProfile _p;
 
         public XauMarketStateDetector(Robot bot)
@@ -29,10 +29,36 @@ namespace GeminiV26.Instruments.XAUUSD
             _p = XAU_InstrumentMatrix.Get(bot.SymbolName);
         }
 
-        public XauMarketState Evaluate()
+        public XauMarketState Evaluate(EntryContext ctx)
         {
             int i = _m5.ClosePrices.Count - 1;
-            
+
+            if (i < Math.Max(ATR_PERIOD, ADX_PERIOD))
+                return new XauMarketState();
+
+            // ---- EMA a contextből ----
+            double ema = ctx.Ema21_M5;
+
+            if (double.IsNaN(ema) || ema <= 0)
+            {
+                _bot.Print("[XAU MSD] EMA21 invalid");
+                return new XauMarketState();
+            }
+
+            // ---- price adatok ----
+            double high = _m5.HighPrices[i];
+            double low = _m5.LowPrices[i];
+            double open = _m5.OpenPrices[i];
+            double close = _m5.ClosePrices[i];
+
+            // ---- EMA compression ----
+            double emaDistAtr =
+                ctx.AtrM5 > 0
+                ? Math.Abs(close - ema) / ctx.AtrM5
+                : 0;
+
+            bool isCompression = emaDistAtr < 0.6;
+
             bool hasEnoughData =
                 i >= Math.Max(ATR_PERIOD, ADX_PERIOD) + _p.RangeLookbackBars;
 
@@ -40,19 +66,18 @@ namespace GeminiV26.Instruments.XAUUSD
             double atrPips = atrRaw / _bot.Symbol.PipSize;
             double adx = _dms.ADX[i];
 
-            // Wick ratio (current bar)
-            double high = _m5.HighPrices[i];
-            double low = _m5.LowPrices[i];
-            double open = _m5.OpenPrices[i];
-            double close = _m5.ClosePrices[i];
-
+            // ---- wick ratio ----
             double range = high - low;
             double body = Math.Abs(close - open);
             double wick = Math.Max(0, range - body);
             double wickRatio = range > 0 ? wick / range : 0;
 
-            // Range width ATR (lookback)
+            // ---- range width ATR ----
             int lb = Math.Max(5, _p.RangeLookbackBars);
+
+            if (i < lb)
+                return new XauMarketState();
+
             double hi = double.MinValue;
             double lo = double.MaxValue;
 
@@ -66,16 +91,22 @@ namespace GeminiV26.Instruments.XAUUSD
             double widthAtr = atrRaw > 0 ? width / atrRaw : 999;
 
             bool isLowVol = atrPips < _p.MinAtrPips;
-            bool isTrend = adx >= _p.MinAdxTrend;
 
-            bool isHardRange = widthAtr <= _p.RangeMaxWidthAtr && !isTrend; // szűk + nem trend
+            bool isTrend =
+                adx >= _p.MinAdxTrend
+                && !isCompression;
+
+            bool isHardRange =
+                widthAtr <= _p.RangeMaxWidthAtr
+                || isCompression;
+
             bool isChop = wickRatio >= _p.MaxWickRatio;
 
             _bot.Print(
-                $"[XAU MSD] atrPips={atrPips:F1} adx={adx:F1} widthATR={widthAtr:F2} " +
+                $"[XAU MSD] emaDistATR={emaDistAtr:F2} atrPips={atrPips:F1} adx={adx:F1} widthATR={widthAtr:F2} " +
                 $"lowVol={isLowVol} trend={isTrend} hardRange={isHardRange} wickRatio={wickRatio:F2} chop={isChop}"
             );
-            
+
             return new XauMarketState
             {
                 AtrPips = atrPips,

@@ -35,7 +35,7 @@ namespace GeminiV26.Core.Entry
         public double Ema8_M5;
         public double Ema21_M5;
         public double Ema21_M15;
-
+                
         // =========================
         // EMA STRUCTURE (M5 / M15)
         // =========================
