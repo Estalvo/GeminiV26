@@ -18,7 +18,7 @@ namespace GeminiV26.Instruments.XAUUSD
         private const int ADX_PERIOD = 14;
         
         private readonly XAU_InstrumentProfile _p;
-
+        private readonly ExponentialMovingAverage _ema21;
         public XauMarketStateDetector(Robot bot)
         {
             _bot = bot;
@@ -28,9 +28,10 @@ namespace GeminiV26.Instruments.XAUUSD
             _dms = bot.Indicators.DirectionalMovementSystem(_m5, ADX_PERIOD);
 
             _p = XAU_InstrumentMatrix.Get(bot.SymbolName);
+            _ema21 = bot.Indicators.ExponentialMovingAverage(_m5.ClosePrices, 21);
         }
 
-        public XauMarketState Evaluate(EntryContext ctx)
+        public XauMarketState Evaluate()
         {
             int i = _m5.Count - 1;
 
@@ -38,8 +39,8 @@ namespace GeminiV26.Instruments.XAUUSD
                 return new XauMarketState();
 
             // ---- EMA a contextből ----
-            double ema = ctx.Ema21_M5;
-
+            double ema = _ema21.Result[i];
+            
             if (double.IsNaN(ema) || ema <= 0)
             {
                 _bot.Print("[XAU MSD] EMA21 invalid");

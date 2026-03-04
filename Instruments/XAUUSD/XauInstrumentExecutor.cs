@@ -78,7 +78,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
-            var ms = _marketStateDetector.Evaluate(ctx);
+            var ms = _marketStateDetector.Evaluate();
             
             // =========================
             // MARKET STATE – SOFT (XAU)
