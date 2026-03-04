@@ -2,6 +2,7 @@
 using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.EntryTypes.METAL;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Instruments.XAUUSD
 {
