@@ -40,7 +40,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             // ---- EMA a contextből ----
             double ema = _ema21.Result[i];
-            
+
             if (double.IsNaN(ema) || ema <= 0)
             {
                 _bot.Print("[XAU MSD] EMA21 invalid");
@@ -54,9 +54,11 @@ namespace GeminiV26.Instruments.XAUUSD
             double close = _m5.ClosePrices[i];
 
             // ---- EMA compression ----
+            double atrRaw = _atr.Result[i];
+
             double emaDistAtr =
-                ctx.AtrM5 > 0
-                ? Math.Abs(close - ema) / ctx.AtrM5
+                atrRaw > 0
+                ? Math.Abs(close - ema) / atrRaw
                 : 0;
 
             bool isCompression = emaDistAtr < 0.6;
