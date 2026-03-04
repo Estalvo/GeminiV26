@@ -523,7 +523,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 score -= BiasAgainstPenalty;
 
-                _bot.Print(
+                ctx.Bot.Print(
                     $"[BTC_PULLBACK][BIAS_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
                 );
             }
