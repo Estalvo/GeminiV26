@@ -17,10 +17,10 @@ namespace GeminiV26.EntryTypes.METAL
                     // ===== instrument karakter =====
                     pullbackStyle: FxPullbackStyle.EMA50,
                     minAtrPips: 10.0,
-                    minAdx: 18.0,
+                    minAdx: 22.0,
                     maxWick: 0.52,
                     rangeLookback: 14,
-                    rangeMaxAtr: 0.95,
+                    rangeMaxAtr: 2.2,
                     allowAsia: false,
                     sessionStart: 7,
                     sessionEnd: 20,
