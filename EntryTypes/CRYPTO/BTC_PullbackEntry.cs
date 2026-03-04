@@ -515,6 +515,19 @@ namespace GeminiV26.EntryTypes.Crypto
             int dynamicMinScore = MIN_SCORE;
 
             // =========================
+            // BIAS SOFT PENALTY (same logic as FlagEntry)
+            // =========================
+            if (ctx.TrendDirection != TradeDirection.None &&
+                dir != ctx.TrendDirection)
+            {
+                score -= BiasAgainstPenalty;
+
+                _bot.Print(
+                    $"[BTC_PULLBACK][BIAS_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
+                );
+            }
+
+            // =========================
             // FINAL CHECK
             // =========================
             if (score < dynamicMinScore)
