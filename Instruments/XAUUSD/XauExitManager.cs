@@ -97,19 +97,17 @@ namespace GeminiV26.Instruments.XAUUSD
         // =====================================================
         public void OnTick()
         {
-            foreach (var pos in _bot.Positions.ToList())
+            foreach (var ctx in _contexts.Values)
             {
-                if (!pos.SymbolName.Contains("XAU"))
+                var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
+                if (pos == null)
                     continue;
 
+                if (ctx.RiskPriceDistance <= 0)
+                    continue;
+                    
                 if (!pos.StopLoss.HasValue)
                     continue;
-
-                if (!_contexts.TryGetValue(pos.Id, out var ctx))
-                {
-                    Debug($"[XAU EXIT DBG] NO CTX for pos={pos.Id}");
-                    continue;
-                }
 
                 var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
                 if (sym == null)
