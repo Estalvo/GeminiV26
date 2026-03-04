@@ -190,31 +190,42 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add($"FLAG_WIDE_SESSION(-{p}) rangeAtr={rangeAtr:F2} lim={sessionLimit:F2}");
             }
 
-            // ===== breakout trigger (B-mode): closeBreak OR wickBreak+strongBody =====
+            // breakout trigger (strict mode): closeBreak + ATR margin
+            // wickBreak ignored to avoid XAU spike fakeouts
             double lastClose = lastBar.Close;
             double lastOpen = lastBar.Open;
             double lastHigh = lastBar.High;
             double lastLow = lastBar.Low;
 
             bool closeBreak = dir == TradeDirection.Long ? lastClose > hi : lastClose < lo;
-            bool wickBreak = dir == TradeDirection.Long ? lastHigh >= hi : lastLow <= lo;
+
+            /*bool wickBreak = dir == TradeDirection.Long
+                ? lastHigh > hi
+                : lastLow < lo;
 
             bool strongBodyDir = dir == TradeDirection.Long ? lastClose > lastOpen : lastClose < lastOpen;
+*/
 
-            double range = lastHigh - lastLow;
+            double candleRange = lastHigh - lastLow;
+            double bodyRatio = candleRange > 0 ? body / candleRange : 0;
             double body = Math.Abs(lastClose - lastOpen);
-            double bodyRatio = range > 0 ? body / range : 0;
-
+            
             bool bodyDominant = bodyRatio >= MinBodyRatio;
 
             // distance beyond breakout boundary (for HTF-against quality)
+            // breakout trigger (strict mode)
             double breakDist = dir == TradeDirection.Long
                 ? Math.Max(0, lastClose - hi)
                 : Math.Max(0, lo - lastClose);
+
             double breakAtr = (ctx.AtrM5 > 0) ? (breakDist / ctx.AtrM5) : 0;
 
-            const double MinCloseBreakAtr = 0.05; // 0.03–0.08 között érdemes tesztelni XAU-n
-            bool breakout = closeBreak && breakAtr >= MinCloseBreakAtr;
+            const double MinCloseBreakAtr = 0.05;
+
+            bool breakout =
+                closeBreak
+                && breakAtr >= MinCloseBreakAtr
+                && bodyDominant;
 
             bool isHtfAgainst = (ctx.TrendDirection != TradeDirection.None && dir != ctx.TrendDirection);
 
@@ -223,12 +234,6 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (!breakout)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "NO_BREAK", reasons);
-
-            if (!bodyDominant)
-            {
-                score -= 4;
-                reasons.Add("WEAK_BODY(-4)");
-            }
 
             // ===== HTF bias handling: small penalty + stronger breakout quality when against =====
             if (isHtfAgainst)
@@ -293,11 +298,15 @@ namespace GeminiV26.EntryTypes.METAL
             rangeAtr = 999;
 
             var bars = ctx.M5;
-            int lastClosed = bars.Count - 2;
-            int start = lastClosed - flagBars + 1;
-            if (start < 2) return false;
 
-            for (int i = start; i <= lastClosed; i++)
+            int lastClosed = bars.Count - 2;
+            int flagEnd = lastClosed - 1;
+            int start = flagEnd - flagBars + 1;
+
+            if (start < 2)
+                return false;
+
+            for (int i = start; i <= flagEnd; i++)
             {
                 hi = Math.Max(hi, bars[i].High);
                 lo = Math.Min(lo, bars[i].Low);
@@ -306,7 +315,11 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.AtrM5 <= 0)
                 return false;
 
-            rangeAtr = (hi - lo) / ctx.AtrM5;
+            double range = hi - lo;
+            if (range <= 0)
+                return false;
+
+                rangeAtr = range / ctx.AtrM5;
             return true;
         }
 
