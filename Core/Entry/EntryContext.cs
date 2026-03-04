@@ -185,10 +185,6 @@ namespace GeminiV26.Core.Entry
         public FxSession Session { get; set; }
 
         public Robot Bot { get; }
-
-        public EntryContext(Robot bot)
-        {
-            Bot = bot;
-        }
+        
     }
 }
