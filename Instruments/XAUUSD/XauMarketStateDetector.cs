@@ -66,7 +66,7 @@ namespace GeminiV26.Instruments.XAUUSD
             bool hasEnoughData =
                 i >= Math.Max(ATR_PERIOD, ADX_PERIOD) + _p.RangeLookbackBars;
 
-            double atrRaw = _atr.Result[i];
+            
             double atrPips = atrRaw / _bot.Symbol.PipSize;
             double adx = _dms.ADX[i];
 
