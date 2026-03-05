@@ -49,6 +49,13 @@ namespace GeminiV26.EntryTypes.FX
             );
 
             // -----------------------------------------------------
+            // MARKET STATE FILTER
+            // -----------------------------------------------------
+
+            if (ctx.IsLowVol_M5)
+                return Invalid(ctx, dir, "LOW_VOL_BLOCK", score);
+                
+            // -----------------------------------------------------
             // MICRO COMPRESSION DETECTION
             // -----------------------------------------------------
 
@@ -57,12 +64,12 @@ namespace GeminiV26.EntryTypes.FX
 
             ctx.Log?.Invoke($"[FX_MICRO RANGE] dir={dir} rATR={rAtr:F2}");
 
-            if (rAtr > 2.2)
+            if (rAtr > 1.8)
                 return Invalid(ctx, dir, "RANGE_TOO_WIDE", score);
 
             if (rAtr < 0.9) score += 4;
             else if (rAtr < 1.2) score += 2;
-            else if (rAtr > 1.8) score -= 3;
+            else if (rAtr < 1.6) score += 0;
 
             // -----------------------------------------------------
             // IMPULSE CONTEXT
@@ -84,13 +91,17 @@ namespace GeminiV26.EntryTypes.FX
             {
                 double conf = ctx.FxHtfConfidence01;
 
-                if (conf > 0.70) score += 5;
-                else if (conf > 0.50) score += 3;
-                else if (conf > 0.30) score += 1;
+                if (conf > 0.75) score += 6;
+                else if (conf > 0.55) score += 4;
+                else if (conf > 0.35) score += 2;
             }
             else if (ctx.FxHtfAllowedDirection != TradeDirection.None)
             {
-                score -= 4;
+                double conf = ctx.FxHtfConfidence01;
+
+                if (conf > 0.60) score -= 10;
+                else if (conf > 0.40) score -= 7;
+                else score -= 4;
             }
 
             // -----------------------------------------------------
@@ -99,8 +110,12 @@ namespace GeminiV26.EntryTypes.FX
 
             bool breakout = false;
 
-            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
+            if (ctx.HasBreakout_M1 &&
+                ctx.BreakoutDirection == dir &&
+                rAtr < 1.6)
+            {
                 breakout = true;
+            }
 
             if (!breakout)
                 return Invalid(ctx, dir, "WAIT_BREAKOUT", score);
@@ -112,6 +127,9 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
 
             int lastClosed = ctx.M5.Count - 2;
+            if (lastClosed < 0)
+                return Invalid(ctx, dir, "NO_LAST_BAR", score);
+
             var last = ctx.M5[lastClosed];
 
             double body = Math.Abs(last.Close - last.Open);
@@ -152,7 +170,7 @@ namespace GeminiV26.EntryTypes.FX
             // FINAL SCORE GATE
             // -----------------------------------------------------
 
-            int minScore = 56;
+            int minScore = 68;
 
             ctx.Log?.Invoke($"[FX_MICRO FINAL] dir={dir} score={score} min={minScore}");
 
