@@ -119,8 +119,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 // - prefer: ctx.RiskPriceDistance
                 // - fallback: pos.EntryPrice vs pos.StopLoss (végső)
                 // -------------------------------------------------
-                double? tp1PriceMaybe = ctx.Tp1Price;
-
+               
                 double rDist = GetRiskDistance(pos, ctx);
                 if (rDist <= 0)
                     continue;
@@ -163,35 +162,19 @@ namespace GeminiV26.Instruments.XAUUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
-                    double tp1Price;
+                    double tp1R = ResolveTp1R(ctx);
 
-                    if (tp1PriceMaybe.HasValue && tp1PriceMaybe.Value > 0)
-                    {
-                        tp1Price = tp1PriceMaybe.Value;
-                    }
-                    else
-                    {
-                        // profil bucket → ha ctx.Tp1R nincs rendesen kitöltve, pótoljuk
-                        double tp1R = ResolveTp1R(ctx);
-                        tp1Price = pos.TradeType == TradeType.Buy
-                            ? pos.EntryPrice + rDist * tp1R
-                            : pos.EntryPrice - rDist * tp1R;
+                    double tp1Price = pos.TradeType == TradeType.Buy
+                        ? pos.EntryPrice + rDist * tp1R
+                        : pos.EntryPrice - rDist * tp1R;
 
-                        // opcionális: ctx.Tp1Price beégetése, hogy stabil legyen később is
-                        ctx.Tp1Price = tp1Price;
-                        if (ctx.Tp1R <= 0) ctx.Tp1R = tp1R;
-                    }
+                    if (ctx.Tp1R <= 0)
+                        ctx.Tp1R = tp1R;
 
                     double priceNow =
                         pos.TradeType == TradeType.Buy
                             ? sym.Bid
                             : sym.Ask;
-
-                    Debug(
-                        $"[XAU TP1 DBG] pos={pos.Id} dir={pos.TradeType} " +
-                        $"entry={pos.EntryPrice:F2} SL={pos.StopLoss.Value:F2} " +
-                        $"rDist={rDist:F2} TP1@={tp1Price:F2} price={priceNow:F2}"
-                    );
 
                     bool hit =
                         pos.TradeType == TradeType.Buy
@@ -201,10 +184,10 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (hit)
                     {
                         ExecuteTp1(pos, ctx, rDist);
-                        return; 
+                        return;
                     }
 
-                    continue; // TP1 előtt trailing tilos
+                    continue;
                 }
 
                 // =========================
