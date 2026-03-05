@@ -1083,8 +1083,30 @@ namespace GeminiV26.Core
                 if (bias.State == HtfBiasState.Neutral ||
                     bias.State == HtfBiasState.Transition)
                 {
-                    _bot.Print("[TC] XAU HTF NOTE: Transition/Neutral -> skip bias filtering, continue to router");
-                    // NEM return!
+                    _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback only");
+
+                    symbolSignals = symbolSignals
+                        .Where(e =>
+                            e == null ||
+                            !e.IsValid ||
+                            e.Type == EntryType.XAU_Pullback)
+                        .ToList();
+
+                    if (symbolSignals.All(e => e == null || !e.IsValid))
+                    {
+                        foreach (var s in symbolSignals)
+                        {
+                            _bot.Print(
+                                $"[TC][XAU HTF CAND] type={s?.Type} " +
+                                $"valid={s?.IsValid} dir={s?.Direction} " +
+                                $"score={s?.Score} reason={s?.Reason}");
+                        }
+
+                        _bot.Print("[TC] XAU HTF BLOCK: no valid pullback in Transition/Neutral");
+                        return;
+                    }
+
+                    // no direction filter
                 }
                 else
                 {
@@ -1143,7 +1165,9 @@ namespace GeminiV26.Core
                 {
                     _bot.Print(
                         $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
-                        $"Width={xauState.RangeWidth:F2} ADX={xauState.Adx:F1}"
+                        $"Width={xauState.RangeWidth:F2} " +
+                        $"ADX={xauState.Adx:F1} " +
+                        $"ATR={xauState.Atr:F2}"
                     );
                     return;
                 }
