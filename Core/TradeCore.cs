@@ -989,126 +989,73 @@ namespace GeminiV26.Core
                     $"valid={e.IsValid} score={e.Score} reason={e.Reason}"
                 );
             }
-            // =========================
-            // FX HTF BIAS GATE (Group-level)
-            // =========================
-            bool isFxSymbolGate =
-                isFxSymbol &&
-                !symU.Contains("XAU") &&
-                !IsNasSymbol(symU) &&
-                !symU.Contains("US30") &&
-                !symU.Contains("GER40") &&
-                !symU.Contains("GER") &&
-                !symU.Contains("BTC") &&
-                !symU.Contains("ETH");
-                        
-            if (isFxSymbolGate && _fxBias != null)
-            {
-                var bias = _fxBias.Get(_bot.SymbolName);
 
-                _ctx.FxHtfAllowedDirection = bias.AllowedDirection;
-                _ctx.FxHtfConfidence01 = bias.Confidence01;
-                _ctx.FxHtfReason = bias.Reason;
+        // =====================================================
+        // HTF BIAS GATE (Asset-group level)
+        // Handles FX / Crypto / Metals / Index policies
+        // =====================================================
 
-                _bot.Print(
-                    $"[FX HTF] allow={bias.AllowedDirection} " +
-                    $"conf={bias.Confidence01:0.00} reason={bias.Reason}"
-                );
-            }
-            else if (isCryptoSymbol && _cryptoBias != null)
-{
-    var bias = _cryptoBias.Get(_bot.SymbolName);
-
-    _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
-
-    // =====================================================
-    // 1) TRANSITION / NEUTRAL
-    //    -> NO FULL BLOCK
-    //    -> Only Pullback allowed
-    // =====================================================
-    if (bias.State == HtfBiasState.Neutral ||
-        bias.State == HtfBiasState.Transition)
-    {
-        _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback only, no direction filter");
-
-        symbolSignals = symbolSignals
-            .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
-            .ToList();
-
-        if (symbolSignals.All(e => e == null || !e.IsValid))
+        // =========================
+        // FX
+        // =========================
+        if (isFxSymbol && _fxBias != null)
         {
-            foreach (var s in symbolSignals)
-            {
-                _bot.Print(
-                    $"[TC][CRYPTO HTF CAND] type={s?.Type} " +
-                    $"valid={s?.IsValid} dir={s?.Direction} " +
-                    $"score={s?.Score} reason={s?.Reason}");
-            }
+            var bias = _fxBias.Get(_bot.SymbolName);
 
-            _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback in Transition/Neutral");
-            return;
+            _ctx.FxHtfAllowedDirection = bias.AllowedDirection;
+            _ctx.FxHtfConfidence01 = bias.Confidence01;
+            _ctx.FxHtfReason = bias.Reason;
+
+            _bot.Print(
+                $"[FX HTF] allow={bias.AllowedDirection} " +
+                $"conf={bias.Confidence01:0.00} reason={bias.Reason}"
+            );
         }
 
-        // IMPORTANT:
-        // No direction filtering here.
-        // Continue to router.
-    }
-    else
-    {
-        // =====================================================
-        // 2) BULL / BEAR
-        //    -> Direction filter enforced
-        // =====================================================
-        if (bias.AllowedDirection != TradeDirection.None)
+        // =========================
+        // CRYPTO
+        // =========================
+        else if (isCryptoSymbol && _cryptoBias != null)
         {
-            symbolSignals = symbolSignals
-                .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                .ToList();
+            var bias = _cryptoBias.Get(_bot.SymbolName);
 
-            if (symbolSignals.All(e => e == null || !e.IsValid))
+            _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
+
+            // =====================================================
+            // 1) TRANSITION / NEUTRAL
+            //    -> Pullback only
+            //    -> No direction filter
+            // =====================================================
+            if (bias.State == HtfBiasState.Neutral ||
+                bias.State == HtfBiasState.Transition)
             {
-                _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by allowed direction");
-                return;
-            }
-        }
-    }
-}
+                _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback only, no direction filter");
 
-            else if (isMetalSymbol && _metalBias != null)
-            {
-                var bias = _metalBias.Get(_bot.SymbolName);
+                symbolSignals = symbolSignals
+                    .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
+                    .ToList();
 
-                _bot.Print($"[XAU HTF] state={bias.State} allow={bias.AllowedDirection}");
-
-                if (bias.State == HtfBiasState.Neutral ||
-                    bias.State == HtfBiasState.Transition)
+                if (symbolSignals.All(e => e == null || !e.IsValid))
                 {
-                    _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback only");
-
-                    symbolSignals = symbolSignals
-                        .Where(e =>
-                            e == null ||
-                            !e.IsValid ||
-                            e.Type == EntryType.XAU_Pullback)
-                        .ToList();
-
-                    if (symbolSignals.All(e => e == null || !e.IsValid))
+                    foreach (var s in symbolSignals)
                     {
-                        foreach (var s in symbolSignals)
-                        {
-                            _bot.Print(
-                                $"[TC][XAU HTF CAND] type={s?.Type} " +
-                                $"valid={s?.IsValid} dir={s?.Direction} " +
-                                $"score={s?.Score} reason={s?.Reason}");
-                        }
-
-                        _bot.Print("[TC] XAU HTF BLOCK: no valid pullback in Transition/Neutral");
-                        return;
+                        _bot.Print(
+                            $"[TC][CRYPTO HTF CAND] type={s?.Type} " +
+                            $"valid={s?.IsValid} dir={s?.Direction} " +
+                            $"score={s?.Score} reason={s?.Reason}");
                     }
 
-                    // no direction filter
+                    _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback in Transition/Neutral");
+                    return;
                 }
-                else
+            }
+
+            // =====================================================
+            // 2) TREND (Bull / Bear)
+            // =====================================================
+            else
+            {
+                if (bias.AllowedDirection != TradeDirection.None)
                 {
                     symbolSignals = symbolSignals
                         .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
@@ -1116,105 +1063,161 @@ namespace GeminiV26.Core
 
                     if (symbolSignals.All(e => e == null || !e.IsValid))
                     {
-                        _bot.Print("[TC] XAU HTF BLOCK: all candidates filtered by bias");
+                        _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by allowed direction");
+                        return;
+                    }
+                }
+            }
+        }
+
+                // =========================
+                // METALS (XAU)
+                // =========================
+                else if (isMetalSymbol && _metalBias != null)
+                {
+                    var bias = _metalBias.Get(_bot.SymbolName);
+
+                    _bot.Print($"[XAU HTF] state={bias.State} allow={bias.AllowedDirection}");
+
+                    if (bias.State == HtfBiasState.Neutral ||
+                        bias.State == HtfBiasState.Transition)
+                    {
+                        _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback only");
+
+                        symbolSignals = symbolSignals
+                            .Where(e =>
+                                e == null ||
+                                !e.IsValid ||
+                                e.Type == EntryType.XAU_Pullback)
+                            .ToList();
+
+                        if (symbolSignals.All(e => e == null || !e.IsValid))
+                        {
+                            foreach (var s in symbolSignals)
+                            {
+                                _bot.Print(
+                                    $"[TC][XAU HTF CAND] type={s?.Type} " +
+                                    $"valid={s?.IsValid} dir={s?.Direction} " +
+                                    $"score={s?.Score} reason={s?.Reason}");
+                            }
+
+                            _bot.Print("[TC] XAU HTF BLOCK: no valid pullback in Transition/Neutral");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        symbolSignals = symbolSignals
+                            .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                            .ToList();
+
+                        if (symbolSignals.All(e => e == null || !e.IsValid))
+                        {
+                            _bot.Print("[TC] XAU HTF BLOCK: all candidates filtered by bias");
+                            return;
+                        }
+                    }
+                }
+
+                // =========================
+                // INDEX
+                // =========================
+                else if (isIndexSymbol && _indexBias != null)
+                {
+                    var bias = _indexBias.Get(_bot.SymbolName);
+
+                    _bot.Print($"[INDEX HTF] state={bias.State} allow={bias.AllowedDirection}");
+
+                    if (bias.State == HtfBiasState.Neutral ||
+                        bias.State == HtfBiasState.Transition)
+                    {
+                        _bot.Print("[TC] INDEX HTF BLOCK: state=Transition/Neutral");
+                        return;
+                    }
+
+                    symbolSignals = symbolSignals
+                        .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                        .ToList();
+
+                    if (symbolSignals.All(e => e == null || !e.IsValid))
+                    {
+                        _bot.Print("[TC] INDEX HTF BLOCK: all candidates filtered by bias");
                         return;
                     }
                 }
 
-            }
-            else if (isIndexSymbol && _indexBias != null)
-            {
-                var bias = _indexBias.Get(_bot.SymbolName);
 
-                _bot.Print($"[INDEX HTF] state={bias.State} allow={bias.AllowedDirection}");
+                // =====================================================
+                // ROUTER
+                // =====================================================
+                var selected = _router.SelectEntry(symbolSignals);
 
-                if (bias.State == HtfBiasState.Neutral ||
-                    bias.State == HtfBiasState.Transition)
-                    return;
+                _bot.Print($"[TRACE] selected is null = {selected == null}");
 
-                symbolSignals = symbolSignals
-                    .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                    .ToList();
-
-                if (symbolSignals.All(e => e == null || !e.IsValid))
+                if (selected == null)
                 {
-                    _bot.Print("[TC] INDEX HTF BLOCK: all candidates filtered by bias");
+                    _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
                     return;
                 }
-            }
 
-            var selected = _router.SelectEntry(symbolSignals);
 
-            _bot.Print($"[TRACE] selected is null = {selected == null}");
-
-            if (selected == null)
-            {
-                _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
-                return;
-            }
-
-            // =========================
-            // XAU HARD RANGE BLOCK (ENTRY-LEVEL)
-            // =========================
-            if (_bot.SymbolName.Contains("XAU") &&
-                _xauMarketStateDetector != null)
-            {
-                xauState = _xauMarketStateDetector.Evaluate();
-
-                if (xauState != null && xauState.IsRange)
+                // =====================================================
+                // XAU HARD RANGE BLOCK
+                // =====================================================
+                if (_bot.SymbolName.Contains("XAU") &&
+                    _xauMarketStateDetector != null)
                 {
-                    _bot.Print(
-                        $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
-                        $"Width={xauState.RangeWidth:F2} " +
-                        $"ADX={xauState.Adx:F1} " +
-                        $"ATR={xauState.Atr:F2}"
-                    );
+                    xauState = _xauMarketStateDetector.Evaluate();
+
+                    if (xauState != null && xauState.IsRange)
+                    {
+                        _bot.Print(
+                            $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
+                            $"Width={xauState.RangeWidth:F2} " +
+                            $"ADX={xauState.Adx:F1} " +
+                            $"ATR={xauState.Atr:F2}"
+                        );
+                        return;
+                    }
+                }
+
+
+                // =====================================================
+                // META STORE GUARD
+                // =====================================================
+                if (_tradeMetaStore == null)
+                {
+                    _bot.Print("[TC] ERROR: _tradeMetaStore is NULL (skip entry)");
                     return;
                 }
-            }
 
-            // ADDED: meta store guard
-            if (_tradeMetaStore == null)
-            {
-                _bot.Print("[TC] ERROR: _tradeMetaStore is NULL (skip entry)");
-                return;
-            }
 
-            _tradeMetaStore.RegisterPending(
-                _bot.SymbolName,
-                new PendingEntryMeta
+                // =====================================================
+                // REGISTER ENTRY META
+                // =====================================================
+                _tradeMetaStore.RegisterPending(
+                    _bot.SymbolName,
+                    new PendingEntryMeta
+                    {
+                        EntryType = selected.Type.ToString(),
+                        EntryReason = selected.Reason,
+                        Confidence = Convert.ToInt32(selected.Score)
+                    }
+                );
+
+                _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
+
+
+                // =====================================================
+                // DIRECTION VALIDATION
+                // =====================================================
+                if (selected.Direction == TradeDirection.None)
                 {
-                    EntryType = selected.Type.ToString(),
-                    EntryReason = selected.Reason,
-                    Confidence = Convert.ToInt32(selected.Score)
-                }
-            );
-
-            _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
-
-            if (selected.Direction == TradeDirection.None)
-            {
-                _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
-                return;
-            }
-
-            var gateDir = ToTradeTypeStrict(selected.Direction);
-
-            // =========================
-            // XAU range hard block (only if state exists)
-            // =========================
-            if (_bot.SymbolName.Contains("XAU") && xauState != null)
-            {
-                bool hardRange = xauState.IsRange;
-                if (hardRange)
-                {
-                    _bot.Print(
-                        $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
-                        $"Width={xauState.RangeWidth:F2} ADX={xauState.Adx:F1} Vol={xauState.VolumeNorm:F2}"
-                    );
+                    _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
                     return;
                 }
-            }
+
+                var gateDir = ToTradeTypeStrict(selected.Direction);
 
             // === GATES ONLY ===
             if (_bot.SymbolName.Contains("XAU"))
