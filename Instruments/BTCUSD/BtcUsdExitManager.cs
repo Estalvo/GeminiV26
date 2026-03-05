@@ -119,7 +119,7 @@ namespace GeminiV26.Instruments.BTCUSD
                     // TVM – Early Exit (TP1 előtt)
                     // =========================
                     {
-                        const int MinBarsBeforeTvm = 3;
+                        const int MinBarsBeforeTvm = 4;
 
                         if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
