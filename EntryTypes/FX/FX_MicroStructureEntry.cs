@@ -52,7 +52,7 @@ namespace GeminiV26.EntryTypes.FX
             // MARKET STATE FILTER
             // -----------------------------------------------------
 
-            if (ctx.IsLowVol_M5)
+            if (ctx.MarketState != null && ctx.MarketState.IsLowVol)
                 return Invalid(ctx, dir, "LOW_VOL_BLOCK", score);
                 
             // -----------------------------------------------------

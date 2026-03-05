@@ -120,7 +120,7 @@ namespace GeminiV26.Core.Entry
         public bool IsAtrExpanding_M5;
         public bool IsVolumeIncreasing_M5;
         public bool IsVolatilityAcceptable_Crypto { get; set; }
-        
+                
         // =========================
         // Market State (INDEX / XAU / FX context)
         // =========================
