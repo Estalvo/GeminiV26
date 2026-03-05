@@ -346,6 +346,7 @@ namespace GeminiV26.Core
                 {
                     new FX_FlagEntry(),                   // ÚJ, valódi flag
                     new FX_FlagContinuationEntry(),       // RÉGI "flag"
+                    new FX_MicroStructureEntry(),         // 👈 ÚJ
                     new FX_MicroContinuationEntry(),
                     new FX_PullbackEntry(),
                     new FX_RangeBreakoutEntry(),
