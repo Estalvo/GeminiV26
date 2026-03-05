@@ -48,6 +48,13 @@ namespace GeminiV26.EntryTypes.FX
                 $"impulse={ctx.HasImpulse_M5} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}"
             );
 
+            int barsSinceBreak =
+                dir == TradeDirection.Long
+                ? ctx.BarsSinceHighBreak_M5
+                : ctx.BarsSinceLowBreak_M5;
+
+            ctx.Log?.Invoke($"[FX_MICRO STRUCT] barsSinceBreak={barsSinceBreak}");
+            
             // -----------------------------------------------------
             // MARKET STATE FILTER
             // -----------------------------------------------------
@@ -110,11 +117,6 @@ namespace GeminiV26.EntryTypes.FX
 
             bool breakout = false;
 
-            int barsSinceBreak =
-                dir == TradeDirection.Long
-                ? ctx.BarsSinceHighBreak_M5
-                : ctx.BarsSinceLowBreak_M5;
-
             if (ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == dir &&
                 rAtr < 1.6 &&
@@ -147,11 +149,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // STRUCTURE FRESHNESS
             // -----------------------------------------------------
-
-            int barsSinceBreak =
-                dir == TradeDirection.Long
-                ? ctx.BarsSinceHighBreak_M5
-                : ctx.BarsSinceLowBreak_M5;
 
             if (barsSinceBreak > 3)
                 score -= 3;
