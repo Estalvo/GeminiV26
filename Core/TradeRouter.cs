@@ -170,11 +170,19 @@ namespace GeminiV26.Core
             switch (type)
             {
                 case EntryType.FX_Flag: return 0;
+
                 case EntryType.FX_FlagContinuation: return 1;
-                case EntryType.FX_MicroContinuation: return 2; // 👈 ÚJ
-                case EntryType.FX_Pullback: return 3;
-                case EntryType.FX_RangeBreakout: return 4;
-                case EntryType.FX_Reversal: return 5;
+
+                case EntryType.FX_MicroStructure: return 2;
+
+                case EntryType.FX_MicroContinuation: return 3;
+
+                case EntryType.FX_Pullback: return 4;
+
+                case EntryType.FX_RangeBreakout: return 5;
+
+                case EntryType.FX_Reversal: return 6;
+
                 default: return 100;
             }
         }

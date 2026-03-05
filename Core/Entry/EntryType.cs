@@ -15,6 +15,7 @@
         FX_Reversal,
         FX_FlagContinuation,
         FX_MicroContinuation,
+        FX_MicroStructure,
 
         // ===== INDEX =====
         Index_Breakout,
