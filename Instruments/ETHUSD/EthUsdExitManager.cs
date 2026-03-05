@@ -115,7 +115,7 @@ namespace GeminiV26.Instruments.ETHUSD
                     // TVM – Early Exit (TP1 előtt)
                     // =========================
                     {
-                        const int MinBarsBeforeTvm = 2;
+                        const int MinBarsBeforeTvm = 4;
 
                         if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
