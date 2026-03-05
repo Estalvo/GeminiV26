@@ -15,7 +15,7 @@ namespace GeminiV26.Core.HtfBias
     }
 }
 
-/*
+
 public sealed class HtfBiasSnapshot
 {
     public HtfBiasState State { get; set; } = HtfBiasState.Neutral;
@@ -24,7 +24,7 @@ public sealed class HtfBiasSnapshot
     public DateTime LastUpdateH1Closed { get; set; } = DateTime.MinValue;
     public string Reason { get; set; } = "INIT";
 
-    // convenience helpers (használhatók engine-ekben)
+    // convenience helpers (hasznï¿½lhatï¿½k engine-ekben)
     public static HtfBiasSnapshot Neutral(string reason)
         => new() { State = HtfBiasState.Neutral, Reason = reason };
 
@@ -43,10 +43,10 @@ public sealed class HtfBiasSnapshot
             Reason = reason
         };
 }
-*/
+
 
 public interface IHtfBiasProvider
     {
         HtfBiasSnapshot Get(string symbolName);
     }
-}
+
