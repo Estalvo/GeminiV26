@@ -4,7 +4,7 @@ using cAlgo.API;
 namespace GeminiV26.Core
 {
     /// <summary>
-    /// Gemini V26 – Trade Viability Monitor (TVM)
+    /// Gemini V26 – Trade Viability Monitor (TVM 2.0)
     /// Asset-aware: FX / INDEX / METAL / CRYPTO
     ///
     /// NOTE: Ez a modul csak akkor él, ha az ExitManager(ek) hívják.
@@ -21,14 +21,13 @@ namespace GeminiV26.Core
         public bool ShouldEarlyExit(
             PositionContext ctx,
             Position pos,
-            Bars m5,
-            Bars m15)
+            Bars m5)
         {
             // TP1 után nem zárunk
             if (ctx.Tp1Hit)
                 return false;
 
-            if (m5 == null || m5.Count < 5)
+            if (m5 == null || m5.Count < 6)
                 return false;
 
             double risk = ctx.RiskPriceDistance;
@@ -38,42 +37,23 @@ namespace GeminiV26.Core
             // =====================================================
             // 0️⃣ ASSET CLASS DETECTION
             // =====================================================
-
             string sym = pos.SymbolName ?? string.Empty;
 
             bool isFx =
-                sym == "EURUSD" ||
-                sym == "GBPUSD" ||
-                sym == "USDJPY" ||
-                sym == "AUDNZD" ||
-                sym == "AUDUSD" ||
-                sym == "NZDUSD" ||
-                sym == "USDCHF" ||
-                sym == "USDCAD" ||
-                sym == "EURJPY" ||
-                sym == "GBPJPY";
+                sym == "EURUSD" || sym == "GBPUSD" || sym == "USDJPY" ||
+                sym == "AUDNZD" || sym == "AUDUSD" || sym == "NZDUSD" ||
+                sym == "USDCHF" || sym == "USDCAD" || sym == "EURJPY" || sym == "GBPJPY";
 
             bool isCrypto =
-                sym == "BTCUSD" ||
-                sym == "ETHUSD" ||
-                sym == "BTCUSDT" ||
-                sym == "ETHUSDT";
+                sym == "BTCUSD" || sym == "ETHUSD" || sym == "BTCUSDT" || sym == "ETHUSDT";
 
             bool isMetal =
-                sym == "XAUUSD" ||
-                sym == "XAGUSD" ||
-                sym == "XPTUSD" ||
-                sym == "XPDUSD";
+                sym == "XAUUSD" || sym == "XAGUSD" || sym == "XPTUSD" || sym == "XPDUSD";
 
             bool isIndex =
-                sym == "NAS100" ||
-                sym == "US30" ||
-                sym == "SPX500" ||
-                sym == "DE40" ||
-                sym == "UK100" ||
-                sym == "JP225";
+                sym == "NAS100" || sym == "US30" || sym == "SPX500" ||
+                sym == "DE40" || sym == "UK100" || sym == "JP225";
 
-            // fallback: ha nincs felismerve, akkor "INDEX-like" (gyors döntés) helyett inkább konzervatív METAL/INDEX közép
             string asset =
                 isFx ? "FX" :
                 isCrypto ? "CRYPTO" :
@@ -82,10 +62,9 @@ namespace GeminiV26.Core
                 "UNKNOWN";
 
             // =====================================================
-            // 0.1️⃣ ASSET-SPECIFIC THRESHOLDS (MFE/MAE/TIME/B2E)
+            // 0.1️⃣ ASSET-SPECIFIC THRESHOLDS
             // =====================================================
 
-            // MFE = minimum progress elvárás (dead/no follow-through)
             double mfeNoProgressR =
                 isFx ? 0.12 :
                 isCrypto ? 0.30 :
@@ -93,7 +72,6 @@ namespace GeminiV26.Core
                 isMetal ? 0.20 :
                 0.20;
 
-            // MAE = ellenirányú mozgás küszöb (veszély)
             double maeAdverseR =
                 isFx ? 0.40 :
                 isCrypto ? 0.25 :
@@ -101,15 +79,13 @@ namespace GeminiV26.Core
                 isMetal ? 0.30 :
                 0.35;
 
-            // Minimum időablak percben (hogy ne vágjunk túl korán)
             double minMinutesOpen =
-                isFx ? 25 :          // FX: türelmesebb
-                isCrypto ? 10 :      // crypto: gyors döntés
-                isIndex ? 12 :       // index: gyors döntés, de ne túl agresszív
-                isMetal ? 12 :       // metal: spike-ok miatt közepes
+                isFx ? 25 :
+                isCrypto ? 10 :
+                isIndex ? 12 :
+                isMetal ? 12 :
                 15;
 
-            // Back-to-entry tolerancia R-ben (ha visszajött entry környékére)
             double backToEntryBandR =
                 isFx ? 0.18 :
                 isCrypto ? 0.12 :
@@ -117,27 +93,58 @@ namespace GeminiV26.Core
                 isMetal ? 0.15 :
                 0.15;
 
-            // Danger threshold (intelligens threshold) – asset szerint
             int dangerThreshold =
                 isFx ? 3 :
-                isCrypto ? 2 :   // crypto-n gyorsabban vágunk
+                isCrypto ? 2 :
                 isIndex ? 3 :
                 isMetal ? 3 :
                 3;
 
-            // Profit rescue paraméterek (TP1-proximity based)
             double rescueTriggerFactor =
-                isCrypto ? 0.70 :   // crypto: ha már majdnem TP1, gyorsabban mentsük
+                isCrypto ? 0.70 :
                 isIndex ? 0.65 :
                 isMetal ? 0.65 :
                 0.65;
 
             double rescueFadeFactor =
-                isCrypto ? 0.55 :   // crypto: szigorúbb visszaesés-érzékenység
+                isCrypto ? 0.55 :
                 0.60;
 
+            // Counter-impulse / sweep hold
+            double counterImpulseHoldMaeR =
+                isCrypto ? 0.45 :
+                isIndex ? 0.40 :
+                isMetal ? 0.40 :
+                0.35;
+
+            double counterImpulseRecoverBandR =
+                isCrypto ? 0.18 :
+                isIndex ? 0.18 :
+                isMetal ? 0.20 :
+                0.22;
+
+            int counterImpulseMaxBarsM5 =
+                isCrypto ? 4 :
+                isIndex ? 4 :
+                5;
+
+            int counterImpulseMinBarsM5 =
+                isCrypto ? 2 :
+                isIndex ? 2 :
+                isMetal ? 2 :
+                2;
+
             // =====================================================
-            // 1️⃣ UPDATE MFE / MAE (core state)
+            // Bars since entry (M5) – deterministic O(1)
+            // =====================================================
+
+            ctx.BarsSinceEntryM5 = (int)Math.Max(
+                1,
+                (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+            );
+
+            // =====================================================
+            // 1️⃣ PRICE + MFE/MAE UPDATE
             // =====================================================
 
             double currentPrice =
@@ -162,62 +169,88 @@ namespace GeminiV26.Core
             ctx.MaeR = Math.Max(ctx.MaeR, adverseR);
 
             // =====================================================
-            // 2️⃣ DEAD TRADE LOGIC (core idea)
+            // 2️⃣ CORE FLAGS
             // =====================================================
 
-            // nincs valódi progress (asset-aware)
             bool noProgress = ctx.MfeR < mfeNoProgressR;
-
-            // jelentős ellenirányú mozgás (asset-aware)
             bool adverseGrowing = ctx.MaeR > maeAdverseR;
 
-            // időablak (asset-aware)
-            double minutesOpen =
-                (DateTime.UtcNow - ctx.EntryTime).TotalMinutes;
-
+            double minutesOpen = (_bot.Server.Time - ctx.EntryTime).TotalMinutes;
             bool enoughTime = minutesOpen >= minMinutesOpen;
 
-            // visszajött entry közelébe (asset-aware)
             bool backToEntry =
-                Math.Abs(currentPrice - ctx.EntryPrice)
-                < risk * backToEntryBandR;
-
-            // =====================================================
-            // 3️⃣ STRUCTURE DAMAGE
-            // =====================================================
+                Math.Abs(currentPrice - ctx.EntryPrice) < risk * backToEntryBandR;
 
             bool structureBroken = IsStructureWeakening(pos, m5);
-
-            // =====================================================
-            // 4️⃣ MOMENTUM COLLAPSE
-            // =====================================================
-
             bool momentumFade = IsMomentumFading(m5);
 
+            // -----------------------------------------------------
+            // Optional audit snapshot (ritkított log: csak 1x / bar-t érdemes, ExitManager oldalon)
+            // _bot?.Print($"[TVM {asset}] SNAP | bars={ctx.BarsSinceEntryM5} min={minutesOpen:0.0} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00}");
+
             // =====================================================
-            // 5️⃣ CRYPTO / INDEX EARLY "NO-IMPULSE" SAFETY (extra guard)
-            //    (nem törlünk, csak pontosítunk és kiegészítünk)
+            // DEBUG SNAPSHOT (early trade diagnostics)
             // =====================================================
 
-            // crypto/index: ha nagyon gyorsan kiderül, hogy nincs follow-through,
-            // akkor ne várjunk a teljes "danger matrix"-ra.
+            if (ctx.BarsSinceEntryM5 <= 6)
+            {
+                _bot.Print(
+                    $"[TVM SNAP {asset}] " +
+                    $"bars={ctx.BarsSinceEntryM5} " +
+                    $"min={minutesOpen:0.0} " +
+                    $"mfeR={ctx.MfeR:0.00} " +
+                    $"maeR={ctx.MaeR:0.00} " +
+                    $"noProg={noProgress} " +
+                    $"advGrow={adverseGrowing} " +
+                    $"backEntry={backToEntry} " +
+                    $"structWeak={structureBroken} " +
+                    $"momFade={momentumFade}"
+                );
+            }
+
+            // =====================================================
+            // 2.5️⃣ COUNTER-IMPULSE / SWEEP HOLD
+            // =====================================================
+
+            if ((isCrypto || isIndex || isMetal) &&
+                ctx.BarsSinceEntryM5 >= counterImpulseMinBarsM5 &&
+                ctx.BarsSinceEntryM5 <= counterImpulseMaxBarsM5)
+            {
+                bool hadCounterImpulse = ctx.MaeR >= counterImpulseHoldMaeR;
+
+                bool recoveredTowardEntry =
+                    Math.Abs(currentPrice - ctx.EntryPrice) < risk * counterImpulseRecoverBandR;
+
+                bool structureImproving = IsStructureImproving(pos, m5);
+
+                if (hadCounterImpulse && recoveredTowardEntry && structureImproving)
+                {
+                    _bot?.Print($"[TVM {asset}] HOLD (SWEEP) | maeR={ctx.MaeR:0.00} mfeR={ctx.MfeR:0.00} barsM5={ctx.BarsSinceEntryM5} recovered={recoveredTowardEntry} structImp={structureImproving}");
+                    return false;
+                }
+            }
+
+            // =====================================================
+            // 3️⃣ FAST DEAD (Crypto/Index)
+            // =====================================================
+
             if ((isCrypto || isIndex) && enoughTime)
             {
                 bool fastDead =
                     noProgress &&
-                    (ctx.MaeR > (maeAdverseR * 0.90)); // kicsit agresszívebb, mint a fő MAE küszöb
+                    (ctx.MaeR > (maeAdverseR * 0.90));
 
                 if (fastDead)
                 {
                     ctx.IsDeadTrade = true;
                     ctx.DeadTradeReason = $"{asset}_FAST_DEAD_NO_IMPULSE";
-                    _bot?.Print($"[TVM {asset}] EARLY EXIT | reason={ctx.DeadTradeReason} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} min={minMinutesOpen:0}m");
+                    _bot?.Print($"[TVM {asset}] EARLY EXIT | reason={ctx.DeadTradeReason} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} min={minMinutesOpen:0}m barsM5={ctx.BarsSinceEntryM5}");
                     return true;
                 }
             }
 
             // =====================================================
-            // INTELLIGENT MATRIX
+            // 4️⃣ INTELLIGENT DANGER MATRIX
             // =====================================================
 
             int danger = 0;
@@ -228,12 +261,10 @@ namespace GeminiV26.Core
             if (structureBroken) danger++;
             if (momentumFade) danger++;
 
-            // -----------------------------------------------------
-            // SMART THRESHOLD
-            // -----------------------------------------------------
+            // =====================================================
+            // 5️⃣ SMART KILLS
+            // =====================================================
 
-            // ha teljesen dead trade: gyors kill (asset-aware)
-            // (a korábbi !isFx ágat nem töröljük, hanem pontosítjuk és kibővítjük)
             if (!isFx && noProgress && adverseGrowing && enoughTime)
             {
                 ctx.IsDeadTrade = true;
@@ -242,7 +273,6 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            // FX: no follow-through + structure/momentum kombináció esetén is legyen "smart kill"
             if (isFx && enoughTime)
             {
                 bool fxNoFollowThrough =
@@ -259,49 +289,45 @@ namespace GeminiV26.Core
                 }
             }
 
-            // ==========================================
-            // 7️⃣ PROFIT RESCUE (TP1-proximity based)
-            // ==========================================
+            // =====================================================
+            // 6️⃣ PROFIT RESCUE (TP1-proximity based)
+            // =====================================================
 
             if (!ctx.Tp1Hit && ctx.Tp1R > 0)
             {
                 bool enoughBarsForRescue = ctx.BarsSinceEntryM5 >= 4;
-
                 if (enoughBarsForRescue)
                 {
+                    double tp1R = ctx.Tp1R;
+                    double rescueTriggerR = tp1R * rescueTriggerFactor;
+
+                    double currentR = favorableR;
+
+                    bool wasNearTp1 = ctx.MfeR >= rescueTriggerR;
+                    bool nowFading = currentR < ctx.MfeR * rescueFadeFactor;
+                    bool structureWeak = IsStructureWeakening(pos, m5);
+
+                    if (wasNearTp1 && nowFading && structureWeak)
                     {
-                        double tp1R = ctx.Tp1R;
-                        double rescueTriggerR = tp1R * rescueTriggerFactor;   // asset-aware
-
-                        // NOTE: pos.Pips * PipSize = ármozgás "price" egységben
-                        // Itt abs-t használunk, mert a logika a visszaesés arányára figyel.
-                        double currentR =
-                            Math.Abs(pos.Pips * pos.Symbol.PipSize) / risk;
-
-                        bool wasNearTp1 = ctx.MfeR >= rescueTriggerR;
-                        bool nowFading = currentR < ctx.MfeR * rescueFadeFactor;   // asset-aware visszaesés
-                        bool structureWeak = IsStructureWeakening(pos, m5);
-
-                        if (wasNearTp1 && nowFading && structureWeak)
-                        {
-                            ctx.DeadTradeReason = $"{asset}_RESCUE_EXIT";
-                            _bot?.Print($"[TVM {asset}] RESCUE EXIT | reason={ctx.DeadTradeReason} | tp1R={tp1R:0.00} mfeR={ctx.MfeR:0.00} curR={currentR:0.00}");
-                            return true; // RESCUE EXIT
-                        }
+                        ctx.DeadTradeReason = $"{asset}_RESCUE_EXIT";
+                        _bot?.Print($"[TVM {asset}] RESCUE EXIT | reason={ctx.DeadTradeReason} | tp1R={tp1R:0.00} mfeR={ctx.MfeR:0.00} curR={currentR:0.00}");
+                        return true;
                     }
                 }
             }
 
-            // normál intelligens threshold (asset-aware)
+            // =====================================================
+            // 7️⃣ THRESHOLD EXIT
+            // =====================================================
+
             bool exit = danger >= dangerThreshold;
 
             if (exit)
             {
-                // ok megjelölés: nem feltétlen "dead trade", lehet momentum/structure collapse is
                 if (string.IsNullOrEmpty(ctx.DeadTradeReason))
                     ctx.DeadTradeReason = $"{asset}_DANGER_{danger}_OF_{dangerThreshold}";
 
-                _bot?.Print($"[TVM {asset}] THRESHOLD EXIT | reason={ctx.DeadTradeReason} | danger={danger}/{dangerThreshold} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} back={backToEntry} struct={structureBroken} mom={momentumFade}");
+                _bot?.Print($"[TVM {asset}] THRESHOLD EXIT | reason={ctx.DeadTradeReason} | danger={danger}/{dangerThreshold} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} back={backToEntry} struct={structureBroken} mom={momentumFade} barsM5={ctx.BarsSinceEntryM5}");
             }
 
             return exit;
@@ -321,6 +347,22 @@ namespace GeminiV26.Core
                 return c0 < c1 && c1 <= c2 && c2 <= c3;
 
             return c0 > c1 && c1 >= c2 && c2 >= c3;
+        }
+
+        private bool IsStructureImproving(Position pos, Bars m5)
+        {
+            if (m5.Count < 4)
+                return false;
+
+            double c0 = m5.ClosePrices.Last(0);
+            double c1 = m5.ClosePrices.Last(1);
+            double c2 = m5.ClosePrices.Last(2);
+            double c3 = m5.ClosePrices.Last(3);
+
+            if (pos.TradeType == TradeType.Buy)
+                return c0 > c1 && c1 >= c2 && c2 >= c3;
+
+            return c0 < c1 && c1 <= c2 && c2 <= c3;
         }
 
         private bool IsMomentumFading(Bars m5)
