@@ -110,9 +110,15 @@ namespace GeminiV26.EntryTypes.FX
 
             bool breakout = false;
 
+            int barsSinceBreak =
+                dir == TradeDirection.Long
+                ? ctx.BarsSinceHighBreak_M5
+                : ctx.BarsSinceLowBreak_M5;
+
             if (ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == dir &&
-                rAtr < 1.6)
+                rAtr < 1.6 &&
+                barsSinceBreak <= 2)
             {
                 breakout = true;
             }
