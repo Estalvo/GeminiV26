@@ -62,7 +62,7 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.PullbackDepthAtr_M5 > MaxPullbackAtr)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
-            int score = 40;
+            int score = 45;
 
             // =================================================
             // EMA VISZONY
