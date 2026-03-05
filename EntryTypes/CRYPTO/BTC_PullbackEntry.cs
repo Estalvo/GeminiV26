@@ -388,13 +388,21 @@ namespace GeminiV26.EntryTypes.Crypto
             // ADX ROLL OVER CONTINUATION BLOCK
             // =========================
             bool continuation =
-                ctx.BarsSinceImpulse_M5 > 2 &&
+                ctx.BarsSinceImpulse_M5 > 3 &&
                 !ctx.IsPullbackDecelerating_M5;
 
+            bool trendDominant =
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) >= 12;
+
+            bool candleAligned =
+                ctx.LastClosedBarInTrendDirection;
+
             if (continuation &&
-                ctx.Adx_M5 >= 38 &&
+                ctx.Adx_M5 >= 36 &&
                 ctx.AdxSlope_M5 <= 0 &&
-                !ctx.IsAtrExpanding_M5)
+                !ctx.IsAtrExpanding_M5 &&
+                !trendDominant &&
+                !candleAligned)
             {
                 return Block(ctx,
                     "CRYPTO_PULLBACK_ADX_ROLL_OVER_CONT",
