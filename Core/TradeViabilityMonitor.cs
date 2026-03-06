@@ -21,7 +21,8 @@ namespace GeminiV26.Core
         public bool ShouldEarlyExit(
             PositionContext ctx,
             Position pos,
-            Bars m5)
+            Bars m5,
+            Bars m15)
         {
             // TP1 után nem zárunk
             if (ctx.Tp1Hit)
