@@ -534,7 +534,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 bool strongMomentum =
                     ctx.Adx_M5 >= 28 &&
                     ctx.AdxSlope_M5 >= 0 &&
-                    ctx.HasImpulse_M5;
+                    ctx.HasImpulse_M5 &&
+                    ctx.BarsSinceImpulse_M5 <= 2;
 
                 if (strongMomentum)
                 {
