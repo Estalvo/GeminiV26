@@ -80,7 +80,7 @@ namespace GeminiV26.Core
                 0.35;
 
             double minMinutesOpen =
-                isFx ? 25 :
+                isFx ? 35 :
                 isCrypto ? 10 :
                 isIndex ? 12 :
                 isMetal ? 12 :
@@ -94,7 +94,7 @@ namespace GeminiV26.Core
                 0.15;
 
             int dangerThreshold =
-                isFx ? 3 :
+                isFx ? 4 :
                 isCrypto ? 2 :
                 isIndex ? 3 :
                 isMetal ? 3 :
@@ -184,6 +184,7 @@ namespace GeminiV26.Core
             bool structureBroken = IsStructureWeakening(pos, m5);
             bool momentumFade = IsMomentumFading(m5);
 
+            bool fxGraceWindow = isFx && ctx.BarsSinceEntryM5 < 4;
             // -----------------------------------------------------
             // Optional audit snapshot (ritkított log: csak 1x / bar-t érdemes, ExitManager oldalon)
             // _bot?.Print($"[TVM {asset}] SNAP | bars={ctx.BarsSinceEntryM5} min={minutesOpen:0.0} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00}");
@@ -273,18 +274,19 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            if (isFx && enoughTime)
+            if (isFx && enoughTime && !fxGraceWindow)
             {
                 bool fxNoFollowThrough =
                     noProgress &&
-                    (structureBroken || momentumFade || backToEntry) &&
-                    ctx.MaeR > (maeAdverseR * 0.80);
+                    backToEntry &&
+                    (structureBroken || momentumFade) &&
+                    ctx.MaeR > (maeAdverseR * 0.95);
 
                 if (fxNoFollowThrough)
                 {
                     ctx.IsDeadTrade = true;
                     ctx.DeadTradeReason = "FX_NO_FOLLOW_THROUGH";
-                    _bot?.Print($"[TVM FX] EARLY EXIT | reason={ctx.DeadTradeReason} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} danger={danger}/{dangerThreshold}");
+                    _bot?.Print($"[TVM FX] EARLY EXIT | reason={ctx.DeadTradeReason} | mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} danger={danger}/{dangerThreshold} barsM5={ctx.BarsSinceEntryM5}");
                     return true;
                 }
             }
@@ -319,7 +321,10 @@ namespace GeminiV26.Core
             // =====================================================
             // 7️⃣ THRESHOLD EXIT
             // =====================================================
-
+            // FX grace window – az első pár M5 barban ne vágjunk ki trade-et
+            if (isFx && fxGraceWindow)
+                return false;
+                
             bool exit = danger >= dangerThreshold;
 
             if (exit)
