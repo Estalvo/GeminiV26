@@ -24,7 +24,7 @@ namespace GeminiV26.Instruments.FX
                     0.15,
                     2.2,
                     3.0,
-                    25,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -10 },
@@ -100,7 +100,7 @@ namespace GeminiV26.Instruments.FX
                     0.18,
                     2.2,
                     4.5,
-                    25,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -10 },
@@ -176,7 +176,7 @@ namespace GeminiV26.Instruments.FX
                     0.12,
                     2.0,
                     3.5,
-                    25,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -5 }, // ÚJ: Hiába Asia bias, büntessük meg a JPY kockázat miatt
@@ -256,7 +256,7 @@ namespace GeminiV26.Instruments.FX
                     0.20,
                     2.2,
                     6.5,
-                    25,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    +5 },
@@ -334,7 +334,7 @@ namespace GeminiV26.Instruments.FX
                     0.15,
                     2.2,
                     4.5,
-                    25,
+                    20,
                     new()
                 {
                     { FxSession.Asia,    -5 }, // ÚJ: Minimális büntetés Ázsiára is a JPY kockázat miatt
@@ -414,7 +414,7 @@ namespace GeminiV26.Instruments.FX
                     0.12,
                     2.0,
                     2.8,
-                    25,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -5 }, // ÚJ: Itt is bevezetünk egy kis szigort
@@ -497,7 +497,7 @@ namespace GeminiV26.Instruments.FX
                     0.12,
                     2.0,
                     2.8,
-                    23,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -5 }, // ÚJ: Minimális szigorítás
@@ -575,7 +575,7 @@ namespace GeminiV26.Instruments.FX
                     0.10,
                     2.0,
                     1.8,
-                    22,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -5 },  // SZIGORÍTÁS: Ne legyen ingyen a belépés Ázsiában sem
@@ -653,7 +653,7 @@ namespace GeminiV26.Instruments.FX
                     0.15,
                     2.2,
                     3.8,
-                    24,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -10 }, // SZIGORÍTÁS: -5 -> -10 (Ázsiában csak a CAD "véletlen" mozgásai vannak)
@@ -735,7 +735,7 @@ namespace GeminiV26.Instruments.FX
                     0.12,
                     2.2,
                     3.0,
-                    24,
+                    20,
                     new()
                     {
                         { FxSession.Asia,    -15 }, // SZIGORÍTÁS: -5 -> -15 (Ázsiában tiltsuk le szinte teljesen)
