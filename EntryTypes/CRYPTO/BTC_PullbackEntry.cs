@@ -524,15 +524,31 @@ namespace GeminiV26.EntryTypes.Crypto
             int dynamicMinScore = MIN_SCORE;
 
             // =========================
-            // BIAS SOFT PENALTY (same logic as FlagEntry)
+            // STRONG BIAS ALIGNMENT GUARD (NEW)
             // =========================
+
             if (ctx.TrendDirection != TradeDirection.None &&
                 dir != ctx.TrendDirection)
             {
+                // ha a lokális momentum erős → ne tradelj ellene
+                bool strongMomentum =
+                    ctx.Adx_M5 >= 28 &&
+                    ctx.AdxSlope_M5 >= 0 &&
+                    ctx.HasImpulse_M5;
+
+                if (strongMomentum)
+                {
+                    return Block(ctx,
+                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0}",
+                        score,
+                        dir);
+                }
+
+                // ha nem erős momentum → marad a soft penalty
                 score -= BiasAgainstPenalty;
 
                 ctx.Log?.Invoke(
-                    $"[BTC_PULLBACK][BIAS_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
+                    $"[BTC_PULLBACK][BIAS_SOFT_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
                 );
             }
 
