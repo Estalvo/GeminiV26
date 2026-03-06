@@ -151,7 +151,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (breakoutImpulse && ctx.BarsSinceImpulse_M5 <= 3)
             {
                 return Block(ctx,
-                    $"PB_BLOCK_AFTER_BREAKOUT_IMPULSE body>1.2ATR bars={ctx.BarsSinceImpulse_M5}",
+                    $"PB_BLOCK_AFTER_BREAKOUT_IMPULSE body>0.8ATR bars={ctx.BarsSinceImpulse_M5}",
                     score,
                     dir);
             }
@@ -176,7 +176,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (strongMomentum)
                 {
                     return Block(ctx,
-                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0} diSpread={diSpread:0.0}",
+                        $"BIAS_STRONG_CONFLICT trend={originalTrendDir} dir={dir} adx={ctx.Adx_M5:0.0} diSpread={diSpread:0.0}",
                         score,
                         dir);
                 }
@@ -185,7 +185,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score -= BiasAgainstPenalty;
 
                 ctx.Log?.Invoke(
-                    $"[BTC_PULLBACK][BIAS_SOFT_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
+                    $"[BTC_PULLBACK][BIAS_SOFT_CONFLICT] trend={originalTrendDir} dir={dir} penalty={BiasAgainstPenalty}"
                 );
             }
 
