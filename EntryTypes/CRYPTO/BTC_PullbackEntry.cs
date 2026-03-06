@@ -368,6 +368,13 @@ namespace GeminiV26.EntryTypes.Crypto
             if (trendFatigue)
                 score -= 10;
 
+            bool diCompression =
+                ctx.Adx_M5 >= 38 &&
+                Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 6;
+
+            if (diCompression)
+                score -= 6;
+                
             // =========================
             // ULTRA SOFT LATE TREND MICRO PENALTY
             // =========================
@@ -388,7 +395,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // 1️⃣ Többlépcsős impulzus detektálás
             bool lateImpulseStructure =
                 ctx.HasImpulse_M5 &&
-                ctx.BarsSinceImpulse_M5 <= 2 &&
+                ctx.BarsSinceImpulse_M5 <= 3 &&
                 ctx.Adx_M5 >= 28;
 
             // 2️⃣ ADX már nem gyorsul
