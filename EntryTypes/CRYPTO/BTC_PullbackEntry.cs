@@ -35,6 +35,7 @@ namespace GeminiV26.EntryTypes.Crypto
             int lastClosed = bars.Count - 2;
            
             TradeDirection dir = ctx.TrendDirection;
+            var originalTrendDir = ctx.TrendDirection;
 
             // =========================
             // HTF DIRECTION OVERRIDE / PRACTICAL GATE
@@ -145,7 +146,7 @@ namespace GeminiV26.EntryTypes.Crypto
             bool breakoutImpulse =
                 freshImpulse &&
                 ctx.AtrM5 > 0 &&
-                Math.Abs(bars[lastClosed].Close - bars[lastClosed].Open) > 1.2 * ctx.AtrM5;
+                Math.Abs(bars[lastClosed].Close - bars[lastClosed].Open) > 0.8 * ctx.AtrM5;
 
             if (breakoutImpulse && ctx.BarsSinceImpulse_M5 <= 3)
             {
@@ -153,6 +154,39 @@ namespace GeminiV26.EntryTypes.Crypto
                     $"PB_BLOCK_AFTER_BREAKOUT_IMPULSE body>1.2ATR bars={ctx.BarsSinceImpulse_M5}",
                     score,
                     dir);
+            }
+
+            // =========================
+            // STRONG BIAS ALIGNMENT GUARD (NEW)
+            // =========================
+
+            if (originalTrendDir != TradeDirection.None &&
+                dir != originalTrendDir)
+            {
+                double diSpread = Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5);
+                bool dominantTrend = diSpread >= 10;   // institutional threshold
+
+                bool strongMomentum =
+                    ctx.Adx_M5 >= 28 &&
+                    ctx.AdxSlope_M5 >= -0.2 &&   // stabilabb mint >=0
+                    ctx.HasImpulse_M5 &&
+                    ctx.BarsSinceImpulse_M5 <= 2 &&
+                    dominantTrend;
+
+                if (strongMomentum)
+                {
+                    return Block(ctx,
+                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0} diSpread={diSpread:0.0}",
+                        score,
+                        dir);
+                }
+
+                // ha nem erős momentum → marad a soft penalty
+                score -= BiasAgainstPenalty;
+
+                ctx.Log?.Invoke(
+                    $"[BTC_PULLBACK][BIAS_SOFT_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
+                );
             }
 
             // =========================
@@ -432,6 +466,20 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
+            // REAL PULLBACK REQUIREMENT (INSTITUTIONAL GUARD)
+            // =========================
+
+            if (!ctx.IsPullbackDecelerating_M5 && 
+                !ctx.HasReactionCandle_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 2)
+            {
+                return Block(ctx,
+                    "NO_REAL_PULLBACK_AFTER_IMPULSE",
+                    score,
+                    dir);
+            }
+
+            // =========================
             // PULLBACK QUALITY
             // =========================
             bool validPullbackReaction =
@@ -522,39 +570,6 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             int dynamicMinScore = MIN_SCORE;
-
-            // =========================
-            // STRONG BIAS ALIGNMENT GUARD (NEW)
-            // =========================
-
-            if (ctx.TrendDirection != TradeDirection.None &&
-                dir != ctx.TrendDirection)
-            {
-                double diSpread = Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5);
-                bool dominantTrend = diSpread >= 10;   // institutional threshold
-
-                bool strongMomentum =
-                    ctx.Adx_M5 >= 28 &&
-                    ctx.AdxSlope_M5 >= -0.2 &&   // stabilabb mint >=0
-                    ctx.HasImpulse_M5 &&
-                    ctx.BarsSinceImpulse_M5 <= 2 &&
-                    dominantTrend;
-
-                if (strongMomentum)
-                {
-                    return Block(ctx,
-                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0} diSpread={diSpread:0.0}",
-                        score,
-                        dir);
-                }
-
-                // ha nem erős momentum → marad a soft penalty
-                score -= BiasAgainstPenalty;
-
-                ctx.Log?.Invoke(
-                    $"[BTC_PULLBACK][BIAS_SOFT_CONFLICT] trend={ctx.TrendDirection} dir={dir} penalty={BiasAgainstPenalty}"
-                );
-            }
 
             // =========================
             // FINAL CHECK
