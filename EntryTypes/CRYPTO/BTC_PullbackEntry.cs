@@ -530,17 +530,20 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.TrendDirection != TradeDirection.None &&
                 dir != ctx.TrendDirection)
             {
-                // ha a lokális momentum erős → ne tradelj ellene
+                double diSpread = Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5);
+                bool dominantTrend = diSpread >= 10;   // institutional threshold
+
                 bool strongMomentum =
                     ctx.Adx_M5 >= 28 &&
-                    ctx.AdxSlope_M5 >= 0 &&
+                    ctx.AdxSlope_M5 >= -0.2 &&   // stabilabb mint >=0
                     ctx.HasImpulse_M5 &&
-                    ctx.BarsSinceImpulse_M5 <= 2;
+                    ctx.BarsSinceImpulse_M5 <= 2 &&
+                    dominantTrend;
 
                 if (strongMomentum)
                 {
                     return Block(ctx,
-                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0}",
+                        $"BIAS_STRONG_CONFLICT trend={ctx.TrendDirection} dir={dir} adx={ctx.Adx_M5:0.0} diSpread={diSpread:0.0}",
                         score,
                         dir);
                 }
