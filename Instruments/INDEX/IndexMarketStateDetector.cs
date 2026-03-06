@@ -54,7 +54,7 @@ namespace GeminiV26.Instruments.INDEX
                 return null;
 
             double atrRaw = _atr.Result[i];
-            double atrPoints = atrRaw / _bot.Symbol.TickSize;
+            double atrPoints = atrRaw;
             double adx = _adx.ADX[i];
 
             // =====================================================
