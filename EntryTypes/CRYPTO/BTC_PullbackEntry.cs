@@ -395,7 +395,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // 1️⃣ Többlépcsős impulzus detektálás
             bool lateImpulseStructure =
                 ctx.HasImpulse_M5 &&
-                ctx.BarsSinceImpulse_M5 <= 3 &&
+                ctx.BarsSinceImpulse_M5 <= 2 &&
                 ctx.Adx_M5 >= 28;
 
             // 2️⃣ ADX már nem gyorsul
