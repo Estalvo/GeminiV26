@@ -117,6 +117,12 @@ namespace GeminiV26.Instruments.ETHUSD
                     {
                         const int MinBarsBeforeTvm = 4;
 
+                        // SINGLE SOURCE OF TRUTH
+                        ctx.BarsSinceEntryM5 = (int)Math.Max(
+                            1,
+                            (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+                        );
+
                         if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
                             var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
@@ -125,7 +131,7 @@ namespace GeminiV26.Instruments.ETHUSD
                             if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                             {
                                 _bot.Print(
-                                    $"[BTCUSD TVM EXIT] pos={pos.Id} " +
+                                    $"[{pos.SymbolName} TVM EXIT] pos={pos.Id} " +
                                     $"reason={ctx.DeadTradeReason} " +
                                     $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
                                     $"barsM5={ctx.BarsSinceEntryM5}"
