@@ -245,7 +245,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 Tp2Price = tp2Price,
 
                 // 🔑 MARKET STATE SNAPSHOT
-                MarketTrend = _marketStateDetector?.IsTrending ?? false
+                MarketTrend = entry.Direction != TradeDirection.None
             };
 
             ctx.Tp1Price =
