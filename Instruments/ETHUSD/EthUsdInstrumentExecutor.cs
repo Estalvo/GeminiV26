@@ -211,7 +211,9 @@ namespace GeminiV26.Instruments.ETHUSD
                 Tp1Hit = false,
 
                 BeMode = BeMode.AfterTp1,
-                Tp2Price = tp2Price
+                Tp2Price = tp2Price,
+                
+                MarketTrend = entry.Direction != TradeDirection.None
             };
 
             ctx.Tp1Price =
