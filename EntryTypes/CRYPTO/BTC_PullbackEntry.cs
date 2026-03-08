@@ -140,6 +140,33 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
+            // MIN PULLBACK MATURITY GUARD
+            // =========================
+            if (ctx.HasImpulse_M5)
+            {
+                // 0-1 bar után nincs belépés
+                if (ctx.BarsSinceImpulse_M5 < 2)
+                {
+                    return Block(ctx,
+                        $"PULLBACK_TOO_EARLY barsSinceImpulse={ctx.BarsSinceImpulse_M5}",
+                        score,
+                        dir);
+                }
+
+                // 2. barnál csak tiszta pullback reactionnel engedünk
+                if (ctx.BarsSinceImpulse_M5 == 2 &&
+                    (!ctx.IsPullbackDecelerating_M5 ||
+                    !ctx.HasReactionCandle_M5 ||
+                    !ctx.LastClosedBarInTrendDirection))
+                {
+                    return Block(ctx,
+                        $"PULLBACK_NOT_MATURE barsSinceImpulse={ctx.BarsSinceImpulse_M5} pbDecel={ctx.IsPullbackDecelerating_M5} react={ctx.HasReactionCandle_M5} trendBar={ctx.LastClosedBarInTrendDirection}",
+                        score,
+                        dir);
+                }
+            }
+
+            // =========================
             // BREAKOUT IMPULSE BLOCK
             // =========================
 
