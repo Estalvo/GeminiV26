@@ -143,22 +143,20 @@ namespace GeminiV26.Instruments.XAUUSD
             // -----------------------------------------------------
             ctx.ComputeFinalConfidence();
 
-            // ⬇️ XAU MarketState SOFT influence
-            ctx.FinalConfidence += statePenalty;
-            ctx.FinalConfidence = Math.Max(0, ctx.FinalConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
 
-            // Trailing mód kizárólag FinalConfidence alapján
+            // Trailing mód riskConfidence alapján (FinalConfidence + statePenalty)
             ctx.TrailingMode =
-                ctx.FinalConfidence >= 85 ? TrailingMode.Loose :
-                ctx.FinalConfidence >= 75 ? TrailingMode.Normal :
+                riskConfidence >= 85 ? TrailingMode.Loose :
+                riskConfidence >= 75 ? TrailingMode.Normal :
                                              TrailingMode.Tight;
 
             // =====================================================
-            // 4️⃣ SL / TP POLICY (FinalConfidence)
+            // 4️⃣ SL / TP POLICY (riskConfidence)
             // =====================================================
             double slPriceDist = _riskSizer.CalculateStopLossPriceDistance(
                 _bot,
-                ctx.FinalConfidence,
+                riskConfidence,
                 entry.Type);
 
             if (slPriceDist <= 0)
@@ -170,7 +168,7 @@ namespace GeminiV26.Instruments.XAUUSD
             double tp2Price = _riskSizer.CalculateTp2PriceFromSlDistance(
                 _bot,
                 tradeType,
-                ctx.FinalConfidence,
+                riskConfidence,
                 slPriceDist);
 
             if (tp2Price <= 0)
@@ -183,7 +181,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // 5️⃣ TP / R VALUES (EURUSD MINTA SZERINT)
             // =====================================================
             _riskSizer.GetTakeProfit(
-                ctx.FinalConfidence,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -201,7 +199,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             long volumeUnits = _riskSizer.CalculateVolumeInUnits(
                 _bot,
-                ctx.FinalConfidence,
+                riskConfidence,
                 slPriceDist
             );
 

@@ -97,18 +97,10 @@ namespace GeminiV26.Instruments.EURUSD
             // =========================================================
             _entryLogic.Evaluate();
             int logicConfidence = _entryLogic.LastLogicConfidence;
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
-            //int tempFinalConfidence =
-            //    Math.Max(0, Math.Min(100, entry.Score + logicConfidence));
-
-            int tempFinalConfidence =
-                Math.Max(0, Math.Min(100,
-                    entry.Score +
-                    logicConfidence +
-                    statePenalty
-                ));
-
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
             {
@@ -116,7 +108,7 @@ namespace GeminiV26.Instruments.EURUSD
                 return;
             }
 
-            double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
             {
@@ -125,13 +117,13 @@ namespace GeminiV26.Instruments.EURUSD
             }
 
             _riskSizer.GetTakeProfit(
-                tempFinalConfidence,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
 
             if (volumeUnits <= 0)
             {
@@ -198,8 +190,8 @@ namespace GeminiV26.Instruments.EURUSD
 
                 // maradhat így, hogy ne változzon a működés
                 TrailingMode =
-                    tempFinalConfidence >= 85 ? TrailingMode.Loose :
-                    tempFinalConfidence >= 75 ? TrailingMode.Normal :
+                    riskConfidence >= 85 ? TrailingMode.Loose :
+                    riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = result.Position.VolumeInUnits,

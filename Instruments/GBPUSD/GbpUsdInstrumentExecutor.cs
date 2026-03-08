@@ -86,12 +86,8 @@ namespace GeminiV26.Instruments.GBPUSD
             _entryLogic.Evaluate();
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
-            int tempFinalConfidence =
-                Math.Max(0, Math.Min(100,
-                    entry.Score +
-                    logicConfidence +
-                    statePenalty
-                ));
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
             // =====================================================
             // HARD ATR GATE (GBPUSD) – NO MICRO VOL
@@ -118,11 +114,11 @@ namespace GeminiV26.Instruments.GBPUSD
                     ? TradeType.Buy
                     : TradeType.Sell;
 
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
             if (slPriceDist <= 0)
                 return;
 
@@ -137,14 +133,14 @@ namespace GeminiV26.Instruments.GBPUSD
             }
 
             _riskSizer.GetTakeProfit(
-                tempFinalConfidence,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
             // sizing MUST use the same slPriceDist we will actually place
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
             if (volumeUnits <= 0)
                 return;
 
@@ -183,6 +179,8 @@ namespace GeminiV26.Instruments.GBPUSD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence,
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
 
@@ -196,10 +194,12 @@ namespace GeminiV26.Instruments.GBPUSD
                 BeMode = BeMode.AfterTp1,
 
                 TrailingMode =
-                    tempFinalConfidence >= 85 ? TrailingMode.Loose :
-                    tempFinalConfidence >= 75 ? TrailingMode.Normal :
+                    riskConfidence >= 85 ? TrailingMode.Loose :
+                    riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight
             };
+
+            ctx.ComputeFinalConfidence();
 
             _positionContexts[positionKey] = ctx;
             _exitManager.RegisterContext(ctx);
