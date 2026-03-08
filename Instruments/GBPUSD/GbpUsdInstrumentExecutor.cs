@@ -191,6 +191,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 Tp1R = tp1R,
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
+                MarketTrend = entry.Direction != TradeDirection.None,
 
                 BeMode = BeMode.AfterTp1,
 
