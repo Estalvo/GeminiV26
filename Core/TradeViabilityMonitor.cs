@@ -61,18 +61,11 @@ namespace GeminiV26.Core
             // SIMPLE TREND DETECTION (M15)
             // =====================================================
 
-            bool marketTrending = false;
+            bool marketTrending = ctx.MarketTrend;
 
-            if (m15 != null && m15.Count > 20)
-            {
-                double move =
-                    Math.Abs(
-                        m15.ClosePrices.Last(0) -
-                        m15.ClosePrices.Last(10)
-                    );
-
-                marketTrending = move > pos.Symbol.PipSize * 40;
-            }
+            _bot.Print(
+                $"[TVM TREND SOURCE] {pos.SymbolName} ctxTrend={marketTrending}"
+            );
 
             double mfeNoProgressR =
                 isFx ? 0.12 :
