@@ -132,6 +132,8 @@ namespace GeminiV26.Instruments.XAUUSD
                 Tp1CloseFraction = 0.40,
                 Tp1R = 0.25,
 
+                MarketTrend = entry.Direction != TradeDirection.None,
+
                 InitialStopLossR = 1.0,
                 BeMode = BeMode.AfterTp1
             };
