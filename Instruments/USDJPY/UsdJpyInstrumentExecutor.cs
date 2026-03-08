@@ -189,7 +189,9 @@ namespace GeminiV26.Instruments.USDJPY
 
                 EntryVolumeInUnits = result.Position.VolumeInUnits,
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
-                Tp2Price = tp2Price
+                Tp2Price = tp2Price,
+
+                MarketTrend = entry.Direction != TradeDirection.None
             };
 
             // ✅ Kanonikus 70/30 FinalConfidence
@@ -197,7 +199,6 @@ namespace GeminiV26.Instruments.USDJPY
 
             _positionContexts[ctx.PositionId] = ctx;
             _exitManager.RegisterContext(ctx);
-
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)
