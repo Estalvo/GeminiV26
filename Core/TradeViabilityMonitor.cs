@@ -64,11 +64,13 @@ namespace GeminiV26.Core
                 isMetal ? 0.20 :
                 0.20;
 
+            bool marketTrending = ctx.MarketTrend;
+
             double maeAdverseR =
                 isFx ? 0.40 :
-                isCrypto ? 0.25 :
-                isIndex ? 0.30 :
-                isMetal ? 0.30 :
+                isCrypto ? (marketTrending ? 0.35 : 0.25) :
+                isIndex ? (marketTrending ? 0.32 : 0.30) :
+                isMetal ? (marketTrending ? 0.33 : 0.30) :
                 0.35;
 
             double minMinutesOpen =
@@ -128,8 +130,10 @@ namespace GeminiV26.Core
                     $"[TVM SNAP {asset}] " +
                     $"bars={ctx.BarsSinceEntryM5} " +
                     $"min={minutesOpen:0.0} " +
+                    $"trend={marketTrending} " +
                     $"mfeR={ctx.MfeR:0.00} " +
                     $"maeR={ctx.MaeR:0.00} " +
+                    $"thrMAE={maeAdverseR:0.00} " +
                     $"noProg={noProgress} " +
                     $"advGrow={adverseGrowing} " +
                     $"structWeak={structureBroken} " +
@@ -144,7 +148,7 @@ namespace GeminiV26.Core
             bool enoughTime = minutesOpen >= minMinutesOpen;
             bool enoughBars = ctx.BarsSinceEntryM5 >= 4;
 
-            if ((isCrypto || isIndex) && enoughTime && enoughBars)
+            if ((isCrypto || isIndex) && enoughTime && enoughBars && !marketTrending)
             {
                 bool fastDead =
                     noProgress &&
@@ -173,8 +177,9 @@ namespace GeminiV26.Core
 
             if (noProgress && enoughTime) danger++;
             if (adverseGrowing) danger++;
-            if (structureBroken) danger++;
-            if (momentumFade) danger++;
+
+            if (!marketTrending && structureBroken) danger++;
+            if (!marketTrending && momentumFade) danger++;
 
             bool exit = danger >= dangerThreshold;
 
