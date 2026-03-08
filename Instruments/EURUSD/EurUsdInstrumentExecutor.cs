@@ -172,7 +172,12 @@ namespace GeminiV26.Instruments.EURUSD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
-                EntryScore = tempFinalConfidence,
+
+                // ✅ Rulebook mezők rendbetéve (viselkedést nem változtat)
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence,
+                // FinalConfidence-t ComputeFinalConfidence tölti
+
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
                 RiskPriceDistance = slPriceDist,
@@ -183,7 +188,6 @@ namespace GeminiV26.Instruments.EURUSD
                 Tp2Ratio = tp2Ratio,
                 BeOffsetR = 0.10,
 
-                // opcionális, de hasznos:
                 Tp1Price = tradeType == TradeType.Buy
                     ? entryPrice + slPriceDist * tp1R
                     : entryPrice - slPriceDist * tp1R,
@@ -192,6 +196,7 @@ namespace GeminiV26.Instruments.EURUSD
                 Tp1CloseFraction = tp1Ratio,
                 BeMode = BeMode.AfterTp1,
 
+                // maradhat így, hogy ne változzon a működés
                 TrailingMode =
                     tempFinalConfidence >= 85 ? TrailingMode.Loose :
                     tempFinalConfidence >= 75 ? TrailingMode.Normal :
@@ -199,8 +204,13 @@ namespace GeminiV26.Instruments.EURUSD
 
                 EntryVolumeInUnits = result.Position.VolumeInUnits,
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
-                Tp2Price = tp2Price
+                Tp2Price = tp2Price,
+
+                MarketTrend = entry.Direction != TradeDirection.None
             };
+
+            // ✅ 1 sor, safe: kanonikus FinalConfidence kiszámolása (CSV/analytics)
+            ctx.ComputeFinalConfidence();
 
             _positionContexts[ctx.PositionId] = ctx;
             _exitManager.RegisterContext(ctx);
