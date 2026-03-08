@@ -242,7 +242,10 @@ namespace GeminiV26.Instruments.BTCUSD
                 Tp1Hit = false,
 
                 BeMode = BeMode.AfterTp1,
-                Tp2Price = tp2Price
+                Tp2Price = tp2Price,
+
+                // 🔑 MARKET STATE SNAPSHOT
+                MarketTrend = _marketStateDetector?.IsTrending ?? false
             };
 
             ctx.Tp1Price =
