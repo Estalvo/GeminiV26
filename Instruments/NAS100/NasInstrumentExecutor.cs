@@ -171,6 +171,8 @@ namespace GeminiV26.Instruments.NAS100
                 Tp2Ratio = tp2Ratio,
                 Tp2Price = tp2Price,
 
+                MarketTrend = entry.Direction != TradeDirection.None,
+
                 BeOffsetR = 0.10,
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
