@@ -45,13 +45,13 @@ namespace GeminiV26.Instruments.US30
             }
 
             // =========================
-            // ENTRY LOGIC – US30
+            // ENTRY LOGIC ï¿½ US30
             // =========================
             _entryLogic.Evaluate();
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
             // =========================
-            // MARKET STATE – SOFT
+            // MARKET STATE ï¿½ SOFT
             // =========================
             int statePenalty = 0;
 
@@ -61,7 +61,7 @@ namespace GeminiV26.Instruments.US30
                 if (ms != null)
                 {
                     if (ms.IsLowVol)
-                        statePenalty -= 15;   // US30 érzékenyebb, mint NAS
+                        statePenalty -= 15;   // US30 ï¿½rzï¿½kenyebb, mint NAS
                     if (ms.IsTrend)
                         statePenalty += 5;
                 }
@@ -141,6 +141,8 @@ namespace GeminiV26.Instruments.US30
                 Tp1CloseFraction = tp1Ratio,
 
                 BeMode = BeMode.AfterTp1,
+
+                MarketTrend = entry.Direction != TradeDirection.None,
 
                 TrailingMode =
                     tempFinalConfidence >= 85 ? TrailingMode.Loose :
