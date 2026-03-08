@@ -57,14 +57,29 @@ namespace GeminiV26.Core
             // ASSET THRESHOLDS
             // =====================================================
 
+            // =====================================================
+            // SIMPLE TREND DETECTION (M15)
+            // =====================================================
+
+            bool marketTrending = false;
+
+            if (m15 != null && m15.Count > 20)
+            {
+                double move =
+                    Math.Abs(
+                        m15.ClosePrices.Last(0) -
+                        m15.ClosePrices.Last(10)
+                    );
+
+                marketTrending = move > pos.Symbol.PipSize * 40;
+            }
+
             double mfeNoProgressR =
                 isFx ? 0.12 :
                 isCrypto ? 0.30 :
                 isIndex ? 0.25 :
                 isMetal ? 0.20 :
                 0.20;
-
-            bool marketTrending = ctx.MarketTrend;
 
             double maeAdverseR =
                 isFx ? 0.40 :
@@ -176,7 +191,7 @@ namespace GeminiV26.Core
             int danger = 0;
 
             if (noProgress && enoughTime) danger++;
-            if (adverseGrowing) danger++;
+            if (adverseGrowing && enoughTime) danger++;
 
             if (!marketTrending && structureBroken) danger++;
             if (!marketTrending && momentumFade) danger++;
