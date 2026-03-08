@@ -323,5 +323,7 @@ namespace GeminiV26.Core
         /// Trailing restore előkészítés.
         /// </summary>
         public double? LastStopLossPrice { get; set; }
+
+        public bool MarketTrend { get; set; }
     }
 }
