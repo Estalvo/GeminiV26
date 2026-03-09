@@ -1127,7 +1127,10 @@ namespace GeminiV26.Core
                 {
                     var bias = _indexBias.Get(_bot.SymbolName);
 
-                    _bot.Print($"[INDEX HTF] state={bias.State} allow={bias.AllowedDirection}");
+                    _bot.Print(
+                        $"[INDEX HTF] sym={_bot.SymbolName} " +
+                        $"state={bias.State} allow={bias.AllowedDirection}"
+                    );
 
                     if (bias.State == HtfBiasState.Neutral ||
                         bias.State == HtfBiasState.Transition)
@@ -1136,8 +1139,17 @@ namespace GeminiV26.Core
                         return;
                     }
 
+                    const int HtfAlignedMinScore = 75;
+
                     symbolSignals = symbolSignals
-                        .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
+                        .Where(e =>
+                            e == null ||
+                            !e.IsValid ||
+                            (
+                                e.Direction == bias.AllowedDirection &&
+                                e.Score >= HtfAlignedMinScore
+                            )
+                        )
                         .ToList();
 
                     if (symbolSignals.All(e => e == null || !e.IsValid))
@@ -1146,7 +1158,6 @@ namespace GeminiV26.Core
                         return;
                     }
                 }
-
 
                 // =====================================================
                 // ROUTER
@@ -1854,7 +1865,7 @@ namespace GeminiV26.Core
                     hardLimit = -250.0;
 
                 else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
-                    hardLimit = -150.0;
+                    hardLimit = -220.0;
 
                 else
                     hardLimit = -150.0; // default FX
