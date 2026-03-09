@@ -1854,7 +1854,7 @@ namespace GeminiV26.Core
                     hardLimit = -250.0;
 
                 else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
-                    hardLimit = -150.0;
+                    hardLimit = -220.0;
 
                 else
                     hardLimit = -150.0; // default FX
