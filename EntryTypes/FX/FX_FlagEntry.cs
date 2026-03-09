@@ -508,6 +508,42 @@ namespace GeminiV26.EntryTypes.FX
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
+            // =====================================================
+            // POST-BREAKOUT COOLDOWN (institutional anti-stop-sweep)
+            // =====================================================
+            int minBreakoutBars = 0;
+
+            if (breakoutReason == "M1_BREAKOUT")
+            {
+                minBreakoutBars =
+                    ctx.Session == FxSession.Asia ? 1 : 2;
+            }
+            else if (breakoutReason == "RANGE_BREAK_DIR")
+            {
+                minBreakoutBars = 1;
+            }
+
+            bool breakoutJustHappened =
+                breakoutConfirmed &&
+                minBreakoutBars > 0 &&
+                barsSinceBreak >= 0 &&
+                barsSinceBreak < minBreakoutBars;
+
+            if (breakoutJustHappened)
+            {
+                ctx.Log?.Invoke(
+                    $"[FX_FLAG COOLDOWN] candDir={flagDir} breakoutReason={breakoutReason} " +
+                    $"barsSinceBreak={barsSinceBreak} minRequired={minBreakoutBars}"
+                );
+
+                return Invalid(
+                    ctx,
+                    flagDir,
+                    $"POST_BREAKOUT_COOLDOWN({breakoutReason},{barsSinceBreak}<{minBreakoutBars})",
+                    score
+                );
+            }
+
             if (ctx.Session == FxSession.Asia)
             {
                 int asiaBarsSinceBreak2 = barsSinceBreak;
