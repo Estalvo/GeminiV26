@@ -156,20 +156,28 @@ namespace GeminiV26.EntryTypes.INDEX
             );
 
             ctx.Log?.Invoke(
-                $"[IDX_FLAG][IMPULSE] dir={ctx.ImpulseDirection_M5} " +
+                $"[IDX_FLAG][START] sym={ctx.Symbol} dir={dir} " +
+                $"adx={ctx.Adx_M5:F1} atr={ctx.AtrM5:F1} trend={ctx.MarketState?.IsTrend} lowVol={ctx.MarketState?.IsLowVol} " +
+                $"impulse={ctx.HasImpulse_M5} bsi={ctx.BarsSinceImpulse_M5}"
+            );
+
+            TradeDirection approxImpulseDir =
+                ctx.Ema21_M5 >= ctx.Ema50_M5
+                    ? TradeDirection.Long
+                    : TradeDirection.Short;
+
+            ctx.Log?.Invoke(
+                $"[IDX_FLAG][IMPULSE] approxDir={approxImpulseDir} " +
                 $"barsSinceImpulse={ctx.BarsSinceImpulse_M5}"
             );
 
             // =====================================================
-            // IMPULSE DIRECTION ALIGNMENT
+            // IMPULSE DIRECTION ALIGNMENT (approx)
             // =====================================================
 
-            if (ctx.ImpulseDirection_M5 == TradeDirection.None)
-                return Reject(ctx, "IMPULSE_DIR_UNKNOWN", score, dir);
-
-            if (dir != ctx.ImpulseDirection_M5)
+            if (dir != approxImpulseDir)
                 return Reject(ctx, "IMPULSE_DIR_MISMATCH", score, dir);
-                
+               
             // =====================================================
             // HARD CONTEXT GATES
             // =====================================================
