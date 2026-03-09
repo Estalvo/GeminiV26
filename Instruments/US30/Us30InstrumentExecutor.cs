@@ -139,6 +139,17 @@ namespace GeminiV26.Instruments.US30
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
 
+                // TP1 fix: keep full R-context so ExitManager can evaluate TP1 deterministically
+                RiskPriceDistance = slPriceDist,
+
+                Tp1R = tp1R,
+                Tp1Ratio = tp1Ratio,
+                Tp2R = tp2R,
+                Tp2Ratio = tp2Ratio,
+                Tp2Price = tp2Price,
+
+                BeOffsetR = 0.10,
+
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
 
@@ -150,6 +161,9 @@ namespace GeminiV26.Instruments.US30
                     riskConfidence >= 85 ? TrailingMode.Loose :
                     riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
+
+                EntryVolumeInUnits = volumeUnits,
+                RemainingVolumeInUnits = volumeUnits,
 
             };
 
