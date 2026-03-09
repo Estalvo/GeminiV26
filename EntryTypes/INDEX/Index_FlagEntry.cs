@@ -19,10 +19,10 @@ namespace GeminiV26.EntryTypes.INDEX
         private const double MinBreakoutBodyRatio = 0.55;
         private const double MinBreakoutBarAtr = 0.35;
 
-        private const double MaxOpposingSlopeAtr = 0.45;
+        private const double MaxOpposingSlopeAtr = 0.35;
         private const double MaxSameDirSlopeAtr = 0.20;
 
-        private const int BaseScore = 84;
+        private const int BaseScore = 78;
         private const int MinScore = 72;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -155,6 +155,21 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"impulse={ctx.HasImpulse_M5} bsi={ctx.BarsSinceImpulse_M5}"
             );
 
+            ctx.Log?.Invoke(
+                $"[IDX_FLAG][IMPULSE] dir={ctx.ImpulseDirection_M5} " +
+                $"barsSinceImpulse={ctx.BarsSinceImpulse_M5}"
+            );
+
+            // =====================================================
+            // IMPULSE DIRECTION ALIGNMENT
+            // =====================================================
+
+            if (ctx.ImpulseDirection_M5 == TradeDirection.None)
+                return Reject(ctx, "IMPULSE_DIR_UNKNOWN", score, dir);
+
+            if (dir != ctx.ImpulseDirection_M5)
+                return Reject(ctx, "IMPULSE_DIR_MISMATCH", score, dir);
+                
             // =====================================================
             // HARD CONTEXT GATES
             // =====================================================
