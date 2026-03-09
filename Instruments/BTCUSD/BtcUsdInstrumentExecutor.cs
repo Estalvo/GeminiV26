@@ -63,16 +63,14 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             _entryLogic.Evaluate(out _, out int logicConfidence);
 
-            // 🔒 safety clamp – ONLY for BTC executor
-            logicConfidence = Math.Max(-20, Math.Min(20, logicConfidence));
-
-            int tempFinalConfidence = Clamp01to100(entry.Score + logicConfidence);
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence);
 
             // =========================================================
             // SL DISTANCE (ATR)
             // =========================================================
             double slPriceDist =
-                CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+                CalculateStopLossPriceDistance(riskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
@@ -84,7 +82,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             // RISK-BASED VOLUME (BTC – price-value aware)
             // =========================================================
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
             double balance = _bot.Account.Balance;
             double riskMoney = balance * (riskPercent / 100.0);
 
@@ -110,7 +108,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             // SCORE-BASED RISK MONOTONICITY GUARD (CRYPTO)
             // =========================================================
-            double score = tempFinalConfidence;
+            double score = riskConfidence;
 
             double scoreRiskMult =                
                 score < 45 ? 0.70 :
@@ -127,11 +125,11 @@ namespace GeminiV26.Instruments.BTCUSD
             double minUnits = _bot.Symbol.VolumeInUnitsMin;
             double maxLowScoreUnits = minUnits * 20;
 
-            if (tempFinalConfidence < 45 &&
+            if (riskConfidence < 45 &&
                 rawUnits > maxLowScoreUnits)
             {
                 _bot.Print(
-                    $"[BTCUSD][RISK] score={tempFinalConfidence} rawUnits capped " +
+                    $"[BTCUSD][RISK] score={riskConfidence} rawUnits capped " +
                     $"from {rawUnits:F6} to {maxLowScoreUnits:F6}"
                 );
 
@@ -148,7 +146,7 @@ namespace GeminiV26.Instruments.BTCUSD
             }
 
             // ⚠️ IMPORTANT: lotCap MUST be in units
-            double lotCapUnits = _riskSizer.GetLotCap(tempFinalConfidence);
+            double lotCapUnits = _riskSizer.GetLotCap(riskConfidence);
             double cappedUnits = Math.Min(rawUnits, lotCapUnits);
 
             double volumeUnits =
@@ -167,7 +165,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // TP POLICY
             // =========================================================
             _riskSizer.GetTakeProfit(
-                tempFinalConfidence,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -190,7 +188,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
 
             _bot.Print(
-                $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} FC={tempFinalConfidence} " +
+                $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} FC={riskConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"rawUnits={rawUnits:F0} cap={lotCapUnits:F0} volUnits={volumeUnits}"
             );

@@ -67,32 +67,32 @@ namespace GeminiV26.Instruments.US30
                 }
             }
 
-            int tempFinalConfidence =
-                Math.Max(0, Math.Min(100, entry.Score + logicConfidence + statePenalty));
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
             var tradeType =
                 entry.Direction == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
 
             _riskSizer.GetTakeProfit(
-                entry.Score,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
 
             if (volumeUnits <= 0)
                 return;
@@ -139,16 +139,16 @@ namespace GeminiV26.Instruments.US30
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
 
+                // TP1 fix: keep full R-context so ExitManager can evaluate TP1 deterministically
                 RiskPriceDistance = slPriceDist,
 
                 Tp1R = tp1R,
                 Tp1Ratio = tp1Ratio,
                 Tp2R = tp2R,
                 Tp2Ratio = tp2Ratio,
-                Tp1Price = tradeType == TradeType.Buy
-                    ? result.Position.EntryPrice + slPriceDist * tp1R
-                    : result.Position.EntryPrice - slPriceDist * tp1R,
                 Tp2Price = tp2Price,
+
+                BeOffsetR = 0.10,
 
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
@@ -158,8 +158,8 @@ namespace GeminiV26.Instruments.US30
                 MarketTrend = entry.Direction != TradeDirection.None,
 
                 TrailingMode =
-                    tempFinalConfidence >= 85 ? TrailingMode.Loose :
-                    tempFinalConfidence >= 75 ? TrailingMode.Normal :
+                    riskConfidence >= 85 ? TrailingMode.Loose :
+                    riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = volumeUnits,
@@ -168,13 +168,6 @@ namespace GeminiV26.Instruments.US30
             };
 
             ctx.ComputeFinalConfidence();
-
-            _bot.Print(
-                $"[US30 CTX INIT] pos={positionKey} dir={result.Position.TradeType} " +
-                $"entry={ctx.EntryPrice} slDist={ctx.RiskPriceDistance} tp1R={ctx.Tp1R} " +
-                $"tp2R={ctx.Tp2R} tp1Frac={ctx.Tp1CloseFraction} vol={ctx.EntryVolumeInUnits} " +
-                $"entryScore={ctx.EntryScore} logic={ctx.LogicConfidence} final={ctx.FinalConfidence}"
-            );
 
             _positionContexts[positionKey] = ctx;
             _exitManager.RegisterContext(ctx);

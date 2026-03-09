@@ -71,7 +71,9 @@ namespace GeminiV26.Core
         /// CSAK management és risk input.
         /// NEM belépési gate.
         /// </summary>
-        public int FinalConfidence { get; set; }
+        public int FinalConfidence { get; private set; }
+
+        private bool _isFinalConfidenceComputed;
 
         public DateTime EntryTime { get; set; }
 
@@ -264,17 +266,30 @@ namespace GeminiV26.Core
         /// - CSAK risk / management input
         /// - Determinisztikus, egyszer számolt érték
         /// </summary>
-        public void ComputeFinalConfidence()
+        public static int ComputeFinalConfidenceValue(int entryScore, int logicConfidence)
         {
-            // Safety clamp (defenzív)
-            int entry = Math.Max(0, Math.Min(100, EntryScore));
-            int logic = Math.Max(0, Math.Min(100, LogicConfidence));
+            int entry = Math.Max(0, Math.Min(100, entryScore));
+            int logic = Math.Max(0, Math.Min(100, logicConfidence));
 
             double combined =
                 entry * 0.7 +
                 logic * 0.3;
 
-            FinalConfidence = (int)Math.Round(combined, MidpointRounding.AwayFromZero);
+            return (int)Math.Round(combined, MidpointRounding.AwayFromZero);
+        }
+
+        public static int ClampRiskConfidence(int confidence)
+        {
+            return Math.Max(0, Math.Min(100, confidence));
+        }
+
+        public void ComputeFinalConfidence()
+        {
+            if (_isFinalConfidenceComputed)
+                return;
+
+            FinalConfidence = ComputeFinalConfidenceValue(EntryScore, LogicConfidence);
+            _isFinalConfidenceComputed = true;
         }
 
         // =========================================================

@@ -60,8 +60,8 @@ namespace GeminiV26.Instruments.GER40
                 }
             }
 
-            int tempFinalConfidence =
-                Math.Max(0, Math.Min(100, entry.Score + logicConfidence + statePenalty));
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
             
             var tradeType =
                 entry.Direction == TradeDirection.Long
@@ -71,28 +71,28 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // RISK POLICY
             // =========================
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
 
             _riskSizer.GetTakeProfit(
-                tempFinalConfidence,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
-            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(tempFinalConfidence, entry.Type);
+            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(riskConfidence, entry.Type);
 
-            double lotCap = _riskSizer.GetLotCap(tempFinalConfidence);
+            double lotCap = _riskSizer.GetLotCap(riskConfidence);
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
             if (volumeUnits <= 0)
                 return;
 
@@ -149,8 +149,7 @@ namespace GeminiV26.Instruments.GER40
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
                 EntryScore = entry.Score,
-
-                FinalConfidence = tempFinalConfidence,   // ⬅️ KÖTELEZŐ
+                LogicConfidence = logicConfidence,
 
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
@@ -170,13 +169,15 @@ namespace GeminiV26.Instruments.GER40
                 Tp1CloseFraction = tp1Ratio,
 
                 TrailingMode =
-                    tempFinalConfidence >= 85 ? TrailingMode.Loose :
-                    tempFinalConfidence >= 75 ? TrailingMode.Normal :
+                    riskConfidence >= 85 ? TrailingMode.Loose :
+                    riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = volumeUnits,
                 RemainingVolumeInUnits = volumeUnits
             };
+
+            ctx.ComputeFinalConfidence();
 
             _positionContexts[positionKey] = ctx;
             _exitManager.RegisterContext(ctx);

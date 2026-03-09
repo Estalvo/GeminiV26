@@ -83,12 +83,8 @@ namespace GeminiV26.Instruments.USDJPY
             // =========================================================
             // FINAL CONFIDENCE (entry + logic + market state)
             // =========================================================
-            int tempFinalConfidence =
-                Math.Max(0, Math.Min(100,
-                    entry.Score +
-                    logicConfidence +
-                    statePenalty
-                ));
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
+            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
             var tradeType =
                 entry.Direction == TradeDirection.Long
@@ -96,26 +92,26 @@ namespace GeminiV26.Instruments.USDJPY
                     : TradeType.Sell;
 
             // === STOP LOSS DISTANCE ===
-            double slPriceDist = CalculateStopLossPriceDistance(tempFinalConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
 
             // === TP CONFIG ===
             _riskSizer.GetTakeProfit(
-                entry.Score,
+                riskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
             // === RISK ===
-            double riskPercent = _riskSizer.GetRiskPercent(tempFinalConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
                 return;
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, tempFinalConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
 
             if (volumeUnits <= 0)
                 return;
@@ -181,10 +177,10 @@ namespace GeminiV26.Instruments.USDJPY
                 Tp1CloseFraction = tp1Ratio,
                 BeMode = BeMode.AfterTp1,
 
-                // ⚠️ Trailing marad tempFinalConfidence alapján
+                // ⚠️ Trailing marad riskConfidence alapján
                 TrailingMode =
-                    tempFinalConfidence >= 85 ? TrailingMode.Loose :
-                    tempFinalConfidence >= 75 ? TrailingMode.Normal :
+                    riskConfidence >= 85 ? TrailingMode.Loose :
+                    riskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = result.Position.VolumeInUnits,
