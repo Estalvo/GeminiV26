@@ -134,8 +134,21 @@ namespace GeminiV26.Instruments.US30
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence,
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
+
+                RiskPriceDistance = slPriceDist,
+
+                Tp1R = tp1R,
+                Tp1Ratio = tp1Ratio,
+                Tp2R = tp2R,
+                Tp2Ratio = tp2Ratio,
+                Tp1Price = tradeType == TradeType.Buy
+                    ? result.Position.EntryPrice + slPriceDist * tp1R
+                    : result.Position.EntryPrice - slPriceDist * tp1R,
+                Tp2Price = tp2Price,
 
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
@@ -149,7 +162,19 @@ namespace GeminiV26.Instruments.US30
                     tempFinalConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
+                EntryVolumeInUnits = volumeUnits,
+                RemainingVolumeInUnits = volumeUnits,
+
             };
+
+            ctx.ComputeFinalConfidence();
+
+            _bot.Print(
+                $"[US30 CTX INIT] pos={positionKey} dir={result.Position.TradeType} " +
+                $"entry={ctx.EntryPrice} slDist={ctx.RiskPriceDistance} tp1R={ctx.Tp1R} " +
+                $"tp2R={ctx.Tp2R} tp1Frac={ctx.Tp1CloseFraction} vol={ctx.EntryVolumeInUnits} " +
+                $"entryScore={ctx.EntryScore} logic={ctx.LogicConfidence} final={ctx.FinalConfidence}"
+            );
 
             _positionContexts[positionKey] = ctx;
             _exitManager.RegisterContext(ctx);

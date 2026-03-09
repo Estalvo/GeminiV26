@@ -79,15 +79,19 @@ namespace GeminiV26.Instruments.US30
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
 
-                    if (CheckTp1Hit(pos, rDist, tp1R))
+                    if (CheckTp1Hit(pos, ctx, rDist, tp1R))
                     {
-                        ExecuteTp1(pos, ctx);
-                        MoveToBreakEven(pos, ctx, rDist);
+                        bool tp1Done = ExecuteTp1(pos, ctx);
 
-                        ctx.Tp1Hit = true;
+                        if (tp1Done)
+                        {
+                            MoveToBreakEven(pos, ctx, rDist);
 
-                        if (ctx.TrailingMode == TrailingMode.None)
-                            ctx.TrailingMode = TrailingMode.Normal;
+                            if (ctx.TrailingMode == TrailingMode.None)
+                                ctx.TrailingMode = TrailingMode.Normal;
+
+                            _bot.Print($"[US30 TP1 STATE] pos={pos.Id} tp1Hit={ctx.Tp1Hit} be={ctx.BePrice} trailing={ctx.TrailingMode}");
+                        }
 
                         return; // <<< KRITIKUS
                     }
@@ -106,7 +110,7 @@ namespace GeminiV26.Instruments.US30
         // =====================================================
         // TP1 CHECK
         // =====================================================
-        private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
+        private bool CheckTp1Hit(Position pos, PositionContext ctx, double rDist, double tp1R)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (sym == null)
@@ -120,19 +124,26 @@ namespace GeminiV26.Instruments.US30
                 ? sym.Bid
                 : sym.Ask;
 
-            return pos.TradeType == TradeType.Buy
+            bool hit = pos.TradeType == TradeType.Buy
                 ? priceNow >= tp1Price
                 : priceNow <= tp1Price;
+
+            _bot.Print(
+                $"[US30 TP1 DBG] pos={pos.Id} dir={pos.TradeType} entry={pos.EntryPrice} sl={pos.StopLoss} " +
+                $"r={rDist} tp1R={tp1R} tp1={tp1Price} bid={sym.Bid} ask={sym.Ask} tp1Hit={ctx.Tp1Hit} hit={hit}"
+            );
+
+            return hit;
         }
 
         // =====================================================
         // TP1 EXECUTION
         // =====================================================
-         private void ExecuteTp1(Position pos, PositionContext ctx)
+         private bool ExecuteTp1(Position pos, PositionContext ctx)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (sym == null)
-                return;
+                return false;
 
             double frac = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
                 ? ctx.Tp1CloseFraction
@@ -142,23 +153,33 @@ namespace GeminiV26.Instruments.US30
 
             long targetUnits = (long)Math.Floor(pos.VolumeInUnits * frac);
             if (targetUnits <= 0)
-                return;
+                return false;
 
             long closeUnits = (long)sym.NormalizeVolumeInUnits(targetUnits);
 
             if (closeUnits < minUnits)
-                return;
+                return false;
 
             if (closeUnits >= pos.VolumeInUnits)
                 closeUnits = (long)(pos.VolumeInUnits - minUnits);
 
             if (closeUnits <= 0)
-                return;
+                return false;
 
-            _bot.ClosePosition(pos, closeUnits);
+            _bot.Print($"[US30 TP1 EXEC] pos={pos.Id} closeUnits={closeUnits} posVol={pos.VolumeInUnits} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
+
+            var closeResult = _bot.ClosePosition(pos, closeUnits);
+
+            _bot.Print($"[US30 TP1 EXEC RES] pos={pos.Id} success={closeResult.IsSuccessful} err={closeResult.Error}");
+
+            if (!closeResult.IsSuccessful)
+                return false;
 
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = pos.VolumeInUnits - closeUnits;
+            ctx.Tp1Hit = true;
+
+            return true;
         }
 
         // =====================================================
