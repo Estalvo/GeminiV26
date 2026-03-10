@@ -26,6 +26,14 @@
 // Ez a fájl NORMATÍV.
 // Ha itt score vagy confidence gate jelenik meg, az BUG.
 // =========================================================
+/// ENTRY PIPELINE CONTRACT
+///
+/// 1. Instrument EntryLogic -> generates candidate signals
+/// 2. EntryRouter -> prioritizes and validates entry types
+/// 3. Executor -> executes final signal
+///
+/// Router does NOT re-evaluate market logic.
+/// It only orchestrates EntryTypes.
 
 using cAlgo.API;
 using GeminiV26.Core.Entry;
