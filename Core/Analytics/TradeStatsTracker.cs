@@ -35,6 +35,18 @@ namespace GeminiV26.Core.Analytics
             public bool Breakout;
         }
 
+        public sealed class TradeCloseSnapshot
+        {
+            public DateTime TimestampUtc;
+            public string Symbol;
+            public string Direction;
+            public double EntryPrice;
+            public double ExitPrice;
+            public double Profit;
+            public int? Score;
+            public int? Confidence;
+        }
+
         private readonly Dictionary<string, InstrumentStats> _instrumentStats = new Dictionary<string, InstrumentStats>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<long, TradeMeta> _activeByPositionId = new Dictionary<long, TradeMeta>();
         private readonly Dictionary<string, Queue<TradeMeta>> _activeBySymbol = new Dictionary<string, Queue<TradeMeta>>(StringComparer.OrdinalIgnoreCase);
@@ -84,6 +96,14 @@ namespace GeminiV26.Core.Analytics
             if (ctx == null || string.IsNullOrWhiteSpace(ctx.Symbol))
                 return;
 
+            RegisterTradeClose(ctx, pnl, null);
+        }
+
+        public void RegisterTradeClose(EntryContext ctx, double pnl, TradeCloseSnapshot snapshot)
+        {
+            if (ctx == null || string.IsNullOrWhiteSpace(ctx.Symbol))
+                return;
+
             var symbol = ctx.Symbol;
             var stats = GetOrCreateSymbolStats(symbol);
 
@@ -97,6 +117,18 @@ namespace GeminiV26.Core.Analytics
             if (ctx.FlagBreakoutConfirmed)
                 UpdateStats(stats.Breakout, pnl);
 
+            WriteTradeRow(snapshot ?? new TradeCloseSnapshot
+            {
+                TimestampUtc = DateTime.UtcNow,
+                Symbol = symbol,
+                Direction = string.Empty,
+                EntryPrice = 0,
+                ExitPrice = 0,
+                Profit = pnl,
+                Score = null,
+                Confidence = null
+            });
+
             _closedTrades++;
             if (_closedTrades % 20 == 0)
                 PrintSummary();
@@ -104,10 +136,15 @@ namespace GeminiV26.Core.Analytics
 
         public void RegisterTradeClose(long positionId, EntryContext fallbackCtx, double pnl)
         {
+            RegisterTradeClose(positionId, fallbackCtx, pnl, null);
+        }
+
+        public void RegisterTradeClose(long positionId, EntryContext fallbackCtx, double pnl, TradeCloseSnapshot snapshot)
+        {
             if (_activeByPositionId.TryGetValue(positionId, out var meta) && meta != null)
             {
                 _activeByPositionId.Remove(positionId);
-                RegisterTradeClose(ToContext(meta), pnl);
+                RegisterTradeClose(ToContext(meta), pnl, snapshot);
                 return;
             }
 
@@ -116,7 +153,7 @@ namespace GeminiV26.Core.Analytics
                 if (_activeBySymbol.TryGetValue(fallbackCtx.Symbol, out var queue) && queue.Count > 0)
                     queue.Dequeue();
 
-                RegisterTradeClose(fallbackCtx, pnl);
+                RegisterTradeClose(fallbackCtx, pnl, snapshot);
                 return;
             }
 
@@ -208,6 +245,44 @@ namespace GeminiV26.Core.Analytics
         private static string FormatWinRate(double winRate)
         {
             return winRate.ToString("0.00", CultureInfo.InvariantCulture);
+        }
+
+        private void WriteTradeRow(TradeCloseSnapshot snapshot)
+        {
+            if (snapshot == null || string.IsNullOrWhiteSpace(snapshot.Symbol))
+                return;
+
+            try
+            {
+                const string basePath = @"C:\Users\Administrator\Documents\GeminiV26\Data\Trades";
+                Directory.CreateDirectory(basePath);
+
+                var safeSymbol = snapshot.Symbol.Trim();
+                var filePath = Path.Combine(basePath, $"{safeSymbol}_trades.csv");
+
+                if (!File.Exists(filePath))
+                {
+                    const string header = "timestamp,symbol,direction,entryPrice,exitPrice,profit,score,confidence";
+                    File.WriteAllText(filePath, header + Environment.NewLine);
+                }
+
+                var row = string.Join(",",
+                    snapshot.TimestampUtc.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                    safeSymbol,
+                    snapshot.Direction ?? string.Empty,
+                    snapshot.EntryPrice.ToString(CultureInfo.InvariantCulture),
+                    snapshot.ExitPrice.ToString(CultureInfo.InvariantCulture),
+                    snapshot.Profit.ToString(CultureInfo.InvariantCulture),
+                    snapshot.Score?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+                    snapshot.Confidence?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);
+
+                File.AppendAllText(filePath, row + Environment.NewLine);
+                _log($"[TRADESTATS] trade logged {safeSymbol}");
+            }
+            catch (Exception ex)
+            {
+                _log($"[TRADESTATS][ERROR] {ex.Message}");
+            }
         }
     }
 }
