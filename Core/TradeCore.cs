@@ -75,6 +75,7 @@ namespace GeminiV26.Core
         private readonly EntryRouter _entryRouter;
         private readonly EntryContextBuilder _contextBuilder;
         private readonly TransitionDetector _transitionDetector;
+        private readonly FlagBreakoutDetector _flagBreakoutDetector;
         private readonly List<IEntryType> _entryTypes;
 
         private readonly TradeLogger _tradeLogger;
@@ -395,6 +396,7 @@ namespace GeminiV26.Core
             _entryRouter = new EntryRouter(_entryTypes);
             _contextBuilder = new EntryContextBuilder(bot);
             _transitionDetector = new TransitionDetector(_bot.Print);
+            _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
             _tradeLogger = new TradeLogger(_bot.SymbolName);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
@@ -880,6 +882,7 @@ namespace GeminiV26.Core
             _ctx.Transition = transition;
             _ctx.TransitionValid = transition.TransitionValid;
             _ctx.TransitionScoreBonus = transition.BonusScore;
+            _flagBreakoutDetector.Evaluate(_ctx);
 
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
@@ -1578,7 +1581,7 @@ namespace GeminiV26.Core
 
         private void ApplyTransitionScoreBoost(EntryContext ctx, List<EntryEvaluation> symbolSignals)
         {
-            if (ctx == null || symbolSignals == null || !ctx.TransitionValid || ctx.TransitionScoreBonus <= 0)
+            if (ctx == null || symbolSignals == null || !ctx.TransitionValid || !ctx.FlagBreakoutConfirmed || ctx.TransitionScoreBonus <= 0)
                 return;
 
             foreach (var entry in symbolSignals)
