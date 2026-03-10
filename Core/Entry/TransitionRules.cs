@@ -5,9 +5,12 @@ namespace GeminiV26.Core.Entry
         public int MaxImpulseAge { get; init; } = 8;
         public double ImpulseMultiplier { get; init; } = 1.2;
         public double MinImpulseBodyRatio { get; init; } = 0.60;
+        public double MinImpulseStrength { get; init; } = 0.40;
+        public double ImpulseNormalizationAtrFactor { get; init; } = 2.0;
 
         public double MaxPullbackDepthR { get; init; } = 0.5;
         public int MinPullbackBars { get; init; } = 2;
+        public double OptimalPullbackDepthR { get; init; } = 0.42;
 
         public int MaxFlagBars { get; init; } = 5;
         public double MaxCompressionRatio { get; init; } = 0.75;
@@ -22,8 +25,10 @@ namespace GeminiV26.Core.Entry
                 {
                     MaxImpulseAge = 6,
                     ImpulseMultiplier = 1.4,
+                    MinImpulseStrength = 0.45,
                     MaxPullbackDepthR = 0.45,
                     MinPullbackBars = 2,
+                    OptimalPullbackDepthR = 0.40,
                     MaxFlagBars = 4,
                     MaxCompressionRatio = 0.70
                 };
@@ -35,8 +40,10 @@ namespace GeminiV26.Core.Entry
                 {
                     MaxImpulseAge = 7,
                     ImpulseMultiplier = 1.3,
+                    MinImpulseStrength = 0.40,
                     MaxPullbackDepthR = 0.5,
                     MinPullbackBars = 2,
+                    OptimalPullbackDepthR = 0.42,
                     MaxFlagBars = 5,
                     MaxCompressionRatio = 0.80
                 };
