@@ -38,7 +38,8 @@ namespace GeminiV26.Core.Entry
             bool impulseDirectionValid = impulseDirection != TradeDirection.None && impulseDirection == direction;
 
             double impulseStrength = GetImpulseStrength(ctx, last, impulseBarsAgo);
-            _log?.Invoke($"[TRANSITION][IMPULSE] detected={hasImpulse} barsSince={impulseBarsAgo} strength={impulseStrength:0.00} direction={impulseDirection}");
+            bool impulseStrengthValid = impulseStrength >= p.MinImpulseStrength;
+            _log?.Invoke($"[TRANSITION][IMPULSE] detected={hasImpulse} barsSince={impulseBarsAgo} strength={impulseStrength:0.00} strengthValid={impulseStrengthValid} direction={impulseDirection}");
 
             int pullbackBars = Math.Max(0, ctx.PullbackBars_M5);
             TradeDirection pullbackDirection = DetectPullbackDirection(ctx, last, pullbackBars);
@@ -46,14 +47,27 @@ namespace GeminiV26.Core.Entry
 
             double impulseRange = GetImpulseRange(ctx, impulseIndex);
             double pullbackDepthR = ComputePullbackDepthR(ctx, last, pullbackBars, impulseDirection, impulseRange);
-            bool hasPullback = pullbackBars > 0 && pullbackDepthR <= p.MaxPullbackDepthR && pullbackDirectionValid;
+            double avgPullbackBody = 0.0;
+            int pullbackStart = Math.Max(0, last - pullbackBars + 1);
+            for (int i = pullbackStart; i <= last; i++)
+            {
+                avgPullbackBody += Math.Abs(ctx.M5.ClosePrices[i] - ctx.M5.OpenPrices[i]);
+            }
+
+            avgPullbackBody /= Math.Max(1, pullbackBars);
+            bool pullbackQualityValid = avgPullbackBody <= ctx.AtrM5 * 0.6;
+            bool hasPullback =
+                pullbackBars > 0 &&
+                pullbackDepthR <= p.MaxPullbackDepthR &&
+                pullbackDirectionValid &&
+                pullbackQualityValid;
 
             if (hasPullback && p.StrictWickFilter)
             {
                 hasPullback = ctx.HasRejectionWick_M5;
             }
 
-            _log?.Invoke($"[TRANSITION][PULLBACK] depthR={pullbackDepthR:0.00} bars={pullbackBars} direction={pullbackDirection}");
+            _log?.Invoke($"[TRANSITION][PULLBACK] depthR={pullbackDepthR:0.00} bars={pullbackBars} direction={pullbackDirection} qualityValid={pullbackQualityValid}");
 
             int flagBars = EstimateFlagBars(ctx, last, p.MaxFlagBars, direction);
             double compressionScore = ComputeCompressionScore(ctx, last, flagBars, impulseRange);
@@ -66,15 +80,17 @@ namespace GeminiV26.Core.Entry
 
             _log?.Invoke($"[TRANSITION][FLAG] bars={flagBars} compression={compressionScore:0.00} directionValid={flagDirectionValid}");
 
-            bool valid = hasImpulse && impulseDirectionValid && hasPullback && hasFlag;
+            bool valid = hasImpulse && impulseDirectionValid && impulseStrengthValid && hasPullback && hasFlag;
             int bonus = valid ? 10 : 0;
 
             string reason = "OK";
             if (!hasImpulse) reason = impulseTooOld ? "ImpulseTooOld" : "NoImpulse";
             else if (!impulseDirectionValid) reason = "InvalidImpulseDirection";
+            else if (!impulseStrengthValid) reason = "WeakImpulse";
             else if (!hasPullback)
             {
                 if (!pullbackDirectionValid) reason = "InvalidPullbackDirection";
+                else if (!pullbackQualityValid) reason = "AggressivePullback";
                 else reason = pullbackDepthR > p.MaxPullbackDepthR ? "PullbackTooDeep" : "NoPullback";
             }
             else if (!hasFlag) reason = !flagDirectionValid ? "InvalidFlagDirection" : "CompressionTooLow";

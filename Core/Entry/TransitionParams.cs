@@ -6,6 +6,7 @@ namespace GeminiV26.Core.Entry
         public double MaxPullbackDepthR { get; init; }
         public int MaxFlagBars { get; init; }
         public double MinCompressionScore { get; init; }
+        public double MinImpulseStrength { get; init; }
         public bool StrictWickFilter { get; init; }
 
         public static TransitionParams ForSymbol(string symbol)
@@ -20,6 +21,7 @@ namespace GeminiV26.Core.Entry
                     MaxPullbackDepthR = 0.35,
                     MaxFlagBars = 3,
                     MinCompressionScore = 0.65,
+                    MinImpulseStrength = 1.2,
                     StrictWickFilter = true
                 };
             }
@@ -32,6 +34,7 @@ namespace GeminiV26.Core.Entry
                     MaxPullbackDepthR = 0.38,
                     MaxFlagBars = 4,
                     MinCompressionScore = 0.55,
+                    MinImpulseStrength = 1.0,
                     StrictWickFilter = false
                 };
             }
@@ -42,6 +45,7 @@ namespace GeminiV26.Core.Entry
                 MaxPullbackDepthR = 0.45,
                 MaxFlagBars = 6,
                 MinCompressionScore = 0.50,
+                MinImpulseStrength = 0.8,
                 StrictWickFilter = false
             };
         }
