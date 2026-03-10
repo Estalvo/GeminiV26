@@ -162,6 +162,7 @@ namespace GeminiV26.Core.Entry
         public int TransitionScoreBonus { get; set; }
         public TransitionEvaluation Transition { get; set; }
         public bool FlagBreakoutConfirmed { get; set; }
+        public int BreakoutBarsSince { get; set; }
         public double FlagHigh { get; set; }
         public double FlagLow { get; set; }
 

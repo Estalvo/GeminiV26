@@ -16,7 +16,16 @@ namespace GeminiV26.Core.Entry
             if (ctx == null)
                 return;
 
-            ctx.FlagBreakoutConfirmed = false;
+            if (ctx.FlagBreakoutConfirmed)
+            {
+                ctx.BreakoutBarsSince++;
+                if (ctx.BreakoutBarsSince > 3)
+                {
+                    ctx.FlagBreakoutConfirmed = false;
+                    _log?.Invoke($"[FLAG_BREAKOUT][EXPIRE] barsSince={ctx.BreakoutBarsSince} breakoutExpired=true");
+                }
+            }
+
             ctx.FlagHigh = 0.0;
             ctx.FlagLow = 0.0;
 
@@ -47,22 +56,33 @@ namespace GeminiV26.Core.Entry
 
             double breakoutBuffer = ctx.AtrM5 * 0.10;
             bool breakout = false;
+            bool highBreak = false;
+            bool lowBreak = false;
+            bool closeConfirm = false;
 
             if (ctx.TrendDirection == TradeDirection.Long)
             {
-                breakout = ctx.M5.ClosePrices[last] > flagHigh + breakoutBuffer;
+                highBreak = ctx.M5.HighPrices[last] > flagHigh + breakoutBuffer;
+                closeConfirm = ctx.M5.ClosePrices[last] > flagHigh;
+                breakout = highBreak && closeConfirm;
             }
             else if (ctx.TrendDirection == TradeDirection.Short)
             {
-                breakout = ctx.M5.ClosePrices[last] < flagLow - breakoutBuffer;
+                lowBreak = ctx.M5.LowPrices[last] < flagLow - breakoutBuffer;
+                closeConfirm = ctx.M5.ClosePrices[last] < flagLow;
+                breakout = lowBreak && closeConfirm;
             }
 
             ctx.FlagHigh = flagHigh;
             ctx.FlagLow = flagLow;
-            ctx.FlagBreakoutConfirmed = breakout;
+            if (breakout)
+            {
+                ctx.FlagBreakoutConfirmed = true;
+                ctx.BreakoutBarsSince = 0;
+            }
 
-            _log?.Invoke($"[FLAG_BREAKOUT][RANGE] high={flagHigh:0.#####} low={flagLow:0.#####} bars={flagBars}");
-            _log?.Invoke($"[FLAG_BREAKOUT][CHECK] direction={ctx.TrendDirection} breakout={breakout} buffer={breakoutBuffer:0.#####}");
+            _log?.Invoke($"[FLAG_BREAKOUT][RANGE] high={flagHigh:0.#####} low={flagLow:0.#####} bars={flagBars} lastClosedIndex={last}");
+            _log?.Invoke($"[FLAG_BREAKOUT][CHECK] direction={ctx.TrendDirection} highBreak={highBreak} lowBreak={lowBreak} closeConfirm={closeConfirm} breakout={breakout} buffer={breakoutBuffer:0.#####} lastClosedIndex={last}");
         }
     }
 }
