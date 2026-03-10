@@ -77,6 +77,8 @@ namespace GeminiV26.Core
 
         public DateTime EntryTime { get; set; }
 
+        public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
+
         public double EntryPrice { get; set; }
 
         // =========================

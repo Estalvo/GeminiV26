@@ -12,6 +12,7 @@ using System;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.FX
@@ -28,6 +29,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.AtrM5 <= 0)
                 return Invalid(ctx, TradeDirection.None, "ATR_NOT_READY", 0);
 
+            var matrix = ctx.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowFlag)
+                return Invalid(ctx, TradeDirection.None, "SESSION_MATRIX_FLAG_DISABLED", 0);
+
             var fx = FxInstrumentMatrix.Get(ctx.Symbol);
             if (fx == null)
                 return Invalid(ctx, TradeDirection.None, "NO_FX_PROFILE", 0);
@@ -38,6 +43,9 @@ namespace GeminiV26.EntryTypes.FX
             // === Evaluate BOTH directions ===
             var longEval = EvalForDir(ctx, fx, tuning, TradeDirection.Long);
             var shortEval = EvalForDir(ctx, fx, tuning, TradeDirection.Short);
+
+            ApplyScoreModifier(longEval, matrix);
+            ApplyScoreModifier(shortEval, matrix);
 
             // Prefer VALID; if both valid -> higher score wins
             if (longEval.IsValid && shortEval.IsValid)
@@ -1042,6 +1050,12 @@ namespace GeminiV26.EntryTypes.FX
 
             try { value = Convert.ToInt32(v); return true; }
             catch { return false; }
+        }
+
+        private static void ApplyScoreModifier(EntryEvaluation eval, SessionMatrixConfig matrix)
+        {
+            if (eval == null || matrix == null) return;
+            eval.Score += (int)System.Math.Round(matrix.EntryScoreModifier);
         }
     }
 }

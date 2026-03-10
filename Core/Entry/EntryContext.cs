@@ -2,6 +2,7 @@
 using cAlgo.API.Internals;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
+using GeminiV26.Core.Matrix;
 using System;
 
 namespace GeminiV26.Core.Entry
@@ -183,6 +184,10 @@ namespace GeminiV26.Core.Entry
         // Session
         // =========================
         public FxSession Session { get; set; }
+
+        public SessionMatrixConfig SessionMatrixConfig { get; set; } = SessionMatrixDefaults.Neutral;
+
+        public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
 
         public Robot Bot { get; }
         
