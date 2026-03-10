@@ -80,9 +80,9 @@ namespace GeminiV26.Core
             }
 
             DateTime entryTime = ctx.EntryTime;
-            DateTime oldestBarTime = m5.OpenTimes.Last(currentBarIndex);
+            DateTime firstBarTime = m5.OpenTimes.Last(currentBarIndex);
 
-            if (entryTime <= oldestBarTime)
+            if (entryTime <= firstBarTime)
             {
                 entryBarIndex = 0;
                 return currentBarIndex;
