@@ -26,39 +26,74 @@ namespace GeminiV26.Core.Entry
             int last = ctx.M5.Count - 2;
 
             int impulseBarsAgo = Math.Max(0, ctx.BarsSinceImpulse_M5);
-            bool hasImpulse = ctx.HasImpulse_M5 && impulseBarsAgo <= p.MaxImpulseBars;
+            bool impulseTooOld = ctx.HasImpulse_M5 && impulseBarsAgo > p.MaxImpulseBars;
+            bool hasImpulse = ctx.HasImpulse_M5 && !impulseTooOld;
+            int impulseIndex = Math.Max(1, last - impulseBarsAgo);
 
             TradeDirection direction = ctx.TrendDirection;
             if (direction == TradeDirection.None)
                 direction = InferDirection(ctx, last);
 
+            TradeDirection impulseDirection = DetectImpulseDirection(ctx, impulseIndex, direction);
+            bool impulseDirectionValid = impulseDirection != TradeDirection.None && impulseDirection == direction;
+
             double impulseStrength = GetImpulseStrength(ctx, last, impulseBarsAgo);
-            _log?.Invoke($"[TRANSITION][IMPULSE] detected={hasImpulse} barsSince={impulseBarsAgo} strength={impulseStrength:0.00}");
+            bool impulseStrengthValid = impulseStrength >= p.MinImpulseStrength;
+            _log?.Invoke($"[TRANSITION][IMPULSE] detected={hasImpulse} barsSince={impulseBarsAgo} strength={impulseStrength:0.00} direction={impulseDirection} strengthValid={impulseStrengthValid}");
 
             int pullbackBars = Math.Max(0, ctx.PullbackBars_M5);
-            double pullbackDepthR = Math.Max(0.0, ctx.PullbackDepthAtr_M5 / 2.0);
-            bool hasPullback = pullbackBars > 0 && pullbackDepthR <= p.MaxPullbackDepthR;
+            TradeDirection pullbackDirection = DetectPullbackDirection(ctx, last, pullbackBars);
+            bool pullbackDirectionValid = pullbackDirection == OppositeOf(impulseDirection);
+
+            double impulseRange = GetImpulseRange(ctx, impulseIndex);
+            double pullbackDepthR = ComputePullbackDepthR(ctx, last, pullbackBars, impulseDirection, impulseRange);
+            double avgPullbackBody = ComputeAveragePullbackBody(ctx, last, pullbackBars);
+            bool pullbackQualityValid = avgPullbackBody <= ctx.AtrM5 * 0.6;
+
+            bool hasPullback =
+                pullbackBars > 0 &&
+                pullbackDepthR <= p.MaxPullbackDepthR &&
+                pullbackDirectionValid &&
+                pullbackQualityValid;
 
             if (hasPullback && p.StrictWickFilter)
             {
                 hasPullback = ctx.HasRejectionWick_M5;
             }
 
-            _log?.Invoke($"[TRANSITION][PULLBACK] depthR={pullbackDepthR:0.00} bars={pullbackBars}");
+            _log?.Invoke($"[TRANSITION][PULLBACK] depthR={pullbackDepthR:0.00} bars={pullbackBars} direction={pullbackDirection} qualityValid={pullbackQualityValid}");
 
             int flagBars = EstimateFlagBars(ctx, last, p.MaxFlagBars, direction);
-            double compressionScore = ComputeCompressionScore(ctx, last, flagBars);
-            bool hasFlag = flagBars > 0 && flagBars <= p.MaxFlagBars && compressionScore >= p.MinCompressionScore;
+            double compressionScore = ComputeCompressionScore(ctx, last, flagBars, impulseRange);
+            bool flagDirectionValid = IsFlagDirectionValid(ctx, last, flagBars, impulseDirection, ctx.AtrM5);
+            bool hasFlag =
+                flagBars > 0 &&
+                flagBars <= p.MaxFlagBars &&
+                compressionScore >= p.MinCompressionScore &&
+                flagDirectionValid;
 
-            _log?.Invoke($"[TRANSITION][FLAG] bars={flagBars} compression={compressionScore:0.00}");
+            _log?.Invoke($"[TRANSITION][FLAG] bars={flagBars} compression={compressionScore:0.00} directionValid={flagDirectionValid}");
 
-            bool valid = hasImpulse && hasPullback && hasFlag;
+            bool valid =
+                hasImpulse &&
+                impulseDirectionValid &&
+                impulseStrengthValid &&
+                hasPullback &&
+                hasFlag;
+
             int bonus = valid ? 10 : 0;
 
             string reason = "OK";
-            if (!hasImpulse) reason = "NoImpulse";
-            else if (!hasPullback) reason = pullbackDepthR > p.MaxPullbackDepthR ? "PullbackTooDeep" : "NoPullback";
-            else if (!hasFlag) reason = "NoFlagCompression";
+            if (!hasImpulse) reason = impulseTooOld ? "ImpulseTooOld" : "NoImpulse";
+            else if (!impulseDirectionValid) reason = "InvalidImpulseDirection";
+            else if (!impulseStrengthValid) reason = "WeakImpulse";
+            else if (!hasPullback)
+            {
+                if (!pullbackDirectionValid) reason = "InvalidPullbackDirection";
+                else if (!pullbackQualityValid) reason = "AggressivePullback";
+                else reason = pullbackDepthR > p.MaxPullbackDepthR ? "PullbackTooDeep" : "NoPullback";
+            }
+            else if (!hasFlag) reason = !flagDirectionValid ? "InvalidFlagDirection" : "CompressionTooLow";
 
             _log?.Invoke($"[TRANSITION][DECISION] valid={valid} bonus={bonus} reason={reason}");
 
@@ -93,6 +128,101 @@ namespace GeminiV26.Core.Entry
             return ctx.AtrM5 > 0 ? body / ctx.AtrM5 : 0.0;
         }
 
+        private static TradeDirection DetectImpulseDirection(EntryContext ctx, int impulseIndex, TradeDirection fallback)
+        {
+            double impulseMove = ctx.M5.ClosePrices[impulseIndex] - ctx.M5.OpenPrices[impulseIndex];
+            if (Math.Abs(impulseMove) < 1e-12)
+                return fallback;
+
+            return impulseMove > 0 ? TradeDirection.Long : TradeDirection.Short;
+        }
+
+        private static TradeDirection DetectPullbackDirection(EntryContext ctx, int last, int pullbackBars)
+        {
+            if (pullbackBars <= 0)
+                return TradeDirection.None;
+
+            int start = Math.Max(1, last - pullbackBars + 1);
+            double move = ctx.M5.ClosePrices[last] - ctx.M5.ClosePrices[start - 1];
+
+            if (Math.Abs(move) < 1e-12)
+                return TradeDirection.None;
+
+            return move > 0 ? TradeDirection.Long : TradeDirection.Short;
+        }
+
+        private static TradeDirection OppositeOf(TradeDirection direction)
+        {
+            return direction == TradeDirection.Long
+                ? TradeDirection.Short
+                : direction == TradeDirection.Short ? TradeDirection.Long : TradeDirection.None;
+        }
+
+        private static double GetImpulseRange(EntryContext ctx, int impulseIndex)
+        {
+            double high = ctx.M5.HighPrices[impulseIndex];
+            double low = ctx.M5.LowPrices[impulseIndex];
+            return Math.Max(0.0, high - low);
+        }
+
+        private static double ComputePullbackDepthR(EntryContext ctx, int last, int pullbackBars, TradeDirection impulseDirection, double impulseRange)
+        {
+            if (pullbackBars <= 0 || impulseRange <= 0)
+                return 0.0;
+
+            int start = Math.Max(0, last - pullbackBars + 1);
+            double pullbackExtreme = impulseDirection == TradeDirection.Long
+                ? double.MaxValue
+                : double.MinValue;
+
+            for (int i = start; i <= last; i++)
+            {
+                if (impulseDirection == TradeDirection.Long)
+                    pullbackExtreme = Math.Min(pullbackExtreme, ctx.M5.LowPrices[i]);
+                else
+                    pullbackExtreme = Math.Max(pullbackExtreme, ctx.M5.HighPrices[i]);
+            }
+
+            double impulseAnchor = ctx.M5.ClosePrices[Math.Max(0, start - 1)];
+            double retraceSize = impulseDirection == TradeDirection.Long
+                ? Math.Max(0.0, impulseAnchor - pullbackExtreme)
+                : Math.Max(0.0, pullbackExtreme - impulseAnchor);
+
+            return retraceSize / impulseRange;
+        }
+
+        private static double ComputeAveragePullbackBody(EntryContext ctx, int last, int pullbackBars)
+        {
+            if (pullbackBars <= 0)
+                return 0.0;
+
+            double avgPullbackBody = 0.0;
+            int start = Math.Max(0, last - pullbackBars + 1);
+
+            for (int i = start; i <= last; i++)
+            {
+                avgPullbackBody += Math.Abs(ctx.M5.ClosePrices[i] - ctx.M5.OpenPrices[i]);
+            }
+
+            return avgPullbackBody / Math.Max(1, pullbackBars);
+        }
+
+        private static bool IsFlagDirectionValid(EntryContext ctx, int last, int flagBars, TradeDirection impulseDirection, double atr)
+        {
+            if (flagBars <= 1)
+                return false;
+
+            int start = Math.Max(0, last - flagBars + 1);
+            double move = ctx.M5.ClosePrices[last] - ctx.M5.ClosePrices[start];
+            double tolerance = Math.Max(atr * 0.10, 1e-12);
+
+            if (Math.Abs(move) <= tolerance)
+                return true;
+
+            TradeDirection flagSlopeDirection = move > 0 ? TradeDirection.Long : TradeDirection.Short;
+            return flagSlopeDirection != impulseDirection;
+        }
+
         private static int EstimateFlagBars(EntryContext ctx, int last, int maxFlagBars, TradeDirection direction)
         {
             int bars = 0;
@@ -115,9 +245,9 @@ namespace GeminiV26.Core.Entry
             return bars;
         }
 
-        private static double ComputeCompressionScore(EntryContext ctx, int last, int flagBars)
+        private static double ComputeCompressionScore(EntryContext ctx, int last, int flagBars, double impulseRange)
         {
-            if (flagBars <= 1)
+            if (flagBars <= 1 || impulseRange <= 0)
                 return 0.0;
 
             int start = Math.Max(0, last - flagBars + 1);
@@ -134,11 +264,13 @@ namespace GeminiV26.Core.Entry
 
             avgBody /= flagBars;
             double range = hi - lo;
-            if (range <= 0 || ctx.AtrM5 <= 0)
+            if (range <= 0)
                 return 0.0;
 
-            double rangeCompression = 1.0 - Math.Min(1.0, range / (ctx.AtrM5 * 2.0));
-            double bodyCompression = 1.0 - Math.Min(1.0, avgBody / (ctx.AtrM5 * 0.9));
+            double rangeCompression = 1.0 - Math.Min(1.0, range / impulseRange);
+            double bodyCompression = 1.0;
+            if (ctx.AtrM5 > 0)
+                bodyCompression = 1.0 - Math.Min(1.0, avgBody / ctx.AtrM5);
 
             return Math.Max(0.0, Math.Min(1.0, (rangeCompression * 0.6) + (bodyCompression * 0.4)));
         }

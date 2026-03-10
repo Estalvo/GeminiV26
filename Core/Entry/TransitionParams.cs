@@ -3,6 +3,7 @@ namespace GeminiV26.Core.Entry
     public sealed class TransitionParams
     {
         public int MaxImpulseBars { get; init; }
+        public double MinImpulseStrength { get; init; }
         public double MaxPullbackDepthR { get; init; }
         public int MaxFlagBars { get; init; }
         public double MinCompressionScore { get; init; }
@@ -17,6 +18,7 @@ namespace GeminiV26.Core.Entry
                 return new TransitionParams
                 {
                     MaxImpulseBars = 5,
+                    MinImpulseStrength = 1.2,
                     MaxPullbackDepthR = 0.35,
                     MaxFlagBars = 3,
                     MinCompressionScore = 0.65,
@@ -29,6 +31,7 @@ namespace GeminiV26.Core.Entry
                 return new TransitionParams
                 {
                     MaxImpulseBars = 6,
+                    MinImpulseStrength = 1.0,
                     MaxPullbackDepthR = 0.38,
                     MaxFlagBars = 4,
                     MinCompressionScore = 0.55,
@@ -39,6 +42,7 @@ namespace GeminiV26.Core.Entry
             return new TransitionParams
             {
                 MaxImpulseBars = 12,
+                MinImpulseStrength = 0.8,
                 MaxPullbackDepthR = 0.45,
                 MaxFlagBars = 6,
                 MinCompressionScore = 0.50,
