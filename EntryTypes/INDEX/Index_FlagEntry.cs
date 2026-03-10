@@ -1,5 +1,6 @@
 ﻿using cAlgo.API;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.INDEX;
 using System;
 
@@ -27,6 +28,10 @@ namespace GeminiV26.EntryTypes.INDEX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowFlag)
+                return Reject(ctx, "SESSION_MATRIX_ALLOWFLAG_DISABLED", 0, TradeDirection.None);
+
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 40)
                 return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
@@ -44,6 +49,7 @@ namespace GeminiV26.EntryTypes.INDEX
             double maxDistFromEmaAtr = p.MaxEmaDistanceAtr > 0 ? p.MaxEmaDistanceAtr : DefaultMaxDistFromEmaAtr;
 
             double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 18.0;
+            minAdxTrend = Math.Max(minAdxTrend, matrix.MinAdx);
             double chopAdxThreshold = p.ChopAdxThreshold > 0 ? p.ChopAdxThreshold : 17.0;
             double chopDiDiff = p.ChopDiDiffThreshold > 0 ? p.ChopDiDiffThreshold : 7.0;
 
@@ -89,6 +95,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 fatigueThreshold,
                 fatigueAdxLevel,
                 scoreMultiplier);
+
+            longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
+            shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (longEval.IsValid && shortEval.IsValid)
                 return longEval.Score >= shortEval.Score ? longEval : shortEval;
@@ -391,6 +400,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"[IDX_FLAG][FINAL] dir={dir} score={score} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +
                 $"emaDistATR={distFromEmaAtr:F2} fatigue={fatigueCount}/{fatigueThreshold}"
             );
+
+            score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score}<{MinScore})", score, dir);
