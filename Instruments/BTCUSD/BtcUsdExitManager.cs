@@ -115,6 +115,34 @@ namespace GeminiV26.Instruments.BTCUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
+                    double tp1Price =
+                        ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
+
+                    // Ha nincs M1 bar, fallback tick alapra
+                    bool reached;
+                    if (m1 != null && m1.Count > 0)
+                    {
+                        reached = pos.TradeType == TradeType.Buy
+                            ? m1Bar.High >= tp1Price
+                            : m1Bar.Low <= tp1Price;
+                    }
+                    else
+                    {
+                        reached =
+                            (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
+                            (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+                    }
+
+                    if (reached)
+                    {
+                        _bot.Print("[BTCUSD][TP1][HIT] TP1 HIT (OnTick)");
+                        ExecuteTp1(pos, ctx, rDist);
+
+                        // KRITIKUS: TP1 után azonnal kilépünk ebből a tickből,
+                        // hogy ne legyen state-ütközés a partial close / modify miatt.
+                        return;
+                    }
+
                     // =========================
                     // TVM – Early Exit (TP1 előtt)
                     // =========================
@@ -149,34 +177,6 @@ namespace GeminiV26.Instruments.BTCUSD
                                 return;
                             }
                         }
-                    }
-
-                    double tp1Price =
-                        ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
-
-                    // Ha nincs M1 bar, fallback tick alapra
-                    bool reached;
-                    if (m1 != null && m1.Count > 0)
-                    {
-                        reached = pos.TradeType == TradeType.Buy
-                            ? m1Bar.High >= tp1Price
-                            : m1Bar.Low <= tp1Price;
-                    }
-                    else
-                    {
-                        reached =
-                            (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
-                            (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
-                    }
-
-                    if (reached)
-                    {
-                        _bot.Print("[BTCUSD][TP1][HIT] TP1 HIT (OnTick)");
-                        ExecuteTp1(pos, ctx, rDist);
-
-                        // KRITIKUS: TP1 után azonnal kilépünk ebből a tickből,
-                        // hogy ne legyen state-ütközés a partial close / modify miatt.
-                        return;
                     }
 
                     // 🔒 TP1 előtt trailing TILOS
