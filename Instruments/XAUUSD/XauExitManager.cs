@@ -125,39 +125,6 @@ namespace GeminiV26.Instruments.XAUUSD
                     continue;
                 
                 // =========================
-                // TVM – Early Exit (TP1 előtt)
-                // =========================
-                {
-                    var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                    var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
-
-                    if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
-                    {
-                        _bot.Print(
-                            $"[XAU TVM EXIT] pos={pos.Id} " +
-                            $"reason={ctx.DeadTradeReason} " +
-                            $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
-                        );
-
-                        _bot.ClosePosition(pos);
-
-                        _eventLogger.Log(new EventRecord
-                        {
-                            EventTimestamp = DateTime.UtcNow,
-                            Symbol = _bot.SymbolName,
-                            EventType = "EXIT_TVM",
-                            PositionId = ctx.PositionId,
-                            Confidence = ctx.FinalConfidence,
-                            Reason = ctx.DeadTradeReason,
-                            Extra = "TVM",
-                            RValue = ctx.MaeR
-                        });
-
-                        return;
-                    }
-                }
-
-                // =========================
                 // TP1 (TP1 előtt nincs trailing)
                 // =========================
                 if (!ctx.Tp1Hit)
@@ -185,6 +152,39 @@ namespace GeminiV26.Instruments.XAUUSD
                     {
                         ExecuteTp1(pos, ctx, rDist);
                         return;
+                    }
+
+                    // =========================
+                    // TVM – Early Exit (TP1 előtt)
+                    // =========================
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        {
+                            _bot.Print(
+                                $"[XAU TVM EXIT] pos={pos.Id} " +
+                                $"reason={ctx.DeadTradeReason} " +
+                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
+                            );
+
+                            _bot.ClosePosition(pos);
+
+                            _eventLogger.Log(new EventRecord
+                            {
+                                EventTimestamp = DateTime.UtcNow,
+                                Symbol = _bot.SymbolName,
+                                EventType = "EXIT_TVM",
+                                PositionId = ctx.PositionId,
+                                Confidence = ctx.FinalConfidence,
+                                Reason = ctx.DeadTradeReason,
+                                Extra = "TVM",
+                                RValue = ctx.MaeR
+                            });
+
+                            return;
+                        }
                     }
 
                     continue;

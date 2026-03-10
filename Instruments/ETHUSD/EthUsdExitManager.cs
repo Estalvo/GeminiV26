@@ -111,6 +111,22 @@ namespace GeminiV26.Instruments.ETHUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
+                    double tp1Price =
+                        ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
+
+                    bool reached =
+                        (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
+                        (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+
+                    if (reached)
+                    {
+                        _bot.Print("[ETHUSD][TP1][HIT] TP1 HIT (OnTick)");
+                        ExecuteTp1(pos, ctx, rDist);
+
+                        // TP1 után ne fussunk tovább ebben a tickben (BTC-vel konzisztens)
+                        return;
+                    }
+
                     // =========================
                     // TVM – Early Exit (TP1 előtt)
                     // =========================
@@ -145,22 +161,6 @@ namespace GeminiV26.Instruments.ETHUSD
                                 return;
                             }
                         }
-                    }
-
-                    double tp1Price =
-                        ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
-
-                    bool reached =
-                        (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
-                        (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
-
-                    if (reached)
-                    {
-                        _bot.Print("[ETHUSD][TP1][HIT] TP1 HIT (OnTick)");
-                        ExecuteTp1(pos, ctx, rDist);
-
-                        // TP1 után ne fussunk tovább ebben a tickben (BTC-vel konzisztens)
-                        return;
                     }
 
                     // 🔒 TP1 előtt trailing TILOS

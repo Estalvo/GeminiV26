@@ -10,6 +10,7 @@ namespace GeminiV26.Instruments.USDCHF
     public class UsdChfExitManager
     {
         private readonly Robot _bot;
+        private readonly TradeViabilityMonitor _tvm;
 
         // PositionId → Context
         private readonly Dictionary<long, PositionContext> _contexts = new();
@@ -29,6 +30,7 @@ namespace GeminiV26.Instruments.USDCHF
         public UsdChfExitManager(Robot bot)
         {
             _bot = bot;
+            _tvm = new TradeViabilityMonitor(_bot);
         }
 
         // TradeCore hívja entry után
@@ -76,8 +78,13 @@ namespace GeminiV26.Instruments.USDCHF
         // =====================================================
         public void OnTick()
         {
-            foreach (var ctx in _contexts.Values)
+            var keys = new List<long>(_contexts.Keys);
+
+            foreach (var key in keys)
             {
+                if (!_contexts.TryGetValue(key, out var ctx))
+                    continue;
+
                 var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
                 if (pos == null || !pos.StopLoss.HasValue)
                     continue;
@@ -136,6 +143,47 @@ namespace GeminiV26.Instruments.USDCHF
 
                         continue;
                     }
+
+                }
+
+                if (!ctx.Tp1Hit)
+                {
+                // =========================
+                // TVM – Early Exit (TP1 előtt)
+                // =========================
+                {
+                    const int MinBarsBeforeTvm = 4;
+
+                    // SINGLE SOURCE OF TRUTH
+                    ctx.BarsSinceEntryM5 = (int)Math.Max(
+                        1,
+                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+                    );
+
+                    if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        {
+                            _bot.Print(
+                                $"[TVM EXIT] {pos.SymbolName} pos={pos.Id} " +
+                                $"reason={ctx.DeadTradeReason} " +
+                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
+                                $"barsM5={ctx.BarsSinceEntryM5}"
+                            );
+
+                            _bot.ClosePosition(pos);
+
+                            // cleanup
+                            _contexts.Remove(key);
+
+                            return;
+                        }
+                    }
+                }
+
 
                     continue;
                 }

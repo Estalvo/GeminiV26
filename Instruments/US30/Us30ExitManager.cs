@@ -10,6 +10,7 @@ namespace GeminiV26.Instruments.US30
     public class Us30ExitManager
     {
         private readonly Robot _bot;
+        private readonly TradeViabilityMonitor _tvm;
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
         // ===== TUNING =====
@@ -30,6 +31,7 @@ namespace GeminiV26.Instruments.US30
         {
             _bot = bot;
             _atrM5 = _bot.Indicators.AverageTrueRange(AtrPeriod, MovingAverageType.Exponential);
+            _tvm = new TradeViabilityMonitor(_bot);
         }
 
         public void RegisterContext(PositionContext ctx)
@@ -95,6 +97,47 @@ namespace GeminiV26.Instruments.US30
 
                         return; // <<< KRITIKUS
                     }
+
+                }
+
+                if (!ctx.Tp1Hit)
+                {
+                // =========================
+                // TVM – Early Exit (TP1 előtt)
+                // =========================
+                {
+                    const int MinBarsBeforeTvm = 4;
+
+                    // SINGLE SOURCE OF TRUTH
+                    ctx.BarsSinceEntryM5 = (int)Math.Max(
+                        1,
+                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+                    );
+
+                    if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        {
+                            _bot.Print(
+                                $"[TVM EXIT] {pos.SymbolName} pos={pos.Id} " +
+                                $"reason={ctx.DeadTradeReason} " +
+                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
+                                $"barsM5={ctx.BarsSinceEntryM5}"
+                            );
+
+                            _bot.ClosePosition(pos);
+
+                            // cleanup
+                            _contexts.Remove(key);
+
+                            return;
+                        }
+                    }
+                }
+
 
                     continue;
                 }
