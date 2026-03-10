@@ -1885,7 +1885,21 @@ namespace GeminiV26.Core
                 TrailingActivated = ctx?.TrailingActivated,
             });
 
-            _statsTracker.RegisterTradeClose(pos.Id, entryCtx, pos.NetProfit);
+            _statsTracker.RegisterTradeClose(
+                pos.Id,
+                entryCtx,
+                pos.NetProfit,
+                new TradeStatsTracker.TradeCloseSnapshot
+                {
+                    TimestampUtc = _bot.Server.Time.ToUniversalTime(),
+                    Symbol = pos.SymbolName,
+                    Direction = pos.TradeType.ToString(),
+                    EntryPrice = pos.EntryPrice,
+                    ExitPrice = pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
+                    Profit = pos.NetProfit,
+                    Score = null,
+                    Confidence = meta?.Confidence
+                });
 
             _positionContexts.Remove(pos.Id);
             _contextRegistry.RemovePosition(pos.Id);
