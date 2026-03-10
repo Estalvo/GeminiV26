@@ -12,6 +12,7 @@ namespace GeminiV26.Core.Entry
 
         public double PullbackDepthR { get; init; }
         public double CompressionScore { get; init; }
+        public double QualityScore { get; init; }
 
         public bool IsValid { get; init; }
         public int BonusScore { get; init; }
