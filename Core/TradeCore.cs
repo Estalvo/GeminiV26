@@ -397,7 +397,7 @@ namespace GeminiV26.Core
 
             _entryRouter = new EntryRouter(_entryTypes);
             _contextBuilder = new EntryContextBuilder(bot);
-            _transitionDetector = new TransitionDetector(_bot.Print);
+            _transitionDetector = new TransitionDetector();
             _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
             _tradeLogger = new TradeLogger(_bot.SymbolName);
             _statsTracker = new TradeStatsTracker(_bot.Print);
@@ -886,7 +886,7 @@ namespace GeminiV26.Core
 
             var transition = _transitionDetector.Evaluate(_ctx);
             _ctx.Transition = transition;
-            _ctx.TransitionValid = transition.TransitionValid;
+            _ctx.TransitionValid = transition.IsValid;
             _ctx.TransitionScoreBonus = transition.BonusScore;
             _flagBreakoutDetector.Evaluate(_ctx);
 
