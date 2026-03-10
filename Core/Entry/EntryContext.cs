@@ -187,6 +187,8 @@ namespace GeminiV26.Core.Entry
 
         public SessionMatrixConfig SessionMatrixConfig { get; set; } = SessionMatrixDefaults.Neutral;
 
+        public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
+
         public Robot Bot { get; }
         
     }
