@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.METAL
@@ -47,6 +48,9 @@ namespace GeminiV26.EntryTypes.METAL
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowFlag)
+                return Invalid(ctx, "SESSION_MATRIX_FLAG_DISABLED");
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < BarsNotReadyMin)
                 return Invalid(ctx, "CTX_NOT_READY");
 

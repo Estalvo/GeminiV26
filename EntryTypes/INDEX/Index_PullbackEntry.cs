@@ -1,4 +1,5 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.INDEX;
 using System;
 
@@ -16,7 +17,11 @@ namespace GeminiV26.EntryTypes.INDEX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            if (!ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 10)
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowPullback)
+                return null;
+
+            if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 10)
                 return null;
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
@@ -25,6 +30,7 @@ namespace GeminiV26.EntryTypes.INDEX
             // MATRIX DRIVEN THRESHOLDS
             // =============================
             double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
+            minAdxTrend = Math.Max(minAdxTrend, matrix.MinAdx);
             int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : 4;
             double minAtrPoints = p.MinAtrPoints > 0 ? p.MinAtrPoints : 0;
 
@@ -151,6 +157,8 @@ namespace GeminiV26.EntryTypes.INDEX
             // =====================================================
             // FINAL SCORE GATE
             // =====================================================
+            score += (int)Math.Round(matrix.EntryScoreModifier);
+
             if (score < MinScore)
             {
                 Console.WriteLine(

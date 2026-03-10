@@ -61,6 +61,7 @@ using System;
 using System.Collections.Generic;
 using GeminiV26.Core;
 using GeminiV26.Core.HtfBias;
+using GeminiV26.Core.Matrix;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -244,8 +245,10 @@ namespace GeminiV26.Core
         private bool isIndexSymbol;
 
         private GlobalSessionGate _globalSessionGate;
+        private SessionMatrix _sessionMatrix;
 
         private EntryContext _ctx;
+        private long _entryRouterPassCounter;
 
         public TradeCore(Robot bot)
         {
@@ -387,6 +390,7 @@ namespace GeminiV26.Core
             _contextBuilder = new EntryContextBuilder(bot);
             _tradeLogger = new TradeLogger(_bot.SymbolName);
             _globalSessionGate = new GlobalSessionGate(_bot);
+            _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 
             _xauEntryLogic = new XauEntryLogic(_bot);
             _xauSessionGate = new XauSessionGate(_bot);
@@ -845,13 +849,28 @@ namespace GeminiV26.Core
             }
 
             // =========================
-            // GLOBAL SESSION GATE
+            // GLOBAL SESSION GATE + SESSION MATRIX
             // =========================
-            if (!_globalSessionGate.AllowEntry(_bot.SymbolName))
+            SessionDecision sessionDecision = _globalSessionGate.GetDecision(_bot.SymbolName, _bot.TimeFrame);
+            if (!sessionDecision.Allow)
             {
                 _bot.Print("[TC] BLOCKED: Global SessionGate");
                 return;
             }
+
+            string instrumentClass = ResolveInstrumentClass(symU);
+            SessionMatrixConfig sessionCfg = _sessionMatrix.Resolve(sessionDecision, instrumentClass, _bot.TimeFrame);
+            _ctx.SessionMatrixConfig = sessionCfg;
+
+            _bot.Print("[SESSION_MATRIX] symbol={0} bucket={1} tier={2} flag={3} breakout={4} pullback={5} minADX={6:F1} minAtrMult={7:F2}",
+                _bot.SymbolName,
+                sessionDecision.Bucket,
+                SessionMatrix.DetectTier(_bot.TimeFrame),
+                sessionCfg.AllowFlag,
+                sessionCfg.AllowBreakout,
+                sessionCfg.AllowPullback,
+                sessionCfg.MinAdx,
+                sessionCfg.MinAtrMultiplier);
 
             // =========================
             // FX SESSION INJECT
@@ -963,6 +982,9 @@ namespace GeminiV26.Core
 
             int minBars = _bot.SymbolName.Contains("EURUSD") ? 10 : 30;
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
+
+            _entryRouterPassCounter++;
+            _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
@@ -1814,6 +1836,24 @@ namespace GeminiV26.Core
             return s == "GER40"
                 || s == "GERMANY40"
                 || s == "DE40";
+        }
+
+
+        private static string ResolveInstrumentClass(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol))
+                return "FX";
+
+            if (symbol.Contains("XAU") || symbol.Contains("XAG"))
+                return "METAL";
+
+            if (symbol.Contains("BTC") || symbol.Contains("ETH"))
+                return "CRYPTO";
+
+            if (IsIndexSymbol(symbol))
+                return "INDEX";
+
+            return "FX";
         }
 
         private static bool IsIndexSymbol(string symbol)

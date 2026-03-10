@@ -14,7 +14,7 @@ public class GlobalSessionGate
 
     public bool AllowEntry(string symbol)
     {
-        return GetDecision(symbol, TimeFrame.Minute).Allow;
+        return AllowEntry(symbol, _bot.TimeFrame);
     }
 
     public bool AllowEntry(string symbol, TimeFrame tf)
@@ -222,7 +222,7 @@ public class GlobalSessionGate
             decision.Priority = SessionPriority.Medium;
     }
 
-    private static TimeframeTier GetTimeframeTier(TimeFrame tf)
+    public static TimeframeTier GetTimeframeTier(TimeFrame tf)
     {
         string tfName = tf.ToString();
 

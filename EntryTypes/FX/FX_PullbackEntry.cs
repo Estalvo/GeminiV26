@@ -1,6 +1,7 @@
 ﻿using System;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.FX
@@ -29,6 +30,16 @@ namespace GeminiV26.EntryTypes.FX
             if (fx == null)
                 return Block(ctx, "NO_FX_PROFILE", score);
 
+            var matrix = ctx.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowPullback)
+                return Block(ctx, "SESSION_MATRIX_PULLBACK_DISABLED", score);
+
+            if (ctx.AtrM5 < (0.5 * matrix.MinAtrMultiplier))
+                return Block(ctx, "SESSION_MATRIX_ATR_TOO_LOW", score);
+
+            if (matrix.MinEmaDistance > 0 && System.Math.Abs(ctx.Ema8_M5 - ctx.Ema21_M5) < matrix.MinEmaDistance)
+                return Block(ctx, "SESSION_MATRIX_EMA_DISTANCE_TOO_LOW", score);
+
             // FlagEntry-style penalty budget (prevents "death by a thousand cuts")
             int penaltyBudget = 10;   // vagy 8–12, amit a FlagEntry-ben használsz
 
@@ -52,6 +63,7 @@ namespace GeminiV26.EntryTypes.FX
             // =========================
             // Asia is noisier -> allow slightly lower ADX, but still hard-gate.
             double dynamicMinAdx = (ctx.Session == FxSession.Asia) ? 18.0 : 20.0;
+            dynamicMinAdx = System.Math.Max(dynamicMinAdx, matrix.MinAdx);
 
             if (ctx.Adx_M5 < dynamicMinAdx)
                 return Block(ctx, $"ADX_TOO_LOW_{ctx.Adx_M5:0.0}", score);
@@ -202,6 +214,8 @@ namespace GeminiV26.EntryTypes.FX
             // =========================
             // FINAL SCORE CHECK
             // =========================
+            score += (int)System.Math.Round(matrix.EntryScoreModifier);
+
             if (score < MIN_SCORE)
                 return Block(ctx, $"LOW_SCORE_{score}", score);
 
