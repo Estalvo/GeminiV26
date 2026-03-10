@@ -1903,7 +1903,7 @@ namespace GeminiV26.Core
                     MarketRegime = ResolveMarketRegime(entryCtx),
                     MfeR = ctx?.MfeR ?? 0.0,
                     MaeR = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
-                    RMultiple = ComputeRMultiple(pos, ctx, sym),
+                    RMultiple = ComputeRMultiple(pos, ctx, sym.PipSize),
                     TransitionQuality = entryCtx?.TransitionValid == true
                         ? entryCtx.Transition?.QualityScore ?? 0.0
                         : 0.0
@@ -2030,12 +2030,12 @@ namespace GeminiV26.Core
             return entryCtx.IsAtrExpanding_M5 ? "HighVol" : "LowVol";
         }
 
-        private static double ComputeRMultiple(Position pos, PositionContext ctx, Symbol sym)
+        private static double ComputeRMultiple(Position pos, PositionContext? ctx, double pipSize)
         {
-            if (pos == null || ctx == null || sym == null || ctx.RiskPriceDistance <= 0)
+            if (pos == null || ctx == null || ctx.RiskPriceDistance <= 0)
                 return 0.0;
 
-            return (pos.Pips * sym.PipSize) / ctx.RiskPriceDistance;
+            return (pos.Pips * pipSize) / ctx.RiskPriceDistance;
         }
 
         // =========================================================
