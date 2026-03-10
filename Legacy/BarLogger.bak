@@ -1,0 +1,138 @@
+﻿using cAlgo.API;
+using GeminiV26.Data.Models;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
+
+namespace GeminiV26.Data
+{
+    /// <summary>
+    /// Folyamatos M1 / M5 bar logger.
+    /// - Explicit MarketData Bars (NEM bot TF)
+    /// - Új bar záráskor ír
+    /// - Napi CSV rotáció
+    /// </summary>
+    public class BarLogger
+    {
+        private readonly Robot _bot;
+        private readonly string _symbol;
+        private readonly string _baseDir;
+
+        private readonly Bars _barsM1;
+        private readonly Bars _barsM5;
+
+        private DateTime _lastM1BarTime = DateTime.MinValue;
+        private DateTime _lastM5BarTime = DateTime.MinValue;
+
+        public BarLogger(Robot bot)
+        {
+            _bot = bot;
+            _symbol = bot.SymbolName;
+
+            _barsM1 = bot.MarketData.GetBars(TimeFrame.Minute);
+            _barsM5 = bot.MarketData.GetBars(TimeFrame.Minute5);
+
+            // Data/Bars/{SYMBOL}/
+            _baseDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "GeminiV26",
+                "Data",
+                "Bars",
+                _symbol
+            );
+
+            Directory.CreateDirectory(_baseDir);
+        }
+
+        /// <summary>
+        /// Hívás OnTick()-ből.
+        /// </summary>
+        public void OnTick()
+        {
+            LogBarsInternal(_barsM1, "M1", ref _lastM1BarTime);
+            LogBarsInternal(_barsM5, "M5", ref _lastM5BarTime);
+        }
+
+        // =====================================================
+        // INTERNAL
+        // =====================================================
+
+        private void LogBarsInternal(Bars bars, string tf, ref DateTime lastLoggedBarTime)
+        {
+            if (bars == null || bars.Count < 2)
+                return;
+
+            // mindig a legutóbb LEZÁRT bar
+            int idx = bars.Count - 2;
+            DateTime barTime = bars.OpenTimes[idx];
+
+            // duplikációvédelem
+            if (barTime <= lastLoggedBarTime)
+                return;
+
+            lastLoggedBarTime = barTime;
+
+            var record = new BarLogRecord
+            {
+                LogTimestamp = DateTime.UtcNow,
+                BarTimestamp = barTime,
+                Symbol = _symbol,
+                Timeframe = tf,
+                BarOpen = bars.OpenPrices[idx],
+                BarHigh = bars.HighPrices[idx],
+                BarLow = bars.LowPrices[idx],
+                BarClose = bars.ClosePrices[idx],
+                BarVolume = bars.TickVolumes[idx],
+                BarSpread = GetSpreadSafe()
+            };
+
+            WriteCsv(record);
+        }
+
+        private double GetSpreadSafe()
+        {
+            try
+            {
+                return _bot.Symbol.Spread;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        private void WriteCsv(BarLogRecord r)
+        {
+            string date = r.BarTimestamp.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            string fileName = $"{_symbol}_{r.Timeframe}_{date}.csv";
+            string path = Path.Combine(_baseDir, fileName);
+
+            bool writeHeader = !File.Exists(path);
+
+            var sb = new StringBuilder();
+
+            if (writeHeader)
+            {
+                sb.AppendLine(
+                    "LogTimestamp,BarTimestamp,Symbol,Timeframe,BarOpen,BarHigh,BarLow,BarClose,BarVolume,BarSpread"
+                );
+            }
+
+            sb.AppendLine(string.Join(",",
+                r.LogTimestamp.ToString("O", CultureInfo.InvariantCulture),
+                r.BarTimestamp.ToString("O", CultureInfo.InvariantCulture),
+                r.Symbol,
+                r.Timeframe,
+                r.BarOpen.ToString(CultureInfo.InvariantCulture),
+                r.BarHigh.ToString(CultureInfo.InvariantCulture),
+                r.BarLow.ToString(CultureInfo.InvariantCulture),
+                r.BarClose.ToString(CultureInfo.InvariantCulture),
+                r.BarVolume.ToString(CultureInfo.InvariantCulture),
+                r.BarSpread.ToString(CultureInfo.InvariantCulture)
+            ));
+
+            File.AppendAllText(path, sb.ToString());
+        }
+    }
+}
