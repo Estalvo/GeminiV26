@@ -2030,7 +2030,7 @@ namespace GeminiV26.Core
             return entryCtx.IsAtrExpanding_M5 ? "HighVol" : "LowVol";
         }
 
-        private static double ComputeRMultiple(Position pos, PositionContext? ctx, Symbol? sym)
+        private static double ComputeRMultiple(Position pos, PositionContext ctx, Symbol sym)
         {
             if (pos == null || ctx == null || sym == null || ctx.RiskPriceDistance <= 0)
                 return 0.0;
