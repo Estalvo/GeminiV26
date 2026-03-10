@@ -2,38 +2,118 @@
 // =========================================================
 // GEMINI V26 – TradeCore
 // Rulebook 1.0 – Orchestrator Layer
+// Version: 3.9
 //
-// TradeCore FELELŐSSÉGE:
-// - pipeline vezérlés (build → evaluate → route → gate → execute)
-// - egyetlen nyitott pozíció enforce
-// - instrument routing
+// TradeCore a rendszer ORCHESTRATOR rétege.
+// Nem stratégiai modul és nem döntéshozó.
 //
-// TradeCore NEM:
-// - score-ol
-// - confidence-et számol
-// - stratégia között dönt
-// - EntryLogic-ra hallgat veto-ként
+// ---------------------------------------------------------
+// FELELŐSSÉG
+// ---------------------------------------------------------
 //
-// SCORE / CONFIDENCE SZABÁLY:
-// - EntryType → EntryScore
-// - EntryLogic → LogicConfidence (csak info)
-// - PositionContext → FinalConfidence (single source of truth)
+// TradeCore kizárólag a pipeline vezérléséért felel:
 //
-// GATE SZABÁLY:
-// - Session / Impulse gate az egyetlen HARD STOP
-// - BTC/ETH esetén az ImpulseGate kötelező
+// 1. Context build
+// 2. Entry evaluation
+// 3. Entry routing
+// 4. Gate enforcement
+// 5. Execution dispatch
 //
-// Ez a fájl NORMATÍV.
-// Ha itt score vagy confidence gate jelenik meg, az BUG.
+// TradeCore NEM számol és NEM dönt:
+//
+// - nem számol score-t
+// - nem számol confidence-et
+// - nem választ stratégiát
+// - nem veto-z EntryLogic alapján
+//
+// ---------------------------------------------------------
+// SCORE / CONFIDENCE SZABÁLY
+// ---------------------------------------------------------
+//
+// EntryType        → EntryScore
+// EntryLogic       → LogicConfidence (információs érték)
+// PositionContext  → FinalConfidence (single source of truth)
+//
+// FinalConfidence számítás:
+// 70% EntryScore
+// 30% LogicConfidence
+//
+// TradeCore NEM használ score vagy confidence alapú gate-et.
+//
+// Ha ilyen logika megjelenik ebben a fájlban → BUG.
+//
+// ---------------------------------------------------------
+// ENTRY PIPELINE CONTRACT
+// ---------------------------------------------------------
+//
+// A teljes belépési pipeline sorrendje:
+//
+// 1️⃣ Context Build
+//    EntryContext létrehozása instrument és market state alapján.
+//
+// 2️⃣ Instrument EntryLogic
+//    Instrument-specifikus interpretáció.
+//    Nem generál trade-et, csak context információt ad.
+//
+// 3️⃣ EntryTypes
+//    Pattern / setup detektálás.
+//    Ezek generálják a candidate entry-ket.
+//
+// 4️⃣ EntryRouter
+//    Candidate entry-k prioritása és validációja.
+//    A router NEM futtat újra piaci logikát.
+//
+// 5️⃣ Gates
+//    HARD STOP mechanizmusok:
+//
+//    - SessionGate
+//    - ImpulseGate
+//
+//    Ha egy gate blokkol → entry elutasítva.
+//
+// 6️⃣ Executor
+//    Végrehajtás dispatch az instrument executor felé.
+//
+// ---------------------------------------------------------
+// GATE SZABÁLY
+// ---------------------------------------------------------
+//
+// A rendszerben csak a következők lehetnek HARD STOP gate-ek:
+//
+// - SessionGate
+// - ImpulseGate
+//
+// BTC / ETH esetén az ImpulseGate kötelező.
+//
+// Más gate típus NEM létezhet TradeCore szinten.
+//
+// ---------------------------------------------------------
+// POZÍCIÓ SZABÁLY
+// ---------------------------------------------------------
+//
+// A rendszer egyszerre csak egy aktív pozíciót enged.
+//
+// TradeCore enforce-olja:
+//
+// maxOpenPositions = 1
+//
+// ---------------------------------------------------------
+// FONTOS
+// ---------------------------------------------------------
+//
+// TradeCore nem stratégiai modul.
+//
+// Ha itt jelenik meg:
+//
+// - score threshold
+// - confidence threshold
+// - setup preferencia
+// - stratégiai logika
+//
+// az architekturális hiba.
+//
 // =========================================================
-/// ENTRY PIPELINE CONTRACT
-///
-/// 1. Instrument EntryLogic -> generates candidate signals
-/// 2. EntryRouter -> prioritizes and validates entry types
-/// 3. Executor -> executes final signal
-///
-/// Router does NOT re-evaluate market logic.
-/// It only orchestrates EntryTypes.
+// =========================================================
 
 using cAlgo.API;
 using GeminiV26.Core.Entry;
