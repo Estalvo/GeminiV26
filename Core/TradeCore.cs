@@ -248,7 +248,6 @@ namespace GeminiV26.Core
         private SessionMatrix _sessionMatrix;
 
         private EntryContext _ctx;
-        private long _entryRouterPassCounter;
 
         public TradeCore(Robot bot)
         {
@@ -982,9 +981,6 @@ namespace GeminiV26.Core
 
             int minBars = _bot.SymbolName.Contains("EURUSD") ? 10 : 30;
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
-
-            _entryRouterPassCounter++;
-            _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 

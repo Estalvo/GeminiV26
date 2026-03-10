@@ -3,7 +3,6 @@ using GeminiV26.Core.Entry;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.INDEX;
 using System;
-using System.Collections.Generic;
 
 namespace GeminiV26.EntryTypes.INDEX
 {
@@ -26,8 +25,6 @@ namespace GeminiV26.EntryTypes.INDEX
 
         private const int BaseScore = 84;
         private const int MinScore = 72;
-
-        private static readonly Dictionary<string, int> _traceInvocationCountByBarDir = new Dictionary<string, int>();
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -160,20 +157,6 @@ namespace GeminiV26.EntryTypes.INDEX
             double open = breakoutBar.Open;
             double high = breakoutBar.High;
             double low = breakoutBar.Low;
-
-            DateTime traceBarTime = bars.OpenTimes[lastClosed];
-            string traceKey = $"{ctx.Symbol}|{traceBarTime:O}|{dir}";
-            int traceCount;
-            lock (_traceInvocationCountByBarDir)
-            {
-                _traceInvocationCountByBarDir.TryGetValue(traceKey, out traceCount);
-                traceCount++;
-                _traceInvocationCountByBarDir[traceKey] = traceCount;
-            }
-
-            ctx.Log?.Invoke(
-                $"[IDX_FLAG][TRACE] evaluator invoked sym={ctx.Symbol} dir={dir} bar={traceBarTime:O} count={traceCount}"
-            );
 
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][START] sym={ctx.Symbol} dir={dir} " +
