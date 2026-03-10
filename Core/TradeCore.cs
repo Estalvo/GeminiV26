@@ -2,117 +2,29 @@
 // =========================================================
 // GEMINI V26 – TradeCore
 // Rulebook 1.0 – Orchestrator Layer
-// Version: 3.9
 //
-// TradeCore a rendszer ORCHESTRATOR rétege.
-// Nem stratégiai modul és nem döntéshozó.
+// TradeCore FELELŐSSÉGE:
+// - pipeline vezérlés (build → evaluate → route → gate → execute)
+// - egyetlen nyitott pozíció enforce
+// - instrument routing
 //
-// ---------------------------------------------------------
-// FELELŐSSÉG
-// ---------------------------------------------------------
+// TradeCore NEM:
+// - score-ol
+// - confidence-et számol
+// - stratégia között dönt
+// - EntryLogic-ra hallgat veto-ként
 //
-// TradeCore kizárólag a pipeline vezérléséért felel:
+// SCORE / CONFIDENCE SZABÁLY:
+// - EntryType → EntryScore
+// - EntryLogic → LogicConfidence (csak info)
+// - PositionContext → FinalConfidence (single source of truth)
 //
-// 1. Context build
-// 2. Entry evaluation
-// 3. Entry routing
-// 4. Gate enforcement
-// 5. Execution dispatch
+// GATE SZABÁLY:
+// - Session / Impulse gate az egyetlen HARD STOP
+// - BTC/ETH esetén az ImpulseGate kötelező
 //
-// TradeCore NEM számol és NEM dönt:
-//
-// - nem számol score-t
-// - nem számol confidence-et
-// - nem választ stratégiát
-// - nem veto-z EntryLogic alapján
-//
-// ---------------------------------------------------------
-// SCORE / CONFIDENCE SZABÁLY
-// ---------------------------------------------------------
-//
-// EntryType        → EntryScore
-// EntryLogic       → LogicConfidence (információs érték)
-// PositionContext  → FinalConfidence (single source of truth)
-//
-// FinalConfidence számítás:
-// 70% EntryScore
-// 30% LogicConfidence
-//
-// TradeCore NEM használ score vagy confidence alapú gate-et.
-//
-// Ha ilyen logika megjelenik ebben a fájlban → BUG.
-//
-// ---------------------------------------------------------
-// ENTRY PIPELINE CONTRACT
-// ---------------------------------------------------------
-//
-// A teljes belépési pipeline sorrendje:
-//
-// 1️⃣ Context Build
-//    EntryContext létrehozása instrument és market state alapján.
-//
-// 2️⃣ Instrument EntryLogic
-//    Instrument-specifikus interpretáció.
-//    Nem generál trade-et, csak context információt ad.
-//
-// 3️⃣ EntryTypes
-//    Pattern / setup detektálás.
-//    Ezek generálják a candidate entry-ket.
-//
-// 4️⃣ EntryRouter
-//    Candidate entry-k prioritása és validációja.
-//    A router NEM futtat újra piaci logikát.
-//
-// 5️⃣ Gates
-//    HARD STOP mechanizmusok:
-//
-//    - SessionGate
-//    - ImpulseGate
-//
-//    Ha egy gate blokkol → entry elutasítva.
-//
-// 6️⃣ Executor
-//    Végrehajtás dispatch az instrument executor felé.
-//
-// ---------------------------------------------------------
-// GATE SZABÁLY
-// ---------------------------------------------------------
-//
-// A rendszerben csak a következők lehetnek HARD STOP gate-ek:
-//
-// - SessionGate
-// - ImpulseGate
-//
-// BTC / ETH esetén az ImpulseGate kötelező.
-//
-// Más gate típus NEM létezhet TradeCore szinten.
-//
-// ---------------------------------------------------------
-// POZÍCIÓ SZABÁLY
-// ---------------------------------------------------------
-//
-// A rendszer egyszerre csak egy aktív pozíciót enged.
-//
-// TradeCore enforce-olja:
-//
-// maxOpenPositions = 1
-//
-// ---------------------------------------------------------
-// FONTOS
-// ---------------------------------------------------------
-//
-// TradeCore nem stratégiai modul.
-//
-// Ha itt jelenik meg:
-//
-// - score threshold
-// - confidence threshold
-// - setup preferencia
-// - stratégiai logika
-//
-// az architekturális hiba.
-//
-// =========================================================
+// Ez a fájl NORMATÍV.
+// Ha itt score vagy confidence gate jelenik meg, az BUG.
 // =========================================================
 
 using cAlgo.API;
@@ -150,6 +62,7 @@ using System.Collections.Generic;
 using GeminiV26.Core;
 using GeminiV26.Core.HtfBias;
 using GeminiV26.Core.Matrix;
+using GeminiV26.Core.Context;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -336,6 +249,11 @@ namespace GeminiV26.Core
         private SessionMatrix _sessionMatrix;
 
         private EntryContext _ctx;
+        private long _entryRouterPassCounter;
+        private readonly ContextRegistry _contextRegistry = new ContextRegistry();
+        private DateTime _lastContextPruneUtc = DateTime.MinValue;
+        private static readonly TimeSpan ContextPruneInterval = TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan ContextMaxAge = TimeSpan.FromMinutes(30);
 
         public TradeCore(Robot bot)
         {
@@ -743,6 +661,12 @@ namespace GeminiV26.Core
                     ? $"[META BIND OK] pos={pos.Id} symbol={pos.SymbolName}"
                     : $"[META BIND FAIL] pos={pos.Id} symbol={pos.SymbolName} (NO PENDING)"
                 );
+
+                if (_ctx != null)
+                    _contextRegistry.RegisterEntry(pos.Id, _ctx);
+
+                if (_positionContexts.TryGetValue(pos.Id, out var pctx))
+                    _contextRegistry.RegisterPosition(pctx);
             };
 
             _bot.Positions.Closed += OnPositionClosed;
@@ -845,9 +769,12 @@ namespace GeminiV26.Core
                 // ⛔ TEMP SAFETY (you already had this)
                 if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
                 {
-                    _bot.Print($"[EXIT DBG] NO PositionContext for posId={pos.Id}");
+                    _bot.Print($"[TC] Context missing for position posId={pos.Id}");
                     continue;
                 }
+
+                ctx.LastUpdateUtc = DateTime.UtcNow;
+                _contextRegistry.RegisterPosition(ctx);
 
                 if (_bot.SymbolName.Contains("XAU"))
                     _xauExitManager?.OnBar(pos);
@@ -898,6 +825,14 @@ namespace GeminiV26.Core
                     _ger40ExitManager?.OnBar(pos);
             }
 
+            if (_lastContextPruneUtc == DateTime.MinValue ||
+                (_bot.Server.Time - _lastContextPruneUtc) >= ContextPruneInterval)
+            {
+                _contextRegistry.PruneStale(ContextMaxAge, id =>
+                    _bot.Print($"[TC] Pruned stale context: positionId={id}"));
+                _lastContextPruneUtc = _bot.Server.Time;
+            }
+
             if (HasOpenGeminiPosition())
             {
                 _bot.Print("[DEBUG] HasOpenGeminiPosition = TRUE");
@@ -934,6 +869,10 @@ namespace GeminiV26.Core
                 _bot.Print("[TC] BLOCKED: EntryContext not ready");
                 return;
             }
+
+            _ctx.LastUpdateUtc = DateTime.UtcNow;
+            _contextRegistry.RegisterEntry(_ctx);
+            _contextRegistry.RebuildFromActivePositions(_bot.Positions, _positionContexts);
 
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
@@ -1069,6 +1008,9 @@ namespace GeminiV26.Core
 
             int minBars = _bot.SymbolName.Contains("EURUSD") ? 10 : 30;
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
+
+            _entryRouterPassCounter++;
+            _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
@@ -1878,6 +1820,8 @@ namespace GeminiV26.Core
             });
 
             _positionContexts.Remove(pos.Id);
+            _contextRegistry.RemovePosition(pos.Id);
+            _contextRegistry.RemoveEntry(pos.Id);
             _tradeMetaStore.Remove(pos.Id);
         }
 
