@@ -1,4 +1,5 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 
 namespace GeminiV26.EntryTypes.METAL
 {
@@ -23,6 +24,10 @@ namespace GeminiV26.EntryTypes.METAL
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowBreakout)
+                return Reject(ctx, "SESSION_MATRIX_BREAKOUT_DISABLED");
+
             if (ctx == null || !ctx.IsReady || ctx.M5 == null)
                 return Reject(ctx, "CTX_NOT_READY");
 
@@ -61,6 +66,8 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.Symbol != null && ctx.Symbol.ToUpper().Contains("XAU"))
                 minAdxRequired = 28.0;
 
+            minAdxRequired = System.Math.Max(minAdxRequired, matrix.MinAdx);
+
             if (ctx.Adx_M5 < minAdxRequired)
                 return Reject(ctx, $"ADX_TOO_LOW({ctx.Adx_M5:F1})");
 
@@ -92,6 +99,8 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             // FINAL DECISION
             // =====================================================
+            score += (int)System.Math.Round(matrix.EntryScoreModifier);
+
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score})");
 

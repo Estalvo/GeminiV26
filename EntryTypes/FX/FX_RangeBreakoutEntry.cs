@@ -1,4 +1,5 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 using System;
 
@@ -16,6 +17,18 @@ namespace GeminiV26.EntryTypes.FX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowBreakout)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    IsValid = false,
+                    Reason = "SESSION_MATRIX_BREAKOUT_DISABLED"
+                };
+            }
+
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
