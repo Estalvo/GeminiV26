@@ -37,7 +37,8 @@ namespace GeminiV26.Core.Entry
                 impulseIndex = i;
                 impulseDirection = bullishImpulse ? TradeDirection.Long : TradeDirection.Short;
                 impulseRange = range;
-                impulseStrength = ctx.AtrM5 > 0 ? range / ctx.AtrM5 : 0.0;
+                double normalizationAtr = ctx.AtrM5 * rules.ImpulseNormalizationAtrFactor;
+                impulseStrength = normalizationAtr > 0 ? Clamp01(range / normalizationAtr) : 0.0;
                 break;
             }
 
@@ -50,6 +51,15 @@ namespace GeminiV26.Core.Entry
                 impulseDirection = TradeDirection.None;
                 impulseRange = 0.0;
                 impulseStrength = 0.0;
+            }
+
+            bool weakImpulse = hasImpulse && impulseStrength < rules.MinImpulseStrength;
+            if (weakImpulse)
+            {
+                hasImpulse = false;
+                impulseIndex = -1;
+                impulseDirection = TradeDirection.None;
+                impulseRange = 0.0;
             }
 
             ctx.Log?.Invoke($"[TRANSITION][IMPULSE] detected={hasImpulse.ToString().ToLowerInvariant()} barsSince={barsSinceImpulse} strength={impulseStrength:0.00}");
@@ -84,7 +94,7 @@ namespace GeminiV26.Core.Entry
                         trendAlignmentMaintained = pullbackHigh < ctx.M5.HighPrices[impulseIndex];
                     }
 
-                    pullbackQuality = Clamp01(1.0 - pullbackDepthR);
+                    pullbackQuality = Clamp01(1.0 - Math.Abs(pullbackDepthR - rules.OptimalPullbackDepthR));
                 }
 
                 hasPullback = pullbackBars >= rules.MinPullbackBars
@@ -135,10 +145,10 @@ namespace GeminiV26.Core.Entry
 
             string reason = isValid
                 ? "OK"
-                : BuildReason(hasImpulse, hasPullback, hasFlag, flagStructureBroken, pullbackDepthR, rules.MaxPullbackDepthR, compression, rules.MaxCompressionRatio);
+                : BuildReason(hasImpulse, hasPullback, hasFlag, flagStructureBroken, weakImpulse, pullbackDepthR, rules.MaxPullbackDepthR, compression, rules.MaxCompressionRatio);
 
             ctx.Log?.Invoke($"[TRANSITION][QUALITY] impulse={impulseStrength:0.00} compression={compressionScore:0.00} pullback={pullbackQuality:0.00} score={qualityScore:0.00} bonus={bonus}");
-            ctx.Log?.Invoke($"[TRANSITION][DECISION] valid={isValid.ToString().ToLowerInvariant()} bonus={bonus}");
+            ctx.Log?.Invoke($"[TRANSITION][DECISION] valid={isValid.ToString().ToLowerInvariant()} bonus={bonus} reason={reason}");
 
             return new TransitionEvaluation
             {
@@ -270,8 +280,11 @@ namespace GeminiV26.Core.Entry
             return value;
         }
 
-        private static string BuildReason(bool hasImpulse, bool hasPullback, bool hasFlag, bool flagStructureBroken, double pullbackDepthR, double maxPullbackDepthR, double compression, double maxCompression)
+        private static string BuildReason(bool hasImpulse, bool hasPullback, bool hasFlag, bool flagStructureBroken, bool weakImpulse, double pullbackDepthR, double maxPullbackDepthR, double compression, double maxCompression)
         {
+            if (weakImpulse)
+                return "WeakImpulse";
+
             if (!hasImpulse)
                 return "MissingImpulse";
 
