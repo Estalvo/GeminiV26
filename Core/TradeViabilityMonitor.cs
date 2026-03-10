@@ -18,87 +18,99 @@ namespace GeminiV26.Core
             Bars m5,
             Bars m15)
         {
-            // TP1 után nem zárunk
+            if (ctx == null || pos == null)
+                return false;
+
+            // TP1 után nem zárunk viability alapon
             if (ctx.Tp1Hit)
                 return false;
 
-            if (m5 == null || m5.Count < 6)
+            if (m5 == null || m5.Count < 4)
                 return false;
 
             double risk = ctx.RiskPriceDistance;
             if (risk <= 0)
                 return false;
 
-            string sym = pos.SymbolName ?? string.Empty;
+            int currentBarIndex;
+            int entryBarIndex;
+            int barsSinceEntry = ComputeBarsSinceEntryByIndex(ctx, m5, out currentBarIndex, out entryBarIndex);
+            ctx.BarsSinceEntryM5 = barsSinceEntry;
 
-            bool isFx =
-                sym == "EURUSD" || sym == "GBPUSD" || sym == "USDJPY" ||
-                sym == "AUDNZD" || sym == "AUDUSD" || sym == "NZDUSD" ||
-                sym == "USDCHF" || sym == "USDCAD" || sym == "EURJPY" || sym == "GBPJPY";
+            if (barsSinceEntry <= 12)
+            {
+                _bot.Print(
+                    $"[TVM DBG] barsSinceEntry={barsSinceEntry} currentBarIndex={currentBarIndex} entryBarIndex={entryBarIndex}"
+                );
+            }
 
-            bool isCrypto =
-                sym == "BTCUSD" || sym == "ETHUSD" || sym == "BTCUSDT" || sym == "ETHUSDT";
+            if (barsSinceEntry <= 0)
+                return false;
 
-            bool isMetal =
-                sym == "XAUUSD" || sym == "XAGUSD" || sym == "XPTUSD" || sym == "XPDUSD";
+            UpdateMfeMae(ctx, pos, risk);
 
-            bool isIndex =
-                sym == "NAS100" || sym == "US30" || sym == "SPX500" ||
-                sym == "DE40" || sym == "UK100" || sym == "JP225";
+            bool marketTrend = ctx.MarketTrend;
+            double adxNow = EstimateAdxLikeStrength(m5, 5);
+            bool atrShrinking = IsAtrShrinking(m5);
 
-            string asset =
-                isFx ? "FX" :
-                isCrypto ? "CRYPTO" :
-                isMetal ? "METAL" :
-                isIndex ? "INDEX" :
-                "UNKNOWN";
+            if (barsSinceEntry <= 3)
+            {
+                return EvaluateEarlyPhase(ctx, barsSinceEntry, adxNow, atrShrinking, marketTrend);
+            }
 
-            // =====================================================
-            // ASSET THRESHOLDS
-            // =====================================================
+            if (barsSinceEntry <= 10)
+            {
+                return EvaluateDevelopmentPhase(ctx, barsSinceEntry, adxNow, marketTrend, m5, pos.TradeType);
+            }
 
-            // =====================================================
-            // SIMPLE TREND DETECTION (M15)
-            // =====================================================
+            return EvaluateMaturePhase(ctx, barsSinceEntry, adxNow, marketTrend);
+        }
 
-            bool marketTrending = ctx.MarketTrend;
+        private int ComputeBarsSinceEntryByIndex(
+            PositionContext ctx,
+            Bars m5,
+            out int currentBarIndex,
+            out int entryBarIndex)
+        {
+            currentBarIndex = m5.Count - 1;
+            if (currentBarIndex < 0)
+            {
+                entryBarIndex = 0;
+                return 0;
+            }
 
-            _bot.Print(
-                $"[TVM TREND SOURCE] {pos.SymbolName} ctxTrend={marketTrending}"
-            );
+            DateTime entryTime = ctx.EntryTime;
+            DateTime oldestBarTime = m5.OpenTimes.Last(currentBarIndex);
 
-            double mfeNoProgressR =
-                isFx ? 0.12 :
-                isCrypto ? 0.30 :
-                isIndex ? 0.25 :
-                isMetal ? 0.20 :
-                0.20;
+            if (entryTime <= oldestBarTime)
+            {
+                entryBarIndex = 0;
+                return currentBarIndex;
+            }
 
-            double maeAdverseR =
-                isFx ? 0.40 :
-                isCrypto ? (marketTrending ? 0.35 : 0.25) :
-                isIndex ? (marketTrending ? 0.32 : 0.30) :
-                isMetal ? (marketTrending ? 0.33 : 0.30) :
-                0.35;
+            entryBarIndex = currentBarIndex;
+            int offset = 0;
+            while (offset <= currentBarIndex)
+            {
+                DateTime barOpenTime = m5.OpenTimes.Last(offset);
+                if (barOpenTime <= entryTime)
+                {
+                    entryBarIndex = currentBarIndex - offset;
+                    break;
+                }
 
-            double minMinutesOpen =
-                isFx ? 35 :
-                isCrypto ? 10 :
-                isIndex ? 12 :
-                isMetal ? 12 :
-                15;
+                offset++;
+            }
 
-            int dangerThreshold =
-                isFx ? 4 :
-                isCrypto ? 2 :
-                isIndex ? 3 :
-                isMetal ? 3 :
-                3;
+            int barsSinceEntry = currentBarIndex - entryBarIndex;
+            if (barsSinceEntry < 0)
+                barsSinceEntry = 0;
 
-            // =====================================================
-            // PRICE + MFE/MAE UPDATE
-            // =====================================================
+            return barsSinceEntry;
+        }
 
+        private void UpdateMfeMae(PositionContext ctx, Position pos, double risk)
+        {
             double currentPrice =
                 pos.TradeType == TradeType.Buy
                     ? pos.Symbol.Bid
@@ -117,119 +129,245 @@ namespace GeminiV26.Core
             double favorableR = favorableMove / risk;
             double adverseR = adverseMove / risk;
 
-            ctx.MfeR = Math.Max(ctx.MfeR, favorableR);
-            ctx.MaeR = Math.Max(ctx.MaeR, adverseR);
+            if (favorableR > ctx.MfeR)
+                ctx.MfeR = favorableR;
 
-            double minutesOpen = (_bot.Server.Time - ctx.EntryTime).TotalMinutes;
-
-            bool noProgress = ctx.MfeR < mfeNoProgressR;
-            bool adverseGrowing = ctx.MaeR > maeAdverseR;
-
-            bool structureBroken = IsStructureWeakening(pos, m5);
-            bool momentumFade = IsMomentumFading(m5);
-
-            // =====================================================
-            // DEBUG SNAP
-            // =====================================================
-
-            if (ctx.BarsSinceEntryM5 <= 6)
-            {
-                _bot.Print(
-                    $"[TVM SNAP {asset}] " +
-                    $"bars={ctx.BarsSinceEntryM5} " +
-                    $"min={minutesOpen:0.0} " +
-                    $"trend={marketTrending} " +
-                    $"mfeR={ctx.MfeR:0.00} " +
-                    $"maeR={ctx.MaeR:0.00} " +
-                    $"thrMAE={maeAdverseR:0.00} " +
-                    $"noProg={noProgress} " +
-                    $"advGrow={adverseGrowing} " +
-                    $"structWeak={structureBroken} " +
-                    $"momFade={momentumFade}"
-                );
-            }
-
-            // =====================================================
-            // CRYPTO / INDEX FAST DEAD
-            // =====================================================
-
-            bool enoughTime = minutesOpen >= minMinutesOpen;
-            bool enoughBars = ctx.BarsSinceEntryM5 >= 4;
-
-            if ((isCrypto || isIndex) && enoughTime && enoughBars && !marketTrending)
-            {
-                bool fastDead =
-                    noProgress &&
-                    (ctx.MaeR > (maeAdverseR * 0.90));
-
-                if (fastDead)
-                {
-                    ctx.IsDeadTrade = true;
-                    ctx.DeadTradeReason = $"{asset}_FAST_DEAD_NO_IMPULSE";
-
-                    _bot.Print(
-                        $"[TVM {asset}] EARLY EXIT | reason={ctx.DeadTradeReason} " +
-                        $"mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                        $"barsM5={ctx.BarsSinceEntryM5}"
-                    );
-
-                    return true;
-                }
-            }
-
-            // =====================================================
-            // DANGER MATRIX
-            // =====================================================
-
-            int danger = 0;
-
-            if (noProgress && enoughTime) danger++;
-            if (adverseGrowing && enoughTime) danger++;
-
-            if (!marketTrending && structureBroken) danger++;
-            if (!marketTrending && momentumFade) danger++;
-
-            bool exit = danger >= dangerThreshold;
-
-            if (exit)
-            {
-                ctx.DeadTradeReason = $"{asset}_DANGER";
-
-                _bot.Print(
-                    $"[TVM {asset}] THRESHOLD EXIT | " +
-                    $"danger={danger}/{dangerThreshold} " +
-                    $"mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00}"
-                );
-            }
-
-            return exit;
+            if (adverseR > ctx.MaeR)
+                ctx.MaeR = adverseR;
         }
 
-        private bool IsStructureWeakening(Position pos, Bars m5)
+        private bool EvaluateEarlyPhase(
+            PositionContext ctx,
+            int barsSinceEntry,
+            double adxNow,
+            bool atrShrinking,
+            bool marketTrend)
         {
-            if (m5.Count < 4)
+            _bot.Print(
+                $"[TVM PHASE] EARLY bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
+                $"adx={adxNow:0.0} trend={marketTrend}"
+            );
+
+            bool noProgress = barsSinceEntry >= 2 && ctx.MfeR < 0.10;
+            bool adverseExpansion = ctx.MaeR > 0.35;
+            bool momentumWeak = adxNow < 20.0 || atrShrinking;
+            bool fastAdverse = ctx.MaeR > 0.25 && barsSinceEntry <= 2;
+
+            _bot.Print(
+                $"[TVM EARLY] noProgress={noProgress} adverseExpansion={adverseExpansion} " +
+                $"momentumWeak={momentumWeak} atrShrinking={atrShrinking}"
+            );
+            _bot.Print(
+                $"[TVM EARLY] fastAdverse={fastAdverse} maeR={ctx.MaeR:0.00} bars={barsSinceEntry}"
+            );
+
+            int dangerCount = 0;
+            if (noProgress)
+                dangerCount++;
+            if (adverseExpansion)
+                dangerCount++;
+            if (momentumWeak)
+                dangerCount++;
+            if (fastAdverse)
+                dangerCount++;
+
+            _bot.Print($"[TVM DECISION] phase=EARLY dangerCount={dangerCount} threshold=2");
+
+            if (dangerCount >= 2)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "EARLY_FAILURE";
+
+                _bot.Print(
+                    $"[TVM EXIT] reason=EARLY_FAILURE mfeR={ctx.MfeR:0.00} " +
+                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}"
+                );
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool EvaluateDevelopmentPhase(
+            PositionContext ctx,
+            int barsSinceEntry,
+            double adxNow,
+            bool marketTrend,
+            Bars m5,
+            TradeType tradeType)
+        {
+            _bot.Print(
+                $"[TVM PHASE] DEVELOPMENT bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
+                $"adx={adxNow:0.0} trend={marketTrend}"
+            );
+
+            bool momentumDecay = IsMomentumDecaying(m5, 4);
+            bool structureBreak = ctx.MaeR > 0.60 || IsStructureWeakening(tradeType, m5);
+            bool noContinuation = barsSinceEntry >= 6 && ctx.MfeR < 0.25;
+
+            _bot.Print(
+                $"[TVM DEVELOPMENT] momentumDecay={momentumDecay} noContinuation={noContinuation} " +
+                $"structureBreak={structureBreak}"
+            );
+
+            bool shouldExit = structureBreak || (momentumDecay && noContinuation);
+
+            _bot.Print(
+                $"[TVM DECISION] phase=DEVELOPMENT structureBreak={structureBreak} " +
+                $"combo={(momentumDecay && noContinuation)}"
+            );
+
+            if (shouldExit)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "DEVELOPMENT_FAILURE";
+
+                _bot.Print(
+                    $"[TVM EXIT] reason=DEVELOPMENT_FAILURE mfeR={ctx.MfeR:0.00} " +
+                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}"
+                );
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool EvaluateMaturePhase(
+            PositionContext ctx,
+            int barsSinceEntry,
+            double adxNow,
+            bool marketTrend)
+        {
+            _bot.Print(
+                $"[TVM PHASE] MATURE bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
+                $"adx={adxNow:0.0} trend={marketTrend}"
+            );
+
+            bool maximumAdverseExcursion = ctx.MaeR > 0.80;
+            bool weakDevelopment = barsSinceEntry > 12 && ctx.MfeR < 0.30;
+
+            _bot.Print(
+                $"[TVM MATURE] maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}"
+            );
+
+            bool shouldExit = maximumAdverseExcursion || weakDevelopment;
+
+            _bot.Print(
+                $"[TVM DECISION] phase=MATURE maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}"
+            );
+
+            if (shouldExit)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "MATURE_FAILURE";
+
+                _bot.Print(
+                    $"[TVM EXIT] reason=MATURE_FAILURE mfeR={ctx.MfeR:0.00} " +
+                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}"
+                );
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsAtrShrinking(Bars m5)
+        {
+            if (m5 == null || m5.Count < 7)
+                return false;
+
+            double recent =
+                (m5.HighPrices.Last(0) - m5.LowPrices.Last(0)) +
+                (m5.HighPrices.Last(1) - m5.LowPrices.Last(1)) +
+                (m5.HighPrices.Last(2) - m5.LowPrices.Last(2));
+
+            double previous =
+                (m5.HighPrices.Last(3) - m5.LowPrices.Last(3)) +
+                (m5.HighPrices.Last(4) - m5.LowPrices.Last(4)) +
+                (m5.HighPrices.Last(5) - m5.LowPrices.Last(5));
+
+            return recent < previous;
+        }
+
+        private bool IsMomentumDecaying(Bars m5, int window)
+        {
+            if (m5 == null)
+                return false;
+
+            int requiredBars = (window * 2) + 2;
+            if (m5.Count < requiredBars)
+                return false;
+
+            double recentStrength = EstimateDirectionalStrength(m5, 0, window);
+            double previousStrength = EstimateDirectionalStrength(m5, window, window);
+
+            return recentStrength < previousStrength;
+        }
+
+        private double EstimateAdxLikeStrength(Bars m5, int window)
+        {
+            if (m5 == null)
+                return 0.0;
+
+            if (window < 2)
+                window = 2;
+
+            int maxWindow = m5.Count - 1;
+            if (maxWindow < 2)
+                return 0.0;
+
+            if (window > maxWindow)
+                window = maxWindow;
+
+            return EstimateDirectionalStrength(m5, 0, window);
+        }
+
+        private double EstimateDirectionalStrength(Bars m5, int startOffset, int window)
+        {
+            if (m5 == null)
+                return 0.0;
+
+            if (window < 2)
+                return 0.0;
+
+            int lastNeededOffset = startOffset + window;
+            if (m5.Count <= lastNeededOffset)
+                return 0.0;
+
+            double netMove = Math.Abs(m5.ClosePrices.Last(startOffset) - m5.ClosePrices.Last(startOffset + window));
+            double totalMove = 0.0;
+
+            int i = 0;
+            while (i < window)
+            {
+                double c0 = m5.ClosePrices.Last(startOffset + i);
+                double c1 = m5.ClosePrices.Last(startOffset + i + 1);
+                totalMove += Math.Abs(c0 - c1);
+                i++;
+            }
+
+            if (totalMove <= 0.0)
+                return 0.0;
+
+            return (netMove / totalMove) * 100.0;
+        }
+
+        private bool IsStructureWeakening(TradeType tradeType, Bars m5)
+        {
+            if (m5 == null || m5.Count < 4)
                 return false;
 
             double c0 = m5.ClosePrices.Last(0);
             double c1 = m5.ClosePrices.Last(1);
             double c2 = m5.ClosePrices.Last(2);
 
-            if (pos.TradeType == TradeType.Buy)
+            if (tradeType == TradeType.Buy)
                 return c0 < c1 && c1 < c2;
 
             return c0 > c1 && c1 > c2;
-        }
-
-        private bool IsMomentumFading(Bars m5)
-        {
-            if (m5.Count < 4)
-                return false;
-
-            double r0 = m5.HighPrices.Last(0) - m5.LowPrices.Last(0);
-            double r1 = m5.HighPrices.Last(1) - m5.LowPrices.Last(1);
-            double r2 = m5.HighPrices.Last(2) - m5.LowPrices.Last(2);
-
-            return r0 < r1 && r1 < r2;
         }
     }
 }
