@@ -161,6 +161,9 @@ namespace GeminiV26.Core.Entry
         public bool TransitionValid { get; set; }
         public int TransitionScoreBonus { get; set; }
         public TransitionEvaluation Transition { get; set; }
+        public bool FlagBreakoutConfirmed { get; set; }
+        public double FlagHigh { get; set; }
+        public double FlagLow { get; set; }
 
         // ===== FX HTF bias (lightweight) =====
         public TradeDirection FxHtfAllowedDirection { get; set; } = TradeDirection.None;
