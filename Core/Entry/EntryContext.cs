@@ -155,6 +155,13 @@ namespace GeminiV26.Core.Entry
         // =========================
         public bool LastClosedBarInTrendDirection { get; set; }
 
+        // =========================
+        // Pullback -> Flag transition
+        // =========================
+        public bool TransitionValid { get; set; }
+        public int TransitionScoreBonus { get; set; }
+        public TransitionEvaluation Transition { get; set; }
+
         // ===== FX HTF bias (lightweight) =====
         public TradeDirection FxHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double FxHtfConfidence01 { get; set; } = 0.0;
