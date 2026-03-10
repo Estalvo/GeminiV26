@@ -1898,7 +1898,15 @@ namespace GeminiV26.Core
                     ExitPrice = pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
                     Profit = pos.NetProfit,
                     Score = null,
-                    Confidence = meta?.Confidence
+                    Confidence = meta?.Confidence,
+                    SetupType = ResolveSetupType(meta?.EntryType),
+                    MarketRegime = ResolveMarketRegime(entryCtx),
+                    MfeR = ctx?.MfeR ?? 0.0,
+                    MaeR = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
+                    RMultiple = ComputeRMultiple(pos, ctx, sym),
+                    TransitionQuality = entryCtx?.TransitionValid == true
+                        ? entryCtx.Transition?.QualityScore ?? 0.0
+                        : 0.0
                 });
 
             _positionContexts.Remove(pos.Id);
@@ -1971,6 +1979,63 @@ namespace GeminiV26.Core
             return IsNasSymbol(symbol)
                 || IsUs30(symbol)
                 || IsGer40(symbol);
+        }
+
+        private static string ResolveSetupType(string entryType)
+        {
+            if (string.IsNullOrWhiteSpace(entryType))
+                return string.Empty;
+
+            var setup = entryType.Trim();
+
+            if (setup.IndexOf("MicroContinuation", StringComparison.OrdinalIgnoreCase) >= 0)
+                return "MicroContinuation";
+            if (setup.IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0)
+                return "Flag";
+            if (setup.IndexOf("Pullback", StringComparison.OrdinalIgnoreCase) >= 0)
+                return "Pullback";
+            if (setup.IndexOf("Breakout", StringComparison.OrdinalIgnoreCase) >= 0)
+                return "Breakout";
+            if (setup.IndexOf("Transition", StringComparison.OrdinalIgnoreCase) >= 0)
+                return "Transition";
+
+            return setup;
+        }
+
+        private static string ResolveMarketRegime(EntryContext entryCtx)
+        {
+            if (entryCtx == null)
+                return string.Empty;
+
+            if (entryCtx.TransitionValid)
+                return "Transition";
+
+            var marketState = entryCtx.MarketState;
+            if (marketState != null)
+            {
+                if (marketState.IsTrend)
+                    return "Trend";
+                if (marketState.IsRange)
+                    return "Range";
+                if (marketState.IsLowVol)
+                    return "LowVol";
+            }
+
+            if (entryCtx.IsRange_M5)
+                return "Range";
+
+            if (entryCtx.TrendDirection != TradeDirection.None)
+                return "Trend";
+
+            return entryCtx.IsAtrExpanding_M5 ? "HighVol" : "LowVol";
+        }
+
+        private static double ComputeRMultiple(Position pos, PositionContext ctx, Symbol sym)
+        {
+            if (pos == null || ctx == null || sym == null || ctx.RiskPriceDistance <= 0)
+                return 0.0;
+
+            return (pos.Pips * sym.PipSize) / ctx.RiskPriceDistance;
         }
 
         // =========================================================

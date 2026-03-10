@@ -45,6 +45,12 @@ namespace GeminiV26.Core.Analytics
             public double Profit;
             public int? Score;
             public int? Confidence;
+            public string SetupType;
+            public string MarketRegime;
+            public double MfeR;
+            public double MaeR;
+            public double RMultiple;
+            public double TransitionQuality;
         }
 
         private readonly Dictionary<string, InstrumentStats> _instrumentStats = new Dictionary<string, InstrumentStats>(StringComparer.OrdinalIgnoreCase);
@@ -126,7 +132,13 @@ namespace GeminiV26.Core.Analytics
                 ExitPrice = 0,
                 Profit = pnl,
                 Score = null,
-                Confidence = null
+                Confidence = null,
+                SetupType = string.Empty,
+                MarketRegime = string.Empty,
+                MfeR = 0,
+                MaeR = 0,
+                RMultiple = 0,
+                TransitionQuality = 0
             });
 
             _closedTrades++;
@@ -262,7 +274,7 @@ namespace GeminiV26.Core.Analytics
 
                 if (!File.Exists(filePath))
                 {
-                    const string header = "timestamp,symbol,direction,entryPrice,exitPrice,profit,score,confidence";
+                    const string header = "timestamp,symbol,direction,entryPrice,exitPrice,profit,score,confidence,SetupType,MarketRegime,MFE_R,MAE_R,RMultiple,TransitionQuality";
                     File.WriteAllText(filePath, header + Environment.NewLine);
                 }
 
@@ -274,7 +286,13 @@ namespace GeminiV26.Core.Analytics
                     snapshot.ExitPrice.ToString(CultureInfo.InvariantCulture),
                     snapshot.Profit.ToString(CultureInfo.InvariantCulture),
                     snapshot.Score?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-                    snapshot.Confidence?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);
+                    snapshot.Confidence?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+                    snapshot.SetupType ?? string.Empty,
+                    snapshot.MarketRegime ?? string.Empty,
+                    snapshot.MfeR.ToString("0.####", CultureInfo.InvariantCulture),
+                    snapshot.MaeR.ToString("0.####", CultureInfo.InvariantCulture),
+                    snapshot.RMultiple.ToString("0.####", CultureInfo.InvariantCulture),
+                    snapshot.TransitionQuality.ToString("0.####", CultureInfo.InvariantCulture));
 
                 File.AppendAllText(filePath, row + Environment.NewLine);
                 _log($"[TRADESTATS] trade logged {safeSymbol}");
