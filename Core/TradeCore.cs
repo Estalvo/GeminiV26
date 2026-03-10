@@ -63,6 +63,7 @@ using GeminiV26.Core;
 using GeminiV26.Core.HtfBias;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Context;
+using GeminiV26.Core.Analytics;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -81,6 +82,7 @@ namespace GeminiV26.Core
         private readonly TradeLogger _tradeLogger;
         private readonly Dictionary<long, PositionContext> _positionContexts = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
+        private readonly TradeStatsTracker _statsTracker;
        
         private const string BotLabel = "GeminiV26";
                 
@@ -398,6 +400,7 @@ namespace GeminiV26.Core
             _transitionDetector = new TransitionDetector(_bot.Print);
             _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
             _tradeLogger = new TradeLogger(_bot.SymbolName);
+            _statsTracker = new TradeStatsTracker(_bot.Print);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 
@@ -667,7 +670,10 @@ namespace GeminiV26.Core
                 );
 
                 if (_ctx != null)
+                {
                     _contextRegistry.RegisterEntry(pos.Id, _ctx);
+                    _statsTracker.RegisterTradeOpen(_ctx, pos.Id);
+                }
 
                 if (_positionContexts.TryGetValue(pos.Id, out var pctx))
                     _contextRegistry.RegisterPosition(pctx);
@@ -1808,6 +1814,7 @@ namespace GeminiV26.Core
 
             _tradeMetaStore.TryGet(pos.Id, out var meta);
             _positionContexts.TryGetValue(pos.Id, out var ctx);
+            var entryCtx = _contextRegistry.GetEntry(pos.Id);
 
             if (meta == null)
             {
@@ -1877,6 +1884,8 @@ namespace GeminiV26.Core
                 BeActivated = ctx?.BeActivated,
                 TrailingActivated = ctx?.TrailingActivated,
             });
+
+            _statsTracker.RegisterTradeClose(pos.Id, entryCtx, pos.NetProfit);
 
             _positionContexts.Remove(pos.Id);
             _contextRegistry.RemovePosition(pos.Id);
