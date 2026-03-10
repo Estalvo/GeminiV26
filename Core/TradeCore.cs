@@ -74,6 +74,7 @@ namespace GeminiV26.Core
 
         private readonly EntryRouter _entryRouter;
         private readonly EntryContextBuilder _contextBuilder;
+        private readonly TransitionDetector _transitionDetector;
         private readonly List<IEntryType> _entryTypes;
 
         private readonly TradeLogger _tradeLogger;
@@ -393,6 +394,7 @@ namespace GeminiV26.Core
 
             _entryRouter = new EntryRouter(_entryTypes);
             _contextBuilder = new EntryContextBuilder(bot);
+            _transitionDetector = new TransitionDetector(_bot.Print);
             _tradeLogger = new TradeLogger(_bot.SymbolName);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
@@ -874,6 +876,11 @@ namespace GeminiV26.Core
             _contextRegistry.RegisterEntry(_ctx);
             _contextRegistry.RebuildFromActivePositions(_bot.Positions, _positionContexts);
 
+            var transition = _transitionDetector.Evaluate(_ctx);
+            _ctx.Transition = transition;
+            _ctx.TransitionValid = transition.TransitionValid;
+            _ctx.TransitionScoreBonus = transition.BonusScore;
+
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
             // =========================
@@ -1027,6 +1034,8 @@ namespace GeminiV26.Core
                 _bot.Print("[DEBUG] NO signals for symbol");
                 return;
             }
+
+            ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
             // ===== IDE TEDD =====
             _bot.Print($"[DBG ENTRY] total candidates={symbolSignals.Count}");
@@ -1564,6 +1573,53 @@ namespace GeminiV26.Core
                 if (!_ger40SessionGate.AllowEntry(gateDir)) return;
                 if (!_ger40ImpulseGate.AllowEntry(gateDir)) return;
                 _ger40Executor.ExecuteEntry(selected);
+            }
+        }
+
+        private void ApplyTransitionScoreBoost(EntryContext ctx, List<EntryEvaluation> symbolSignals)
+        {
+            if (ctx == null || symbolSignals == null || !ctx.TransitionValid || ctx.TransitionScoreBonus <= 0)
+                return;
+
+            foreach (var entry in symbolSignals)
+            {
+                if (entry == null || !entry.IsValid)
+                    continue;
+
+                int boost = GetTransitionBoost(entry.Type, ctx.TransitionScoreBonus);
+                if (boost <= 0)
+                    continue;
+
+                entry.Score += boost;
+                if (entry.Score > 100)
+                    entry.Score = 100;
+
+                entry.Reason = $"{entry.Reason} [TRANSITION+{boost}]";
+                _bot.Print($"[ENTRY][TRANSITION] score boost applied type={entry.Type} boost={boost} score={entry.Score}");
+            }
+        }
+
+        private static int GetTransitionBoost(EntryType type, int maxBonus)
+        {
+            switch (type)
+            {
+                case EntryType.FX_Flag:
+                case EntryType.FX_FlagContinuation:
+                case EntryType.Index_Flag:
+                case EntryType.Crypto_Flag:
+                case EntryType.TC_Flag:
+                case EntryType.XAU_Flag:
+                    return maxBonus;
+
+                case EntryType.FX_Pullback:
+                case EntryType.Index_Pullback:
+                case EntryType.Crypto_Pullback:
+                case EntryType.TC_Pullback:
+                case EntryType.XAU_Pullback:
+                    return Math.Min(maxBonus, 8);
+
+                default:
+                    return 0;
             }
         }
         
