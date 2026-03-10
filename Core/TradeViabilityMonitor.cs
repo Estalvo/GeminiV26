@@ -211,16 +211,11 @@ namespace GeminiV26.Core
                 $"structureBreak={structureBreak}"
             );
 
-            bool continuationFailure =
-                momentumDecay &&
-                noContinuation &&
-                (barsSinceEntry >= 5 || ctx.MaeR > 0.25);
-
-            bool shouldExit = structureBreak || continuationFailure;
+            bool shouldExit = structureBreak || (momentumDecay && noContinuation);
 
             _bot.Print(
                 $"[TVM DECISION] phase=DEVELOPMENT structureBreak={structureBreak} " +
-                $"continuationFailure={continuationFailure}"
+                $"combo={(momentumDecay && noContinuation)}"
             );
 
             if (shouldExit)
