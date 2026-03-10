@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 
 namespace GeminiV26.EntryTypes.METAL
 {
@@ -16,6 +17,10 @@ namespace GeminiV26.EntryTypes.METAL
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowPullback)
+                return Reject(ctx, "SESSION_MATRIX_PULLBACK_DISABLED");
+
             if (ctx == null || !ctx.IsReady)
                 return Reject(ctx, "CTX_NOT_READY");
 
@@ -152,6 +157,8 @@ namespace GeminiV26.EntryTypes.METAL
                 minScore += 4;
 
             // FINAL CHECK
+            score += (int)Math.Round(matrix.EntryScoreModifier);
+
             if (score < minScore)
                 return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
                 

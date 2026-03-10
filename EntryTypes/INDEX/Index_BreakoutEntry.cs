@@ -1,5 +1,6 @@
 ﻿using cAlgo.API;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.INDEX;
 using System;
 
@@ -15,6 +16,10 @@ namespace GeminiV26.EntryTypes.INDEX
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             int score = 0;
+
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowBreakout)
+                return Reject(ctx, "SESSION_MATRIX_ALLOWBREAKOUT_DISABLED", 0, TradeDirection.None);
 
             if (ctx == null || !ctx.IsReady)
                 return Reject(ctx, "CTX_NOT_READY", score, TradeDirection.None);
@@ -34,6 +39,7 @@ namespace GeminiV26.EntryTypes.INDEX
             // MATRIX DRIVEN THRESHOLDS
             // =============================
             double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
+            minAdxTrend = Math.Max(minAdxTrend, matrix.MinAdx);
             int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : 3;
             double minAtrPoints = p.MinAtrPoints > 0 ? p.MinAtrPoints : 0;
 
@@ -128,6 +134,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 6;
             else
                 score -= 4;
+
+            score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score})", score, dir);
