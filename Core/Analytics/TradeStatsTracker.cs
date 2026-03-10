@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using GeminiV26.Core.Entry;
 
@@ -136,7 +137,40 @@ namespace GeminiV26.Core.Analytics
                 _log($"Transition: total={s.Transition.Total} winrate={FormatWinRate(s.Transition.WinRate)}");
                 _log($"NonTransition: total={s.NonTransition.Total} winrate={FormatWinRate(s.NonTransition.WinRate)}");
                 _log($"Breakout: total={s.Breakout.Total} winrate={FormatWinRate(s.Breakout.WinRate)}");
+
+                ExportInstrumentStatsToFile(symbol, s);
             }
+        }
+
+        private void ExportInstrumentStatsToFile(string symbol, InstrumentStats stats)
+        {
+            const string basePath = @"C:\Users\Administrator\Documents\GeminiV26\Data\Trades";
+            var instrumentPath = Path.Combine(basePath, symbol);
+            Directory.CreateDirectory(instrumentPath);
+
+            var filePath = Path.Combine(instrumentPath, "TradeStats.csv");
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+            if (!File.Exists(filePath))
+            {
+                const string header = "Timestamp,Symbol,AllTrades,AllWinrate,AllNetProfit,TransitionTrades,TransitionWinrate,NonTransitionTrades,NonTransitionWinrate,BreakoutTrades,BreakoutWinrate";
+                File.AppendAllText(filePath, header + Environment.NewLine);
+            }
+
+            var row = string.Join(",",
+                timestamp,
+                symbol,
+                stats.All.Total.ToString(CultureInfo.InvariantCulture),
+                stats.All.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
+                Math.Round(stats.All.NetProfit, 2).ToString("0.00", CultureInfo.InvariantCulture),
+                stats.Transition.Total.ToString(CultureInfo.InvariantCulture),
+                stats.Transition.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
+                stats.NonTransition.Total.ToString(CultureInfo.InvariantCulture),
+                stats.NonTransition.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
+                stats.Breakout.Total.ToString(CultureInfo.InvariantCulture),
+                stats.Breakout.WinRate.ToString("0.00", CultureInfo.InvariantCulture));
+
+            File.AppendAllText(filePath, row + Environment.NewLine);
         }
 
         private static EntryContext ToContext(TradeMeta meta)
