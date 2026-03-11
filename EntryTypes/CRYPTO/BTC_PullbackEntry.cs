@@ -608,13 +608,14 @@ namespace GeminiV26.EntryTypes.Crypto
             // ======================================
             // BTC PULLBACK QUALITY FILTER
             // ======================================
+            bool isPullbackSetup = Type == EntryType.Crypto_Pullback;
 
-            // 1) Minimum confidence (BTC pullback hard gate)
-            if (score < 45)
+            // 1) Minimum confidence (only for pullback)
+            if (isPullbackSetup && score < 45)
             {
-                Console.WriteLine($"[BTC FILTER] rejected: low confidence {score}");
-                ctx.Log?.Invoke($"[BTC FILTER] rejected: low confidence {score}");
-                return Block(ctx, "BTC_FILTER_LOW_CONFIDENCE", score, dir);
+                Console.WriteLine($"[BTC FILTER] rejected: pullback low confidence {score}");
+                ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback low confidence {score}");
+                return Block(ctx, "BTC_FILTER_PULLBACK_LOW_CONFIDENCE", score, dir);
             }
 
             // 2) Pullback requires impulse reclaim
@@ -622,7 +623,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.HasImpulse_M5 &&
                 ctx.LastClosedBarInTrendDirection;
 
-            if (!impulseReclaimConfirmed)
+            if (isPullbackSetup && !impulseReclaimConfirmed)
             {
                 Console.WriteLine("[BTC FILTER] rejected: no impulse reclaim");
                 ctx.Log?.Invoke("[BTC FILTER] rejected: no impulse reclaim");
@@ -630,11 +631,24 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // 3) Pullback timeout (dead pullback filter)
-            if (ctx.PullbackBars_M5 > 4)
+            if (isPullbackSetup && ctx.PullbackBars_M5 > 4)
             {
-                Console.WriteLine("[BTC FILTER] rejected: pullback timeout");
-                ctx.Log?.Invoke("[BTC FILTER] rejected: pullback timeout");
-                return Block(ctx, "BTC_FILTER_PULLBACK_TIMEOUT", score, dir);
+                Console.WriteLine($"[BTC FILTER] rejected: pullback timeout bars={ctx.PullbackBars_M5}");
+                ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback timeout bars={ctx.PullbackBars_M5}");
+                return Block(ctx, $"BTC_FILTER_PULLBACK_TIMEOUT_BARS_{ctx.PullbackBars_M5}", score, dir);
+            }
+
+            // 4) ATR depth filter (reject overly deep pullbacks)
+            if (isPullbackSetup)
+            {
+                double pullbackDepth = Math.Abs(ctx.PullbackDepthAtr_M5);
+
+                if (pullbackDepth > 0.5)
+                {
+                    Console.WriteLine($"[BTC FILTER] rejected: pullback too deep depth={pullbackDepth:F2}");
+                    ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback too deep depth={pullbackDepth:F2}");
+                    return Block(ctx, "BTC_FILTER_PULLBACK_TOO_DEEP", score, dir);
+                }
             }
 
             // =========================
