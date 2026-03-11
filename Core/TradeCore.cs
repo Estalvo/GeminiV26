@@ -399,10 +399,10 @@ namespace GeminiV26.Core
             _contextBuilder = new EntryContextBuilder(bot);
             _transitionDetector = new TransitionDetector();
             _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
-            _logWriter = new LogWriter();
+            _logWriter = new LogWriter(msg => _bot.Print(msg));
             _logger = new CompositeTradeLogger(
-                new CsvTradeLogger(_logWriter),
-                new CsvAnalyticsLogger(_logWriter));
+                new CsvTradeLogger(_logWriter, msg => _bot.Print(msg)),
+                new CsvAnalyticsLogger(_logWriter, msg => _bot.Print(msg)));
             _statsTracker = new TradeStatsTracker(_bot.Print);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());

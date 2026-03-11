@@ -21,10 +21,12 @@ namespace GeminiV26.Core.Logging
 
         private readonly LogWriter _writer;
         private readonly string _rootPath;
+        private readonly Action<string> _errorSink;
 
-        public CsvAnalyticsLogger(LogWriter writer, string rootPath = null)
+        public CsvAnalyticsLogger(LogWriter writer, Action<string> errorSink = null, string rootPath = null)
         {
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
+            _errorSink = errorSink;
             _rootPath = string.IsNullOrWhiteSpace(rootPath)
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26")
                 : rootPath;
@@ -44,58 +46,66 @@ namespace GeminiV26.Core.Logging
 
         private void WriteRecord(TradeLogContext context, TradeLogResult result)
         {
-            var timestamp = result?.ExitTimeUtc ?? context.TimestampUtc;
-            if (timestamp == default)
-                timestamp = DateTime.UtcNow;
-
-            string path = BuildPath(context.Symbol, timestamp, "Analytics", "analytics");
-            EnsureHeader(path, Header);
-
-            var pctx = context.PositionContext;
-            var ectx = context.EntryContext;
-            var transition = ectx?.Transition;
-
-            string outcome = "FLAT";
-            if (result?.NetProfit.HasValue == true)
+            string path = null;
+            try
             {
-                if (result.NetProfit.Value > 0) outcome = "WIN";
-                else if (result.NetProfit.Value < 0) outcome = "LOSS";
+                var timestamp = result?.ExitTimeUtc ?? context.TimestampUtc;
+                if (timestamp == default)
+                    timestamp = DateTime.UtcNow;
+
+                path = BuildPath(context.Symbol, timestamp, "Analytics", "analytics");
+                EnsureHeader(path, Header);
+
+                var pctx = context.PositionContext;
+                var ectx = context.EntryContext;
+                var transition = ectx?.Transition;
+
+                string outcome = "FLAT";
+                if (result?.NetProfit.HasValue == true)
+                {
+                    if (result.NetProfit.Value > 0) outcome = "WIN";
+                    else if (result.NetProfit.Value < 0) outcome = "LOSS";
+                }
+
+                var values = new[]
+                {
+                    Csv(timestamp.ToString("O", CultureInfo.InvariantCulture)),
+                    Csv(context.Symbol),
+                    Csv(context.Direction),
+
+                    Csv(context.PendingMeta?.EntryType ?? pctx?.EntryType),
+                    CsvNum(pctx?.EntryScore),
+                    CsvNum(transition?.QualityScore),
+                    CsvNum(ectx?.TransitionScoreBonus),
+
+                    CsvNum(ectx?.AdxSlope_M5),
+                    CsvNum(ectx?.BarsSinceImpulse_M5),
+                    CsvNum(ectx?.PullbackDepthAtr_M5),
+                    CsvNum(ectx?.PullbackBars_M5),
+
+                    CsvNum(ectx?.RangeBreakAtrSize_M5),
+
+                    Csv(ectx?.MarketState?.ToString()),
+                    Csv(ectx?.Session.ToString()),
+                    Csv(null),
+                    CsvNum(ectx?.Ema21Slope_M5),
+                    CsvNum(ectx?.Adx_M5),
+
+                    CsvNum(pctx?.EntryScore),
+                    CsvNum(pctx?.LogicConfidence),
+                    CsvNum(pctx?.FinalConfidence),
+
+                    Csv(outcome),
+                    CsvNum(pctx?.MfeR),
+                    CsvNum(pctx?.MaeR)
+                };
+
+                File.AppendAllText(path, string.Join(",", values) + Environment.NewLine);
             }
-
-            var values = new[]
+            catch (Exception ex)
             {
-                Csv(timestamp.ToString("O", CultureInfo.InvariantCulture)),
-                Csv(context.Symbol),
-                Csv(context.Direction),
-
-                Csv(context.PendingMeta?.EntryType ?? pctx?.EntryType),
-                CsvNum(pctx?.EntryScore),
-                CsvNum(transition?.QualityScore),
-                CsvNum(ectx?.TransitionScoreBonus),
-
-                CsvNum(ectx?.AdxSlope_M5),
-                CsvNum(ectx?.BarsSinceImpulse_M5),
-                CsvNum(ectx?.PullbackDepthAtr_M5),
-                CsvNum(ectx?.PullbackBars_M5),
-
-                CsvNum(ectx?.RangeBreakAtrSize_M5),
-
-                Csv(ectx?.MarketState?.ToString()),
-                Csv(ectx?.Session.ToString()),
-                Csv(null),
-                CsvNum(ectx?.Ema21Slope_M5),
-                CsvNum(ectx?.Adx_M5),
-
-                CsvNum(pctx?.EntryScore),
-                CsvNum(pctx?.LogicConfidence),
-                CsvNum(pctx?.FinalConfidence),
-
-                Csv(outcome),
-                CsvNum(pctx?.MfeR),
-                CsvNum(pctx?.MaeR)
-            };
-
-            File.AppendAllText(path, string.Join(",", values) + Environment.NewLine);
+                _errorSink?.Invoke($"[CSV LOGGER ERROR][ANALYTICS] path={path ?? "<null>"} ex={ex.GetType().Name} msg={ex.Message}");
+            }
         }
 
         private string BuildPath(string symbol, DateTime utc, string category, string suffix)
