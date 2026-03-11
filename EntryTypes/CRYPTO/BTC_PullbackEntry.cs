@@ -605,6 +605,38 @@ namespace GeminiV26.EntryTypes.Crypto
 
             int dynamicMinScore = MIN_SCORE;
 
+            // ======================================
+            // BTC PULLBACK QUALITY FILTER
+            // ======================================
+
+            // 1) Minimum confidence (BTC pullback hard gate)
+            if (score < 45)
+            {
+                Console.WriteLine($"[BTC FILTER] rejected: low confidence {score}");
+                ctx.Log?.Invoke($"[BTC FILTER] rejected: low confidence {score}");
+                return Block(ctx, "BTC_FILTER_LOW_CONFIDENCE", score, dir);
+            }
+
+            // 2) Pullback requires impulse reclaim
+            bool impulseReclaimConfirmed =
+                ctx.HasImpulse_M5 &&
+                ctx.LastClosedBarInTrendDirection;
+
+            if (!impulseReclaimConfirmed)
+            {
+                Console.WriteLine("[BTC FILTER] rejected: no impulse reclaim");
+                ctx.Log?.Invoke("[BTC FILTER] rejected: no impulse reclaim");
+                return Block(ctx, "BTC_FILTER_NO_IMPULSE_RECLAIM", score, dir);
+            }
+
+            // 3) Pullback timeout (dead pullback filter)
+            if (ctx.PullbackBars_M5 > 4)
+            {
+                Console.WriteLine("[BTC FILTER] rejected: pullback timeout");
+                ctx.Log?.Invoke("[BTC FILTER] rejected: pullback timeout");
+                return Block(ctx, "BTC_FILTER_PULLBACK_TIMEOUT", score, dir);
+            }
+
             // =========================
             // FINAL CHECK
             // =========================
