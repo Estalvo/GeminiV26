@@ -23,10 +23,12 @@ namespace GeminiV26.Core.Logging
 
         private readonly LogWriter _writer;
         private readonly string _rootPath;
+        private readonly Action<string> _errorSink;
 
-        public CsvTradeLogger(LogWriter writer, string rootPath = null)
+        public CsvTradeLogger(LogWriter writer, Action<string> errorSink = null, string rootPath = null)
         {
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
+            _errorSink = errorSink;
             _rootPath = string.IsNullOrWhiteSpace(rootPath)
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26")
                 : rootPath;
@@ -46,68 +48,76 @@ namespace GeminiV26.Core.Logging
 
         private void WriteRecord(TradeLogContext context, Position position, TradeLogResult result)
         {
-            var now = context.TimestampUtc == default ? DateTime.UtcNow : context.TimestampUtc;
-            string path = BuildPath(context.Symbol, now, "Trades", "trades");
-            EnsureHeader(path, Header);
-
-            var pctx = context.PositionContext;
-            var ectx = context.EntryContext;
-
-            var values = new[]
+            string path = null;
+            try
             {
-                Csv(context.TradeId ?? position?.Id.ToString(CultureInfo.InvariantCulture)),
-                Csv(context.Symbol),
-                Csv(context.PositionId?.ToString(CultureInfo.InvariantCulture)),
-                Csv(context.Direction),
-                Csv(context.StrategyVersion),
+                var now = context.TimestampUtc == default ? DateTime.UtcNow : context.TimestampUtc;
+                path = BuildPath(context.Symbol, now, "Trades", "trades");
+                EnsureHeader(path, Header);
 
-                Csv(context.PendingMeta?.EntryType ?? pctx?.EntryType),
-                Csv(context.PendingMeta?.EntryReason ?? pctx?.EntryReason),
-                Csv(pctx?.EntryTime.ToString("O", CultureInfo.InvariantCulture)),
-                CsvNum(pctx?.EntryPrice),
-                CsvNum(position?.VolumeInUnits ?? pctx?.EntryVolumeInUnits),
+                var pctx = context.PositionContext;
+                var ectx = context.EntryContext;
 
-                CsvNum(pctx?.EntryScore),
-                CsvNum(pctx?.LogicConfidence),
-                CsvNum(pctx?.FinalConfidence),
+                var values = new[]
+                {
+                    Csv(context.TradeId ?? position?.Id.ToString(CultureInfo.InvariantCulture)),
+                    Csv(context.Symbol),
+                    Csv(context.PositionId?.ToString(CultureInfo.InvariantCulture)),
+                    Csv(context.Direction),
+                    Csv(context.StrategyVersion),
 
-                Csv(ectx?.MarketState?.ToString()),
-                Csv(ectx?.Session.ToString()),
-                CsvNum(ectx?.AtrM5),
-                Csv(null),
-                CsvNum(ectx?.Adx_M5),
-                CsvNum(ectx?.Ema21Slope_M5),
-                Csv(null),
+                    Csv(context.PendingMeta?.EntryType ?? pctx?.EntryType),
+                    Csv(context.PendingMeta?.EntryReason ?? pctx?.EntryReason),
+                    Csv(pctx?.EntryTime.ToString("O", CultureInfo.InvariantCulture)),
+                    CsvNum(pctx?.EntryPrice),
+                    CsvNum(position?.VolumeInUnits ?? pctx?.EntryVolumeInUnits),
 
-                CsvNum(pctx?.InitialStopLossR),
-                Csv(null),
-                CsvNum((pctx != null && ectx != null && ectx.AtrM5 > 0) ? pctx.RiskPriceDistance / ectx.AtrM5 : (double?)null),
-                CsvNum(pctx?.StopLossAtrMultiplier),
-                Csv(null),
+                    CsvNum(pctx?.EntryScore),
+                    CsvNum(pctx?.LogicConfidence),
+                    CsvNum(pctx?.FinalConfidence),
 
-                CsvNum(pctx?.MfeR),
-                CsvNum(pctx?.MaeR),
-                CsvNum(pctx?.BarsSinceEntryM5),
-                CsvNum((result?.ExitTimeUtc.HasValue == true && pctx != null) ? (result.ExitTimeUtc.Value - pctx.EntryTime).TotalMinutes : (double?)null),
+                    Csv(ectx?.MarketState?.ToString()),
+                    Csv(ectx?.Session.ToString()),
+                    CsvNum(ectx?.AtrM5),
+                    Csv(null),
+                    CsvNum(ectx?.Adx_M5),
+                    CsvNum(ectx?.Ema21Slope_M5),
+                    Csv(null),
 
-                CsvBool(pctx?.Tp1Hit),
-                CsvBool((pctx != null) ? (bool?)(pctx.Tp2Hit > 0) : null),
-                CsvBool(pctx?.BeActivated),
-                CsvBool(pctx?.TrailingActivated),
+                    CsvNum(pctx?.InitialStopLossR),
+                    Csv(null),
+                    CsvNum((pctx != null && ectx != null && ectx.AtrM5 > 0) ? pctx.RiskPriceDistance / ectx.AtrM5 : (double?)null),
+                    CsvNum(pctx?.StopLossAtrMultiplier),
+                    Csv(null),
 
-                Csv(result?.ExitMode),
-                Csv(result?.ExitReason),
-                Csv(result?.ExitTimeUtc?.ToString("O", CultureInfo.InvariantCulture)),
-                CsvNum(result?.ExitPrice),
+                    CsvNum(pctx?.MfeR),
+                    CsvNum(pctx?.MaeR),
+                    CsvNum(pctx?.BarsSinceEntryM5),
+                    CsvNum((result?.ExitTimeUtc.HasValue == true && pctx != null) ? (result.ExitTimeUtc.Value - pctx.EntryTime).TotalMinutes : (double?)null),
 
-                CsvNum(result?.NetProfit),
-                CsvNum(result?.GrossProfit),
-                CsvNum(result?.Commissions),
-                CsvNum(result?.Swap),
-                CsvNum(result?.Pips)
-            };
+                    CsvBool(pctx?.Tp1Hit),
+                    CsvBool((pctx != null) ? (bool?)(pctx.Tp2Hit > 0) : null),
+                    CsvBool(pctx?.BeActivated),
+                    CsvBool(pctx?.TrailingActivated),
 
-            File.AppendAllText(path, string.Join(",", values) + Environment.NewLine);
+                    Csv(result?.ExitMode),
+                    Csv(result?.ExitReason),
+                    Csv(result?.ExitTimeUtc?.ToString("O", CultureInfo.InvariantCulture)),
+                    CsvNum(result?.ExitPrice),
+
+                    CsvNum(result?.NetProfit),
+                    CsvNum(result?.GrossProfit),
+                    CsvNum(result?.Commissions),
+                    CsvNum(result?.Swap),
+                    CsvNum(result?.Pips)
+                };
+
+                File.AppendAllText(path, string.Join(",", values) + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                _errorSink?.Invoke($"[CSV LOGGER ERROR][TRADE] path={path ?? "<null>"} ex={ex.GetType().Name} msg={ex.Message}");
+            }
         }
 
         private string BuildPath(string symbol, DateTime utc, string category, string suffix)

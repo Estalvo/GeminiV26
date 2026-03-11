@@ -134,42 +134,53 @@ namespace GeminiV26.Data
         // =====================================================
         private void WriteCsvSafe(BarLogRecord r)
         {
-            string date = r.BarTimestamp.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            string fileName = $"{_symbol}_{r.Timeframe}_{date}.csv";
-            string path = Path.Combine(_baseDir, fileName);
-
-            bool writeHeader = !File.Exists(path);
-
-            var sb = new StringBuilder();
-
-            if (writeHeader)
+            string path = string.Empty;
+            try
             {
-                sb.AppendLine(
-                    "LogTimestamp,BarTimestamp,Symbol,Timeframe,BarOpen,BarHigh,BarLow,BarClose,BarVolume,BarSpread"
-                );
+                Directory.CreateDirectory(_baseDir);
+
+                string date = r.BarTimestamp.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                string fileName = $"{_symbol}_{r.Timeframe}_{date}.csv";
+                path = Path.Combine(_baseDir, fileName);
+
+                bool writeHeader = !File.Exists(path);
+
+                var sb = new StringBuilder();
+
+                if (writeHeader)
+                {
+                    sb.AppendLine(
+                        "LogTimestamp,BarTimestamp,Symbol,Timeframe,BarOpen,BarHigh,BarLow,BarClose,BarVolume,BarSpread"
+                    );
+                }
+
+                sb.AppendLine(string.Join(",",
+                    r.LogTimestamp.ToString("O", CultureInfo.InvariantCulture),
+                    r.BarTimestamp.ToString("O", CultureInfo.InvariantCulture),
+                    r.Symbol,
+                    r.Timeframe,
+                    r.BarOpen.ToString(CultureInfo.InvariantCulture),
+                    r.BarHigh.ToString(CultureInfo.InvariantCulture),
+                    r.BarLow.ToString(CultureInfo.InvariantCulture),
+                    r.BarClose.ToString(CultureInfo.InvariantCulture),
+                    r.BarVolume.ToString(CultureInfo.InvariantCulture),
+                    r.BarSpread.ToString(CultureInfo.InvariantCulture)
+                ));
+
+                using (var fs = new FileStream(
+                    path,
+                    FileMode.Append,
+                    FileAccess.Write,
+                    FileShare.ReadWrite))
+                using (var sw = new StreamWriter(fs))
+                {
+                    sw.Write(sb.ToString());
+                    sw.Flush();
+                }
             }
-
-            sb.AppendLine(string.Join(",",
-                r.LogTimestamp.ToString("O", CultureInfo.InvariantCulture),
-                r.BarTimestamp.ToString("O", CultureInfo.InvariantCulture),
-                r.Symbol,
-                r.Timeframe,
-                r.BarOpen.ToString(CultureInfo.InvariantCulture),
-                r.BarHigh.ToString(CultureInfo.InvariantCulture),
-                r.BarLow.ToString(CultureInfo.InvariantCulture),
-                r.BarClose.ToString(CultureInfo.InvariantCulture),
-                r.BarVolume.ToString(CultureInfo.InvariantCulture),
-                r.BarSpread.ToString(CultureInfo.InvariantCulture)
-            ));
-
-            using (var fs = new FileStream(
-                path,
-                FileMode.Append,
-                FileAccess.Write,
-                FileShare.ReadWrite))
-            using (var sw = new StreamWriter(fs))
+            catch (Exception ex)
             {
-                sw.Write(sb.ToString());
+                _bot.Print($"[CSV LOGGER ERROR][BAR] path={path} ex={ex.GetType().Name} msg={ex.Message}");
             }
         }
     }

@@ -8,10 +8,12 @@ namespace GeminiV26.Core.Logging
     {
         private readonly BlockingCollection<Action> _queue = new BlockingCollection<Action>(new ConcurrentQueue<Action>());
         private readonly Thread _worker;
+        private readonly Action<string> _errorSink;
         private volatile bool _disposed;
 
-        public LogWriter()
+        public LogWriter(Action<string> errorSink = null)
         {
+            _errorSink = errorSink;
             _worker = new Thread(WorkLoop)
             {
                 IsBackground = true,
@@ -43,9 +45,9 @@ namespace GeminiV26.Core.Logging
                 {
                     action();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // swallow to keep background writer alive
+                    _errorSink?.Invoke($"[LOG WRITER ERROR] {ex.GetType().Name}: {ex.Message}");
                 }
             }
         }
