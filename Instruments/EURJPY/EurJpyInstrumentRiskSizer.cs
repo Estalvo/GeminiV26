@@ -97,10 +97,19 @@ namespace GeminiV26.Instruments.EURJPY
         // =========================
         public double GetLotCap(int score)
         {
-            double n = NormalizeScore(score);
+            double n = (score - 55) / 35.0;
+            if (n < 0.0) n = 0.0;
+            if (n > 1.0) n = 1.0;
 
-            // JPY: soha nem full cap
-            return 0.60 + n * 0.30; // 0.60 → 0.90
+            double baseCap = 2.0 + n * 1.0;
+
+            if (score >= 80)
+                baseCap += 0.5;
+
+            if (score >= 85)
+                baseCap += 0.5;
+
+            return baseCap;
         }
 
         private static double NormalizeScore(int score)
