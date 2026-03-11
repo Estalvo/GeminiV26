@@ -326,7 +326,13 @@ def plot_equity_drawdown(df: pd.DataFrame, output_dir: Path) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Analyze Gemini V26 trade CSV logs.")
-    parser.add_argument("logs_root", type=Path, help="Root Logs directory to scan.")
+    parser.add_argument(
+        "logs_root",
+        nargs="?",
+        type=Path,
+        default=Path("."),
+        help="Root Logs directory to scan (default: current dir).",
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
