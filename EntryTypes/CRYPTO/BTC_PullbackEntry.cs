@@ -1,4 +1,5 @@
 ﻿using System;
+using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.EntryTypes.Crypto;
 
@@ -649,6 +650,159 @@ namespace GeminiV26.EntryTypes.Crypto
                     ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback too deep depth={pullbackDepth:F2}");
                     return Block(ctx, "BTC_FILTER_PULLBACK_TOO_DEEP", score, dir);
                 }
+            }
+
+            // ======================================
+            // BTC ASIA SESSION MODIFIER (crypto/BTC only)
+            // ======================================
+            bool isBtcSymbol =
+                !string.IsNullOrWhiteSpace(ctx.Symbol) &&
+                ctx.Symbol.IndexOf("BTC", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            bool isAsiaSession = ctx.Session == FxSession.Asia;
+
+            if (isPullbackSetup && isBtcSymbol && isAsiaSession)
+            {
+                const int ASIA_MAX_PULLBACK_BARS = 3;
+                const double ASIA_MAX_RETRACE_RATIO = 0.38;
+                const int ASIA_MIN_CONFIDENCE = 48;
+
+                Console.WriteLine("[BTC ASIA] detected: session modifier active");
+                ctx.Log?.Invoke("[BTC ASIA] detected: session modifier active");
+
+                int driftLookback = 5;
+                int prevLookback = 5;
+
+                bool hasWindowData = lastClosed >= (driftLookback + prevLookback - 1);
+                bool diAligned =
+                    dir == TradeDirection.Long
+                        ? ctx.PlusDI_M5 >= ctx.MinusDI_M5
+                        : ctx.MinusDI_M5 >= ctx.PlusDI_M5;
+                bool slopeAligned =
+                    dir == TradeDirection.Long
+                        ? ctx.Ema21Slope_M5 >= 0
+                        : ctx.Ema21Slope_M5 <= 0;
+                bool impulseAligned =
+                    ctx.ImpulseDirection == TradeDirection.None ||
+                    ctx.ImpulseDirection == dir;
+
+                bool progressionOk = false;
+                int currStart = Math.Max(0, lastClosed - driftLookback + 1);
+                int prevStart = Math.Max(0, currStart - prevLookback);
+                int prevEnd = currStart - 1;
+
+                if (hasWindowData && prevEnd >= prevStart)
+                {
+                    double currHigh = double.MinValue;
+                    double currLow = double.MaxValue;
+                    double prevHigh = double.MinValue;
+                    double prevLow = double.MaxValue;
+
+                    for (int i = currStart; i <= lastClosed; i++)
+                    {
+                        currHigh = Math.Max(currHigh, bars[i].High);
+                        currLow = Math.Min(currLow, bars[i].Low);
+                    }
+
+                    for (int i = prevStart; i <= prevEnd; i++)
+                    {
+                        prevHigh = Math.Max(prevHigh, bars[i].High);
+                        prevLow = Math.Min(prevLow, bars[i].Low);
+                    }
+
+                    progressionOk =
+                        dir == TradeDirection.Long
+                            ? (currHigh > prevHigh && currLow >= prevLow)
+                            : (currLow < prevLow && currHigh <= prevHigh);
+                }
+
+                int flipCount = 0;
+                int noiseStart = Math.Max(1, lastClosed - 5);
+                for (int i = noiseStart; i <= lastClosed; i++)
+                {
+                    var prev = bars[i - 1];
+                    var curr = bars[i];
+
+                    bool prevBull = prev.Close >= prev.Open;
+                    bool currBull = curr.Close >= curr.Open;
+                    if (prevBull != currBull)
+                        flipCount++;
+                }
+
+                bool choppy = flipCount >= 4;
+                bool directionalDriftOk = diAligned && slopeAligned && impulseAligned && progressionOk && !choppy;
+
+                if (!directionalDriftOk)
+                {
+                    Console.WriteLine("[BTC ASIA] rejected: no directional drift quality");
+                    ctx.Log?.Invoke(
+                        $"[BTC ASIA] rejected: no directional drift quality diAligned={diAligned} slopeAligned={slopeAligned} impulseAligned={impulseAligned} progression={progressionOk} flips={flipCount}"
+                    );
+                    return Block(ctx, "BTC_ASIA_NO_DIRECTIONAL_DRIFT_QUALITY", score, dir);
+                }
+
+                double retracementRatio = 0.0;
+                if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 >= 0)
+                {
+                    int impulseStart = Math.Max(0, lastClosed - ctx.BarsSinceImpulse_M5);
+                    double rangeHigh = double.MinValue;
+                    double rangeLow = double.MaxValue;
+
+                    for (int i = impulseStart; i <= lastClosed; i++)
+                    {
+                        rangeHigh = Math.Max(rangeHigh, bars[i].High);
+                        rangeLow = Math.Min(rangeLow, bars[i].Low);
+                    }
+
+                    double impulseSize = Math.Max(0.0, rangeHigh - rangeLow);
+                    double pullbackSize =
+                        dir == TradeDirection.Long
+                            ? Math.Max(0.0, rangeHigh - bars[lastClosed].Close)
+                            : Math.Max(0.0, bars[lastClosed].Close - rangeLow);
+
+                    if (impulseSize > 0)
+                        retracementRatio = pullbackSize / impulseSize;
+                }
+
+                if (retracementRatio > ASIA_MAX_RETRACE_RATIO)
+                {
+                    Console.WriteLine($"[BTC ASIA] rejected: pullback too deep ratio={retracementRatio:0.00}");
+                    ctx.Log?.Invoke($"[BTC ASIA] rejected: pullback too deep ratio={retracementRatio:0.00}");
+                    return Block(ctx, "BTC_ASIA_PULLBACK_TOO_DEEP", score, dir);
+                }
+
+                if (ctx.PullbackBars_M5 > ASIA_MAX_PULLBACK_BARS)
+                {
+                    Console.WriteLine($"[BTC ASIA] rejected: pullback too slow bars={ctx.PullbackBars_M5}");
+                    ctx.Log?.Invoke($"[BTC ASIA] rejected: pullback too slow bars={ctx.PullbackBars_M5}");
+                    return Block(ctx, "BTC_ASIA_PULLBACK_TOO_SLOW", score, dir);
+                }
+
+                bool reclaimConfirmed =
+                    ctx.LastClosedBarInTrendDirection &&
+                    ctx.HasReactionCandle_M5 &&
+                    impulseAligned;
+
+                if (!reclaimConfirmed)
+                {
+                    Console.WriteLine("[BTC ASIA] rejected: no reclaim confirmation");
+                    ctx.Log?.Invoke("[BTC ASIA] rejected: no reclaim confirmation");
+                    return Block(ctx, "BTC_ASIA_NO_RECLAIM_CONFIRMATION", score, dir);
+                }
+
+                if (score < ASIA_MIN_CONFIDENCE)
+                {
+                    Console.WriteLine($"[BTC ASIA] rejected: low confidence score={score}");
+                    ctx.Log?.Invoke($"[BTC ASIA] rejected: low confidence score={score}");
+                    return Block(ctx, "BTC_ASIA_LOW_CONFIDENCE", score, dir);
+                }
+
+                Console.WriteLine(
+                    $"[BTC ASIA] passed: drift={directionalDriftOk}, retrace={retracementRatio:0.00}, bars={ctx.PullbackBars_M5}, confidence={score}"
+                );
+                ctx.Log?.Invoke(
+                    $"[BTC ASIA] passed: drift={directionalDriftOk}, retrace={retracementRatio:0.00}, bars={ctx.PullbackBars_M5}, confidence={score}"
+                );
             }
 
             // =========================
