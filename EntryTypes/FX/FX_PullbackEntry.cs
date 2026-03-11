@@ -17,6 +17,8 @@ namespace GeminiV26.EntryTypes.FX
 
         // Keep your existing baseline. If you want fewer trades, raise this (e.g. 40–45).
         private const int MIN_SCORE = 35;
+        private const int ATR_REL_LOOKBACK = 20;
+        private const double ATR_REL_EXPANSION_FACTOR = 0.85;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -34,8 +36,19 @@ namespace GeminiV26.EntryTypes.FX
             if (!matrix.AllowPullback)
                 return Block(ctx, "SESSION_MATRIX_PULLBACK_DISABLED", score);
 
-            if (ctx.AtrM5 < (0.5 * matrix.MinAtrMultiplier))
-                return Block(ctx, "SESSION_MATRIX_ATR_TOO_LOW", score);
+            double atrAvg20 = ComputeAtrAverage(ctx, ATR_REL_LOOKBACK);
+            if (atrAvg20 <= 0)
+                return Block(ctx, "SESSION_MATRIX_ATR_AVG_UNAVAILABLE", score);
+
+            double atrRelativeThreshold = atrAvg20 * ATR_REL_EXPANSION_FACTOR;
+            bool atrRelativePass = ctx.AtrM5 >= atrRelativeThreshold;
+            ctx?.Log?.Invoke($"[FX_PB ATR] atr={ctx.AtrM5:F2} avg20={atrAvg20:F2} thr={atrRelativeThreshold:F2} pass={atrRelativePass}");
+
+            if (!atrRelativePass)
+            {
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK ATR_RELATIVE_TOO_LOW atr={ctx.AtrM5:F2} avg20={atrAvg20:F2} threshold={atrRelativeThreshold:F2}");
+                return Block(ctx, "[ROUTER] SESSION_MATRIX_ATR_TOO_LOW_RELATIVE", score);
+            }
 
             if (matrix.MinEmaDistance > 0 && System.Math.Abs(ctx.Ema8_M5 - ctx.Ema21_M5) < matrix.MinEmaDistance)
                 return Block(ctx, "SESSION_MATRIX_EMA_DISTANCE_TOO_LOW", score);
@@ -245,6 +258,28 @@ namespace GeminiV26.EntryTypes.FX
 
             // FlagEntry-style debug line (no Console; keep it safe for cTrader compile)
             ctx?.Log?.Invoke($"[FX_PullbackEntry] PEN {tag} -{amount} | score={score} pen={penalty}/{budget}");
+        }
+
+        private static double ComputeAtrAverage(EntryContext ctx, int lookback)
+        {
+            if (ctx?.M5 == null || lookback <= 0 || ctx.M5.Count <= lookback + 1)
+                return 0;
+
+            double trSum = 0;
+            for (int i = 1; i <= lookback; i++)
+            {
+                double high = ctx.M5.HighPrices.Last(i);
+                double low = ctx.M5.LowPrices.Last(i);
+                double prevClose = ctx.M5.ClosePrices.Last(i + 1);
+
+                double trHighLow = high - low;
+                double trHighPrevClose = System.Math.Abs(high - prevClose);
+                double trLowPrevClose = System.Math.Abs(low - prevClose);
+
+                trSum += System.Math.Max(trHighLow, System.Math.Max(trHighPrevClose, trLowPrevClose));
+            }
+
+            return trSum / lookback;
         }
 
         private EntryEvaluation Block(EntryContext ctx, string reason, int score)
