@@ -2062,25 +2062,12 @@ namespace GeminiV26.Core
 
                 double loss = pos.NetProfit;
 
-                // ----------------------------------------
-                // Instrument specific hard limits
-                // ----------------------------------------
+                if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
+                    continue;
 
-                double hardLimit;
-
-                string sym = pos.SymbolName.ToUpper();
-
-                if (sym.Contains("XAU"))
-                    hardLimit = -600.0;
-
-                else if (sym.Contains("BTC") || sym.Contains("ETH"))
-                    hardLimit = -900.0;
-
-                else if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("SPX") || sym.Contains("GER"))
-                    hardLimit = -650.0;
-
-                else
-                    hardLimit = -450.0; // default FX
+                double slPips = ctx.RiskPriceDistance / _bot.Symbol.PipSize;
+                double slRisk = slPips * _bot.Symbol.PipValue * ctx.EntryVolumeInUnits;
+                double hardLimit = -(slRisk * 1.5);
 
 
                 if (loss > hardLimit)
