@@ -24,6 +24,7 @@ namespace GeminiV26.EntryTypes.FX
         {
             int score = 60;   // baseline
             int penalty = 0;  // accumulated penalty (budgeted)
+            int penaltyBudget = 10;   // FlagEntry-style penalty budget
 
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, "CTX_NOT_READY", score);
@@ -31,6 +32,12 @@ namespace GeminiV26.EntryTypes.FX
             var fx = FxInstrumentMatrix.Get(ctx.Symbol);
             if (fx == null)
                 return Block(ctx, "NO_FX_PROFILE", score);
+
+            if (!fx.FlagTuning[FxSession.Asia].AtrExpansionHardBlock)
+                ctx?.Log?.Invoke("[MATRIX POLICY] ATR expansion hard block disabled");
+
+            if (!fx.FlagTuning[FxSession.Asia].RequireStrongEntryCandle)
+                ctx?.Log?.Invoke("[MATRIX POLICY] strong entry candle requirement disabled");
 
             var matrix = ctx.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowPullback)
@@ -46,15 +53,13 @@ namespace GeminiV26.EntryTypes.FX
 
             if (!atrRelativePass)
             {
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK ATR_RELATIVE_TOO_LOW atr={ctx.AtrM5:F2} avg20={atrAvg20:F2} threshold={atrRelativeThreshold:F2}");
-                return Block(ctx, "[ROUTER] SESSION_MATRIX_ATR_TOO_LOW_RELATIVE", score);
+                ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "ATR_CONTRACTION");
+                ctx?.Log?.Invoke($"[PB FILTER] ATR contraction penalty | ATR={ctx.AtrM5:F2} threshold={atrRelativeThreshold:F2}");
             }
 
             if (matrix.MinEmaDistance > 0 && System.Math.Abs(ctx.Ema8_M5 - ctx.Ema21_M5) < matrix.MinEmaDistance)
                 return Block(ctx, "SESSION_MATRIX_EMA_DISTANCE_TOO_LOW", score);
 
-            // FlagEntry-style penalty budget (prevents "death by a thousand cuts")
-            int penaltyBudget = 10;   // vagy 8–12, amit a FlagEntry-ben használsz
 
             // =========================
             // TREND RESOLUTION (HARD)
@@ -96,9 +101,11 @@ namespace GeminiV26.EntryTypes.FX
             // No impulse -> most pullbacks are just chop. FlagEntry is strict; we mimic that.
             if (!ctx.HasImpulse_M5)
             {
-                // Asia: hard block without impulse (your old logic already penalized heavily)
                 if (ctx.Session == FxSession.Asia)
-                    return Block(ctx, "ASIA_NO_IMPULSE", score);
+                {
+                    ApplyPenalty(ref score, ref penalty, 5, penaltyBudget, ctx, "ASIA_NO_IMPULSE");
+                    ctx?.Log?.Invoke("[PB FILTER] Asia impulse missing → penalty applied");
+                }
 
                 ApplyPenalty(ref score, ref penalty, 8, penaltyBudget, ctx, "NO_IMPULSE");
             }
@@ -120,8 +127,12 @@ namespace GeminiV26.EntryTypes.FX
             if (!ctx.HasReactionCandle_M5) weakCount++;
             if (!ctx.LastClosedBarInTrendDirection) weakCount++;
 
-            if (weakCount >= 2)
+            if (weakCount >= 3)
+            {
+                ctx?.Log?.Invoke($"[PB FILTER] weak structure blocked | weakCount={weakCount}");
                 return Block(ctx, "PB_WEAK_STRUCTURE", score);
+            }
+
                 
             // =========================
             // PULLBACK QUALITY (mostly HARD)
