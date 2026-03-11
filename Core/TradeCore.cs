@@ -35,8 +35,7 @@ using GeminiV26.EntryTypes.INDEX;
 using GeminiV26.EntryTypes.METAL;
 using GeminiV26.EntryTypes.Crypto;
 using GeminiV26.Interfaces;
-using GeminiV26.Data;
-using GeminiV26.Data.Models;
+using GeminiV26.Core.Logging;
 using GeminiV26.Instruments.XAUUSD;
 using GeminiV26.Instruments.NAS100;
 using GeminiV26.Instruments.US30;
@@ -79,7 +78,8 @@ namespace GeminiV26.Core
         private readonly FlagBreakoutDetector _flagBreakoutDetector;
         private readonly List<IEntryType> _entryTypes;
 
-        private readonly TradeLogger _tradeLogger;
+        private readonly LogWriter _logWriter;
+        private readonly ITradeLogger _logger;
         private readonly Dictionary<long, PositionContext> _positionContexts = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
         private readonly TradeStatsTracker _statsTracker;
@@ -399,7 +399,10 @@ namespace GeminiV26.Core
             _contextBuilder = new EntryContextBuilder(bot);
             _transitionDetector = new TransitionDetector();
             _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
-            _tradeLogger = new TradeLogger(_bot.SymbolName);
+            _logWriter = new LogWriter();
+            _logger = new CompositeTradeLogger(
+                new CsvTradeLogger(_logWriter),
+                new CsvAnalyticsLogger(_logWriter));
             _statsTracker = new TradeStatsTracker(_bot.Print);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
@@ -677,6 +680,9 @@ namespace GeminiV26.Core
 
                 if (_positionContexts.TryGetValue(pos.Id, out var pctx))
                     _contextRegistry.RegisterPosition(pctx);
+
+                _tradeMetaStore.TryGet(pos.Id, out var pendingMeta);
+                _logger.OnTradeOpened(BuildLogContext(pos, pendingMeta, pctx: _positionContexts.TryGetValue(pos.Id, out var ctxValue) ? ctxValue : null));
             };
 
             _bot.Positions.Closed += OnPositionClosed;
@@ -785,6 +791,8 @@ namespace GeminiV26.Core
 
                 ctx.LastUpdateUtc = DateTime.UtcNow;
                 _contextRegistry.RegisterPosition(ctx);
+                _tradeMetaStore.TryGet(pos.Id, out var openMeta);
+                _logger.OnTradeUpdated(BuildLogContext(pos, openMeta, ctx));
 
                 if (_bot.SymbolName.Contains("XAU"))
                     _xauExitManager?.OnBar(pos);
@@ -1841,49 +1849,21 @@ namespace GeminiV26.Core
 
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
 
-            _tradeLogger.Log(new TradeRecord
-            {
-                CloseTimestamp = _bot.Server.Time,
-
-                Symbol = pos.SymbolName,
-                PositionId = pos.Id,
-                Direction = pos.TradeType.ToString(),
-
-                EntryType = meta?.EntryType,
-                EntryReason = meta?.EntryReason,
-                Confidence = meta?.Confidence,
-
-                // --- Exit diagnostics ---
-                Tp1Hit = ctx != null ? (bool?)ctx.Tp1Hit : null,
-                Tp2Hit = ctx != null ? (bool?)(ctx.Tp2Hit > 0.0) : null,
-
-                EntryPrice = pos.EntryPrice,
-                ExitPrice = pos.EntryPrice
-                    + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
-
-                VolumeInUnits = ctx?.InitialVolumeInUnits > 0
-                    ? ctx.InitialVolumeInUnits
-                    : pos.VolumeInUnits,
-
-                NetProfit = pos.NetProfit,
-                GrossProfit = pos.GrossProfit,
-                Commissions = pos.Commissions,
-                Swap = pos.Swap,
-
-                ExitReason = args.Reason.ToString(),
-                ExitMode = exitMode,
-
-                EntryTime = pos.EntryTime,
-                ExitTime = _bot.Server.Time,
-                Pips = pos.Pips,
-
-                EntryVolumeInUnits = ctx?.InitialVolumeInUnits,
-                Tp1ClosedVolumeInUnits = ctx?.Tp1ClosedVolumeInUnits,
-                RemainingVolumeInUnits = ctx?.RemainingVolumeInUnits,
-
-                BeActivated = ctx?.BeActivated,
-                TrailingActivated = ctx?.TrailingActivated,
-            });
+            _logger.OnTradeClosed(
+                BuildLogContext(pos, meta, ctx, entryCtx),
+                pos,
+                new TradeLogResult
+                {
+                    ExitMode = exitMode,
+                    ExitReason = args.Reason.ToString(),
+                    ExitTimeUtc = _bot.Server.Time,
+                    ExitPrice = pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
+                    NetProfit = pos.NetProfit,
+                    GrossProfit = pos.GrossProfit,
+                    Commissions = pos.Commissions,
+                    Swap = pos.Swap,
+                    Pips = pos.Pips
+                });
 
             _statsTracker.RegisterTradeClose(
                 pos.Id,
@@ -1915,9 +1895,26 @@ namespace GeminiV26.Core
             _tradeMetaStore.Remove(pos.Id);
         }
 
+        private TradeLogContext BuildLogContext(Position pos, PendingEntryMeta meta, PositionContext pctx = null, EntryContext ectx = null)
+        {
+            return new TradeLogContext
+            {
+                TimestampUtc = _bot.Server.Time.ToUniversalTime(),
+                Symbol = pos?.SymbolName ?? _bot.SymbolName,
+                Direction = pos?.TradeType.ToString(),
+                StrategyVersion = "GeminiV26",
+                PositionId = pos?.Id,
+                TradeId = pos?.Id.ToString(),
+                PositionContext = pctx,
+                EntryContext = ectx ?? (pos != null ? _contextRegistry.GetEntry(pos.Id) : null),
+                PendingMeta = meta
+            };
+        }
+
         public void OnStop()
         {
             _bot.Positions.Closed -= OnPositionClosed;
+            _logWriter?.Dispose();
         }
 
         // =================================================
