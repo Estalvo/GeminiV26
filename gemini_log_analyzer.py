@@ -189,38 +189,46 @@ def profit_factor(profits: pd.Series) -> float:
     return float(gross_profit / abs(gross_loss))
 
 
+def safe_mean(series: pd.Series) -> float:
+    values = series.dropna()
+    if values.empty:
+        return np.nan
+    return float(values.mean())
+
+
 def summarize_group(df: pd.DataFrame, group_col: str) -> pd.DataFrame:
     if group_col not in df.columns:
         return pd.DataFrame()
 
-    grouped = df.groupby(group_col, dropna=False)
-    out = grouped.apply(
-        lambda g: pd.Series(
-            {
-                "TotalTrades": len(g),
-                "Wins": int((g["NetProfit"] > 0).sum()) if "NetProfit" in g else 0,
-                "Losses": int((g["NetProfit"] < 0).sum()) if "NetProfit" in g else 0,
-                "Winrate": float((g["NetProfit"] > 0).mean() * 100.0) if "NetProfit" in g else np.nan,
-                "NetProfitUSD": float(g["NetProfit"].sum()) if "NetProfit" in g else np.nan,
-                "GrossProfitUSD": float(g.loc[g["NetProfit"] > 0, "NetProfit"].sum()) if "NetProfit" in g else np.nan,
-                "GrossLossUSD": float(g.loc[g["NetProfit"] < 0, "NetProfit"].sum()) if "NetProfit" in g else np.nan,
-                "ProfitFactor": profit_factor(g["NetProfit"].dropna()) if "NetProfit" in g else np.nan,
-                "AverageTradeUSD": float(g["NetProfit"].mean()) if "NetProfit" in g else np.nan,
-                "MedianTradeUSD": float(g["NetProfit"].median()) if "NetProfit" in g else np.nan,
-                "AveragePips": float(g["Pips"].mean()) if "Pips" in g else np.nan,
-                "AverageConfidence": float(g["Confidence"].mean()) if "Confidence" in g else np.nan,
-                "AverageHoldMinutes": float(g["HoldMinutes"].mean()) if "HoldMinutes" in g else np.nan,
-                "TP1HitRate": float(g["Tp1Hit"].astype(float).mean() * 100.0) if "Tp1Hit" in g else np.nan,
-                "TP2HitRate": float(g["Tp2Hit"].astype(float).mean() * 100.0) if "Tp2Hit" in g else np.nan,
-                "BEActivationRate": float(g["BeActivated"].astype(float).mean() * 100.0) if "BeActivated" in g else np.nan,
-                "TrailingActivationRate": float(g["TrailingActivated"].astype(float).mean() * 100.0)
-                if "TrailingActivated" in g
-                else np.nan,
-                "MaxDrawdownUSD": float(g["DrawdownUSD"].min()) if "DrawdownUSD" in g else np.nan,
-            }
-        )
-    )
-    return out.reset_index()
+    grouped = df.groupby(group_col, dropna=False, observed=False)
+    rows = []
+    for key, g in grouped:
+        row = {
+            group_col: key,
+            "TotalTrades": len(g),
+            "Wins": int((g["NetProfit"] > 0).sum()) if "NetProfit" in g else 0,
+            "Losses": int((g["NetProfit"] < 0).sum()) if "NetProfit" in g else 0,
+            "Winrate": safe_mean(g["NetProfit"] > 0) * 100.0 if "NetProfit" in g else np.nan,
+            "NetProfitUSD": float(g["NetProfit"].sum()) if "NetProfit" in g else np.nan,
+            "GrossProfitUSD": float(g.loc[g["NetProfit"] > 0, "NetProfit"].sum()) if "NetProfit" in g else np.nan,
+            "GrossLossUSD": float(g.loc[g["NetProfit"] < 0, "NetProfit"].sum()) if "NetProfit" in g else np.nan,
+            "ProfitFactor": profit_factor(g["NetProfit"].dropna()) if "NetProfit" in g else np.nan,
+            "AverageTradeUSD": safe_mean(g["NetProfit"]) if "NetProfit" in g else np.nan,
+            "MedianTradeUSD": float(g["NetProfit"].median()) if "NetProfit" in g else np.nan,
+            "AveragePips": safe_mean(g["Pips"]) if "Pips" in g else np.nan,
+            "AverageConfidence": safe_mean(g["Confidence"]) if "Confidence" in g else np.nan,
+            "AverageHoldMinutes": safe_mean(g["HoldMinutes"]) if "HoldMinutes" in g else np.nan,
+            "TP1HitRate": safe_mean(g["Tp1Hit"].astype(float)) * 100.0 if "Tp1Hit" in g else np.nan,
+            "TP2HitRate": safe_mean(g["Tp2Hit"].astype(float)) * 100.0 if "Tp2Hit" in g else np.nan,
+            "BEActivationRate": safe_mean(g["BeActivated"].astype(float)) * 100.0 if "BeActivated" in g else np.nan,
+            "TrailingActivationRate": safe_mean(g["TrailingActivated"].astype(float)) * 100.0
+            if "TrailingActivated" in g
+            else np.nan,
+            "MaxDrawdownUSD": float(g["DrawdownUSD"].min()) if "DrawdownUSD" in g else np.nan,
+        }
+        rows.append(row)
+
+    return pd.DataFrame(rows)
 
 
 def system_stats(df: pd.DataFrame) -> pd.DataFrame:
@@ -237,15 +245,15 @@ def system_stats(df: pd.DataFrame) -> pd.DataFrame:
         "GrossProfitUSD": float(df.loc[df["NetProfit"] > 0, "NetProfit"].sum()) if "NetProfit" in df else np.nan,
         "GrossLossUSD": float(df.loc[df["NetProfit"] < 0, "NetProfit"].sum()) if "NetProfit" in df else np.nan,
         "ProfitFactor": profit_factor(profits),
-        "AverageTradeUSD": float(df["NetProfit"].mean()) if "NetProfit" in df else np.nan,
+        "AverageTradeUSD": safe_mean(df["NetProfit"]) if "NetProfit" in df else np.nan,
         "MedianTradeUSD": float(df["NetProfit"].median()) if "NetProfit" in df else np.nan,
-        "AveragePips": float(df["Pips"].mean()) if "Pips" in df else np.nan,
-        "AverageConfidence": float(df["Confidence"].mean()) if "Confidence" in df else np.nan,
-        "AverageHoldMinutes": float(df["HoldMinutes"].mean()) if "HoldMinutes" in df else np.nan,
-        "TP1HitRate": float(df["Tp1Hit"].astype(float).mean() * 100.0) if "Tp1Hit" in df else np.nan,
-        "TP2HitRate": float(df["Tp2Hit"].astype(float).mean() * 100.0) if "Tp2Hit" in df else np.nan,
-        "BEActivationRate": float(df["BeActivated"].astype(float).mean() * 100.0) if "BeActivated" in df else np.nan,
-        "TrailingActivationRate": float(df["TrailingActivated"].astype(float).mean() * 100.0)
+        "AveragePips": safe_mean(df["Pips"]) if "Pips" in df else np.nan,
+        "AverageConfidence": safe_mean(df["Confidence"]) if "Confidence" in df else np.nan,
+        "AverageHoldMinutes": safe_mean(df["HoldMinutes"]) if "HoldMinutes" in df else np.nan,
+        "TP1HitRate": safe_mean(df["Tp1Hit"].astype(float)) * 100.0 if "Tp1Hit" in df else np.nan,
+        "TP2HitRate": safe_mean(df["Tp2Hit"].astype(float)) * 100.0 if "Tp2Hit" in df else np.nan,
+        "BEActivationRate": safe_mean(df["BeActivated"].astype(float)) * 100.0 if "BeActivated" in df else np.nan,
+        "TrailingActivationRate": safe_mean(df["TrailingActivated"].astype(float)) * 100.0
         if "TrailingActivated" in df
         else np.nan,
         "MaxDrawdownUSD": float(df["DrawdownUSD"].min()) if "DrawdownUSD" in df else np.nan,
@@ -260,18 +268,26 @@ def daily_stats(df: pd.DataFrame) -> pd.DataFrame:
     temp = df.copy()
     temp["Date"] = temp["CloseTimestamp"].dt.date
     grouped = temp.groupby("Date", dropna=True)
-
-    out = grouped.apply(
-        lambda g: pd.Series(
+    rows = []
+    for key, g in grouped:
+        rows.append(
             {
+                "Date": key,
                 "Trades": len(g),
                 "NetProfitUSD": float(g["NetProfit"].sum()) if "NetProfit" in g else np.nan,
-                "Winrate": float((g["NetProfit"] > 0).mean() * 100.0) if "NetProfit" in g else np.nan,
+                "Winrate": safe_mean(g["NetProfit"] > 0) * 100.0 if "NetProfit" in g else np.nan,
                 "ProfitFactor": profit_factor(g["NetProfit"].dropna()) if "NetProfit" in g else np.nan,
             }
         )
-    ).reset_index()
 
+    return pd.DataFrame(rows)
+
+
+def strip_timezone_from_datetimes(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy()
+    for col in out.columns:
+        if pd.api.types.is_datetime64tz_dtype(out[col]):
+            out[col] = out[col].dt.tz_localize(None)
     return out
 
 
@@ -284,7 +300,7 @@ def write_csv_outputs(output_dir: Path, tables: Dict[str, pd.DataFrame]) -> None
 def write_excel_report(output_file: Path, sheets: Dict[str, pd.DataFrame]) -> None:
     with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
         for sheet_name, data in sheets.items():
-            data.to_excel(writer, sheet_name=sheet_name, index=False)
+            strip_timezone_from_datetimes(data).to_excel(writer, sheet_name=sheet_name, index=False)
 
 
 def plot_equity_drawdown(df: pd.DataFrame, output_dir: Path) -> None:
