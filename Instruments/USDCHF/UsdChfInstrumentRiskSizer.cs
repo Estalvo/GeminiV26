@@ -90,11 +90,19 @@ namespace GeminiV26.Instruments.USDCHF
         // =========================
         public double GetLotCap(int score)
         {
-            double n = NormalizeScore(score);
+            double n = (score - 55) / 35.0;
+            if (n < 0.0) n = 0.0;
+            if (n > 1.0) n = 1.0;
 
-            // FX: ne legyen azonnal full cap
-            // 65% → 100%
-            return 2.0 + n * 0.5;
+            double baseCap = 2.0 + n * 1.0;
+
+            if (score >= 80)
+                baseCap += 0.5;
+
+            if (score >= 85)
+                baseCap += 0.5;
+
+            return baseCap;
         }
 
         private static double NormalizeScore(int score)

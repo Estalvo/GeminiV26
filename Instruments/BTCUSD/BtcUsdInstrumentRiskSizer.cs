@@ -93,9 +93,19 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public double GetLotCap(int confidence)
         {
-            if (confidence >= 85) return 80000;
-            if (confidence >= 75) return 70000;
-            return 60000;
+            double n = (confidence - 55) / 35.0;
+            if (n < 0.0) n = 0.0;
+            if (n > 1.0) n = 1.0;
+
+            double baseCap = 2.0 + n * 1.0;
+
+            if (confidence >= 80)
+                baseCap += 0.5;
+
+            if (confidence >= 85)
+                baseCap += 0.5;
+
+            return baseCap;
         }
     }
 }

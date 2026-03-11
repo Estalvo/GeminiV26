@@ -85,18 +85,17 @@ namespace GeminiV26.Instruments.EURUSD
         // =========================
         public double GetLotCap(int score)
         {
-            double n = NormalizeScore(score);
+            double n = (score - 55) / 35.0;
+            if (n < 0.0) n = 0.0;
+            if (n > 1.0) n = 1.0;
 
-            // Dinamikusabb skálázás:
-            // 1.0 → 1.8 lineárisan
-            double baseCap = 1.0 + n * 0.8;
+            double baseCap = 2.0 + n * 1.0;
 
-            // Extra boost magas minőségű setupra
             if (score >= 80)
-                baseCap += 0.3;   // max ~2.1
+                baseCap += 0.5;
 
             if (score >= 85)
-                baseCap += 0.2;   // max ~2.3
+                baseCap += 0.5;
 
             return baseCap;
         }
