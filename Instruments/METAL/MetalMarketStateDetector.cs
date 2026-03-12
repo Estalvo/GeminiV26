@@ -40,9 +40,7 @@ namespace GeminiV26.Instruments.METAL
                 ATR_PERIOD,
                 MovingAverageType.Exponential);
 
-            _adx = bot.Indicators.AverageDirectionalMovementIndexRating(
-                _bars,
-                ADX_PERIOD);
+            _adx = bot.Indicators.AverageDirectionalMovementIndexRating(ADX_PERIOD);
 
             _ema8 = bot.Indicators.ExponentialMovingAverage(
                 _bars.ClosePrices,
