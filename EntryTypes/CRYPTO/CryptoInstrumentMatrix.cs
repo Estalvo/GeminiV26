@@ -49,7 +49,10 @@ namespace GeminiV26.EntryTypes.Crypto
                     AllowMeanReversion = false,
                     AllowRangeBreakout = true,
                     BlockPullbackOnHighVolWithoutImpulse = false,
-                    RequireStrongImpulseForPullback = false
+                    RequireStrongImpulseForPullback = false,
+
+                    // === Score character ===
+                    ScoreWeightMultiplier = 1.10
                 },
 
                 // =========================
@@ -88,7 +91,10 @@ namespace GeminiV26.EntryTypes.Crypto
                     AllowMeanReversion = false,
                     AllowRangeBreakout = true,
                     BlockPullbackOnHighVolWithoutImpulse = false,
-                    RequireStrongImpulseForPullback = false
+                    RequireStrongImpulseForPullback = false,
+
+                    // === Score character ===
+                    ScoreWeightMultiplier = 1.08
                 }
             };
 

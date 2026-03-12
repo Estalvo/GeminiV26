@@ -47,6 +47,9 @@
         // === Range ===
         public double RangeMaxWidthAtr { get; init; }
 
+        // === Score character ===
+        public double ScoreWeightMultiplier { get; set; } = 1.0;
+
         // === Viselkedési engedélyek ===
         public bool AllowMeanReversion { get; init; }
         public bool AllowRangeBreakout { get; init; }

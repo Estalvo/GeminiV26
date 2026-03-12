@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // SCORE CHARACTER
                     // =========================
-                    ScoreWeightMultiplier = 1.00,
+                    ScoreWeightMultiplier = 1.08,
 
                     // =========================
                     // PROFIT STRUCTURE
@@ -134,7 +134,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // SCORE CHARACTER
                     // =========================
-                    ScoreWeightMultiplier = 1.15,  // agresszívebb karakter
+                    ScoreWeightMultiplier = 1.20,  // agresszívebb karakter
 
                     // =========================
                     // PROFIT STRUCTURE
@@ -210,7 +210,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // SCORE CHARACTER
                     // =========================
-                    ScoreWeightMultiplier = 0.95,
+                    ScoreWeightMultiplier = 1.02,
 
                     // =========================
                     // PROFIT STRUCTURE
