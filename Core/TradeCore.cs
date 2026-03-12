@@ -83,6 +83,8 @@ namespace GeminiV26.Core
         private readonly Dictionary<long, PositionContext> _positionContexts = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
         private readonly TradeStatsTracker _statsTracker;
+        private readonly string _symbolCanonical;
+        private readonly InstrumentClass _instrumentClass;
        
         private const string BotLabel = "GeminiV26";
                 
@@ -263,50 +265,30 @@ namespace GeminiV26.Core
         {
             _bot = bot;
             _router = new TradeRouter(_bot);
-            var symbol = NormalizeSymbol(_bot.SymbolName);
+            _symbolCanonical = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
+            _instrumentClass = SymbolRouting.ResolveInstrumentClass(_symbolCanonical);
+            var symbol = _symbolCanonical;
 
             // =========================
             // INSTRUMENT ROUTING (SSOT)
             // =========================
 
-            if (
-                symbol.Contains("EURUSD") ||
-                symbol.Contains("USDJPY") ||
-                symbol.Contains("GBPUSD") ||
-                symbol.Contains("AUDUSD") ||
-                symbol.Contains("AUDNZD") ||
-                symbol.Contains("EURJPY") ||
-                symbol.Contains("GBPJPY") ||
-                symbol.Contains("NZDUSD") ||
-                symbol.Contains("USDCAD") ||
-                symbol.Contains("USDCHF")
-            )
+            if (_instrumentClass == InstrumentClass.FX)
             {
                 _fxMarketStateDetector = new FxMarketStateDetector(_bot, symbol);
                 _fxBias = new FxHtfBiasEngine(_bot);
             }
-            else if (
-                symbol.Contains("BTC") ||
-                symbol.Contains("ETH")
-            )
+            else if (_instrumentClass == InstrumentClass.CRYPTO)
             {
                 _cryptoMarketStateDetector = new CryptoMarketStateDetector(_bot);
                 _cryptoBias = new CryptoHtfBiasEngine(_bot);
             }
-            else if (
-                symbol.Contains("XAU")
-            )
+            else if (_instrumentClass == InstrumentClass.METAL)
             {
                 _xauMarketStateDetector = new XauMarketStateDetector(_bot);
                 _metalBias = new MetalHtfBiasEngine(_bot);
             }
-            else if (
-                symbol.Contains("NAS") ||
-                symbol.Contains("USTECH") ||
-                symbol.Contains("US30") ||
-                symbol.Contains("GER") ||
-                symbol.Contains("DAX")
-            )
+            else if (_instrumentClass == InstrumentClass.INDEX)
             {
                 _indexMarketStateDetector = new IndexMarketStateDetector(_bot);
                 _indexBias = new IndexHtfBiasEngine(_bot);
@@ -318,10 +300,7 @@ namespace GeminiV26.Core
             }
 
 
-            if (
-               symbol.Contains("BTC") ||
-               symbol.Contains("ETH")
-            )
+            if (_instrumentClass == InstrumentClass.CRYPTO)
             {
                 _entryTypes = new List<IEntryType>
                 {
@@ -331,7 +310,7 @@ namespace GeminiV26.Core
                 };
             }
 
-            else if (symbol.Contains("XAU"))
+            else if (_instrumentClass == InstrumentClass.METAL)
             {
                 _entryTypes = new List<IEntryType>
                 {
@@ -341,18 +320,7 @@ namespace GeminiV26.Core
                     new XAU_ImpulseEntry()
                 };
             }
-            else if (
-                symbol.Contains("EURUSD") ||
-                symbol.Contains("USDJPY") ||
-                symbol.Contains("GBPUSD") ||
-                symbol.Contains("AUDUSD") ||
-                symbol.Contains("AUDNZD") ||
-                symbol.Contains("EURJPY") ||
-                symbol.Contains("GBPJPY") ||
-                symbol.Contains("NZDUSD") ||
-                symbol.Contains("USDCAD") ||
-                symbol.Contains("USDCHF")
-            )
+            else if (_instrumentClass == InstrumentClass.FX)
             {
                 _entryTypes = new List<IEntryType>
                 {
@@ -366,13 +334,7 @@ namespace GeminiV26.Core
                 new FX_ReversalEntry()
             };
             }
-            else if (
-                symbol.Contains("NAS") ||
-                symbol.Contains("USTECH") ||
-                symbol.Contains("US30") ||
-                symbol.Contains("GER") ||
-                symbol.Contains("DAX")
-            )
+            else if (_instrumentClass == InstrumentClass.INDEX)
             {
                 _entryTypes = new List<IEntryType>
                 {
@@ -696,32 +658,21 @@ namespace GeminiV26.Core
 
             _bot.Print($"[ONBAR DBG] raw={rawSym} canonical={sym}");
 
-            bool isFx = _fxMarketStateDetector != null &&
-                !sym.Contains("XAU") &&
-                !sym.Contains("BTC") &&
-                !sym.Contains("ETH") &&
-                !IsNasSymbol(sym) &&
-                !sym.Contains("GER");
+            bool isFx = _fxMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.FX;
 
-            bool isCrypto = _cryptoMarketStateDetector != null &&
-                            (sym.Contains("BTC") || sym.Contains("ETH"));
+            bool isCrypto = _cryptoMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.CRYPTO;
 
-            bool isMetal = _xauMarketStateDetector != null &&
-                           sym.Contains("XAU");
+            bool isMetal = _xauMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.METAL;
 
-            bool isIndex = _indexMarketStateDetector != null &&
-                           (IsNasSymbol(sym) || IsGer40(sym) || sym == "US30");
+            bool isIndex = _indexMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.INDEX;
 
             // =========================
             // ADDED: instrument classification (SSOT for this method)
             // =========================
             string symU = sym.ToUpperInvariant();   // ✅ már canonical
-            bool isMetalSymbol = symU.Contains("XAU") || symU.Contains("XAG");
-            bool isCryptoSymbol = symU.Contains("BTC") || symU.Contains("ETH");
-            bool isIndexSymbol =
-                IsNasSymbol(symU) ||
-                symU == "US30" ||
-                IsGer40(symU);
+            bool isMetalSymbol = SymbolRouting.ResolveInstrumentClass(symU) == InstrumentClass.METAL;
+            bool isCryptoSymbol = SymbolRouting.ResolveInstrumentClass(symU) == InstrumentClass.CRYPTO;
+            bool isIndexSymbol = SymbolRouting.ResolveInstrumentClass(symU) == InstrumentClass.INDEX;
 
             bool isFxSymbol =
                 !isMetalSymbol && !isCryptoSymbol && !isIndexSymbol &&
@@ -795,52 +746,52 @@ namespace GeminiV26.Core
                 _tradeMetaStore.TryGet(pos.Id, out var openMeta);
                 _logger.OnTradeUpdated(BuildLogContext(pos, openMeta, ctx));
 
-                if (_bot.SymbolName.Contains("XAU"))
+                if (IsSymbol("XAUUSD"))
                     _xauExitManager?.OnBar(pos);
 
                 else if (IsNasSymbol(_bot.SymbolName))
                     _nasExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("US30"))
+                else if (IsSymbol("US30"))
                     _us30ExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("EURUSD"))
+                else if (IsSymbol("EURUSD"))
                     _eurUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("USDJPY"))
+                else if (IsSymbol("USDJPY"))
                     _usdJpyExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("GBPUSD"))
+                else if (IsSymbol("GBPUSD"))
                     _gbpUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("AUDUSD"))
+                else if (IsSymbol("AUDUSD"))
                     _audUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("AUDNZD"))
+                else if (IsSymbol("AUDNZD"))
                     _audNzdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("EURJPY"))
+                else if (IsSymbol("EURJPY"))
                     _eurJpyExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("GBPJPY"))
+                else if (IsSymbol("GBPJPY"))
                     _gbpJpyExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("NZDUSD"))
+                else if (IsSymbol("NZDUSD"))
                     _nzdUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("USDCAD"))
+                else if (IsSymbol("USDCAD"))
                     _usdCadExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("USDCHF"))
+                else if (IsSymbol("USDCHF"))
                     _usdChfExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("BTC"))
+                else if (IsSymbol("BTCUSD"))
                     _btcUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("ETH"))
+                else if (IsSymbol("ETHUSD"))
                     _ethUsdExitManager?.OnBar(pos);
 
-                else if (_bot.SymbolName.Contains("GER40") || _bot.SymbolName.Contains("GER"))
+                else if (IsSymbol("GER40"))
                     _ger40ExitManager?.OnBar(pos);
             }
 
@@ -928,52 +879,52 @@ namespace GeminiV26.Core
             // =========================
             if (isFxSymbol) // ADDED: use instrument classification, not detector presence
             {
-                if (_bot.SymbolName.Contains("EURUSD"))
+                if (IsSymbol("EURUSD"))
                 {
                     if (_eurUsdSessionGate is EurUsdSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: EURUSD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("USDJPY"))
+                else if (IsSymbol("USDJPY"))
                 {
                     if (_usdJpySessionGate is UsdJpySessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: USDJPY session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("GBPUSD"))
+                else if (IsSymbol("GBPUSD"))
                 {
                     if (_gbpUsdSessionGate is GbpUsdSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: GBPUSD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("AUDUSD"))
+                else if (IsSymbol("AUDUSD"))
                 {
                     if (_audUsdSessionGate is AudUsdSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: AUDUSD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("AUDNZD"))
+                else if (IsSymbol("AUDNZD"))
                 {
                     if (_audNzdSessionGate is AudNzdSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: AUDNZD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("EURJPY"))
+                else if (IsSymbol("EURJPY"))
                 {
                     if (_eurJpySessionGate is EurJpySessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: EURJPY session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("GBPJPY"))
+                else if (IsSymbol("GBPJPY"))
                 {
                     if (_gbpJpySessionGate is GbpJpySessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: GBPJPY session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("NZDUSD"))
+                else if (IsSymbol("NZDUSD"))
                 {
                     if (_nzdUsdSessionGate is NzdUsdSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: NZDUSD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("USDCAD"))
+                else if (IsSymbol("USDCAD"))
                 {
                     if (_usdCadSessionGate is UsdCadSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: USDCAD session gate missing or wrong type");
                 }
-                else if (_bot.SymbolName.Contains("USDCHF"))
+                else if (IsSymbol("USDCHF"))
                 {
                     if (_usdChfSessionGate is UsdChfSessionGate sg) _ctx.Session = sg.GetSession();
                     else _bot.Print("[TC] WARN: USDCHF session gate missing or wrong type");
@@ -983,55 +934,55 @@ namespace GeminiV26.Core
             TradeType xauBias = TradeType.Buy;   // default
             int xauBiasConfidence = 0;
 
-            if (_bot.SymbolName.Contains("XAU"))
+            if (IsSymbol("XAUUSD"))
                 _xauEntryLogic?.Evaluate(out xauBias, out xauBiasConfidence);
 
-            if (_bot.SymbolName.Contains("EURUSD"))
+            if (IsSymbol("EURUSD"))
                 _eurUsdEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("GBPUSD"))
+            if (IsSymbol("GBPUSD"))
                 _gbpUsdEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("USDJPY"))
+            if (IsSymbol("USDJPY"))
                 _usdJpyEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("AUDUSD"))
+            if (IsSymbol("AUDUSD"))
                 _audUsdEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("AUDNZD"))
+            if (IsSymbol("AUDNZD"))
                 _audNzdEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("EURJPY"))
+            if (IsSymbol("EURJPY"))
                 _eurJpyEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("GBPJPY"))
+            if (IsSymbol("GBPJPY"))
                 _gbpJpyEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("NZDUSD"))
+            if (IsSymbol("NZDUSD"))
                 _nzdUsdEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("USDCAD"))
+            if (IsSymbol("USDCAD"))
                 _usdCadEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("USDCHF"))
+            if (IsSymbol("USDCHF"))
                 _usdChfEntryLogic?.Evaluate();
 
             if (IsNasSymbol(_bot.SymbolName))
                 _nasEntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("GER40") || _bot.SymbolName.Contains("GER"))
+            if (IsSymbol("GER40"))
                 _ger40EntryLogic?.Evaluate();
 
-            if (_bot.SymbolName.Contains("BTC"))
+            if (IsSymbol("BTCUSD"))
                 _btcUsdEntryLogic?.Evaluate(out _, out _);
 
-            if (_bot.SymbolName.Contains("ETH"))
+            if (IsSymbol("ETHUSD"))
                 _ethUsdEntryLogic?.Evaluate(out _, out _);
 
             _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
             _bot.Print($"[DEBUG] M5.Count={_ctx?.M5?.Count}");
 
-            int minBars = _bot.SymbolName.Contains("EURUSD") ? 10 : 30;
+            int minBars = IsSymbol("EURUSD") ? 10 : 30;
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
 
             _entryRouterPassCounter++;
@@ -1299,7 +1250,7 @@ namespace GeminiV26.Core
                 // =====================================================
                 // XAU HARD RANGE BLOCK
                 // =====================================================
-                if (_bot.SymbolName.Contains("XAU") &&
+                if (IsSymbol("XAUUSD") &&
                     _xauMarketStateDetector != null)
                 {
                     xauState = _xauMarketStateDetector.Evaluate();
@@ -1355,7 +1306,7 @@ namespace GeminiV26.Core
                 var gateDir = ToTradeTypeStrict(selected.Direction);
 
             // === GATES ONLY ===
-            if (_bot.SymbolName.Contains("XAU"))
+            if (IsSymbol("XAUUSD"))
             {
                 if (!(_xauSessionGate?.AllowEntry(gateDir) ?? false))
                 {
@@ -1393,7 +1344,7 @@ namespace GeminiV26.Core
                 if (!_us30ImpulseGate.AllowEntry(gateDir)) return;
                 _us30Executor.ExecuteEntry(selected);
             }
-            else if (_bot.SymbolName.Contains("GER40"))
+            else if (IsSymbol("GER40"))
             {
                 if (!(_ger40SessionGate?.AllowEntry(gateDir) ?? false))
                 {
@@ -1410,7 +1361,7 @@ namespace GeminiV26.Core
                 _ger40Executor?.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("EURUSD"))
+            else if (IsSymbol("EURUSD"))
             {
                 if (_eurUsdSessionGate != null && !_eurUsdSessionGate.AllowEntry(gateDir))
                 {
@@ -1427,7 +1378,7 @@ namespace GeminiV26.Core
                 _eurUsdExecutor?.ExecuteEntry(selected);
               
             }
-            else if (_bot.SymbolName.Contains("USDJPY"))
+            else if (IsSymbol("USDJPY"))
             {
                 if (!(_usdJpySessionGate?.AllowEntry(gateDir) ?? false))
                 {
@@ -1443,7 +1394,7 @@ namespace GeminiV26.Core
 
                 _usdJpyExecutor?.ExecuteEntry(selected);
             }
-            else if (_bot.SymbolName.Contains("GBPUSD"))
+            else if (IsSymbol("GBPUSD"))
             {
                 if (!(_gbpUsdSessionGate?.AllowEntry(gateDir) ?? false))
                 {
@@ -1460,7 +1411,7 @@ namespace GeminiV26.Core
                 _gbpUsdExecutor?.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("AUDUSD"))
+            else if (IsSymbol("AUDUSD"))
             {
                 if (!_audUsdSessionGate.AllowEntry(gateDir))
                 {
@@ -1477,7 +1428,7 @@ namespace GeminiV26.Core
                 _audUsdExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("AUDNZD"))
+            else if (IsSymbol("AUDNZD"))
             {
                 if (!_audNzdSessionGate.AllowEntry(gateDir))
                 {
@@ -1494,7 +1445,7 @@ namespace GeminiV26.Core
                 _audNzdExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("EURJPY"))
+            else if (IsSymbol("EURJPY"))
             {
                 if (!_eurJpySessionGate.AllowEntry(gateDir))
                 {
@@ -1511,7 +1462,7 @@ namespace GeminiV26.Core
                 _eurJpyExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("GBPJPY"))
+            else if (IsSymbol("GBPJPY"))
             {
                 if (!_gbpJpySessionGate.AllowEntry(gateDir))
                 {
@@ -1528,7 +1479,7 @@ namespace GeminiV26.Core
                 _gbpJpyExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("NZDUSD"))
+            else if (IsSymbol("NZDUSD"))
             {
                 if (!_nzdUsdSessionGate.AllowEntry(gateDir))
                 {
@@ -1545,7 +1496,7 @@ namespace GeminiV26.Core
                 _nzdUsdExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("USDCAD"))
+            else if (IsSymbol("USDCAD"))
             {
                 if (!_usdCadSessionGate.AllowEntry(gateDir))
                 {
@@ -1562,7 +1513,7 @@ namespace GeminiV26.Core
                 _usdCadExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("USDCHF"))
+            else if (IsSymbol("USDCHF"))
             {
                 if (!_usdChfSessionGate.AllowEntry(gateDir))
                 {
@@ -1579,7 +1530,7 @@ namespace GeminiV26.Core
                 _usdChfExecutor.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("BTC"))
+            else if (IsSymbol("BTCUSD"))
             {
                 // BTC: direction mismatch safety
                 TradeType routerTradeType =
@@ -1607,7 +1558,7 @@ namespace GeminiV26.Core
                 _btcUsdExecutor?.ExecuteEntry(selected);
             }
 
-            else if (_bot.SymbolName.Contains("ETH"))
+            else if (IsSymbol("ETHUSD"))
             {
                 // ETH: direction mismatch safety
                 TradeType routerTradeType =
@@ -1737,7 +1688,7 @@ namespace GeminiV26.Core
                 if (CheckHardLoss())
                     return;
 
-                if (_bot.SymbolName.Contains("XAU"))
+                if (IsSymbol("XAUUSD"))
                 {
                     try { _xauExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1753,7 +1704,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][NAS] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("US30"))
+                else if (IsSymbol("US30"))
                 {
                     try { _us30ExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1761,7 +1712,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][US30] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("GER40") || _bot.SymbolName.Contains("GER"))
+                else if (IsSymbol("GER40"))
                 {
                     try { _ger40ExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1769,7 +1720,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][GER40] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("EURUSD"))
+                else if (IsSymbol("EURUSD"))
                 {
                     try { _eurUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1777,7 +1728,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][EURUSD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("USDJPY"))
+                else if (IsSymbol("USDJPY"))
                 {
                     try { _usdJpyExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1785,7 +1736,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][USDJPY] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("GBPUSD"))
+                else if (IsSymbol("GBPUSD"))
                 {
                     try { _gbpUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1793,7 +1744,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][GBPUSD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("AUDUSD"))
+                else if (IsSymbol("AUDUSD"))
                 {
                     try { _audUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1801,7 +1752,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][AUDUSD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("AUDNZD"))
+                else if (IsSymbol("AUDNZD"))
                 {
                     try { _audNzdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1809,7 +1760,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][AUDNZD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("EURJPY"))
+                else if (IsSymbol("EURJPY"))
                 {
                     try { _eurJpyExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1817,7 +1768,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][EURJPY] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("GBPJPY"))
+                else if (IsSymbol("GBPJPY"))
                 {
                     try { _gbpJpyExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1825,7 +1776,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][GBPJPY] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("NZDUSD"))
+                else if (IsSymbol("NZDUSD"))
                 {
                     try { _nzdUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1833,7 +1784,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][NZDUSD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("USDCAD"))
+                else if (IsSymbol("USDCAD"))
                 {
                     try { _usdCadExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1841,7 +1792,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][USDCAD] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("USDCHF"))
+                else if (IsSymbol("USDCHF"))
                 {
                     try { _usdChfExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1849,7 +1800,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][USDCHF] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("BTC"))
+                else if (IsSymbol("BTCUSD"))
                 {
                     try { _btcUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -1857,7 +1808,7 @@ namespace GeminiV26.Core
                         _bot.Print($"[TC][ONTICK][BTC] {ex.GetType().Name}: {ex.Message}");
                     }
                 }
-                else if (_bot.SymbolName.Contains("ETH"))
+                else if (IsSymbol("ETHUSD"))
                 {
                     try { _ethUsdExitManager?.OnTick(); }
                     catch (Exception ex)
@@ -2006,10 +1957,7 @@ namespace GeminiV26.Core
         // =================================================
         private static string NormalizeSymbol(string symbol)
         {
-            return symbol
-                .ToUpperInvariant()
-                .Replace(" ", "")
-                .Replace("_", "");
+            return SymbolRouting.NormalizeSymbol(symbol);
         }
 
         // =================================================
@@ -2017,42 +1965,23 @@ namespace GeminiV26.Core
         // =================================================
         private static bool IsNasSymbol(string symbol)
         {
-            var s = NormalizeSymbol(symbol);
-            return s.Contains("NAS")
-                || s.Contains("US100")
-                || s.Contains("USTECH100");
+            return SymbolRouting.NormalizeSymbol(symbol) == "NAS100";
         }
 
         private static bool IsUs30(string symbol)
         {
-            var s = NormalizeSymbol(symbol);
-            return s == "US30";
+            return SymbolRouting.NormalizeSymbol(symbol) == "US30";
         }
 
         private static bool IsGer40(string symbol)
         {
-            var s = NormalizeSymbol(symbol);
-            return s == "GER40"
-                || s == "GERMANY40"
-                || s == "DE40";
+            return SymbolRouting.NormalizeSymbol(symbol) == "GER40";
         }
 
 
         private static string ResolveInstrumentClass(string symbol)
         {
-            if (string.IsNullOrWhiteSpace(symbol))
-                return "FX";
-
-            if (symbol.Contains("XAU") || symbol.Contains("XAG"))
-                return "METAL";
-
-            if (symbol.Contains("BTC") || symbol.Contains("ETH"))
-                return "CRYPTO";
-
-            if (IsIndexSymbol(symbol))
-                return "INDEX";
-
-            return "FX";
+            return SymbolRouting.ResolveInstrumentClass(symbol).ToString();
         }
 
         private static bool IsIndexSymbol(string symbol)
@@ -2060,6 +1989,12 @@ namespace GeminiV26.Core
             return IsNasSymbol(symbol)
                 || IsUs30(symbol)
                 || IsGer40(symbol);
+        }
+
+
+        private bool IsSymbol(string canonical)
+        {
+            return SymbolRouting.NormalizeSymbol(_bot.SymbolName) == canonical;
         }
 
         private static string ResolveSetupType(string entryType)

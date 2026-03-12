@@ -1,5 +1,6 @@
 ﻿using System;
 using cAlgo.API;
+using GeminiV26.Core;
 
 public class GlobalSessionGate
 {
@@ -265,26 +266,19 @@ public class GlobalSessionGate
 
     private static bool IsFx(string symbol)
     {
-        if (IsMetal(symbol) || IsCrypto(symbol) || IsIndex(symbol))
-            return false;
-
-        return symbol.Length == 6 && char.IsLetter(symbol[0]);
+        return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.FX;
     }
 
     private static bool IsMetal(string symbol)
     {
-        return symbol.StartsWith("XAU", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("XAG", StringComparison.OrdinalIgnoreCase);
+        return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.METAL;
     }
 
     private static bool IsIndex(string symbol)
     {
-        return symbol.StartsWith("NAS", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("US30", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("GER", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("SPX", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("US100", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("DJ", StringComparison.OrdinalIgnoreCase);
+        var canonical = SymbolRouting.NormalizeSymbol(symbol);
+        return SymbolRouting.ResolveInstrumentClass(canonical) == InstrumentClass.INDEX
+            || canonical == "SPX500";
     }
 
     private static bool ContainsAny(string symbol, params string[] keys)
@@ -308,8 +302,6 @@ public class GlobalSessionGate
 
     private static bool IsCrypto(string symbol)
     {
-        return symbol.StartsWith("BTC", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("ETH", StringComparison.OrdinalIgnoreCase)
-            || symbol.StartsWith("CRYPTO", StringComparison.OrdinalIgnoreCase);
+        return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.CRYPTO;
     }
 }

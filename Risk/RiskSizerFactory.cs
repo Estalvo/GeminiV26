@@ -42,49 +42,51 @@ namespace GeminiV26.Risk
     {
         public static IInstrumentRiskSizer Create(string symbol)
         {
-            if (symbol.Contains("XAU"))
+            var canonical = Core.SymbolRouting.NormalizeSymbol(symbol);
+
+            if (canonical == "XAUUSD")
             {
                 var s = new XauInstrumentRiskSizer();
                 Debug.Assert(s is XauInstrumentRiskSizer, "XAU MUST use XauInstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("NAS"))
+            if (canonical == "NAS100")
             {
                 var s = new NasInstrumentRiskSizer();
                 Debug.Assert(s is NasInstrumentRiskSizer, "NAS MUST use NasInstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("US30"))
+            if (canonical == "US30")
             {
                 var s = new Us30InstrumentRiskSizer();
                 Debug.Assert(s is Us30InstrumentRiskSizer, "US30 MUST use Us30InstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("EURUSD"))
+            if (canonical == "EURUSD")
             {
                 var s = new EurUsdInstrumentRiskSizer();
                 Debug.Assert(s is EurUsdInstrumentRiskSizer, "EURUSD MUST use EurUsdInstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("USDJPY"))
+            if (canonical == "USDJPY")
             {
                 var s = new UsdJpyInstrumentRiskSizer();
                 Debug.Assert(s is UsdJpyInstrumentRiskSizer, "USDJPY MUST use UsdJpyInstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("GBPUSD"))
+            if (canonical == "GBPUSD")
             {
                 var s = new GbpUsdInstrumentRiskSizer();
                 Debug.Assert(s is GbpUsdInstrumentRiskSizer, "GBPUSD MUST use GbpUsdInstrumentRiskSizer");
                 return s;
             }
 
-            if (symbol.Contains("BTC"))
+            if (canonical == "BTCUSD")
             {
                 var s = new BtcUsdInstrumentRiskSizer();
                 Debug.Assert(s is BtcUsdInstrumentRiskSizer, "BTCUSD MUST use BtcUsdInstrumentRiskSizer");

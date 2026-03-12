@@ -111,12 +111,13 @@ namespace GeminiV26.Core
         // Deterministic tie-break (only used when scores are equal)
         private int GetTypePriority(string symbol, EntryType type)
         {
-            string sym = symbol.ToUpper().Replace(" ", "");
+            string sym = SymbolRouting.NormalizeSymbol(symbol);
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(sym);
 
             // =========================
             // XAU
             // =========================
-            if (sym.Contains("XAU"))
+            if (instrumentClass == InstrumentClass.METAL)
             {
                 switch (type)
                 {
@@ -131,15 +132,7 @@ namespace GeminiV26.Core
             // =========================
             // INDEX
             // =========================
-            if (
-                sym.Contains("NAS") ||
-                sym.Contains("USTECH100") ||
-                sym.Contains("US100") ||
-                sym.Contains("US30") ||
-                sym.Contains("DJ30") ||
-                sym.Contains("DAX") ||
-                sym.Contains("GER40")
-            )
+            if (instrumentClass == InstrumentClass.INDEX)
             {
                 switch (type)
                 {
@@ -152,7 +145,7 @@ namespace GeminiV26.Core
             // =========================
             // CRYPTO
             // =========================
-            if (sym.Contains("BTC") || sym.Contains("ETH") || sym.Contains("XBT"))
+            if (instrumentClass == InstrumentClass.CRYPTO)
             {
                 switch (type)
                 {

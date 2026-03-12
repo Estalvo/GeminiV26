@@ -1,4 +1,5 @@
 using System;
+using GeminiV26.Core;
 
 namespace GeminiV26.Core.TradeManagement
 {
@@ -81,23 +82,13 @@ namespace GeminiV26.Core.TradeManagement
 
         public static TrailingProfile ResolveBySymbol(string symbolName)
         {
-            if (string.IsNullOrWhiteSpace(symbolName))
-                return Fx;
-
-            if (symbolName.StartsWith("XAU", StringComparison.OrdinalIgnoreCase) ||
-                symbolName.StartsWith("XAG", StringComparison.OrdinalIgnoreCase))
-                return Metal;
-
-            if (symbolName.Contains("BTC", StringComparison.OrdinalIgnoreCase) ||
-                symbolName.Contains("ETH", StringComparison.OrdinalIgnoreCase))
-                return Crypto;
-
-            if (symbolName.Contains("US30", StringComparison.OrdinalIgnoreCase) ||
-                symbolName.Contains("NAS", StringComparison.OrdinalIgnoreCase) ||
-                symbolName.Contains("GER", StringComparison.OrdinalIgnoreCase))
-                return Index;
-
-            return Fx;
+            return SymbolRouting.ResolveInstrumentClass(symbolName) switch
+            {
+                InstrumentClass.METAL => Metal,
+                InstrumentClass.CRYPTO => Crypto,
+                InstrumentClass.INDEX => Index,
+                _ => Fx
+            };
         }
     }
 }

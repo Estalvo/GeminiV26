@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeminiV26.EntryTypes;
+using GeminiV26.Core;
 
 namespace GeminiV26.Core.Entry
 {
@@ -51,10 +52,7 @@ namespace GeminiV26.Core.Entry
                     if (eval == null)
                         continue;
 
-                    bool isCryptoSymbol = !string.IsNullOrEmpty(ctx.Symbol) &&
-                        (ctx.Symbol.ToUpperInvariant().Contains("BTC") ||
-                         ctx.Symbol.ToUpperInvariant().Contains("ETH") ||
-                         ctx.Symbol.ToUpperInvariant().Contains("CRYPTO"));
+                    bool isCryptoSymbol = SymbolRouting.ResolveInstrumentClass(ctx.Symbol) == InstrumentClass.CRYPTO;
 
                     if (eval.Direction == TradeDirection.None && isCryptoSymbol)
                     {

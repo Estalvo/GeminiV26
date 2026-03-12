@@ -99,7 +99,7 @@ namespace GeminiV26.Core
             // ---------------------------------
             // ONLY XAU ACTIVE
             // ---------------------------------
-            if (!_bot.SymbolName.Contains("XAU"))
+            if (SymbolRouting.ResolveInstrumentClass(_bot.SymbolName) != InstrumentClass.METAL)
                 return state;
 
             // ---------------------------------
@@ -167,7 +167,7 @@ namespace GeminiV26.Core
                 _postBreakoutCountdown--;
             }
 
-            if (_bot.SymbolName.Contains("XAU"))
+            if (SymbolRouting.ResolveInstrumentClass(_bot.SymbolName) == InstrumentClass.METAL)
             {
                 state.IsBreakout = true; // DEBUG
             }

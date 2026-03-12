@@ -222,17 +222,17 @@ namespace GeminiV26.EntryTypes.METAL
             if (string.IsNullOrWhiteSpace(symbol))
                 return null;
 
-            var s = symbol.ToUpperInvariant();
-            if (!s.Contains("XAU") && !s.Contains("XAG"))
+            var canonical = SymbolRouting.NormalizeSymbol(symbol);
+            if (SymbolRouting.ResolveInstrumentClass(canonical) != InstrumentClass.METAL)
                 return null;
 
-            if (_map.TryGetValue(symbol, out var profile))
+            if (_map.TryGetValue(canonical, out var profile))
                 return profile;
 
             return null;
         }
 
         public static bool Contains(string symbol)
-            => _map.ContainsKey(symbol);
+            => _map.ContainsKey(SymbolRouting.NormalizeSymbol(symbol));
     }
 }

@@ -65,7 +65,7 @@ namespace GeminiV26
             // =========================
             // 🔹 REHYDRATE (XAU)
             // =========================
-            if (SymbolName.Contains("XAU"))
+            if (SymbolRouting.ResolveInstrumentClass(SymbolName) == InstrumentClass.METAL)
             {
                 _core.XauExitManager.RehydrateFromLivePositions(this);
             }
