@@ -702,7 +702,7 @@ namespace GeminiV26.Core
             {
                 xauState = _xauMarketStateDetector.Evaluate();
                 if (xauState != null)
-                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange}");
+                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange} Trend={xauState.IsTrend} ADX={xauState.Adx:F1} HardRange={xauState.IsHardRange}");
             }
             else if (isIndex)
             {
@@ -838,6 +838,37 @@ namespace GeminiV26.Core
             {
                 _bot.Print("[TC] BLOCKED: EntryContext not ready");
                 return;
+            }
+
+
+            if (isMetalSymbol)
+            {
+                if (xauState == null && _xauMarketStateDetector != null)
+                    xauState = _xauMarketStateDetector.Evaluate();
+
+                if (xauState != null)
+                {
+                    _ctx.MarketState = new IndexMarketState
+                    {
+                        AtrPoints = xauState.AtrPips,
+                        Adx = xauState.Adx,
+                        IsLowVol = xauState.IsLowVol,
+                        IsTrend = xauState.IsTrend,
+                        IsRange = xauState.IsRange,
+                        RangePoints = xauState.RangeWidth
+                    };
+
+                    _bot.Print(
+                        "[XAU STATE ASSIGN] trend={0} adx={1:F1} range={2} hardRange={3}",
+                        xauState.IsTrend,
+                        xauState.Adx,
+                        xauState.IsRange,
+                        xauState.IsHardRange);
+                }
+                else
+                {
+                    _bot.Print("[XAU STATE ASSIGN] trend= adx= range= hardRange=");
+                }
             }
 
             _ctx.LastUpdateUtc = DateTime.UtcNow;
