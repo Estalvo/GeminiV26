@@ -56,15 +56,13 @@ namespace GeminiV26.EntryTypes.METAL
                 return Invalid(ctx, "CTX_NOT_READY");
 
             var session = ctx.Session;
-            ctx.Log?.Invoke($"[XAU_FLAG][SESSION] bucket={session}");
+            ctx.Log?.Invoke($"[XAU_FLAG][SESSION_CTX] rawBucket={session}");
 
-            return session switch
-            {
-                FxSession.Asia => EvaluateSession(ctx, FxSession.Asia, "XAU_FLAG_ASIA"),
-                FxSession.London => EvaluateSession(ctx, FxSession.London, "XAU_FLAG_LONDON"),
-                FxSession.NewYork => EvaluateSession(ctx, FxSession.NewYork, "XAU_FLAG_NEWYORK"),
-                _ => Invalid(ctx, "NO_SESSION")
-            };
+            if (!TryResolveSessionProfile(session, out var resolvedSession, out var tag))
+                return Invalid(ctx, "NO_SESSION");
+
+            ctx.Log?.Invoke($"[XAU_FLAG][SESSION_PROFILE] resolvedProfile={resolvedSession}");
+            return EvaluateSession(ctx, resolvedSession, tag);
         }
 
         private EntryEvaluation EvaluateSession(EntryContext ctx, FxSession session, string tag)
@@ -144,10 +142,11 @@ namespace GeminiV26.EntryTypes.METAL
 
             int fallbackScore = Math.Max((int)tuning.BaseScore, Math.Max(buyEval.Score, sellEval.Score));
             int minScore = (int)tuning.MinScore;
+            var bias = ResolveHtfBias(ctx);
+            ctx.Log?.Invoke($"[XAU_FLAG][FALLBACK_CHECK] score={fallbackScore} min={minScore} bias={bias}");
 
             if (!buyEval.IsValid && !sellEval.IsValid && fallbackScore >= minScore)
             {
-                var bias = ResolveHtfBias(ctx);
                 if (bias == TradeDirection.Short || bias == TradeDirection.Long)
                 {
                     ctx.Log?.Invoke($"[XAU_FLAG][FALLBACK_DIRECTION] using HTF bias {bias}");
@@ -378,6 +377,21 @@ namespace GeminiV26.EntryTypes.METAL
             rangeAtr = range / ctx.AtrM5;
             ctx.Log?.Invoke($"[FLAG][BARCOUNT] bars={flagBars} range={range:0.00} compression={rangeAtr:0.00}");
             return true;
+        }
+
+
+        private static bool TryResolveSessionProfile(FxSession rawSession, out FxSession resolvedSession, out string tag)
+        {
+            resolvedSession = rawSession;
+            tag = rawSession switch
+            {
+                FxSession.Asia => "XAU_FLAG_ASIA",
+                FxSession.London => "XAU_FLAG_LONDON",
+                FxSession.NewYork => "XAU_FLAG_NEWYORK",
+                _ => null
+            };
+
+            return tag != null;
         }
 
         private static int ComputeStepPenalty(double diffAtr, int per01, int cap)
