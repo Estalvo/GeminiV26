@@ -51,11 +51,11 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 0,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 68              // marad magas
+                        MinScore = 66              // marad magas
                     },
                     london: new FxFlagSessionTuning
                     {
-                        BaseScore = 62,
+                        BaseScore = 64,
                         FlagBars = 3,
                         MaxFlagAtrMult = 2.0,      // ⬆️ 2.2 → 2.8
                         MaxPullbackAtr = 1.05,     // ⬆️ 1.30 → 1.40
@@ -65,7 +65,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 4,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 65              // ⬇️ 70 → 65 (nagyon fontos!)
+                        MinScore = 62             
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -79,7 +79,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 6,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true,
-                        MinScore = 62              // marad
+                        MinScore = 60              // marad
                     }
                 ),
 
