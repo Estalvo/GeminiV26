@@ -105,8 +105,8 @@ namespace GeminiV26.Core.Entry
 
             ctx.Log?.Invoke($"[TRANSITION][PULLBACK] bars={pullbackBars} depthR={pullbackDepthR:0.00}");
 
-            int flagStart = pullbackEnd + 1;
-            int flagBars = flagStart <= last ? (last - flagStart + 1) : 0;
+            int flagStart = -1;
+            int flagBars = 0;
             double compression = 1.0;
             double compressionScore = 0.0;
             bool noStructureBreak = false;
@@ -116,6 +116,22 @@ namespace GeminiV26.Core.Entry
 
             if (hasImpulse && hasPullback)
             {
+                flagStart = pullbackEnd + 1;
+                if (flagStart <= pullbackEnd || flagStart > last)
+                {
+                    ctx.Log?.Invoke("[FLAG][BARCOUNT] bars=0");
+                    return Invalid("FLAG_NOT_DETECTED", pullbackBars, 0, pullbackDepthR, 0.0);
+                }
+
+                flagBars = last - flagStart + 1;
+                ctx.Log?.Invoke($"[FLAG][BARCOUNT] bars={flagBars}");
+
+                if (flagBars > 50)
+                {
+                    ctx.Log?.Invoke("[FLAG][ERROR] invalid flag bar count");
+                    return Invalid("FLAG_INVALID_BAR_COUNT", pullbackBars, flagBars, pullbackDepthR, 0.0);
+                }
+
                 if (flagBars > 0)
                 {
                     double avgRange = AverageRange(ctx, flagStart, last);
@@ -235,6 +251,25 @@ namespace GeminiV26.Core.Entry
             }
 
             return true;
+        }
+
+        private static TransitionEvaluation Invalid(string reason, int pullbackBars = 0, int flagBars = 0, double pullbackDepthR = 0.0, double compressionScore = 0.0)
+        {
+            return new TransitionEvaluation
+            {
+                HasImpulse = false,
+                HasPullback = false,
+                HasFlag = false,
+                BarsSinceImpulse = -1,
+                PullbackBars = pullbackBars,
+                FlagBars = flagBars,
+                PullbackDepthR = pullbackDepthR,
+                CompressionScore = compressionScore,
+                QualityScore = 0.0,
+                IsValid = false,
+                BonusScore = 0,
+                Reason = reason
+            };
         }
 
         private static double AverageRange(EntryContext ctx, int start, int end)

@@ -51,6 +51,18 @@ namespace GeminiV26.Core.Entry
                     if (eval == null)
                         continue;
 
+                    bool isCryptoSymbol = !string.IsNullOrEmpty(ctx.Symbol) &&
+                        (ctx.Symbol.ToUpperInvariant().Contains("BTC") ||
+                         ctx.Symbol.ToUpperInvariant().Contains("ETH") ||
+                         ctx.Symbol.ToUpperInvariant().Contains("CRYPTO"));
+
+                    if (eval.Direction == TradeDirection.None && isCryptoSymbol)
+                    {
+                        eval.Direction = ctx.TrendDirection;
+                        ctx.Log?.Invoke(
+                            $"[ROUTER][DIR] trendDirection={ctx.TrendDirection} dirAssigned={eval.Direction}");
+                    }
+
                     // Instrument-keveredés kizárása
                     if (eval.Symbol != ctx.Symbol)
                         continue;

@@ -1096,6 +1096,9 @@ namespace GeminiV26.Core
 
             _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
 
+            bool allowPullback = false;
+            bool allowFlag = false;
+
             // =====================================================
             // 1) TRANSITION / NEUTRAL
             //    -> Pullback only
@@ -1104,10 +1107,22 @@ namespace GeminiV26.Core
             if (bias.State == HtfBiasState.Neutral ||
                 bias.State == HtfBiasState.Transition)
             {
-                _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback only, no direction filter");
+                allowPullback = true;
+                allowFlag = bias.State == HtfBiasState.Transition;
+
+                if (bias.State == HtfBiasState.Transition)
+                {
+                    _bot.Print($"[CRYPTO HTF POLICY] state=Transition allowPullback={allowPullback} allowFlag={allowFlag}");
+                }
+
+                _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback/flag policy, no direction filter");
 
                 symbolSignals = symbolSignals
-                    .Where(e => e == null || !e.IsValid || e.Type == EntryType.Crypto_Pullback)
+                    .Where(e =>
+                        e == null ||
+                        !e.IsValid ||
+                        (allowPullback && e.Type == EntryType.Crypto_Pullback) ||
+                        (allowFlag && e.Type == EntryType.Crypto_Flag))
                     .ToList();
 
                 if (symbolSignals.All(e => e == null || !e.IsValid))
@@ -1120,7 +1135,7 @@ namespace GeminiV26.Core
                             $"score={s?.Score} reason={s?.Reason}");
                     }
 
-                    _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback in Transition/Neutral");
+                    _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback/flag in Transition/Neutral");
                     return;
                 }
             }
