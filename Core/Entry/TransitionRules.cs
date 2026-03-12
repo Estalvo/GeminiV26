@@ -1,5 +1,13 @@
 namespace GeminiV26.Core.Entry
 {
+    public enum InstrumentType
+    {
+        FX,
+        INDEX,
+        CRYPTO,
+        METAL
+    }
+
     public sealed class TransitionRules
     {
         public int MaxImpulseAge { get; init; } = 8;
@@ -14,42 +22,68 @@ namespace GeminiV26.Core.Entry
 
         public int MaxFlagBars { get; init; } = 5;
         public double MaxCompressionRatio { get; init; } = 0.75;
+        public double StrongAdxThreshold { get; init; } = 30.0;
 
-        public static TransitionRules ForSymbol(string symbol)
+        public static TransitionRules ForInstrument(InstrumentType type)
         {
-            var sym = (symbol ?? string.Empty).ToUpperInvariant();
-
-            if (sym.Contains("BTC") || sym.Contains("ETH") || sym.Contains("CRYPTO"))
+            switch (type)
             {
-                return new TransitionRules
-                {
-                    MaxImpulseAge = 6,
-                    ImpulseMultiplier = 1.4,
-                    MinImpulseStrength = 0.45,
-                    MaxPullbackDepthR = 0.45,
-                    MinPullbackBars = 2,
-                    OptimalPullbackDepthR = 0.40,
-                    MaxFlagBars = 4,
-                    MaxCompressionRatio = 0.70
-                };
-            }
+                case InstrumentType.CRYPTO:
+                    return new TransitionRules
+                    {
+                        MaxImpulseAge = 6,
+                        ImpulseMultiplier = 1.4,
+                        MinImpulseStrength = 0.45,
+                        MaxPullbackDepthR = 0.45,
+                        MinPullbackBars = 2,
+                        OptimalPullbackDepthR = 0.40,
+                        MaxFlagBars = 4,
+                        MaxCompressionRatio = 0.70,
+                        StrongAdxThreshold = 20
+                    };
 
-            if (sym.Contains("NAS") || sym.Contains("US30") || sym.Contains("GER") || sym.Contains("DAX"))
-            {
-                return new TransitionRules
-                {
-                    MaxImpulseAge = 7,
-                    ImpulseMultiplier = 1.3,
-                    MinImpulseStrength = 0.40,
-                    MaxPullbackDepthR = 0.5,
-                    MinPullbackBars = 2,
-                    OptimalPullbackDepthR = 0.42,
-                    MaxFlagBars = 5,
-                    MaxCompressionRatio = 0.80
-                };
-            }
+                case InstrumentType.INDEX:
+                    return new TransitionRules
+                    {
+                        MaxImpulseAge = 7,
+                        ImpulseMultiplier = 1.3,
+                        MinImpulseStrength = 0.40,
+                        MaxPullbackDepthR = 0.50,
+                        MinPullbackBars = 2,
+                        OptimalPullbackDepthR = 0.42,
+                        MaxFlagBars = 5,
+                        MaxCompressionRatio = 0.80,
+                        StrongAdxThreshold = 25
+                    };
 
-            return new TransitionRules();
+                case InstrumentType.METAL:
+                    return new TransitionRules
+                    {
+                        MaxImpulseAge = 6,
+                        ImpulseMultiplier = 1.35,
+                        MinImpulseStrength = 0.45,
+                        MaxPullbackDepthR = 0.55,
+                        MinPullbackBars = 2,
+                        OptimalPullbackDepthR = 0.40,
+                        MaxFlagBars = 5,
+                        MaxCompressionRatio = 0.75,
+                        StrongAdxThreshold = 22
+                    };
+
+                default:
+                    return new TransitionRules
+                    {
+                        MaxImpulseAge = 7,
+                        ImpulseMultiplier = 1.5,
+                        MinImpulseStrength = 0.50,
+                        MaxPullbackDepthR = 0.50,
+                        MinPullbackBars = 2,
+                        OptimalPullbackDepthR = 0.40,
+                        MaxFlagBars = 5,
+                        MaxCompressionRatio = 0.75,
+                        StrongAdxThreshold = 30
+                    };
+            }
         }
     }
 }
