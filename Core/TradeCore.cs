@@ -361,12 +361,13 @@ namespace GeminiV26.Core
             _entryRouter = new EntryRouter(_entryTypes);
             _contextBuilder = new EntryContextBuilder(bot);
             _transitionDetector = new TransitionDetector();
-            _flagBreakoutDetector = new FlagBreakoutDetector(_bot.Print);
-            _logWriter = new LogWriter(msg => _bot.Print(msg));
+            Action<string> safePrint = msg => _bot.BeginInvokeOnMainThread(() => _bot.Print(msg));
+            _flagBreakoutDetector = new FlagBreakoutDetector(safePrint);
+            _logWriter = new LogWriter(safePrint);
             _logger = new CompositeTradeLogger(
-                new CsvTradeLogger(_logWriter, msg => _bot.Print(msg)),
-                new CsvAnalyticsLogger(_logWriter, msg => _bot.Print(msg)));
-            _statsTracker = new TradeStatsTracker(_bot.Print);
+                new CsvTradeLogger(_logWriter, safePrint),
+                new CsvAnalyticsLogger(_logWriter, safePrint));
+            _statsTracker = new TradeStatsTracker(safePrint);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 
