@@ -356,14 +356,15 @@ namespace GeminiV26.Core
             {
                 _entryTypes = new List<IEntryType>
                 {
-                    new FX_FlagEntry(),                   // ÚJ, valódi flag
-                    new FX_FlagContinuationEntry(),       // RÉGI "flag"
-                    new FX_MicroStructureEntry(),         // 👈 ÚJ
-                    new FX_MicroContinuationEntry(),
-                    new FX_PullbackEntry(),
-                    new FX_RangeBreakoutEntry(),
-                    new FX_ReversalEntry()
-                };
+                new FX_FlagEntry(),
+                new FX_FlagContinuationEntry(),
+                new FX_MicroStructureEntry(),
+                new FX_MicroContinuationEntry(),
+                new FX_ImpulseContinuationEntry(),   // ← ide
+                new FX_PullbackEntry(),
+                new FX_RangeBreakoutEntry(),
+                new FX_ReversalEntry()
+            };
             }
             else if (
                 symbol.Contains("NAS") ||
