@@ -875,61 +875,10 @@ namespace GeminiV26.Core
                 sessionCfg.MinAtrMultiplier);
 
             // =========================
-            // FX SESSION INJECT
+            // SESSION INJECT (STRICT FROM GLOBAL GATE BUCKET)
             // =========================
-            if (isFxSymbol) // ADDED: use instrument classification, not detector presence
-            {
-                if (IsSymbol("EURUSD"))
-                {
-                    if (_eurUsdSessionGate is EurUsdSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: EURUSD session gate missing or wrong type");
-                }
-                else if (IsSymbol("USDJPY"))
-                {
-                    if (_usdJpySessionGate is UsdJpySessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: USDJPY session gate missing or wrong type");
-                }
-                else if (IsSymbol("GBPUSD"))
-                {
-                    if (_gbpUsdSessionGate is GbpUsdSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: GBPUSD session gate missing or wrong type");
-                }
-                else if (IsSymbol("AUDUSD"))
-                {
-                    if (_audUsdSessionGate is AudUsdSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: AUDUSD session gate missing or wrong type");
-                }
-                else if (IsSymbol("AUDNZD"))
-                {
-                    if (_audNzdSessionGate is AudNzdSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: AUDNZD session gate missing or wrong type");
-                }
-                else if (IsSymbol("EURJPY"))
-                {
-                    if (_eurJpySessionGate is EurJpySessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: EURJPY session gate missing or wrong type");
-                }
-                else if (IsSymbol("GBPJPY"))
-                {
-                    if (_gbpJpySessionGate is GbpJpySessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: GBPJPY session gate missing or wrong type");
-                }
-                else if (IsSymbol("NZDUSD"))
-                {
-                    if (_nzdUsdSessionGate is NzdUsdSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: NZDUSD session gate missing or wrong type");
-                }
-                else if (IsSymbol("USDCAD"))
-                {
-                    if (_usdCadSessionGate is UsdCadSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: USDCAD session gate missing or wrong type");
-                }
-                else if (IsSymbol("USDCHF"))
-                {
-                    if (_usdChfSessionGate is UsdChfSessionGate sg) _ctx.Session = sg.GetSession();
-                    else _bot.Print("[TC] WARN: USDCHF session gate missing or wrong type");
-                }
-            }
+            _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
+            _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
 
             TradeType xauBias = TradeType.Buy;   // default
             int xauBiasConfidence = 0;
