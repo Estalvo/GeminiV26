@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using cAlgo.API;
-using cAlgo.API.Indicators;
 using GeminiV26.Core;
+using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.US30
 {
@@ -12,26 +11,19 @@ namespace GeminiV26.Instruments.US30
         private readonly Robot _bot;
         private readonly TradeViabilityMonitor _tvm;
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly TrendTradeManager _trendTradeManager;
+        private readonly AdaptiveTrailingEngine _adaptiveTrailingEngine;
+        private readonly StructureTracker _structureTracker;
 
-        // ===== TUNING =====
         private const double BeOffsetR = 0.05;
-
-        private const double TrailTight = 1.2;
-        private const double TrailNormal = 1.6;
-        private const double TrailLoose = 2.1;
-
-        private const int AtrPeriod = 14;
-        private readonly AverageTrueRange _atrM5;
-
-        // Indexhez: ne legyen túl “ideges”
-        private const double MinImproveAtrFrac = 0.05;     // 5% ATR
-        private const double MinImprovePipsFrac = 0.5;     // 0.5 pip
 
         public Us30ExitManager(Robot bot)
         {
             _bot = bot;
-            _atrM5 = _bot.Indicators.AverageTrueRange(AtrPeriod, MovingAverageType.Exponential);
             _tvm = new TradeViabilityMonitor(_bot);
+            _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
+            _adaptiveTrailingEngine = new AdaptiveTrailingEngine(_bot);
+            _structureTracker = new StructureTracker(_bot, _bot.Bars);
         }
 
         public void RegisterContext(PositionContext ctx)
@@ -39,9 +31,6 @@ namespace GeminiV26.Instruments.US30
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
-        // =====================================================
-        // TICK-LEVEL LIFECYCLE (FX-SZERŰ)
-        // =====================================================
         public void OnTick()
         {
             var keys = new List<long>(_contexts.Keys);
@@ -88,31 +77,17 @@ namespace GeminiV26.Instruments.US30
                         if (tp1Done)
                         {
                             MoveToBreakEven(pos, ctx, rDist);
-
-                            if (ctx.TrailingMode == TrailingMode.None)
-                                ctx.TrailingMode = TrailingMode.Normal;
-
-                            _bot.Print($"[US30 TP1 STATE] pos={pos.Id} tp1Hit={ctx.Tp1Hit} be={ctx.BePrice} trailing={ctx.TrailingMode}");
+                            _bot.Print($"[US30 TP1 STATE] pos={pos.Id} tp1Hit={ctx.Tp1Hit} be={ctx.BePrice}");
                         }
 
-                        return; // <<< KRITIKUS
+                        return;
                     }
-
                 }
 
                 if (!ctx.Tp1Hit)
                 {
-                // =========================
-                // TVM – Early Exit (TP1 előtt)
-                // =========================
-                {
                     const int MinBarsBeforeTvm = 4;
-
-                    // SINGLE SOURCE OF TRUTH
-                    ctx.BarsSinceEntryM5 = (int)Math.Max(
-                        1,
-                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
-                    );
+                    ctx.BarsSinceEntryM5 = (int)Math.Max(1, (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0);
 
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
@@ -129,30 +104,33 @@ namespace GeminiV26.Instruments.US30
                             );
 
                             _bot.ClosePosition(pos);
-
-                            // cleanup
                             _contexts.Remove(key);
-
                             return;
                         }
                     }
-                }
-
 
                     continue;
                 }
 
-                ApplyTrailing(pos, ctx);
+                // post-TP1 delegated management
+                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
+                var structure = _structureTracker.GetSnapshot();
+                var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
+
+                ctx.PostTp1TrendScore = decision.Score;
+                ctx.PostTp1TrendState = decision.State.ToString();
+                ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
+
+                TryExtendTp2(pos, ctx, decision);
+                _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
-                public void OnBar(Position pos)
+
+        public void OnBar(Position pos)
         {
-            // szándékosan üres vagy későbbi TVM-hez használható
+            // reserved
         }
 
-        // =====================================================
-        // TP1 CHECK
-        // =====================================================
         private bool CheckTp1Hit(Position pos, PositionContext ctx, double rDist, double tp1R)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
@@ -163,13 +141,9 @@ namespace GeminiV26.Instruments.US30
                 ? pos.EntryPrice + rDist * tp1R
                 : pos.EntryPrice - rDist * tp1R;
 
-            double priceNow = pos.TradeType == TradeType.Buy
-                ? sym.Bid
-                : sym.Ask;
+            double priceNow = pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask;
 
-            bool hit = pos.TradeType == TradeType.Buy
-                ? priceNow >= tp1Price
-                : priceNow <= tp1Price;
+            bool hit = pos.TradeType == TradeType.Buy ? priceNow >= tp1Price : priceNow <= tp1Price;
 
             _bot.Print(
                 $"[US30 TP1 DBG] pos={pos.Id} dir={pos.TradeType} entry={pos.EntryPrice} sl={pos.StopLoss} " +
@@ -179,27 +153,19 @@ namespace GeminiV26.Instruments.US30
             return hit;
         }
 
-        // =====================================================
-        // TP1 EXECUTION
-        // =====================================================
-         private bool ExecuteTp1(Position pos, PositionContext ctx)
+        private bool ExecuteTp1(Position pos, PositionContext ctx)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (sym == null)
                 return false;
 
-            double frac = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
-                ? ctx.Tp1CloseFraction
-                : 0.5;
-
+            double frac = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1 ? ctx.Tp1CloseFraction : 0.5;
             long minUnits = (long)sym.VolumeInUnitsMin;
-
             long targetUnits = (long)Math.Floor(pos.VolumeInUnits * frac);
             if (targetUnits <= 0)
                 return false;
 
             long closeUnits = (long)sym.NormalizeVolumeInUnits(targetUnits);
-
             if (closeUnits < minUnits)
                 return false;
 
@@ -209,10 +175,7 @@ namespace GeminiV26.Instruments.US30
             if (closeUnits <= 0)
                 return false;
 
-            _bot.Print($"[US30 TP1 EXEC] pos={pos.Id} closeUnits={closeUnits} posVol={pos.VolumeInUnits} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
-
             var closeResult = _bot.ClosePosition(pos, closeUnits);
-
             _bot.Print($"[US30 TP1 EXEC RES] pos={pos.Id} success={closeResult.IsSuccessful} err={closeResult.Error}");
 
             if (!closeResult.IsSuccessful)
@@ -221,19 +184,11 @@ namespace GeminiV26.Instruments.US30
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = pos.VolumeInUnits - closeUnits;
             ctx.Tp1Hit = true;
-
             return true;
         }
 
-        // =====================================================
-        // BREAK EVEN
-        // =====================================================
         private void MoveToBreakEven(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            if (sym == null)
-                return;
-
             if (ctx.BePrice > 0)
                 return;
 
@@ -249,65 +204,51 @@ namespace GeminiV26.Instruments.US30
                 return;
 
             _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
-
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
         }
-        // =====================================================
-        // TRAILING (FX-SZERŰ, INDEX TUNING)
-        // =====================================================
-        private void ApplyTrailing(Position pos, PositionContext ctx)
+
+        private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            if (sym == null)
-                return;
-
-            double atr = _atrM5.Result.LastValue;
-            if (atr <= 0)
-                return;
-
-            double mult = GetTrailMultiplier(ctx.TrailingMode);
-            double trailDist = atr * mult;
-
-            double desiredSl =
-                pos.TradeType == TradeType.Buy
-                    ? sym.Bid - trailDist
-                    : sym.Ask + trailDist;
-
-            if (ctx.BePrice > 0)
+            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
             {
-                desiredSl = pos.TradeType == TradeType.Buy
-                    ? Math.Max(desiredSl, ctx.BePrice)
-                    : Math.Min(desiredSl, ctx.BePrice);
+                if (!decision.AllowTp2Extension)
+                    _bot.Print("[TTM] TP2 extension skipped=notAllowed");
+                return;
             }
 
-            double minImprove = Math.Max(
-                sym.PipSize * MinImprovePipsFrac,
-                atr * MinImproveAtrFrac
-            );
+            double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
+            double desiredR = baseR * decision.Tp2ExtensionMultiplier;
+            double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;
 
-            bool improve =
-                (pos.TradeType == TradeType.Buy && desiredSl > pos.StopLoss.Value + minImprove) ||
-                (pos.TradeType == TradeType.Sell && desiredSl < pos.StopLoss.Value - minImprove);
-
-            if (!improve)
-                return;
-
-            _bot.ModifyPosition(pos, desiredSl, pos.TakeProfit);
-        }
-
-        private static int Direction(Position pos)
-            => pos.TradeType == TradeType.Buy ? 1 : -1;
-
-        private static double GetTrailMultiplier(TrailingMode mode)
-        {
-            return mode switch
+            if (desiredR <= currentR + 0.0001)
             {
-                TrailingMode.Tight => TrailTight,
-                TrailingMode.Normal => TrailNormal,
-                TrailingMode.Loose => TrailLoose,
-                _ => TrailNormal
-            };
+                _bot.Print("[TTM] TP2 extension skipped=no progression");
+                return;
+            }
+
+            double newTp = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
+                : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
+
+            double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
+            bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
+            if (!outward)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=not outward");
+                return;
+            }
+
+            if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=same target");
+                return;
+            }
+
+            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            ctx.LastExtendedTp2 = newTp;
+            ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
+            _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
         }
     }
 }
