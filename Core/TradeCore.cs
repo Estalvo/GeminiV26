@@ -1644,7 +1644,12 @@ namespace GeminiV26.Core
 
         private void ApplyTransitionScoreBoost(EntryContext ctx, List<EntryEvaluation> symbolSignals)
         {
-            if (ctx == null || symbolSignals == null || !ctx.TransitionValid || !ctx.FlagBreakoutConfirmed || ctx.TransitionScoreBonus <= 0)
+            if (ctx == null || symbolSignals == null)
+                return;
+
+            int transitionBonus = ctx.TransitionValid ? Math.Max(0, ctx.TransitionScoreBonus) : 0;
+            int flagBreakoutBonus = ctx.FlagBreakoutConfirmed ? 10 : 0;
+            if (transitionBonus <= 0 && flagBreakoutBonus <= 0)
                 return;
 
             foreach (var entry in symbolSignals)
@@ -1652,7 +1657,13 @@ namespace GeminiV26.Core
                 if (entry == null || !entry.IsValid)
                     continue;
 
-                int boost = GetTransitionBoost(entry.Type, ctx.TransitionScoreBonus);
+                int boost = 0;
+                if (transitionBonus > 0)
+                    boost += GetTransitionBoost(entry.Type, transitionBonus);
+
+                if (flagBreakoutBonus > 0)
+                    boost += GetFlagBreakoutBoost(entry.Type, flagBreakoutBonus);
+
                 if (boost <= 0)
                     continue;
 
@@ -1660,8 +1671,32 @@ namespace GeminiV26.Core
                 if (entry.Score > 100)
                     entry.Score = 100;
 
-                entry.Reason = $"{entry.Reason} [TRANSITION+{boost}]";
-                _bot.Print($"[ENTRY][TRANSITION] score boost applied type={entry.Type} boost={boost} score={entry.Score}");
+                entry.Reason = $"{entry.Reason} [STRUCTURE+{boost}]";
+                _bot.Print($"[ENTRY][STRUCTURE] score boost applied type={entry.Type} boost={boost} score={entry.Score} transition={ctx.TransitionValid} breakout={ctx.FlagBreakoutConfirmed}");
+            }
+        }
+
+        private static int GetFlagBreakoutBoost(EntryType type, int maxBonus)
+        {
+            switch (type)
+            {
+                case EntryType.FX_Flag:
+                case EntryType.FX_FlagContinuation:
+                case EntryType.Index_Flag:
+                case EntryType.Crypto_Flag:
+                case EntryType.TC_Flag:
+                case EntryType.XAU_Flag:
+                    return maxBonus;
+
+                case EntryType.FX_Pullback:
+                case EntryType.Index_Pullback:
+                case EntryType.Crypto_Pullback:
+                case EntryType.TC_Pullback:
+                case EntryType.XAU_Pullback:
+                    return Math.Min(maxBonus, 8);
+
+                default:
+                    return 0;
             }
         }
 
