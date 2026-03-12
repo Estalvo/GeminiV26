@@ -1,14 +1,24 @@
 using System;
+using System.Collections.Generic;
 
 namespace GeminiV26.Core.Entry
 {
     public sealed class TransitionDetector
     {
+        private readonly Dictionary<string, TransitionRuntimeState> _stateBySymbol = new(StringComparer.OrdinalIgnoreCase);
+
         public TransitionEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || ctx.M5 == null || ctx.M5.Count < 12 || ctx.AtrM5 <= 0)
             {
                 return new TransitionEvaluation { Reason = "InsufficientData" };
+            }
+
+            string symbol = string.IsNullOrWhiteSpace(ctx.Symbol) ? "__DEFAULT__" : ctx.Symbol;
+            if (!_stateBySymbol.TryGetValue(symbol, out var state))
+            {
+                state = new TransitionRuntimeState();
+                _stateBySymbol[symbol] = state;
             }
 
             var rules = TransitionRules.ForInstrument(ResolveInstrumentType(ctx));
@@ -43,7 +53,7 @@ namespace GeminiV26.Core.Entry
             }
 
             bool hasImpulse = impulseIndex >= 0;
-            int barsSinceImpulse = hasImpulse ? last - impulseIndex : int.MaxValue;
+            int barsSinceImpulse = hasImpulse ? last - impulseIndex : Math.Min(state.BarsSinceImpulse + 1, 999);
             if (hasImpulse && barsSinceImpulse > rules.MaxImpulseAge)
             {
                 hasImpulse = false;
@@ -162,6 +172,24 @@ namespace GeminiV26.Core.Entry
 
             bool isValid = hasImpulse && hasPullback && (hasFlag || relaxedContinuation);
 
+            state.BarsSinceImpulse = hasImpulse ? barsSinceImpulse : Math.Min(state.BarsSinceImpulse + 1, 999);
+            state.BarsSincePullback = hasPullback ? 0 : Math.Min(state.BarsSincePullback + 1, 999);
+            state.BarsSinceFlag = hasFlag ? 0 : Math.Min(state.BarsSinceFlag + 1, 999);
+
+            ctx.HasImpulse_M5 = ctx.HasImpulse_M5 || hasImpulse;
+            ctx.BarsSinceImpulse_M5 = hasImpulse
+                ? Math.Min(ctx.BarsSinceImpulse_M5, barsSinceImpulse)
+                : Math.Min(Math.Max(0, ctx.BarsSinceImpulse_M5), 999);
+
+            if (hasPullback && ctx.AtrM5 > 0)
+            {
+                double impulseAtr = impulseRange / ctx.AtrM5;
+                double detectedPullbackDepthAtr = pullbackDepthR * impulseAtr;
+
+                if (detectedPullbackDepthAtr > 0)
+                    ctx.PullbackDepthAtr_M5 = Math.Max(ctx.PullbackDepthAtr_M5, detectedPullbackDepthAtr);
+            }
+
             double qualityScore = 0.0;
             int bonus = 0;
             if (isValid)
@@ -181,7 +209,7 @@ namespace GeminiV26.Core.Entry
             ctx.Log?.Invoke($"[TRANSITION][QUALITY] impulse={impulseStrength:0.00} compression={compressionScore:0.00} pullback={pullbackQuality:0.00} score={qualityScore:0.00} bonus={bonus}");
             ctx.Log?.Invoke($"[TRANSITION][DECISION] valid={isValid.ToString().ToLowerInvariant()} bonus={bonus} reason={reason}");
 
-            return new TransitionEvaluation
+            var evaluation = new TransitionEvaluation
             {
                 HasImpulse = hasImpulse,
                 HasPullback = hasPullback,
@@ -196,6 +224,18 @@ namespace GeminiV26.Core.Entry
                 BonusScore = bonus,
                 Reason = reason
             };
+
+            ctx.Log?.Invoke(
+                $"[TRACE][DETECTOR_STATE] symbol={ctx.Symbol} impulseSince={state.BarsSinceImpulse} pullbackSince={state.BarsSincePullback} flagSince={state.BarsSinceFlag} valid={evaluation.IsValid} reason={evaluation.Reason}");
+
+            return evaluation;
+        }
+
+        private sealed class TransitionRuntimeState
+        {
+            public int BarsSinceImpulse { get; set; } = 999;
+            public int BarsSincePullback { get; set; } = 999;
+            public int BarsSinceFlag { get; set; } = 999;
         }
 
         private static int FindPullbackEnd(EntryContext ctx, int start, int end, TradeDirection impulseDirection, int minBars)
