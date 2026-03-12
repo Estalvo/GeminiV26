@@ -56,14 +56,13 @@ namespace GeminiV26.EntryTypes.METAL
                 return Invalid(ctx, "CTX_NOT_READY");
 
             var session = ctx.Session;
-            if ((int)session == 0)
-                session = FxSession.London;
+            ctx.Log?.Invoke($"[XAU_FLAG][SESSION] bucket={session}");
 
             return session switch
             {
                 FxSession.Asia => EvaluateSession(ctx, FxSession.Asia, "XAU_FLAG_ASIA"),
                 FxSession.London => EvaluateSession(ctx, FxSession.London, "XAU_FLAG_LONDON"),
-                FxSession.NewYork => EvaluateSession(ctx, FxSession.NewYork, "XAU_FLAG_NY"),
+                FxSession.NewYork => EvaluateSession(ctx, FxSession.NewYork, "XAU_FLAG_NEWYORK"),
                 _ => Invalid(ctx, "NO_SESSION")
             };
         }
@@ -120,6 +119,7 @@ namespace GeminiV26.EntryTypes.METAL
             // ===== evaluate both sides (HTF against allowed) =====
             var buyEval = EvaluateSide(TradeDirection.Long, ctx, session, tag, tuning, profile, hi, lo, rangeAtr, lastBar, last, baseReasons);
             var sellEval = EvaluateSide(TradeDirection.Short, ctx, session, tag, tuning, profile, hi, lo, rangeAtr, lastBar, last, baseReasons);
+            ctx.Log?.Invoke($"[XAU_FLAG][SIDE_CHECK] buyValid={buyEval.IsValid} sellValid={sellEval.IsValid}");
 
             // ===== decision =====
             if (buyEval.IsValid && !sellEval.IsValid) return buyEval;
@@ -140,6 +140,27 @@ namespace GeminiV26.EntryTypes.METAL
                 }
 
                 return diff >= 0 ? buyEval : sellEval;
+            }
+
+            int fallbackScore = Math.Max((int)tuning.BaseScore, Math.Max(buyEval.Score, sellEval.Score));
+            int minScore = (int)tuning.MinScore;
+
+            if (!buyEval.IsValid && !sellEval.IsValid && fallbackScore >= minScore)
+            {
+                var bias = ResolveHtfBias(ctx);
+                if (bias == TradeDirection.Short || bias == TradeDirection.Long)
+                {
+                    ctx.Log?.Invoke($"[XAU_FLAG][FALLBACK_DIRECTION] using HTF bias {bias}");
+                    ctx.Log?.Invoke($"[XAU_FLAG][FALLBACK_DIRECTION] bias={bias} score={fallbackScore}");
+
+                    var reasons = new List<string>(baseReasons.Count + 8);
+                    reasons.AddRange(baseReasons);
+                    reasons.Add($"BUY: valid={buyEval.IsValid} score={buyEval.Score}");
+                    reasons.Add($"SELL: valid={sellEval.IsValid} score={sellEval.Score}");
+                    reasons.Add(bias == TradeDirection.Short ? "HTF_BIAS_FALLBACK_SELL" : "HTF_BIAS_FALLBACK_BUY");
+
+                    return ValidDecisionDir(ctx, session, tag, fallbackScore, minScore, bias, rangeAtr, reasons);
+                }
             }
 
             // none valid -> aggregated invalid for clean logs (Direction=None)
@@ -233,12 +254,26 @@ namespace GeminiV26.EntryTypes.METAL
                 && bodyDominant;
 
             bool isHtfAgainst = (ctx.TrendDirection != TradeDirection.None && dir != ctx.TrendDirection);
+            bool htfBiasAligned = ctx.MetalHtfAllowedDirection == TradeDirection.None || ctx.MetalHtfAllowedDirection == dir;
+            bool trendAligned = ctx.MarketState?.IsTrend != false;
 
             reasons.Add($"DBG_SIDE dir={dir} hi={hi:F2} lo={lo:F2} close={lastClose:F2} open={lastOpen:F2} high={lastHigh:F2} low={lastLow:F2}");
             reasons.Add($"DBG_BREAK closeBreak={closeBreak} bodyRatio={bodyRatio:F2} bodyDom>={MinBodyRatio:F2}={bodyDominant} breakAtr={breakAtr:F2} htf={ctx.TrendDirection} htfAgainst={isHtfAgainst}");
+            reasons.Add($"DBG_ALIGN htfBias={ctx.MetalHtfAllowedDirection} aligned={htfBiasAligned} trend={trendAligned}");
 
-            if (!breakout)
-                return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "NO_BREAK", reasons);
+            if (breakout)
+                reasons.Add("BREAKOUT_OK");
+            else
+                reasons.Add("BREAKOUT_NOT_REQUIRED");
+
+            if (!htfBiasAligned)
+                return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "HTF_BIAS_MISMATCH", reasons);
+
+            if (!trendAligned)
+                return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "TREND_NOT_ALIGNED", reasons);
+
+            if (!ctx.IsValidFlagStructure_M5)
+                return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "FLAG_STRUCTURE_INVALID", reasons);
 
             // ===== HTF bias handling: small penalty + stronger breakout quality when against =====
             if (isHtfAgainst)
@@ -365,6 +400,20 @@ namespace GeminiV26.EntryTypes.METAL
             int l1 = last - 1, l2 = last - 2, l3 = last - 3;
             if (l3 < 0) return false;
             return bars[l1].Low > bars[l2].Low && bars[l2].Low > bars[l3].Low;
+        }
+
+        private static TradeDirection ResolveHtfBias(EntryContext ctx)
+        {
+            if (ctx == null)
+                return TradeDirection.None;
+
+            if (ctx.MetalHtfAllowedDirection == TradeDirection.Long || ctx.MetalHtfAllowedDirection == TradeDirection.Short)
+                return ctx.MetalHtfAllowedDirection;
+
+            if (ctx.TrendDirection == TradeDirection.Long || ctx.TrendDirection == TradeDirection.Short)
+                return ctx.TrendDirection;
+
+            return TradeDirection.None;
         }
 
         private static EntryEvaluation InvalidDecision(
