@@ -43,10 +43,11 @@ namespace GeminiV26.Core.Logging
             if (context == null)
                 return;
 
-            _writer.Enqueue(() => WriteRecord(context, position, result));
+            var snapshot = TradeSnapshot.From(position);
+            _writer.Enqueue(() => WriteRecord(context, snapshot, result));
         }
 
-        private void WriteRecord(TradeLogContext context, Position position, TradeLogResult result)
+        private void WriteRecord(TradeLogContext context, TradeSnapshot snapshot, TradeLogResult result)
         {
             string path = null;
             try
@@ -60,7 +61,7 @@ namespace GeminiV26.Core.Logging
 
                 var values = new[]
                 {
-                    Csv(context.TradeId ?? position?.Id.ToString(CultureInfo.InvariantCulture)),
+                    Csv(context.TradeId ?? snapshot?.PositionIdText),
                     Csv(context.Symbol),
                     Csv(context.PositionId?.ToString(CultureInfo.InvariantCulture)),
                     Csv(context.Direction),
@@ -70,7 +71,7 @@ namespace GeminiV26.Core.Logging
                     Csv(context.PendingMeta?.EntryReason ?? pctx?.EntryReason),
                     Csv(pctx?.EntryTime.ToString("O", CultureInfo.InvariantCulture)),
                     CsvNum(pctx?.EntryPrice),
-                    CsvNum(position?.VolumeInUnits ?? pctx?.EntryVolumeInUnits),
+                    CsvNum(snapshot?.VolumeInUnits ?? pctx?.EntryVolumeInUnits),
 
                     CsvNum(pctx?.EntryScore),
                     CsvNum(pctx?.LogicConfidence),
@@ -150,6 +151,24 @@ namespace GeminiV26.Core.Logging
         private static string CsvBool(bool? value)
         {
             return value.HasValue ? value.Value.ToString() : "";
+        }
+
+        private sealed class TradeSnapshot
+        {
+            public string PositionIdText { get; set; }
+            public double? VolumeInUnits { get; set; }
+
+            public static TradeSnapshot From(Position position)
+            {
+                if (position == null)
+                    return null;
+
+                return new TradeSnapshot
+                {
+                    PositionIdText = position.Id.ToString(CultureInfo.InvariantCulture),
+                    VolumeInUnits = position.VolumeInUnits
+                };
+            }
         }
     }
 }
