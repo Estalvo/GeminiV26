@@ -341,6 +341,22 @@ namespace GeminiV26.Core
         /// </summary>
         public double? LastStopLossPrice { get; set; }
 
+
+        // =========================
+        // Post-TP1 management state
+        // =========================
+        public int PostTp1TrendScore { get; set; }
+
+        public string PostTp1TrendState { get; set; } = string.Empty;
+
+        public string PostTp1TrailingMode { get; set; } = string.Empty;
+
+        public double Tp2ExtensionMultiplierApplied { get; set; } = 1.0;
+
+        public double? LastExtendedTp2 { get; set; }
+
+        public double? LastTrailingStopTarget { get; set; }
+
         public bool MarketTrend { get; set; }
     }
 }
