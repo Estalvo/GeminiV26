@@ -11,7 +11,7 @@ namespace GeminiV26.Core.Entry
                 return new TransitionEvaluation { Reason = "InsufficientData" };
             }
 
-            var rules = TransitionRules.ForInstrument(ctx.InstrumentType);
+            var rules = TransitionRules.ForInstrument(ResolveInstrumentType(ctx));
             int last = ctx.M5.Count - 2;
 
             int impulseIndex = -1;
@@ -328,6 +328,33 @@ namespace GeminiV26.Core.Entry
                 return 1.0;
 
             return value;
+        }
+
+        private static InstrumentType ResolveInstrumentType(EntryContext ctx)
+        {
+            string symbol = ctx?.Symbol;
+            if (string.IsNullOrWhiteSpace(symbol))
+                return InstrumentType.FX;
+
+            string normalized = symbol.ToUpperInvariant();
+
+            if (normalized.Contains("BTC") || normalized.Contains("ETH") || normalized.Contains("CRYPTO"))
+                return InstrumentType.CRYPTO;
+
+            if (normalized.Contains("XAU") || normalized.Contains("XAG") || normalized.Contains("GOLD") || normalized.Contains("SILVER"))
+                return InstrumentType.METAL;
+
+            if (normalized.Contains("US30")
+                || normalized.Contains("NAS")
+                || normalized.Contains("USTEC")
+                || normalized.Contains("GER40")
+                || normalized.Contains("GER")
+                || normalized.Contains("DAX"))
+            {
+                return InstrumentType.INDEX;
+            }
+
+            return InstrumentType.FX;
         }
 
         private static string BuildReason(bool hasImpulse, bool hasPullback, bool hasFlag, bool flagStructureBroken, bool weakImpulse, double pullbackDepthR, double maxPullbackDepthR, double compression, double maxCompression)
