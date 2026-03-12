@@ -82,27 +82,17 @@ namespace GeminiV26.Instruments.METAL
                 compression,
                 hardRange);
 
-            var state = new MetalMarketState
+            return new MetalMarketState
             {
                 AtrPips = atrPips,
-                IsRange = lowVol && !trend
+                Adx = adx,
+                IsLowVol = lowVol,
+                IsTrend = trend,
+                IsCompression = compression,
+                IsHardRange = hardRange,
+                IsRange = lowVol && !trend,
+                EmaDistanceAtr = emaDistATR
             };
-
-            TrySetStateValue(state, "Adx", adx);
-            TrySetStateValue(state, "EmaDistanceAtr", emaDistATR);
-            TrySetStateValue(state, "IsTrend", trend);
-            TrySetStateValue(state, "IsLowVol", lowVol);
-            TrySetStateValue(state, "IsCompression", compression);
-            TrySetStateValue(state, "IsHardRange", hardRange);
-
-            return state;
-        }
-
-        private static void TrySetStateValue(MetalMarketState state, string propertyName, object value)
-        {
-            var property = typeof(MetalMarketState).GetProperty(propertyName);
-            if (property?.CanWrite == true)
-                property.SetValue(state, value);
         }
     }
 }
