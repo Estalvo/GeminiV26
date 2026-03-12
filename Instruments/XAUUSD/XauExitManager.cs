@@ -1,4 +1,4 @@
-// =========================================================
+﻿// =========================================================
 // GEMINI V26 – XAUUSD ExitManager
 // Phase 3.7.x – RULEBOOK 1.0 COMPLIANT
 //
@@ -19,6 +19,7 @@
 
 using cAlgo.API;
 using GeminiV26.Core;
+using GeminiV26.Core.TradeManagement;
 using GeminiV26.Data;
 using GeminiV26.Data.Models;
 using GeminiV26.EntryTypes.METAL; // XAU_InstrumentProfile + XAU_InstrumentMatrix (EntryTypes/Metal)
@@ -33,13 +34,16 @@ namespace GeminiV26.Instruments.XAUUSD
     {
         private readonly Robot _bot;
         private readonly EventLogger _eventLogger;
-        
+
         // Profile (matrixból) – TP1/BE paraméterek innen jönnek
         private readonly XAU_InstrumentProfile _profile;
         private AverageTrueRange _atr;
 
         private const bool DebugTp1 = false;
         private readonly TradeViabilityMonitor _tvm;
+        private readonly TrendTradeManager _trendTradeManager;
+        private readonly AdaptiveTrailingEngine _adaptiveTrailingEngine;
+        private readonly StructureTracker _structureTracker;
         // PositionId → Context
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
@@ -48,10 +52,13 @@ namespace GeminiV26.Instruments.XAUUSD
             _bot = bot;
             _eventLogger = new EventLogger(bot.SymbolName);
             _tvm = new TradeViabilityMonitor(bot);
+            _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
+            _adaptiveTrailingEngine = new AdaptiveTrailingEngine(_bot);
+            _structureTracker = new StructureTracker(_bot, _bot.Bars);
 
             // Profile betöltés (SSOT policy)
             _profile = XAU_InstrumentMatrix.Get(bot.SymbolName);
-            
+
             // ATR indikátor – EGYSZER létrehozva
             _atr = bot.Indicators.AverageTrueRange(
                 bot.Bars,
@@ -105,7 +112,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                 if (ctx.RiskPriceDistance <= 0)
                     continue;
-                    
+
                 if (!pos.StopLoss.HasValue)
                     continue;
 
@@ -119,11 +126,11 @@ namespace GeminiV26.Instruments.XAUUSD
                 // - prefer: ctx.RiskPriceDistance
                 // - fallback: pos.EntryPrice vs pos.StopLoss (végső)
                 // -------------------------------------------------
-               
+
                 double rDist = GetRiskDistance(pos, ctx);
                 if (rDist <= 0)
                     continue;
-                
+
                 // =========================
                 // TP1 (TP1 előtt nincs trailing)
                 // =========================
@@ -193,7 +200,16 @@ namespace GeminiV26.Instruments.XAUUSD
                 // =========================
                 // TRAILING (TP1 után)
                 // =========================
-                ApplyTrailing(pos, ctx);
+                                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
+                var structure = _structureTracker.GetSnapshot();
+                var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
+
+                ctx.PostTp1TrendScore = decision.Score;
+                ctx.PostTp1TrendState = decision.State.ToString();
+                ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
+
+                TryExtendTp2(pos, ctx, decision);
+                _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
 
@@ -431,5 +447,49 @@ namespace GeminiV26.Instruments.XAUUSD
                 bot.Print($"[XAU REHYDRATE] pos={pos.Id}");
             }
         }
+
+        private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
+        {
+            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
+            {
+                if (!decision.AllowTp2Extension)
+                    _bot.Print("[TTM] TP2 extension skipped=notAllowed");
+                return;
+            }
+
+            double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
+            double desiredR = baseR * decision.Tp2ExtensionMultiplier;
+            double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;
+
+            if (desiredR <= currentR + 0.0001)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=no progression");
+                return;
+            }
+
+            double newTp = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
+                : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
+
+            double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
+            bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
+            if (!outward)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=not outward");
+                return;
+            }
+
+            if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=same target");
+                return;
+            }
+
+            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            ctx.LastExtendedTp2 = newTp;
+            ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
+            _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
+        }
+
     }
 }

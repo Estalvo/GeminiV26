@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
+using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.ETHUSD
 {
@@ -12,13 +13,16 @@ namespace GeminiV26.Instruments.ETHUSD
     /// </summary>
 
     public class EthUsdExitManager
-    {        
+    {
         private readonly Robot _bot;
         private readonly TradeViabilityMonitor _tvm;
+        private readonly TrendTradeManager _trendTradeManager;
+        private readonly AdaptiveTrailingEngine _adaptiveTrailingEngine;
+        private readonly StructureTracker _structureTracker;
         // PositionId -> context
         private readonly Dictionary<long, PositionContext> _contexts = new();
 
-        // ===== TP1 / BE =====        
+        // ===== TP1 / BE =====
         private const double BeOffsetR = 0.05;
 
         // ===== Trailing =====
@@ -36,6 +40,9 @@ namespace GeminiV26.Instruments.ETHUSD
         {
             _bot = bot;
             _tvm = new TradeViabilityMonitor(bot);
+            _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
+            _adaptiveTrailingEngine = new AdaptiveTrailingEngine(_bot);
+            _structureTracker = new StructureTracker(_bot, _bot.Bars);
             _atrM5 = _bot.Indicators.AverageTrueRange(
                 AtrPeriod,
                 MovingAverageType.Exponential
@@ -170,7 +177,16 @@ namespace GeminiV26.Instruments.ETHUSD
                 // =========================
                 // Trailing (csak TP1 után)
                 // =========================
-                ApplyTrailing(pos, ctx);
+                                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
+                var structure = _structureTracker.GetSnapshot();
+                var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
+
+                ctx.PostTp1TrendScore = decision.Score;
+                ctx.PostTp1TrendState = decision.State.ToString();
+                ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
+
+                TryExtendTp2(pos, ctx, decision);
+                _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
 
@@ -241,7 +257,7 @@ namespace GeminiV26.Instruments.ETHUSD
         }
 
         private void ApplyTrailing(Position pos, PositionContext ctx)
-        {            
+        {
             if (!pos.StopLoss.HasValue)
                 return;
 
@@ -293,5 +309,49 @@ namespace GeminiV26.Instruments.ETHUSD
                 _ => TrailNormal
             };
         }
+
+        private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
+        {
+            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
+            {
+                if (!decision.AllowTp2Extension)
+                    _bot.Print("[TTM] TP2 extension skipped=notAllowed");
+                return;
+            }
+
+            double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
+            double desiredR = baseR * decision.Tp2ExtensionMultiplier;
+            double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;
+
+            if (desiredR <= currentR + 0.0001)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=no progression");
+                return;
+            }
+
+            double newTp = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
+                : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
+
+            double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
+            bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
+            if (!outward)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=not outward");
+                return;
+            }
+
+            if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
+            {
+                _bot.Print("[TTM] TP2 extension skipped=same target");
+                return;
+            }
+
+            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            ctx.LastExtendedTp2 = newTp;
+            ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
+            _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
+        }
+
     }
 }
