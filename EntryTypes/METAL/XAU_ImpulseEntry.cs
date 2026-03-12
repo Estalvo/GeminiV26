@@ -1,4 +1,5 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core;
 using GeminiV26.Core.Matrix;
 
 namespace GeminiV26.EntryTypes.METAL
@@ -63,7 +64,7 @@ namespace GeminiV26.EntryTypes.METAL
             double minAdxRequired = 18.0;
 
             // XAU impulse continuationhez erősebb trend kell
-            if (ctx.Symbol != null && ctx.Symbol.ToUpper().Contains("XAU"))
+            if (SymbolRouting.ResolveInstrumentClass(ctx.Symbol) == InstrumentClass.METAL)
                 minAdxRequired = 28.0;
 
             minAdxRequired = System.Math.Max(minAdxRequired, matrix.MinAdx);

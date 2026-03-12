@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeminiV26.Core;
 
 namespace GeminiV26.Instruments.INDEX
 {
@@ -257,31 +258,10 @@ namespace GeminiV26.Instruments.INDEX
             if (string.IsNullOrWhiteSpace(symbol))
                 return symbol;
 
-            var s = symbol
-                .ToUpperInvariant()
-                .Replace(" ", "")
-                .Replace("_", "");
-
-            if (s.Contains("USTECH100") ||
-                s.Contains("USTECH") ||
-                s.Contains("US100") ||
-                s.Contains("NAS100"))
-                return "NAS100";
-
-            if (s.Contains("US30") ||
-                s.Contains("DOW"))
-                return "US30";
-
-            if (s.Contains("GER40") ||
-                s.Contains("DE40") ||
-                s.Contains("DAX") ||
-                s.Contains("GERMANY40"))
-                return "GER40";
-
-            return s;
+            return SymbolRouting.NormalizeSymbol(symbol);
         }
 
         public static bool Contains(string symbol)
-            => _map.ContainsKey(symbol);
+            => _map.ContainsKey(Normalize(symbol));
     }
 }

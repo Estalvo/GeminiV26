@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GeminiV26.Core;
 
 namespace GeminiV26.Core.Entry
 {
@@ -372,29 +373,15 @@ namespace GeminiV26.Core.Entry
 
         private static InstrumentType ResolveInstrumentType(EntryContext ctx)
         {
-            string symbol = ctx?.Symbol;
-            if (string.IsNullOrWhiteSpace(symbol))
-                return InstrumentType.FX;
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx?.Symbol);
 
-            string normalized = symbol.ToUpperInvariant();
-
-            if (normalized.Contains("BTC") || normalized.Contains("ETH") || normalized.Contains("CRYPTO"))
-                return InstrumentType.CRYPTO;
-
-            if (normalized.Contains("XAU") || normalized.Contains("XAG") || normalized.Contains("GOLD") || normalized.Contains("SILVER"))
-                return InstrumentType.METAL;
-
-            if (normalized.Contains("US30")
-                || normalized.Contains("NAS")
-                || normalized.Contains("USTEC")
-                || normalized.Contains("GER40")
-                || normalized.Contains("GER")
-                || normalized.Contains("DAX"))
+            return instrumentClass switch
             {
-                return InstrumentType.INDEX;
-            }
-
-            return InstrumentType.FX;
+                InstrumentClass.CRYPTO => InstrumentType.CRYPTO,
+                InstrumentClass.METAL => InstrumentType.METAL,
+                InstrumentClass.INDEX => InstrumentType.INDEX,
+                _ => InstrumentType.FX
+            };
         }
 
         private static string BuildReason(bool hasImpulse, bool hasPullback, bool hasFlag, bool flagStructureBroken, bool weakImpulse, double pullbackDepthR, double maxPullbackDepthR, double compression, double maxCompression)

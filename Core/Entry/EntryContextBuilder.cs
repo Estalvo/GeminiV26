@@ -6,6 +6,7 @@ using GeminiV26.Instruments.INDEX;
 using GeminiV26.Instruments.METAL;
 using GeminiV26.Core.HtfBias;
 using GeminiV26.EntryTypes.METAL;
+using GeminiV26.Core;
 
 namespace GeminiV26.Core.Entry
 {
@@ -31,47 +32,17 @@ namespace GeminiV26.Core.Entry
         // =================================================
         private bool IsIndexSymbol(string symbol)
         {
-            if (string.IsNullOrEmpty(symbol))
-                return false;
-
-            symbol = symbol.ToUpperInvariant();
-
-            return
-                symbol.Contains("NAS") ||
-                symbol.Contains("USTECH") ||
-                symbol.Contains("US TECH") ||
-                symbol.Contains("US30") ||
-                symbol.Contains("US 30") ||
-                symbol.Contains("GER") ||
-                symbol.Contains("GER40") ||
-                symbol.Contains("GERMANY") ||
-                symbol.Contains("DE40") ||
-                symbol.Contains("DAX");
+            return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.INDEX;
         }
 
         private bool IsCryptoSymbol(string symbol)
         {
-            if (string.IsNullOrEmpty(symbol))
-                return false;
-
-            symbol = symbol.ToUpperInvariant();
-
-            return
-                symbol.Contains("BTC") ||
-                symbol.Contains("ETH") ||
-                symbol.Contains("CRYPTO");
+            return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.CRYPTO;
         }
 
         private bool IsMetalSymbol(string symbol)
         {
-            if (string.IsNullOrEmpty(symbol))
-                return false;
-
-            symbol = symbol.ToUpperInvariant();
-
-            return
-                symbol.Contains("XAU") ||
-                symbol.Contains("XAG");
+            return SymbolRouting.ResolveInstrumentClass(symbol) == InstrumentClass.METAL;
         }
 
         // =================================================
@@ -211,7 +182,7 @@ namespace GeminiV26.Core.Entry
                 !isIndex &&
                 !isCrypto &&
                 !isMetal &&
-                FxInstrumentMatrix.Contains(symbol);
+                FxInstrumentMatrix.Contains(SymbolRouting.NormalizeSymbol(symbol));
 
             // =================================================
             // CRYPTO TREND OVERRIDE (DI-dominant in strong trend)
@@ -237,17 +208,17 @@ namespace GeminiV26.Core.Entry
             // =================================================
             // PROFILES
             // =================================================
-            FxInstrumentProfile fxProfile = isFx ? FxInstrumentMatrix.Get(symbol) : null;
+            FxInstrumentProfile fxProfile = isFx ? FxInstrumentMatrix.Get(SymbolRouting.NormalizeSymbol(symbol)) : null;
             IndexInstrumentProfile indexProfile =
-                isIndex && IndexInstrumentMatrix.Contains(symbol)
-                    ? IndexInstrumentMatrix.Get(symbol)
+                isIndex && IndexInstrumentMatrix.Contains(SymbolRouting.NormalizeSymbol(symbol))
+                    ? IndexInstrumentMatrix.Get(SymbolRouting.NormalizeSymbol(symbol))
                     : null;
 
             XAU_InstrumentProfile metalProfile = null;
 
-            if (isMetal && XAU_InstrumentMatrix.Contains(symbol))
+            if (isMetal && XAU_InstrumentMatrix.Contains(SymbolRouting.NormalizeSymbol(symbol)) )
             {
-                metalProfile = XAU_InstrumentMatrix.Get(symbol);
+                metalProfile = XAU_InstrumentMatrix.Get(SymbolRouting.NormalizeSymbol(symbol));
             }
 
             // =================================================
@@ -548,7 +519,7 @@ namespace GeminiV26.Core.Entry
             // instrument-aware compression
             double compressionMult =
                 isCrypto ? 0.35 :
-                isMetal && symbol.ToUpper().Contains("XAU") ? 0.50 :
+                isMetal ? 0.50 :
                 isMetal ? 0.40 :
                 isIndex ? 0.45 :
                         0.50;

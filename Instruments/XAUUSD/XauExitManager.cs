@@ -407,7 +407,7 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             foreach (var pos in bot.Positions)
             {
-                if (!pos.SymbolName.Contains("XAU"))
+                if (SymbolRouting.ResolveInstrumentClass(pos.SymbolName) != InstrumentClass.METAL)
                     continue;
 
                 if (!pos.StopLoss.HasValue)

@@ -5,6 +5,7 @@
 
 using System;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core;
 using System.IO;
 using System.Text;
 using System.Globalization;
@@ -38,6 +39,9 @@ namespace GeminiV26.EntryTypes
             };
 
             int score = 0;
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
+            string symbolCanonical = SymbolRouting.NormalizeSymbol(ctx.Symbol);
 
             // =========================================================
             // M5 candle (kanóc) – HELYES API
@@ -115,7 +119,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // 🛑 XAU – PROFIT-ORIENTED HARD CONTROL
             // =========================================================
-            if (ctx.Symbol.Contains("XAU"))
+            if (instrumentClass == InstrumentClass.METAL)
             {
                 // =====================================================
                 // 1️⃣ LOW ENERGY / KIFULLADÁS – HARD TILT
@@ -192,12 +196,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // 🛑 NAS / US30 – INDEX STRICT (API-safe)
             // =========================================================
-            if (
-                ctx.Symbol.Contains("US TECH") ||
-                ctx.Symbol.Contains("NAS") ||
-                ctx.Symbol.Contains("US30") ||
-                ctx.Symbol.Contains("US 30")
-            )
+            if (instrumentClass == InstrumentClass.INDEX)
             {
                 // EMA zone pullback feloldja a softNoPullback-et indexeken
                 if (softNoPullback && emaZonePullback)
@@ -237,7 +236,7 @@ namespace GeminiV26.EntryTypes
                 }
             }
 
-            if (ctx.Symbol.Contains("EUR"))
+            if (symbolCanonical == "EURUSD")
             {
                 // Range-ben nem kereskedünk
                 if (ctx.IsRange_M5)
@@ -272,7 +271,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // 🛑 GBPUSD – STOPHUNT PROXY
             // =========================================================
-            if (ctx.Symbol.Contains("GBP"))
+            if (symbolCanonical == "GBPUSD")
             {
                 if (ctx.IsRange_M5)
                 {
@@ -290,7 +289,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // 🛑 USDJPY – SNAPBACK
             // =========================================================
-            if (ctx.Symbol.Contains("JPY"))
+            if (symbolCanonical == "USDJPY" || symbolCanonical == "EURJPY" || symbolCanonical == "GBPJPY")
             {
                 if (ctx.IsRange_M5)
                 {
