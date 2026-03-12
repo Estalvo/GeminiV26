@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace GeminiV26.Core.Entry
 {
     public sealed class FlagBreakoutDetector
     {
         private readonly Action<string> _log;
+        private readonly Dictionary<string, BreakoutRuntimeState> _stateBySymbol = new(StringComparer.OrdinalIgnoreCase);
 
         public FlagBreakoutDetector(Action<string> log)
         {
@@ -15,6 +17,16 @@ namespace GeminiV26.Core.Entry
         {
             if (ctx == null)
                 return;
+
+            string symbol = string.IsNullOrWhiteSpace(ctx.Symbol) ? "__DEFAULT__" : ctx.Symbol;
+            if (!_stateBySymbol.TryGetValue(symbol, out var state))
+            {
+                state = new BreakoutRuntimeState();
+                _stateBySymbol[symbol] = state;
+            }
+
+            ctx.FlagBreakoutConfirmed = state.FlagBreakoutConfirmed;
+            ctx.BreakoutBarsSince = state.BarsSinceBreakout;
 
             if (ctx.FlagBreakoutConfirmed)
             {
@@ -81,8 +93,18 @@ namespace GeminiV26.Core.Entry
                 ctx.BreakoutBarsSince = 0;
             }
 
+            state.FlagBreakoutConfirmed = ctx.FlagBreakoutConfirmed;
+            state.BarsSinceBreakout = Math.Min(Math.Max(0, ctx.BreakoutBarsSince), 999);
+
             _log?.Invoke($"[FLAG_BREAKOUT][RANGE] high={flagHigh:0.#####} low={flagLow:0.#####} bars={flagBars} lastClosedIndex={last}");
             _log?.Invoke($"[FLAG_BREAKOUT][CHECK] direction={ctx.TrendDirection} highBreak={highBreak} lowBreak={lowBreak} closeConfirm={closeConfirm} breakout={breakout} buffer={breakoutBuffer:0.#####} lastClosedIndex={last}");
+            _log?.Invoke($"[TRACE][DETECTOR_STATE] symbol={ctx.Symbol} barsSinceBreakout={state.BarsSinceBreakout} breakoutConfirmed={state.FlagBreakoutConfirmed}");
+        }
+
+        private sealed class BreakoutRuntimeState
+        {
+            public bool FlagBreakoutConfirmed { get; set; }
+            public int BarsSinceBreakout { get; set; } = 999;
         }
     }
 }
