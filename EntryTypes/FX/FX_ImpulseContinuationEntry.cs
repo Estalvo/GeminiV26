@@ -20,11 +20,6 @@ namespace GeminiV26.EntryTypes.FX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            return Invalid(ctx, "FX_RESET_DISABLED_IMPULSE_CONT");
-        }
-/*
-        public EntryEvaluation Evaluate(EntryContext ctx)
-        {
             if (!ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
@@ -66,6 +61,9 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // IMPULSE CONDITIONS (REAL CONTEXT FIELDS)
             // =====================================================
+            if (ctx.Adx_M5 < 22)
+                return Invalid(ctx, "WeakTrend");
+
             if (!ctx.HasImpulse_M5)
                 return Invalid(ctx, "NoImpulse");
 
@@ -110,7 +108,7 @@ namespace GeminiV26.EntryTypes.FX
                     $"m1={ctx.M1TriggerInTrendDirection}"
             };
         }
-*/
+
         private EntryEvaluation Invalid(EntryContext ctx, string reason)
             => new()
             {
