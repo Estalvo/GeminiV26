@@ -1139,31 +1139,27 @@ namespace GeminiV26.Core
                         }
                         else
                         {
-                            const int StrongAdxThreshold = 30;
                             var fallbackFlags = symbolSignals
-                                .Where(e =>
-                                    e != null &&
-                                    e.Type == EntryType.XAU_Flag &&
-                                    e.IsValid &&
-                                    e.Score >= 62 &&
-                                    _ctx.MarketState?.IsTrend == true &&
-                                    _ctx.MarketState.Adx > StrongAdxThreshold)
+                                .Where(e => e != null && e.Type == EntryType.XAU_Flag && e.IsValid)
                                 .ToList();
 
-                            if (fallbackFlags.Count > 0)
+                            if (fallbackFlags.Any())
                             {
-                                _bot.Print("[HTF][FALLBACK_FLAG] transition fallback");
-                                symbolSignals = fallbackFlags;
+                                foreach (var entry in fallbackFlags)
+                                {
+                                    _bot.Print($"[TC][XAU HTF CAND] type=XAU_Flag valid={entry.IsValid} score={entry.Score}");
+                                }
                             }
-                            else
-                            {
-                                symbolSignals = symbolSignals
-                                    .Where(e =>
-                                        e == null ||
-                                        !e.IsValid ||
-                                        e.Type == EntryType.XAU_Pullback)
-                                    .ToList();
-                            }
+
+                            symbolSignals = symbolSignals
+                                .Where(e =>
+                                    e == null ||
+                                    !e.IsValid ||
+                                    e.Type == EntryType.XAU_Pullback ||
+                                    e.Type == EntryType.XAU_Flag ||
+                                    e.Type == EntryType.XAU_Reversal ||
+                                    e.Type == EntryType.XAU_Impulse)
+                                .ToList();
                         }
 
                         if (symbolSignals.All(e => e == null || !e.IsValid))
