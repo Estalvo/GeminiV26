@@ -177,11 +177,13 @@ namespace GeminiV26.Core
 
                 case EntryType.FX_MicroContinuation: return 3;
 
-                case EntryType.FX_Pullback: return 4;
+                case EntryType.FX_ImpulseContinuation: return 4;
 
-                case EntryType.FX_RangeBreakout: return 5;
+                case EntryType.FX_Pullback: return 5;
 
-                case EntryType.FX_Reversal: return 6;
+                case EntryType.FX_RangeBreakout: return 6;
+
+                case EntryType.FX_Reversal: return 7;
 
                 default: return 100;
             }
