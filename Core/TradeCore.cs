@@ -1203,7 +1203,7 @@ namespace GeminiV26.Core
                     if (xauState != null && xauState.IsRange)
                     {
                         _bot.Print(
-                            $"[TC] ENTRY BLOCKED: XAU HARD RANGE " +
+                            $"[TC] ENTRY BLOCKED: XAU RANGE REGIME" +
                             $"Width={xauState.RangeWidth:F2} " +
                             $"ADX={xauState.Adx:F1} " +
                             $"ATR={xauState.Atr:F2}"
