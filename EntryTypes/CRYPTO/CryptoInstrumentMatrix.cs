@@ -26,7 +26,12 @@ namespace GeminiV26.EntryTypes.Crypto
 
                     // === Trend ===
                     MinAdxTrend = 20,
-                    MinAdxStrong = 22,
+                    MinAdxStrong = 23,
+                    MinAdxForPullback = 22,
+                    MinAdxSlopeForPullback = 0.0,
+                    MaxBarsSinceImpulseForPullback = 6,
+                    AllowNeutralFlagWithStrongAdx = true,
+                    NeutralFlagMinAdx = 24,
 
                     // === Wick / chop ===
                     MaxWickRatio = 0.55,
@@ -35,10 +40,10 @@ namespace GeminiV26.EntryTypes.Crypto
                     // === Impulse / flag ===
                     ImpulseAtrMult_M5 = 0.30,
                     ImpulseAtrMult_M1 = 0.30,
-                    MaxFlagAtrMult = 1.35,
+                    MaxFlagAtrMult = 1.45,
 
                     // === Range ===
-                    RangeMaxWidthAtr = 1.05,
+                    RangeMaxWidthAtr = 1.20,
 
                     // === Behaviour ===
                     AllowMeanReversion = false,
@@ -61,6 +66,11 @@ namespace GeminiV26.EntryTypes.Crypto
                     // === Trend ===
                     MinAdxTrend = 19,
                     MinAdxStrong = 22,
+                    MinAdxForPullback = 20,
+                    MinAdxSlopeForPullback = -0.2,
+                    MaxBarsSinceImpulseForPullback = 7,
+                    AllowNeutralFlagWithStrongAdx = true,
+                    NeutralFlagMinAdx = 21,
 
                     // === Wick / chop ===
                     MaxWickRatio = 0.60,
@@ -69,10 +79,10 @@ namespace GeminiV26.EntryTypes.Crypto
                     // === Impulse / flag ===
                     ImpulseAtrMult_M5 = 0.45,
                     ImpulseAtrMult_M1 = 0.30,
-                    MaxFlagAtrMult = 1.3,
+                    MaxFlagAtrMult = 1.55,
 
                     // === Range ===
-                    RangeMaxWidthAtr = 1.15,
+                    RangeMaxWidthAtr = 1.30,
 
                     // === Behaviour ===
                     AllowMeanReversion = false,
