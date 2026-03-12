@@ -102,6 +102,53 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx.IsAtrExpanding_M5 && ctx.PullbackDepthAtr_M5 > 0.6)
                 score -= 6;
 
+            if (ctx.PullbackDepthAtr_M5 > 0.5)
+            {
+                var bars = ctx.M5;
+                int lastClosed = bars.Count - 2;
+
+                int compressionBars = Math.Max(0, Math.Min(ctx.PullbackBars_M5, 10));
+                int compressionStart = Math.Max(0, lastClosed - compressionBars + 1);
+
+                double compressionHigh = double.MinValue;
+                double compressionLow = double.MaxValue;
+
+                for (int i = compressionStart; i <= lastClosed; i++)
+                {
+                    compressionHigh = Math.Max(compressionHigh, bars[i].High);
+                    compressionLow = Math.Min(compressionLow, bars[i].Low);
+                }
+
+                double compressionRange = compressionHigh - compressionLow;
+                double atr = Math.Max(0, ctx.AtrM5);
+
+                bool compressionDetected =
+                    compressionBars >= 3 &&
+                    compressionBars <= 10 &&
+                    compressionRange <= atr * 0.6;
+
+                if (!compressionDetected)
+                {
+                    ctx.Log?.Invoke("[PB] rejected: deep pullback without compression");
+                    return null;
+                }
+
+                TradeDirection impulseDirection =
+                    ctx.ImpulseDirection != TradeDirection.None ? ctx.ImpulseDirection : dir;
+
+                bool breakoutAligned =
+                    (impulseDirection == TradeDirection.Long && bars[lastClosed].Close > compressionHigh) ||
+                    (impulseDirection == TradeDirection.Short && bars[lastClosed].Close < compressionLow);
+
+                if (!breakoutAligned)
+                {
+                    ctx.Log?.Invoke("[PB] rejected: breakout against impulse");
+                    return null;
+                }
+
+                ctx.Log?.Invoke("[PB] DeepPullbackContinuation accepted");
+            }
+
             if (ctx.PullbackDepthAtr_M5 <= 0 ||
                 ctx.PullbackDepthAtr_M5 > maxPullbackDepthAtr)
                 return null;
