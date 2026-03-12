@@ -1157,14 +1157,47 @@ namespace GeminiV26.Core
                     if (bias.State == HtfBiasState.Neutral ||
                         bias.State == HtfBiasState.Transition)
                     {
-                        _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback only");
+                        _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback primary, strong flag fallback");
 
-                        symbolSignals = symbolSignals
-                            .Where(e =>
-                                e == null ||
-                                !e.IsValid ||
-                                e.Type == EntryType.XAU_Pullback)
+                        var pullbackSignals = symbolSignals
+                            .Where(e => e != null && e.Type == EntryType.XAU_Pullback)
                             .ToList();
+
+                        bool pullbackValid = pullbackSignals.Any(e => e.IsValid);
+                        if (pullbackValid)
+                        {
+                            symbolSignals = symbolSignals
+                                .Where(e => e == null || !e.IsValid || e.Type == EntryType.XAU_Pullback)
+                                .ToList();
+                        }
+                        else
+                        {
+                            const int StrongAdxThreshold = 30;
+                            var fallbackFlags = symbolSignals
+                                .Where(e =>
+                                    e != null &&
+                                    e.Type == EntryType.XAU_Flag &&
+                                    e.IsValid &&
+                                    e.Score >= 62 &&
+                                    _ctx.MarketState?.IsTrend == true &&
+                                    _ctx.MarketState.Adx > StrongAdxThreshold)
+                                .ToList();
+
+                            if (fallbackFlags.Count > 0)
+                            {
+                                _bot.Print("[HTF][FALLBACK_FLAG] transition fallback");
+                                symbolSignals = fallbackFlags;
+                            }
+                            else
+                            {
+                                symbolSignals = symbolSignals
+                                    .Where(e =>
+                                        e == null ||
+                                        !e.IsValid ||
+                                        e.Type == EntryType.XAU_Pullback)
+                                    .ToList();
+                            }
+                        }
 
                         if (symbolSignals.All(e => e == null || !e.IsValid))
                         {
@@ -1176,7 +1209,7 @@ namespace GeminiV26.Core
                                     $"score={s?.Score} reason={s?.Reason}");
                             }
 
-                            _bot.Print("[TC] XAU HTF BLOCK: no valid pullback in Transition/Neutral");
+                            _bot.Print("[TC] XAU HTF BLOCK: no valid pullback/flag fallback in Transition/Neutral");
                             return;
                         }
                     }

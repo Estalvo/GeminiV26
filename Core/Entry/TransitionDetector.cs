@@ -112,24 +112,41 @@ namespace GeminiV26.Core.Entry
             bool noStructureBreak = false;
             bool hasFlag = false;
             bool flagStructureBroken = false;
+            bool relaxedContinuation = false;
 
-            if (hasImpulse && hasPullback && flagBars > 0)
+            if (hasImpulse && hasPullback)
             {
-                double avgRange = AverageRange(ctx, flagStart, last);
-                compression = impulseRange > 0 ? avgRange / impulseRange : 1.0;
-                compressionScore = Clamp01(1.0 - compression);
+                if (flagBars > 0)
+                {
+                    double avgRange = AverageRange(ctx, flagStart, last);
+                    compression = impulseRange > 0 ? avgRange / impulseRange : 1.0;
+                    compressionScore = Clamp01(1.0 - compression);
 
-                noStructureBreak = ValidateNoStructureBreak(ctx, flagStart, last, impulseDirection, pullbackStart, pullbackEnd);
-                flagStructureBroken = !noStructureBreak;
+                    noStructureBreak = ValidateNoStructureBreak(ctx, flagStart, last, impulseDirection, pullbackStart, pullbackEnd);
+                    flagStructureBroken = !noStructureBreak;
 
-                hasFlag = flagBars <= rules.MaxFlagBars
-                    && compression <= rules.MaxCompressionRatio
-                    && noStructureBreak;
+                    hasFlag = flagBars <= rules.MaxFlagBars
+                        && compression <= rules.MaxCompressionRatio
+                        && noStructureBreak;
+                }
+
+                double strongImpulseThreshold = Math.Max(rules.MinImpulseStrength, 0.60);
+                double maxPullbackDepth = Math.Min(rules.MaxPullbackDepthR, 0.50);
+                const double StrongAdxThreshold = 30.0;
+
+                relaxedContinuation =
+                    impulseStrength > strongImpulseThreshold &&
+                    pullbackDepthR < maxPullbackDepth &&
+                    ctx.MarketState != null &&
+                    ctx.MarketState.Adx > StrongAdxThreshold;
+
+                ctx.Log?.Invoke(
+                    $"[TRANSITION][RELAXED_CHECK] compression={compression:0.00} impulse={impulseStrength:0.00} pullbackDepth={pullbackDepthR:0.00} adx={ctx.MarketState?.Adx:0.00} allowed={relaxedContinuation.ToString().ToLowerInvariant()}");
             }
 
             ctx.Log?.Invoke($"[TRANSITION][FLAG] bars={flagBars} compression={compression:0.00}");
 
-            bool isValid = hasImpulse && hasPullback && hasFlag;
+            bool isValid = hasImpulse && hasPullback && (hasFlag || relaxedContinuation);
 
             double qualityScore = 0.0;
             int bonus = 0;
@@ -144,7 +161,7 @@ namespace GeminiV26.Core.Entry
             }
 
             string reason = isValid
-                ? "OK"
+                ? (hasFlag ? "OK" : "OK_RELAXED_CONTINUATION")
                 : BuildReason(hasImpulse, hasPullback, hasFlag, flagStructureBroken, weakImpulse, pullbackDepthR, rules.MaxPullbackDepthR, compression, rules.MaxCompressionRatio);
 
             ctx.Log?.Invoke($"[TRANSITION][QUALITY] impulse={impulseStrength:0.00} compression={compressionScore:0.00} pullback={pullbackQuality:0.00} score={qualityScore:0.00} bonus={bonus}");

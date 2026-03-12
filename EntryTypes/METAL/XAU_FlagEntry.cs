@@ -25,6 +25,7 @@ namespace GeminiV26.EntryTypes.METAL
         private const int HtfAgainstPenalty = 6;          // small score penalty only (NO hard block)
         private const double MinBodyRatio = 0.55;         // body dominance floor (body/range)
         private const int BarsNotReadyMin = 20;
+        private const int MaxFlagBarsHardLimit = 50;
 
         // HTF-against quality requirements (NOT huge penalty; stronger definition)
         private const double HtfAgainstMinCloseBreakAtr = 0.08; // close must be this far beyond hi/lo in ATR units
@@ -284,7 +285,17 @@ namespace GeminiV26.EntryTypes.METAL
                 // ignore if field not present
             }
 
-            if (score < minScore)
+            bool nearThreshold = score >= (minScore - 3);
+            bool strongContext =
+                ctx.MarketState?.IsTrend == true &&
+                ctx.MarketState?.Adx > 30.0 &&
+                (ctx.MetalHtfAllowedDirection == TradeDirection.None || ctx.MetalHtfAllowedDirection == dir);
+
+            bool valid = score >= minScore || (nearThreshold && strongContext);
+
+            reasons.Add($"[FLAG][THRESHOLD_CHECK] score={score} threshold={minScore} near={nearThreshold.ToString().ToLowerInvariant()} context={strongContext.ToString().ToLowerInvariant()} valid={valid.ToString().ToLowerInvariant()}");
+
+            if (!valid)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "LOW_SCORE", reasons);
 
             reasons.Add("ACCEPT");
@@ -300,6 +311,12 @@ namespace GeminiV26.EntryTypes.METAL
             hi = double.MinValue;
             lo = double.MaxValue;
             rangeAtr = 999;
+
+            if (flagBars > MaxFlagBarsHardLimit)
+            {
+                ctx?.Log?.Invoke("[FLAG][ERROR] invalid bar count");
+                return false;
+            }
 
             var bars = ctx.M5;
 
@@ -323,7 +340,8 @@ namespace GeminiV26.EntryTypes.METAL
             if (range <= 0)
                 return false;
 
-                rangeAtr = range / ctx.AtrM5;
+            rangeAtr = range / ctx.AtrM5;
+            ctx.Log?.Invoke($"[FLAG][BARCOUNT] bars={flagBars} range={range:0.00} compression={rangeAtr:0.00}");
             return true;
         }
 

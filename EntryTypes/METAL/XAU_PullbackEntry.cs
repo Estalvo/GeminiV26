@@ -40,8 +40,12 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // HARD MARKET STATE GATES (XAU)
             // =========================
-            if (ctx.MarketState == null || !ctx.MarketState.IsTrend)
-                return Reject(ctx, "XAU_NO_TREND_STATE");
+            bool trend = ctx.MarketState?.IsTrend == true;
+            ctx.Log?.Invoke(
+                $"[PB][TREND_CHECK] trend={trend.ToString().ToLowerInvariant()} adx={ctx.MarketState?.Adx:0.00}");
+
+            if (!trend)
+                return Reject(ctx, "NO_TREND_STATE");
 
             if (ctx.MarketState.Adx < 16.0)
             {
