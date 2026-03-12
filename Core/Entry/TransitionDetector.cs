@@ -11,7 +11,7 @@ namespace GeminiV26.Core.Entry
                 return new TransitionEvaluation { Reason = "InsufficientData" };
             }
 
-            var rules = TransitionRules.ForSymbol(ctx.Symbol);
+            var rules = TransitionRules.ForInstrument(ctx.InstrumentType);
             int last = ctx.M5.Count - 2;
 
             int impulseIndex = -1;
@@ -148,13 +148,11 @@ namespace GeminiV26.Core.Entry
 
                 double strongImpulseThreshold = Math.Max(rules.MinImpulseStrength, 0.60);
                 double maxPullbackDepth = Math.Min(rules.MaxPullbackDepthR, 0.50);
-                const double StrongAdxThreshold = 30.0;
-
                 relaxedContinuation =
                     impulseStrength > strongImpulseThreshold &&
                     pullbackDepthR < maxPullbackDepth &&
                     ctx.MarketState != null &&
-                    ctx.MarketState.Adx > StrongAdxThreshold;
+                    ctx.MarketState.Adx > rules.StrongAdxThreshold;
 
                 ctx.Log?.Invoke(
                     $"[TRANSITION][RELAXED_CHECK] compression={compression:0.00} impulse={impulseStrength:0.00} pullbackDepth={pullbackDepthR:0.00} adx={ctx.MarketState?.Adx:0.00} allowed={relaxedContinuation.ToString().ToLowerInvariant()}");
