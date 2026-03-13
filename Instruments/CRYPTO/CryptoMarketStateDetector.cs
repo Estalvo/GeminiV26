@@ -45,7 +45,7 @@ namespace GeminiV26.Instruments.CRYPTO
 
             bool isHighVol = atr > 100;
             bool isLowVol = atr < 40;
-            bool isTrend = adx >= 20;
+            bool isTrend = adx >= 18;
 
             _bot.Print(
                 $"[CRYPTO MSD] {_bot.SymbolName} | " +

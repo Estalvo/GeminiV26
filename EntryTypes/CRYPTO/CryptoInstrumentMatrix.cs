@@ -40,7 +40,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     // === Impulse / flag ===
                     ImpulseAtrMult_M5 = 0.30,
                     ImpulseAtrMult_M1 = 0.30,
-                    MaxFlagAtrMult = 1.45,
+                    MaxFlagAtrMult = 1.65,
 
                     // === Range ===
                     RangeMaxWidthAtr = 1.20,
