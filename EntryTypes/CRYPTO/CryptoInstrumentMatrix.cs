@@ -21,29 +21,29 @@ namespace GeminiV26.EntryTypes.Crypto
                     Symbol = "BTCUSD",
 
                     // === Volatility ===
-                    MinAtrPips = 80,
-                    MaxAtrPips = 480,
+                    MinAtrPips = 90,
+                    MaxAtrPips = 520,
 
                     // === Trend ===
-                    MinAdxTrend = 20,
-                    MinAdxStrong = 23,
-                    MinAdxForPullback = 22,
-                    MinAdxSlopeForPullback = 0.0,
-                    MaxBarsSinceImpulseForPullback = 6,
+                    MinAdxTrend = 19,
+                    MinAdxStrong = 24,
+                    MinAdxForPullback = 21,
+                    MinAdxSlopeForPullback = -0.1,
+                    MaxBarsSinceImpulseForPullback = 9,
                     AllowNeutralFlagWithStrongAdx = true,
                     NeutralFlagMinAdx = 24,
 
                     // === Wick / chop ===
-                    MaxWickRatio = 0.55,
-                    ChopLookbackBars = 5,
+                    MaxWickRatio = 0.65,
+                    ChopLookbackBars = 4,
 
                     // === Impulse / flag ===
-                    ImpulseAtrMult_M5 = 0.30,
-                    ImpulseAtrMult_M1 = 0.30,
-                    MaxFlagAtrMult = 1.65,
+                    ImpulseAtrMult_M5 = 0.40,
+                    ImpulseAtrMult_M1 = 0.35,
+                    MaxFlagAtrMult = 1.35,
 
                     // === Range ===
-                    RangeMaxWidthAtr = 1.20,
+                    RangeMaxWidthAtr = 0.95,
 
                     // === Behaviour ===
                     AllowMeanReversion = false,
@@ -52,7 +52,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     RequireStrongImpulseForPullback = false,
 
                     // === Score character ===
-                    ScoreWeightMultiplier = 1.10
+                    ScoreWeightMultiplier = 1.18
                 },
 
                 // =========================
@@ -71,18 +71,18 @@ namespace GeminiV26.EntryTypes.Crypto
                     MinAdxStrong = 22,
                     MinAdxForPullback = 20,
                     MinAdxSlopeForPullback = -0.2,
-                    MaxBarsSinceImpulseForPullback = 7,
+                    MaxBarsSinceImpulseForPullback = 8,
                     AllowNeutralFlagWithStrongAdx = true,
                     NeutralFlagMinAdx = 21,
 
                     // === Wick / chop ===
-                    MaxWickRatio = 0.60,
+                    MaxWickRatio = 0.62,
                     ChopLookbackBars = 5,
 
                     // === Impulse / flag ===
-                    ImpulseAtrMult_M5 = 0.45,
-                    ImpulseAtrMult_M1 = 0.30,
-                    MaxFlagAtrMult = 1.55,
+                    ImpulseAtrMult_M5 = 0.48,
+                    ImpulseAtrMult_M1 = 0.35,
+                    MaxFlagAtrMult = 1.40,
 
                     // === Range ===
                     RangeMaxWidthAtr = 1.30,
@@ -94,7 +94,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     RequireStrongImpulseForPullback = false,
 
                     // === Score character ===
-                    ScoreWeightMultiplier = 1.08
+                    ScoreWeightMultiplier = 1.12
                 }
             };
 
