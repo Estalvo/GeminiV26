@@ -2061,8 +2061,23 @@ namespace GeminiV26.Core
                 if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
                     continue;
 
-                double slPips = ctx.RiskPriceDistance / _bot.Symbol.PipSize;
-                double slRisk = slPips * _bot.Symbol.PipValue * ctx.EntryVolumeInUnits;
+                // A hard-loss guard monetary limitjét ugyanazzal a dimenzióval számoljuk,
+                // mint a risk sizing: price-distance × value-per-price × volume(units).
+                // A korábbi pips × pipValue × units képlet instrumentenként félreskálázódott,
+                // ezért gyakorlatilag 0-hoz közeli limitet adott és azonnali zárást okozott.
+                double valuePerPricePerUnit =
+                    _bot.Symbol.TickSize > 0
+                        ? (_bot.Symbol.TickValue / _bot.Symbol.TickSize)
+                        : 0.0;
+
+                double volumeUnits = pos.VolumeInUnits > 0
+                    ? pos.VolumeInUnits
+                    : ctx.EntryVolumeInUnits;
+
+                double slRisk = ctx.RiskPriceDistance * valuePerPricePerUnit * volumeUnits;
+                if (slRisk <= 0 || double.IsNaN(slRisk) || double.IsInfinity(slRisk))
+                    continue;
+
                 double hardLimit = -(slRisk * 1.5);
 
 
