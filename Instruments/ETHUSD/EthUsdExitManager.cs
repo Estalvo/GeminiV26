@@ -108,6 +108,10 @@ namespace GeminiV26.Instruments.ETHUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
+                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                if (sym == null)
+                    continue;
+
                 // R-distance az eredeti SL alapján
                 double rDist = ctx.RiskPriceDistance;
                 if (rDist <= 0)
@@ -118,16 +122,26 @@ namespace GeminiV26.Instruments.ETHUSD
                 // =========================
                 if (!ctx.Tp1Hit)
                 {
-                    double tp1Price =
-                        ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
+                    if (ctx.Tp1R <= 0)
+                        ctx.Tp1R = 0.5;
 
-                    bool reached =
-                        (pos.TradeType == TradeType.Buy && _bot.Symbol.Bid >= tp1Price) ||
-                        (pos.TradeType == TradeType.Sell && _bot.Symbol.Ask <= tp1Price);
+                    double tp1Price = ctx.Tp1Price > 0
+                        ? ctx.Tp1Price
+                        : (pos.TradeType == TradeType.Buy
+                            ? pos.EntryPrice + rDist * ctx.Tp1R
+                            : pos.EntryPrice - rDist * ctx.Tp1R);
+
+                    if (ctx.Tp1Price <= 0)
+                        ctx.Tp1Price = tp1Price;
+
+                    double currentPrice = pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask;
+                    bool reached = pos.TradeType == TradeType.Buy
+                        ? sym.Bid >= tp1Price
+                        : sym.Ask <= tp1Price;
 
                     if (reached)
                     {
-                        _bot.Print("[ETHUSD][TP1][HIT] TP1 HIT (OnTick)");
+                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={currentPrice} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
 
                         // TP1 után ne fussunk tovább ebben a tickben (BTC-vel konzisztens)
@@ -186,6 +200,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
+                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
@@ -202,33 +217,39 @@ namespace GeminiV26.Instruments.ETHUSD
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return;
+
             // 1) Partial close (crypto-safe)
             // NAS logika: ctx.Tp1CloseFraction (ha nincs értelmes, 0.5)
             double frac = ctx.Tp1CloseFraction;
             if (frac <= 0 || frac >= 1)
                 frac = 0.5;
 
-            double minUnits = _bot.Symbol.VolumeInUnitsMin;
-
-            // Position.VolumeInUnits lehet double crypto instrumenten
-            double targetUnits = pos.VolumeInUnits * frac;
-
-            // Normalize a symbol step-re (crypto: 0.01, 0.001, stb.)
-            double closeUnits = _bot.Symbol.NormalizeVolumeInUnits(targetUnits);
+            long closeUnits = (long)sym.NormalizeVolumeInUnits(
+                (long)Math.Floor(pos.VolumeInUnits * frac),
+                RoundingMode.Down
+            );
+            long minUnits = (long)sym.VolumeInUnitsMin;
 
             if (closeUnits < minUnits)
-                closeUnits = minUnits;
+                return;
 
             // Ne zárjuk ki véletlen fullra (maradjon legalább minUnits)
             if (closeUnits >= pos.VolumeInUnits)
-                closeUnits = _bot.Symbol.NormalizeVolumeInUnits(
-                    pos.VolumeInUnits - minUnits);
+                closeUnits = (long)sym.NormalizeVolumeInUnits((long)Math.Floor(pos.VolumeInUnits - minUnits), RoundingMode.Down);
 
-            if (closeUnits >= minUnits && closeUnits > 0)
-            {
-                _bot.ClosePosition(pos, closeUnits);
-                ctx.Tp1ClosedVolumeInUnits = closeUnits;
-            }
+            if (closeUnits < minUnits)
+                return;
+
+            var closeResult = _bot.ClosePosition(pos, closeUnits);
+            if (!closeResult.IsSuccessful)
+                return;
+
+            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} closedUnits={closeUnits}");
+            ctx.Tp1ClosedVolumeInUnits = closeUnits;
+            ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
 
             // 2) TP1 state
             ctx.Tp1Hit = true;
@@ -247,6 +268,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             // ModifyPosition: SL -> BE, TP marad (TP2)
             _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
+            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} be={bePrice}");
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
@@ -348,6 +370,8 @@ namespace GeminiV26.Instruments.ETHUSD
             }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
