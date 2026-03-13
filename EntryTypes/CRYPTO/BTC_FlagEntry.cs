@@ -95,8 +95,17 @@ namespace GeminiV26.EntryTypes.Crypto
             var longEval = EvaluateSide(ctx, TradeDirection.Long, hi, lo, rangeAtr, lastClosed);
             var shortEval = EvaluateSide(ctx, TradeDirection.Short, hi, lo, rangeAtr, lastClosed);
 
-            if (longEval.IsValid && !shortEval.IsValid) return longEval;
-            if (!longEval.IsValid && shortEval.IsValid) return shortEval;
+            bool buyValid = longEval.IsValid;
+            bool sellValid = shortEval.IsValid;
+
+            if (!buyValid && !sellValid)
+            {
+                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
+                return Invalid(ctx, "FLAG_DIRECTION_INVALID");
+            }
+
+            if (buyValid && !sellValid) return longEval;
+            if (!buyValid && sellValid) return shortEval;
 
             return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
