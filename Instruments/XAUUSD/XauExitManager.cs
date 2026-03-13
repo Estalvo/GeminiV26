@@ -138,13 +138,13 @@ namespace GeminiV26.Instruments.XAUUSD
                 {
                     double tp1R = ResolveTp1R(ctx);
 
-                    double tp1Price = ctx.Tp1Price > 0
-                        ? ctx.Tp1Price
+                    double tp1Price = ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
+                        ? ctx.Tp1Price.Value
                         : (pos.TradeType == TradeType.Buy
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R);
 
-                    if (ctx.Tp1Price <= 0)
+                    if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
                         ctx.Tp1Price = tp1Price;
 
                     if (ctx.Tp1R <= 0)
