@@ -32,7 +32,7 @@ namespace GeminiV26.Instruments.INDEX
                     // FLAG
                     // =========================
                     FlagBars = 3,
-                    MaxFlagAtrMult = 2.2,
+                    MaxFlagAtrMult = 3.0,
                     BreakoutBufferAtr = 0.08,
                     MaxEmaDistanceAtr = 0.75,
 
@@ -108,7 +108,7 @@ namespace GeminiV26.Instruments.INDEX
                     // FLAG
                     // =========================
                     FlagBars = 4,
-                    MaxFlagAtrMult = 2.2,
+                    MaxFlagAtrMult = 3.0,
                     BreakoutBufferAtr = 0.08,
                     MaxEmaDistanceAtr = 1.00,
 
@@ -184,7 +184,7 @@ namespace GeminiV26.Instruments.INDEX
                     // FLAG
                     // =========================
                     FlagBars = 3,
-                    MaxFlagAtrMult = 2.0,
+                    MaxFlagAtrMult = 3.0,
                     BreakoutBufferAtr = 0.07,
                     MaxEmaDistanceAtr = 0.70,
 
