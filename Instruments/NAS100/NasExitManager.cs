@@ -214,13 +214,13 @@ namespace GeminiV26.Instruments.NAS100
             if (sym == null || ctx.Tp1R <= 0)
                 return false;
 
-            double tp1Price = ctx.Tp1Price > 0
-                ? ctx.Tp1Price
+            double tp1Price = ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
+                ? ctx.Tp1Price.Value
                 : (pos.TradeType == TradeType.Buy
                     ? pos.EntryPrice + rDist * ctx.Tp1R
                     : pos.EntryPrice - rDist * ctx.Tp1R);
 
-            if (ctx.Tp1Price <= 0)
+            if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
                 ctx.Tp1Price = tp1Price;
 
             return pos.TradeType == TradeType.Buy

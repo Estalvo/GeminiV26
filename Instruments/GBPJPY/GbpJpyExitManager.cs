@@ -248,9 +248,9 @@ namespace GeminiV26.Instruments.GBPJPY
         private double ctxTp1PriceOrFallback(Position pos, double rDist, double tp1R, out double tp1Price)
         {
             tp1Price = 0;
-            if (_contexts.TryGetValue(pos.Id, out var ctx) && ctx.Tp1Price > 0)
+            if (_contexts.TryGetValue(pos.Id, out var ctx) && ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0)
             {
-                tp1Price = ctx.Tp1Price;
+                tp1Price = ctx.Tp1Price.Value;
                 return tp1Price;
             }
 
@@ -258,7 +258,7 @@ namespace GeminiV26.Instruments.GBPJPY
                 ? pos.EntryPrice + rDist * tp1R
                 : pos.EntryPrice - rDist * tp1R;
 
-            if (_contexts.TryGetValue(pos.Id, out var tpCtx) && tpCtx.Tp1Price <= 0)
+            if (_contexts.TryGetValue(pos.Id, out var tpCtx) && (!tpCtx.Tp1Price.HasValue || tpCtx.Tp1Price.Value <= 0))
                 tpCtx.Tp1Price = tp1Price;
 
             return tp1Price;

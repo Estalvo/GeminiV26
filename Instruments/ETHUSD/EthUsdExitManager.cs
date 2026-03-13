@@ -125,13 +125,13 @@ namespace GeminiV26.Instruments.ETHUSD
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = 0.5;
 
-                    double tp1Price = ctx.Tp1Price > 0
-                        ? ctx.Tp1Price
+                    double tp1Price = ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
+                        ? ctx.Tp1Price.Value
                         : (pos.TradeType == TradeType.Buy
                             ? pos.EntryPrice + rDist * ctx.Tp1R
                             : pos.EntryPrice - rDist * ctx.Tp1R);
 
-                    if (ctx.Tp1Price <= 0)
+                    if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
                         ctx.Tp1Price = tp1Price;
 
                     double currentPrice = pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask;
