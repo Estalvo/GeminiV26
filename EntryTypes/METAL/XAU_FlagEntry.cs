@@ -319,6 +319,18 @@ namespace GeminiV26.EntryTypes.METAL
                 // ignore if field not present
             }
 
+            bool missingImpulse =
+                string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
+
+            if (missingImpulse)
+            {
+                score = Math.Max(0, score - 6);
+
+                ctx.Log?.Invoke(
+                    "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
+                    $"symbol={ctx.Symbol} entry={EntryType.XAU_Flag} penalty=6 score={score}");
+            }
+
             bool nearThreshold = score >= (minScore - 3);
             bool strongContext =
                 ctx.MarketState?.IsTrend == true &&

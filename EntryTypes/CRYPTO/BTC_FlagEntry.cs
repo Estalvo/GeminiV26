@@ -172,6 +172,18 @@ namespace GeminiV26.EntryTypes.Crypto
                 score -= HtfAgainstPenalty;
             }
 
+            bool missingImpulse =
+                string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
+
+            if (missingImpulse)
+            {
+                score = Math.Max(0, score - 6);
+
+                ctx.Log?.Invoke(
+                    "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
+                    $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
+            }
+
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE({score})");
 
