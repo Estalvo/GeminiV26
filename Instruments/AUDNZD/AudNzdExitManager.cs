@@ -295,6 +295,8 @@ namespace GeminiV26.Instruments.AUDNZD
 
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = pos.VolumeInUnits - closeUnits;
+            
+            return true;
         }
 
         // =====================================================
