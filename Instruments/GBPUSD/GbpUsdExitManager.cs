@@ -95,9 +95,14 @@ namespace GeminiV26.Instruments.GBPUSD
 
                     if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
                     {
-                        ExecuteTp1(pos, ctx);
+                        if (!ExecuteTp1(pos, ctx))
+                        {
+                            _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
+                            continue;
+                        }
 
                         ctx.Tp1Hit = true;
+                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
                         ApplyBreakEven(pos, ctx);
                         ctx.TrailingMode = ctx.FinalConfidence >= 80
                             ? TrailingMode.Loose
@@ -118,6 +123,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
+                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
@@ -128,36 +134,59 @@ namespace GeminiV26.Instruments.GBPUSD
         private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null || tp1R <= 0)
+                return false;
+
+            _contexts.TryGetValue(pos.Id, out var ctx);
+            double tp1Price = ctx != null && ctx.Tp1Price > 0
+                ? ctx.Tp1Price
+                : (pos.TradeType == TradeType.Buy
+                    ? pos.EntryPrice + rDist * tp1R
+                    : pos.EntryPrice - rDist * tp1R);
+
+            if (ctx != null && ctx.Tp1Price <= 0)
+                ctx.Tp1Price = tp1Price;
 
             return pos.TradeType == TradeType.Buy
-                ? sym.Bid >= pos.EntryPrice + rDist * tp1R
-                : sym.Ask <= pos.EntryPrice - rDist * tp1R;
+                ? sym.Bid >= tp1Price
+                : sym.Ask <= tp1Price;
         }
 
         // =====================================================
         // TP1 EXECUTION
         // =====================================================
-        private void ExecuteTp1(Position pos, PositionContext ctx)
+        private bool ExecuteTp1(Position pos, PositionContext ctx)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return false;
 
             double fraction = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
                 ? ctx.Tp1CloseFraction
                 : 0.5;
 
-            double minUnits = sym.VolumeInUnitsMin;
-            double closeUnits = sym.NormalizeVolumeInUnits(pos.VolumeInUnits * fraction);
+            double rawUnitsD = pos.VolumeInUnits * fraction;
+            long flooredUnits = (long)Math.Floor(rawUnitsD);
+            long normalizedUnits = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
+            long minUnits = (long)sym.VolumeInUnitsMin;
 
-            if (closeUnits < minUnits)
-                return;
+            if (normalizedUnits < minUnits)
+                return false;
 
-            if (closeUnits >= pos.VolumeInUnits)
-                closeUnits = sym.NormalizeVolumeInUnits(pos.VolumeInUnits - minUnits);
+            if (normalizedUnits >= pos.VolumeInUnits)
+                normalizedUnits = (long)sym.NormalizeVolumeInUnits((long)Math.Floor(pos.VolumeInUnits - minUnits), RoundingMode.Down);
 
-            if (closeUnits < minUnits)
-                return;
+            if (normalizedUnits < minUnits)
+                return false;
 
-            _bot.ClosePosition(pos, closeUnits);
+            var result = _bot.ClosePosition(pos, normalizedUnits);
+            if (!result.IsSuccessful)
+                return false;
+
+            ctx.Tp1ClosedVolumeInUnits = normalizedUnits;
+            ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - normalizedUnits);
+            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} closedUnits={normalizedUnits} remainingUnits={ctx.RemainingVolumeInUnits}");
+            return true;
         }
 
         // =====================================================
@@ -175,6 +204,8 @@ namespace GeminiV26.Instruments.GBPUSD
             _bot.ModifyPosition(pos, Normalize(bePrice, pos.SymbolName), pos.TakeProfit);
 
             ctx.BePrice = bePrice;
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} be={bePrice}");
         }
 
         // =====================================================
@@ -272,6 +303,7 @@ namespace GeminiV26.Instruments.GBPUSD
             }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
