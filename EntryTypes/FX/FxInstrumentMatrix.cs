@@ -44,7 +44,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.6-ról 1.2-re, ne engedjük a túlnyúlt zászlókat
                         MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.95-ről 0.80-ra, csak szoros visszateszt
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 12,    // SZIGORÍTÁS: 6-ról 12-re, precíz gyertyák kellenek
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
                         MaxFlagAtrMult = 3.2,      // ideiglenesen lazítjuk
                         MaxPullbackAtr = 1.35,     // vissza engedjük
-                        BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
+                        BreakoutAtrBuffer = 0.05,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -72,7 +72,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 4,
                         MaxFlagAtrMult = 3.0,
                         MaxPullbackAtr = 1.30,
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -134,7 +134,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.9,
                         MaxPullbackAtr = 1.15,
-                        BreakoutAtrBuffer = 0.12,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -148,7 +148,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.7,
                         MaxPullbackAtr = 1.10,
-                        BreakoutAtrBuffer = 0.12,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -196,7 +196,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 2-ről 3 bárra
                         MaxFlagAtrMult = 1.5,        // SZIGORÍTÁS: 1.4-ről 1.1-re (csak szoros zászlók)
                         MaxPullbackAtr = 0.95,       // SZIGORÍTÁS: 0.95-ről 0.70-re (ne engedjünk mély visszatesztet)
-                        BreakoutAtrBuffer = 0.07,    // BIZTONSÁG: Nagyobb buffer a fals kitörések ellen
+                        BreakoutAtrBuffer = 0.05,    // BIZTONSÁG: Nagyobb buffer a fals kitörések ellen
                         BodyMisalignPenalty = 10,    // SZIGORÍTÁS: 6-ról 15-re
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -212,7 +212,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.7,        // SZIGORÍTÁS: 2.0-ról 1.6-ra
                         MaxPullbackAtr = 1.05,       // SZIGORÍTÁS: 1.30-ról 0.90-re
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -226,7 +226,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.65,
                         MaxPullbackAtr = 1.05,
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -276,7 +276,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 2 helyett 3 bár, hogy a zajt jobban szűrjük
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: Kisebb zászló kiterjedés
                         MaxPullbackAtr = 1.20,       // LAZÍTÁS: 1.00-ról 1.20-ra - kell a tér a GBPJPY zajának
-                        BreakoutAtrBuffer = 0.08,    // TÁVOLSÁG: Nagyobb buffer a kitörésnél
+                        BreakoutAtrBuffer = 0.05,    // TÁVOLSÁG: Nagyobb buffer a kitörésnél
                         BodyMisalignPenalty = 10,    // SZIGORÍTÁS: 6-ról 10-re, ne engedjük a pontatlan gyertyákat
                         M1TriggerBonus = 2,
                         FlagQualityBonus = 3,        // ÚJ: Bónusz a minőségi alakzatnak
@@ -292,7 +292,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 2.1,
                         MaxPullbackAtr = 1.40,
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -306,7 +306,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.95,
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -354,7 +354,7 @@ namespace GeminiV26.Instruments.FX
                     FlagBars = 3,                // STABILITÁS: Több megerősítő gyertya kell
                     MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.3-ról 1.2-re (kisebb zászló = kisebb kockázat)
                     MaxPullbackAtr = 0.80,       // SZIGORÍTÁS: 0.85-ről 0.80-ra
-                    BreakoutAtrBuffer = 0.08,
+                    BreakoutAtrBuffer = 0.05,
                     BodyMisalignPenalty = 15,    // SZIGORÍTÁS: 10-ről 15-re (precízebb gyertyatestek)
                     M1TriggerBonus = 4,
                     FlagQualityBonus = 3,
@@ -370,7 +370,7 @@ namespace GeminiV26.Instruments.FX
                     FlagBars = 3,
                     MaxFlagAtrMult = 1.8,        // SZIGORÍTÁS: 2.0-ról 1.8-ra (kevesebb zajt engedünk)
                     MaxPullbackAtr = 1.10,       // SZIGORÍTÁS: 1.30-ról 1.10-re (ne engedjünk túl mély korrekciót)
-                    BreakoutAtrBuffer = 0.08,
+                    BreakoutAtrBuffer = 0.05,
                     BodyMisalignPenalty = 5,
                     M1TriggerBonus = 5,
                     FlagQualityBonus = 3,
@@ -385,7 +385,7 @@ namespace GeminiV26.Instruments.FX
                     FlagBars = 2,
                     MaxFlagAtrMult = 1.1,
                     MaxPullbackAtr = 0.75,
-                    BreakoutAtrBuffer = 0.10,
+                    BreakoutAtrBuffer = 0.05,
                     BodyMisalignPenalty = 8,
                     M1TriggerBonus = 0,
                     FlagQualityBonus = 3,
@@ -434,7 +434,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 2 helyett 3 bár
                         MaxFlagAtrMult = 1.1,        // SZIGORÍTÁS: 1.4-ről 1.1-re (ne vegyünk túlnyúlt mozgást)
                         MaxPullbackAtr = 0.65,       // SZIGORÍTÁS: 0.75-ről 0.65-re
-                        BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb puffer
+                        BreakoutAtrBuffer = 0.05,    // BIZTONSÁG: Nagyobb puffer
                         BodyMisalignPenalty = 15,    // SZIGORÍTÁS: 10-ről 15-re (csak szép gyertyák)
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -451,7 +451,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,
                         MaxPullbackAtr = 0.70,
-                        BreakoutAtrBuffer = 0.12,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -467,7 +467,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 1,
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.60,
-                        BreakoutAtrBuffer = 0.15,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 8,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -517,7 +517,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.1,        // SZIGORÍTÁS: 1.7 -> 1.1 (csak kompakt alakzatok)
                         MaxPullbackAtr = 0.70,       // SZIGORÍTÁS: 1.05 -> 0.70
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 12,    // SZIGORÍTÁS: 6 -> 12
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -533,7 +533,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.3,        // SZIGORÍTÁS: 1.8 -> 1.3
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.35 -> 0.85
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -547,7 +547,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 2,
                         MaxFlagAtrMult = 0.9,
                         MaxPullbackAtr = 0.85,
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 8,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -595,7 +595,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 2 -> 4 bár (építsen komoly bázist)
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.8 -> 1.0 (csak kompakt, sűrű bázis)
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 1.10 -> 0.60 (ne engedjünk mély visszatesztet)
-                        BreakoutAtrBuffer = 0.08,    // BIZTONSÁG: Nagyobb tizedelés a kitörésnél
+                        BreakoutAtrBuffer = 0.05,    // BIZTONSÁG: Nagyobb tizedelés a kitörésnél
                         BodyMisalignPenalty = 20,    // SZIGORÍTÁS: 6 -> 20 (csak tökéletes gyertyasorrend)
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 5,        // ÚJ: Extra bónusz, ha vizuálisan tiszta a setup
@@ -611,7 +611,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.85,
-                        BreakoutAtrBuffer = 0.12,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 10,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -625,7 +625,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 2,
                         MaxFlagAtrMult = 0.7,
                         MaxPullbackAtr = 0.50,
-                        BreakoutAtrBuffer = 0.15,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 12,
                         M1TriggerBonus = 0,
                         FlagQualityBonus = 3,
@@ -673,7 +673,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.2,        // SZIGORÍTÁS: 1.4 -> 1.2
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 0.85 -> 0.75
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 10,    // SZIGORÍTÁS: 6 -> 10
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -689,7 +689,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.6,        // SZIGORÍTÁS: 2.0 -> 1.6 (megfogja a csúcson vételt)
                         MaxPullbackAtr = 1.00,       // SZIGORÍTÁS: 1.30 -> 1.00
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
@@ -705,7 +705,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 2 -> 3 bár
                         MaxFlagAtrMult = 1.3,
                         MaxPullbackAtr = 0.90,
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 2,
                         FlagQualityBonus = 3,
@@ -755,7 +755,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.0,        // SZIGORÍTÁS: 1.4 -> 1.0 (Csak nagyon szűk bázis)
                         MaxPullbackAtr = 0.60,       // SZIGORÍTÁS: 0.95 -> 0.60
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 15,    // SZIGORÍTÁS: 6 -> 15
                         M1TriggerBonus = 4,
                         FlagQualityBonus = 3,
@@ -771,7 +771,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,
                         MaxFlagAtrMult = 1.4,        // SZIGORÍTÁS: 2.0 -> 1.4 (Kompaktabb setupok)
                         MaxPullbackAtr = 0.85,       // SZIGORÍTÁS: 1.30 -> 0.85
-                        BreakoutAtrBuffer = 0.08,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 5,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 5,        // JUTALMAZÁS: Ha tiszta a kép, kapjon nagy bónuszt
@@ -787,7 +787,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 2,
                         MaxFlagAtrMult = 1.1,
                         MaxPullbackAtr = 0.75,       // SZIGORÍTÁS: 0.90 -> 0.75
-                        BreakoutAtrBuffer = 0.10,
+                        BreakoutAtrBuffer = 0.05,
                         BodyMisalignPenalty = 6,
                         M1TriggerBonus = 2,
                         FlagQualityBonus = 3,
