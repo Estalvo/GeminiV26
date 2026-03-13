@@ -24,7 +24,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // IMPULSE
                     // =========================
-                    ImpulseAtrMult_M5 = 0.58,
+                    ImpulseAtrMult_M5 = 0.62,
                     ImpulseAtrMult_M1 = 0.24,
                     MaxBarsSinceImpulse_M5 = 5,
 
@@ -39,10 +39,10 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // TREND / CHOP
                     // =========================
-                    MinAdxTrend = 20,
+                    MinAdxTrend = 21,
                     MinAtrPoints = 10,
-                    ChopAdxThreshold = 20,
-                    ChopDiDiffThreshold = 7,
+                    ChopAdxThreshold = 18,
+                    ChopDiDiffThreshold = 8,
 
                     // =========================
                     // FATIGUE CONTROL
@@ -54,7 +54,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = false,
-                    MaxPullbackPercentOfImpulse = 0.50,
+                    MaxPullbackPercentOfImpulse = 0.48,
 
                     // =========================
                     // SCORE CHARACTER
@@ -64,14 +64,14 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // PROFIT STRUCTURE
                     // =========================
-                    Tp1R = 0.45,
-                    RunnerMinR = 1.1,
+                    Tp1R = 0.50,
+                    RunnerMinR = 1.2,
                     MaxExtensionR = 3.8,
 
                     // =========================
                     // TRAILING
                     // =========================
-                    TrailStartR = 1.1,
+                    TrailStartR = 1.2,
                     TrailAtrMult = 1.8,
                     MinTrailImprovePts = 10,
 
@@ -100,7 +100,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // IMPULSE
                     // =========================
-                    ImpulseAtrMult_M5 = 0.68,
+                    ImpulseAtrMult_M5 = 0.72,
                     ImpulseAtrMult_M1 = 0.30,
                     MaxBarsSinceImpulse_M5 = 6,
 
@@ -109,16 +109,16 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     FlagBars = 4,
                     MaxFlagAtrMult = 3.0,
-                    BreakoutBufferAtr = 0.14,
+                    BreakoutBufferAtr = 0.15,
                     MaxEmaDistanceAtr = 1.00,
 
                     // =========================
                     // TREND / CHOP
                     // =========================
-                    MinAdxTrend = 18,
+                    MinAdxTrend = 20,
                     MinAtrPoints = 16,
-                    ChopAdxThreshold = 18,
-                    ChopDiDiffThreshold = 6,
+                    ChopAdxThreshold = 17,
+                    ChopDiDiffThreshold = 7,
 
                     // =========================
                     // FATIGUE CONTROL
@@ -130,7 +130,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = true,
-                    MaxPullbackPercentOfImpulse = 0.50,
+                    MaxPullbackPercentOfImpulse = 0.48,
 
                     // =========================
                     // SCORE CHARACTER
@@ -140,14 +140,14 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // PROFIT STRUCTURE
                     // =========================
-                    Tp1R = 0.45,
-                    RunnerMinR = 1.3,
+                    Tp1R = 0.50,
+                    RunnerMinR = 1.4,
                     MaxExtensionR = 4.8,
 
                     // =========================
                     // TRAILING
                     // =========================
-                    TrailStartR = 1.0,
+                    TrailStartR = 1.2,
                     TrailAtrMult = 1.8,
                     MinTrailImprovePts = 16,
 
@@ -176,7 +176,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // IMPULSE
                     // =========================
-                    ImpulseAtrMult_M5 = 0.62,
+                    ImpulseAtrMult_M5 = 0.65,
                     ImpulseAtrMult_M1 = 0.26,
                     MaxBarsSinceImpulse_M5 = 4,
 
@@ -185,16 +185,16 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     FlagBars = 3,
                     MaxFlagAtrMult = 3.0,
-                    BreakoutBufferAtr = 0.10,
+                    BreakoutBufferAtr = 0.11,
                     MaxEmaDistanceAtr = 0.70,
 
                     // =========================
                     // TREND / CHOP
                     // =========================
-                    MinAdxTrend = 20,
+                    MinAdxTrend = 22,
                     MinAtrPoints = 9,
-                    ChopAdxThreshold = 20,
-                    ChopDiDiffThreshold = 7,
+                    ChopAdxThreshold = 19,
+                    ChopDiDiffThreshold = 8,
 
                     // =========================
                     // FATIGUE CONTROL
@@ -206,7 +206,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = false,
-                    MaxPullbackPercentOfImpulse = 0.55,
+                    MaxPullbackPercentOfImpulse = 0.52,
 
                     // =========================
                     // SCORE CHARACTER
@@ -216,14 +216,14 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     // PROFIT STRUCTURE
                     // =========================
-                    Tp1R = 0.40,
-                    RunnerMinR = 1.0,
+                    Tp1R = 0.45,
+                    RunnerMinR = 1.15,
                     MaxExtensionR = 3.2,
 
                     // =========================
                     // TRAILING
                     // =========================
-                    TrailStartR = 1.0,
+                    TrailStartR = 1.1,
                     TrailAtrMult = 1.6,
                     MinTrailImprovePts = 8,
 
