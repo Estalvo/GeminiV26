@@ -88,8 +88,13 @@ namespace GeminiV26.Instruments.NAS100
                             $"entry={pos.EntryPrice} SL={pos.StopLoss} rDist={rDist} " +
                             $"TP1@={tp1Price} bid={_bot.Symbol.Bid} ask={_bot.Symbol.Ask}"
                         );
-                        ExecuteTp1(pos, ctx, rDist);
+                        if (!ExecuteTp1(pos, ctx, rDist))
+                        {
+                            _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType}");
+                            continue;
+                        }
                         ctx.Tp1Hit = true;
+                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType}");
                         continue;
                     }
 
@@ -149,6 +154,8 @@ namespace GeminiV26.Instruments.NAS100
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
+                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
@@ -203,27 +210,48 @@ namespace GeminiV26.Instruments.NAS100
         // =====================================================
         private bool CheckTp1Hit(Position pos, PositionContext ctx, double rDist)
         {
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null || ctx.Tp1R <= 0)
+                return false;
+
+            double tp1Price = ctx.Tp1Price > 0
+                ? ctx.Tp1Price
+                : (pos.TradeType == TradeType.Buy
+                    ? pos.EntryPrice + rDist * ctx.Tp1R
+                    : pos.EntryPrice - rDist * ctx.Tp1R);
+
+            if (ctx.Tp1Price <= 0)
+                ctx.Tp1Price = tp1Price;
+
             return pos.TradeType == TradeType.Buy
-                ? _bot.Symbol.Bid >= pos.EntryPrice + rDist * ctx.Tp1R
-                : _bot.Symbol.Ask <= pos.EntryPrice - rDist * ctx.Tp1R;
+                ? sym.Bid >= tp1Price
+                : sym.Ask <= tp1Price;
         }
 
-        private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
+        private bool ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            double closeVol =
-                _bot.Symbol.NormalizeVolumeInUnits(
-                    pos.VolumeInUnits * ctx.Tp1CloseFraction,
-                    RoundingMode.Down
-                );
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return false;
 
-            if (closeVol >= _bot.Symbol.VolumeInUnitsMin)
-                _bot.ClosePosition(pos, closeVol);
+            double rawUnitsD = pos.VolumeInUnits * ctx.Tp1CloseFraction;
+            long flooredUnits = (long)Math.Floor(rawUnitsD);
+            long closeVol = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
+
+            if (closeVol < sym.VolumeInUnitsMin)
+                return false;
+
+            var result = _bot.ClosePosition(pos, closeVol);
+            if (!result.IsSuccessful)
+                return false;
 
             ctx.Tp1ClosedVolumeInUnits = closeVol;
             ctx.RemainingVolumeInUnits =
                 Math.Max(0, pos.VolumeInUnits - closeVol);
 
+            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} closedUnits={closeVol} remainingUnits={ctx.RemainingVolumeInUnits}");
             ApplyBreakEven(pos, ctx, rDist);
+            return true;
         }
 
         // =====================================================
@@ -239,6 +267,8 @@ namespace GeminiV26.Instruments.NAS100
             ctx.BePrice = bePrice;
 
             _bot.ModifyPosition(pos, Normalize(bePrice), pos.TakeProfit);
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} be={bePrice}");
 
             _eventLogger.Log(new EventRecord
             {
@@ -356,6 +386,8 @@ namespace GeminiV26.Instruments.NAS100
             }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");

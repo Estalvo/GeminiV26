@@ -132,10 +132,16 @@ namespace GeminiV26.Instruments.AUDNZD
                     // ---------- TP1 ----------
                     if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
                     {
-                        ExecuteTp1(pos, ctx);
+                        if (!ExecuteTp1(pos, ctx))
+                        {
+                            _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
+                            continue;
+                        }
 
                         ctx.Tp1Hit = true;
+                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
                         ctx.BeMode = BeMode.AfterTp1;
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
 
                         if (ctx.FinalConfidence >= 80)
                         {
@@ -207,6 +213,7 @@ namespace GeminiV26.Instruments.AUDNZD
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
+                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
@@ -216,15 +223,51 @@ namespace GeminiV26.Instruments.AUDNZD
         // =====================================================
         private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
         {
-            return pos.TradeType == TradeType.Buy
-                ? _bot.Symbol.Bid >= pos.EntryPrice + rDist * tp1R
-                : _bot.Symbol.Ask <= pos.EntryPrice - rDist * tp1R;
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (sym == null)
+                return false;
+
+            if (tp1R <= 0)
+                return false;
+
+            double tp1Price = ctxTp1PriceOrFallback(pos, rDist, tp1R, out var resolvedTp1);
+            double currentPrice = pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask;
+
+            bool hit = pos.TradeType == TradeType.Buy
+                ? sym.Bid >= tp1Price
+                : sym.Ask <= tp1Price;
+
+            if (hit)
+            {
+                _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={currentPrice} tp1={resolvedTp1}");
+            }
+
+            return hit;
+        }
+
+        private double ctxTp1PriceOrFallback(Position pos, double rDist, double tp1R, out double tp1Price)
+        {
+            tp1Price = 0;
+            if (_contexts.TryGetValue(pos.Id, out var ctx) && ctx.Tp1Price > 0)
+            {
+                tp1Price = ctx.Tp1Price;
+                return tp1Price;
+            }
+
+            tp1Price = pos.TradeType == TradeType.Buy
+                ? pos.EntryPrice + rDist * tp1R
+                : pos.EntryPrice - rDist * tp1R;
+
+            if (_contexts.TryGetValue(pos.Id, out var tpCtx) && tpCtx.Tp1Price <= 0)
+                tpCtx.Tp1Price = tp1Price;
+
+            return tp1Price;
         }
 
         // =====================================================
         // TP1 EXECUTION (partial close)
         // =====================================================
-        private void ExecuteTp1(Position pos, PositionContext ctx)
+        private bool ExecuteTp1(Position pos, PositionContext ctx)
         {
             double fraction =
                 ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
@@ -238,7 +281,7 @@ namespace GeminiV26.Instruments.AUDNZD
             );
 
             if (closeUnits < minUnits)
-                return;
+                return false;
 
             if (closeUnits >= pos.VolumeInUnits)
                 closeUnits = (long)_bot.Symbol.NormalizeVolumeInUnits(
@@ -246,7 +289,7 @@ namespace GeminiV26.Instruments.AUDNZD
                 );
 
             if (closeUnits < minUnits)
-                return;
+                return false;
 
             _bot.ClosePosition(pos, closeUnits);
 
@@ -281,6 +324,8 @@ namespace GeminiV26.Instruments.AUDNZD
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} be={bePrice}");
             ctx.BeActivated = true;
         }
 
@@ -424,6 +469,7 @@ namespace GeminiV26.Instruments.AUDNZD
             }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");

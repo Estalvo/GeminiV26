@@ -138,9 +138,14 @@ namespace GeminiV26.Instruments.XAUUSD
                 {
                     double tp1R = ResolveTp1R(ctx);
 
-                    double tp1Price = pos.TradeType == TradeType.Buy
-                        ? pos.EntryPrice + rDist * tp1R
-                        : pos.EntryPrice - rDist * tp1R;
+                    double tp1Price = ctx.Tp1Price > 0
+                        ? ctx.Tp1Price
+                        : (pos.TradeType == TradeType.Buy
+                            ? pos.EntryPrice + rDist * tp1R
+                            : pos.EntryPrice - rDist * tp1R);
+
+                    if (ctx.Tp1Price <= 0)
+                        ctx.Tp1Price = tp1Price;
 
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
@@ -157,6 +162,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     if (hit)
                     {
+                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={priceNow} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
                         return;
                     }
@@ -209,6 +215,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
+                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
@@ -226,23 +233,29 @@ namespace GeminiV26.Instruments.XAUUSD
             double frac = ctx.Tp1CloseFraction;
             if (frac <= 0 || frac >= 1) frac = 0.40;
 
-            double closeVolume =
-                sym.NormalizeVolumeInUnits(
-                    pos.VolumeInUnits * frac,
-                    RoundingMode.Down
-                );
+            double rawUnitsD = pos.VolumeInUnits * frac;
+            long flooredUnits = (long)Math.Floor(rawUnitsD);
+            long closeVolume = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
 
             if (closeVolume < sym.VolumeInUnitsMin)
                 return;
 
-            _bot.ClosePosition(pos, closeVolume);
+            var closeResult = _bot.ClosePosition(pos, closeVolume);
+            if (!closeResult.IsSuccessful)
+            {
+                _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price}");
+                return;
+            }
+
+            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} closedUnits={closeVolume}");
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
 
             // Remaining volume (analytics + rehydrate friendliness)
+            ctx.Tp1ClosedVolumeInUnits = closeVolume;
             ctx.RemainingVolumeInUnits =
-                Math.Max(0, ctx.EntryVolumeInUnits - closeVolume);
+                Math.Max(0, pos.VolumeInUnits - closeVolume);
 
             // BE (profilból)
             ApplyBreakEven(pos, ctx, rDist);
@@ -277,6 +290,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             ctx.BePrice = bePrice;
             double newSl = bePrice;
+            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} be={bePrice}");
 
             _bot.ModifyPosition(
                 pos,
@@ -457,6 +471,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
+            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
             double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;
@@ -486,6 +501,7 @@ namespace GeminiV26.Instruments.XAUUSD
             }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
