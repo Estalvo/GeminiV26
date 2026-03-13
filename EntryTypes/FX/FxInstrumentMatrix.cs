@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.FX
                         FlagBars = 3,                // STABILITÁS: 3-ról 4 bárra emelve, több idő a bázisépítésre
                         MaxFlagAtrMult = 3.2,      // ideiglenesen lazítjuk
                         MaxPullbackAtr = 1.35,     // vissza engedjük
-                        BreakoutAtrBuffer = 0.10,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
+                        BreakoutAtrBuffer = 0.05,    // BIZTONSÁG: Nagyobb buffer, hogy ne ugorjunk bele a hamis kitörésbe
                         BodyMisalignPenalty = 4,
                         M1TriggerBonus = 5,
                         FlagQualityBonus = 3,
