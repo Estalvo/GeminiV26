@@ -26,7 +26,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     ImpulseAtrMult_M5 = 0.62,
                     ImpulseAtrMult_M1 = 0.24,
-                    MaxBarsSinceImpulse_M5 = 5,
+                    MaxBarsSinceImpulse_M5 = 3,
 
                     // =========================
                     // FLAG
@@ -102,7 +102,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     ImpulseAtrMult_M5 = 0.72,
                     ImpulseAtrMult_M1 = 0.30,
-                    MaxBarsSinceImpulse_M5 = 6,
+                    MaxBarsSinceImpulse_M5 = 3,
 
                     // =========================
                     // FLAG
@@ -178,7 +178,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     ImpulseAtrMult_M5 = 0.65,
                     ImpulseAtrMult_M1 = 0.26,
-                    MaxBarsSinceImpulse_M5 = 4,
+                    MaxBarsSinceImpulse_M5 = 2,
 
                     // =========================
                     // FLAG
