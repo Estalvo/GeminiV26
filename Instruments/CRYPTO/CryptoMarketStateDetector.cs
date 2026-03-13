@@ -41,16 +41,18 @@ namespace GeminiV26.Instruments.CRYPTO
                 return null;
 
             double atr = _atr.Result[i];
+            double atrPrev = _atr.Result[i - 5];
             double adx = _dms.ADX[i];
 
             bool isHighVol = atr > 100;
             bool isLowVol = atr < 40;
             bool isTrend = adx >= 18;
+            bool isExpansion = atr > atrPrev * 1.2;
 
             _bot.Print(
                 $"[CRYPTO MSD] {_bot.SymbolName} | " +
                 $"ATR={atr:F1} ADX={adx:F1} " +
-                $"HighVol={isHighVol} LowVol={isLowVol} Trend={isTrend}");
+                $"HighVol={isHighVol} LowVol={isLowVol} Trend={isTrend} Expansion={isExpansion}");
 
             return new CryptoMarketState
             {
@@ -59,7 +61,8 @@ namespace GeminiV26.Instruments.CRYPTO
                 Adx = adx,
                 IsHighVol = isHighVol,
                 IsLowVol = isLowVol,
-                IsTrend = isTrend
+                IsTrend = isTrend,
+                IsExpansion = isExpansion
             };
         }
     }

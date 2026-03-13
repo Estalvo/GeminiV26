@@ -56,6 +56,7 @@ namespace GeminiV26.Instruments.INDEX
             double atrRaw = _atr.Result[i];
             double atrPoints = atrRaw;
             double adx = _adx.ADX[i];
+            double body = Math.Abs(_bars.ClosePrices[i] - _bars.OpenPrices[i]);
 
             // =====================================================
             // PROFILE-DRIVEN THRESHOLDS (FALLBACK SAFE)
@@ -73,11 +74,12 @@ namespace GeminiV26.Instruments.INDEX
 
             bool isLowVol = atrPoints < minAtrPoints;
             bool isTrend = adx >= minAdxTrend;
+            bool isMomentum = body > atrRaw * 0.8;
 
             _bot.Print(
                 $"[INDEX MSD] {_bot.SymbolName} | " +
                 $"atrPts={atrPoints:F1} adx={adx:F1} | " +
-                $"lowVol={isLowVol} trend={isTrend} | " +
+                $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} | " +
                 $"minAtr={minAtrPoints} minAdx={minAdxTrend}");
 
             return new IndexMarketState
@@ -85,7 +87,8 @@ namespace GeminiV26.Instruments.INDEX
                 AtrPoints = atrPoints,
                 Adx = adx,
                 IsLowVol = isLowVol,
-                IsTrend = isTrend
+                IsTrend = isTrend,
+                IsMomentum = isMomentum
             };
         }
     }

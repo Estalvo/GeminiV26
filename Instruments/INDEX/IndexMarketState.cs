@@ -16,6 +16,7 @@ namespace GeminiV26.Instruments.INDEX
         public bool IsLowVol { get; set; }
         public bool IsTrend { get; set; }
         public bool IsRange { get; set; }
+        public bool IsMomentum { get; set; }
 
         public double AtrPoints { get; set; }
         public double RangePoints { get; set; }
