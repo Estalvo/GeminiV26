@@ -4,6 +4,7 @@ using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.FX;
+using GeminiV26.Core.Risk.PositionSizing;
 
 namespace GeminiV26.Instruments.USDCAD
 {
@@ -51,13 +52,13 @@ namespace GeminiV26.Instruments.USDCAD
                 _bot.Print("[USDCAD EXEC] SKIP: MarketStateDetector NULL");
                 return; // vagy continue, attól függ hol vagy
             }
-                        
+
             if (ms == null)
             {
                 _bot.Print("[USDCAD EXEC] BLOCKED: MarketState NULL");
                 return;
             }
-            
+
             if (ms.IsLowVol)
             {
                 _bot.Print("[USDCAD EXEC] BLOCKED: Low volatility");
@@ -226,45 +227,11 @@ namespace GeminiV26.Instruments.USDCAD
 
         private long CalculateVolumeInUnits(double riskPercent, double slPriceDist, int score)
         {
-            double balance = _bot.Account.Balance;
-            double riskAmount = balance * (riskPercent / 100.0);
-
-            double slPips = slPriceDist / _bot.Symbol.PipSize;
-            // USDCAD mid-vol FX: 8 pip floor túl agresszív
-            const double MinSlPips_USDCAD = 6.5;
-            if (slPips < MinSlPips_USDCAD)
-                slPips = MinSlPips_USDCAD;
-
-            // PipValue = USD per pip per MIN UNIT
-            double pipValuePerUnit = _bot.Symbol.PipValue;
-
-            if (pipValuePerUnit <= 0)
-            {
-                _bot.Print("[USDCAD RISK] ERROR: PipValuePerUnit <= 0");
-                return 0;
-            }
-
-            // ✅ UNIT alapú számítás
-            double rawUnits = riskAmount / (slPips * pipValuePerUnit);
-
-            // Lot cap → UNIT cap
-            double capLots = _riskSizer.GetLotCap(score);
-            double capUnits = capLots * _bot.Symbol.LotSize;
-
-            double finalUnits = Math.Min(rawUnits, capUnits);
-
-            long normalized = (long)_bot.Symbol.NormalizeVolumeInUnits(
-                finalUnits,
-                RoundingMode.Down
-            );
-
-            _bot.Print(
-                $"[USDCAD RISK FIX] risk={riskPercent:F2}% " +
-                $"slPips={slPips:F1} pipValUnit={pipValuePerUnit:E5} " +
-                $"rawUnits={rawUnits:F0} capUnits={capUnits:F0} finalUnits={normalized}"
-            );
-
-            return normalized < _bot.Symbol.VolumeInUnitsMin ? 0 : normalized;
+            return FxPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(score));
         }
     }
 }

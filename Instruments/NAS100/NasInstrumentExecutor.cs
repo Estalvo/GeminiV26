@@ -4,6 +4,7 @@ using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.INDEX;
+using GeminiV26.Core.Risk.PositionSizing;
 
 namespace GeminiV26.Instruments.NAS100
 {
@@ -44,7 +45,7 @@ namespace GeminiV26.Instruments.NAS100
                 {
                     if (ms.IsLowVol)
                         _bot.Print("[NAS][STATE] LOWVOL");
-                                        
+
                     if (ms.IsTrend)
                         _bot.Print("[NAS][STATE] TREND");
                 }
@@ -206,28 +207,11 @@ namespace GeminiV26.Instruments.NAS100
 
         private long CalculateVolumeInUnits(double riskPercent, double slPriceDist, int score)
         {
-            double balance = _bot.Account.Balance;
-            double riskUsd = balance * (riskPercent / 100.0);
-
-            var s = _bot.Symbol;
-
-            double valuePerUnitPerPrice =
-                (s.TickValue / s.LotSize) / s.TickSize;
-
-            double lossPerUnit = slPriceDist * valuePerUnitPerPrice;
-            if (lossPerUnit <= 0)
-                return 0;
-
-            double rawUnits = riskUsd / lossPerUnit;
-
-            double capLots = _riskSizer.GetLotCap(score);
-            long capUnits = Convert.ToInt64(s.QuantityToVolumeInUnits(capLots));
-
-            long normalized = Convert.ToInt64(
-                s.NormalizeVolumeInUnits(Math.Min(rawUnits, capUnits))
-            );
-                        
-            return normalized < s.VolumeInUnitsMin ? 0 : normalized;
+            return IndexPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(score));
         }
     }
 }

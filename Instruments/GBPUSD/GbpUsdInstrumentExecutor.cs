@@ -5,6 +5,7 @@ using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.FX;
 using cAlgo.API.Indicators;
+using GeminiV26.Core.Risk.PositionSizing;
 
 namespace GeminiV26.Instruments.GBPUSD
 {
@@ -217,33 +218,11 @@ namespace GeminiV26.Instruments.GBPUSD
 
         private long CalculateVolumeInUnits(double riskPercent, double slPriceDist, int score)
         {
-            double balance = _bot.Account.Balance;
-            double riskAmount = balance * (riskPercent / 100.0);
-            if (riskAmount <= 0)
-                return 0;
-
-            double slPips = slPriceDist / _bot.Symbol.PipSize;
-            if (slPips <= 0)
-                return 0;
-
-            double pipValuePerLot =
-                _bot.Symbol.TickValue / _bot.Symbol.TickSize * _bot.Symbol.PipSize;
-
-            double rawLots = riskAmount / (slPips * pipValuePerLot);
-            if (rawLots <= 0)
-                return 0;
-
-            double capLots = _riskSizer.GetLotCap(score);
-            double finalLots = capLots > 0 ? Math.Min(rawLots, capLots) : rawLots;
-
-            double rawUnits = finalLots * _bot.Symbol.LotSize;
-
-            long units = (long)_bot.Symbol.NormalizeVolumeInUnits(rawUnits, RoundingMode.Down);
-
-            if (units < _bot.Symbol.VolumeInUnitsMin)
-                return 0;
-
-            return units;
+            return FxPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(score));
         }
     }
 }

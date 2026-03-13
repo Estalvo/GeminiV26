@@ -4,6 +4,7 @@ using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.FX;
+using GeminiV26.Core.Risk.PositionSizing;
 
 namespace GeminiV26.Instruments.NZDUSD
 {
@@ -51,13 +52,13 @@ namespace GeminiV26.Instruments.NZDUSD
                 _bot.Print("[NZDUSD EXEC] SKIP: MarketStateDetector NULL");
                 return; // vagy continue, attól függ hol vagy
             }
-                        
+
             if (ms == null)
             {
                 _bot.Print("[NZDUSD EXEC] BLOCKED: MarketState NULL");
                 return;
             }
-            
+
             if (ms.IsLowVol)
             {
                 _bot.Print("[NZDUSD EXEC] BLOCKED: Low volatility");
@@ -226,45 +227,11 @@ namespace GeminiV26.Instruments.NZDUSD
 
         private long CalculateVolumeInUnits(double riskPercent, double slPriceDist, int score)
         {
-            double balance = _bot.Account.Balance;
-            double riskAmount = balance * (riskPercent / 100.0);
-
-            double slPips = slPriceDist / _bot.Symbol.PipSize;
-            // NZDUSD low-vol FX: 8 pip floor túl agresszív
-            const double MinSlPips_NZDUSD = 6.0;
-            if (slPips < MinSlPips_NZDUSD)
-                slPips = MinSlPips_NZDUSD;
-
-            // PipValue = USD per pip per MIN UNIT
-            double pipValuePerUnit = _bot.Symbol.PipValue;
-
-            if (pipValuePerUnit <= 0)
-            {
-                _bot.Print("[NZDUSD RISK] ERROR: PipValuePerUnit <= 0");
-                return 0;
-            }
-
-            // ✅ UNIT alapú számítás
-            double rawUnits = riskAmount / (slPips * pipValuePerUnit);
-
-            // Lot cap → UNIT cap
-            double capLots = _riskSizer.GetLotCap(score);
-            double capUnits = capLots * _bot.Symbol.LotSize;
-
-            double finalUnits = Math.Min(rawUnits, capUnits);
-
-            long normalized = (long)_bot.Symbol.NormalizeVolumeInUnits(
-                finalUnits,
-                RoundingMode.Down
-            );
-
-            _bot.Print(
-                $"[NZDUSD RISK FIX] risk={riskPercent:F2}% " +
-                $"slPips={slPips:F1} pipValUnit={pipValuePerUnit:E5} " +
-                $"rawUnits={rawUnits:F0} capUnits={capUnits:F0} finalUnits={normalized}"
-            );
-
-            return normalized < _bot.Symbol.VolumeInUnitsMin ? 0 : normalized;
+            return FxPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(score));
         }
     }
 }

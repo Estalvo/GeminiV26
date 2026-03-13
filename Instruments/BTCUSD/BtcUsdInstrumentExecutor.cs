@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.CRYPTO;
 using GeminiV26.Instruments.BTCUSD;
 
@@ -80,77 +81,14 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
 
             // =========================================================
-            // RISK-BASED VOLUME (BTC – price-value aware)
+            // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
             // =========================================================
             double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
-            double balance = _bot.Account.Balance;
-            double riskMoney = balance * (riskPercent / 100.0);
-
-            // value of 1 price unit move per 1 volume unit
-            double valuePerUnitPerPrice = 1.0;
-
-
-            if (valuePerUnitPerPrice <= 0 || double.IsNaN(valuePerUnitPerPrice))
-            {
-                _bot.Print("[BTCUSD][EXEC] abort: invalid valuePerUnitPerPrice");
-                return;
-            }
-
-            double lossPerUnit = slPriceDist * valuePerUnitPerPrice;
-            if (lossPerUnit <= 0 || double.IsNaN(lossPerUnit))
-            {
-                _bot.Print("[BTCUSD][EXEC] abort: invalid lossPerUnit");
-                return;
-            }
-                        
-            double rawUnits = riskMoney / lossPerUnit;
-
-            // =========================================================
-            // SCORE-BASED RISK MONOTONICITY GUARD (CRYPTO)
-            // =========================================================
-            double score = riskConfidence;
-
-            double scoreRiskMult =                
-                score < 45 ? 0.70 :
-                score < 55 ? 0.85 :
-                score < 65 ? 0.95 :
-                             1.00;
-
-            rawUnits *= scoreRiskMult;
-
-            // =========================================================
-            // CRYPTO SCORE SAFETY GUARD (HARD CAP)
-            // low score MUST NOT produce large size
-            // =========================================================
-            double minUnits = _bot.Symbol.VolumeInUnitsMin;
-            double maxLowScoreUnits = minUnits * 20;
-
-            if (riskConfidence < 45 &&
-                rawUnits > maxLowScoreUnits)
-            {
-                _bot.Print(
-                    $"[BTCUSD][RISK] score={riskConfidence} rawUnits capped " +
-                    $"from {rawUnits:F6} to {maxLowScoreUnits:F6}"
-                );
-
-                rawUnits = maxLowScoreUnits;
-            }
-
-            if (rawUnits < _bot.Symbol.VolumeInUnitsMin)
-            {
-                _bot.Print(
-                    $"[BTCUSD][EXEC] rawUnits too small → abort " +
-                    $"raw={rawUnits:F6} min={_bot.Symbol.VolumeInUnitsMin}"
-                );
-                return;
-            }
-
-            // ⚠️ IMPORTANT: lotCap MUST be in units
-            double lotCapUnits = _riskSizer.GetLotCap(riskConfidence);
-            double cappedUnits = Math.Min(rawUnits, lotCapUnits);
-
-            double volumeUnits =
-                _bot.Symbol.NormalizeVolumeInUnits(cappedUnits);
+            long volumeUnits = CryptoPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(riskConfidence));
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
@@ -190,7 +128,7 @@ namespace GeminiV26.Instruments.BTCUSD
             _bot.Print(
                 $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} FC={riskConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
-                $"rawUnits={rawUnits:F0} cap={lotCapUnits:F0} volUnits={volumeUnits}"
+                $"volUnits={volumeUnits}"
             );
 
             // =========================================================

@@ -4,6 +4,7 @@ using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.FX;
+using GeminiV26.Core.Risk.PositionSizing;
 
 namespace GeminiV26.Instruments.AUDUSD
 {
@@ -45,19 +46,19 @@ namespace GeminiV26.Instruments.AUDUSD
         public void ExecuteEntry(EntryEvaluation entry)
         {
             var ms = _marketStateDetector.Evaluate();
-            
+
             /*if (_marketStateDetector == null)
             {
                 _bot.Print("[EUR EXEC] SKIP: MarketStateDetector NULL");
                 return; // vagy continue, attól függ hol vagy
             }
-                        
+
             if (ms == null)
             {
                 _bot.Print("[EUR EXEC] BLOCKED: MarketState NULL");
                 return;
             }
-            
+
             if (ms.IsLowVol)
             {
                 _bot.Print("[EUR EXEC] BLOCKED: Low volatility");
@@ -206,7 +207,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
             _positionContexts[ctx.PositionId] = ctx;
             _exitManager.RegisterContext(ctx);
-            
+
             _bot.Print(
                 $"[AUDUSD EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}"
@@ -226,46 +227,11 @@ namespace GeminiV26.Instruments.AUDUSD
 
         private long CalculateVolumeInUnits(double riskPercent, double slPriceDist, int score)
         {
-            double balance = _bot.Account.Balance;
-            double riskAmount = balance * (riskPercent / 100.0);
-
-            double slPips = slPriceDist / _bot.Symbol.PipSize;
-
-            // AUDUSD low-vol FX: 8 pip floor túl agresszív
-            const double MinSlPips_AUDUSD = 6.0;
-            if (slPips < MinSlPips_AUDUSD)
-                slPips = MinSlPips_AUDUSD;
-
-            // PipValue = USD per pip per MIN UNIT
-            double pipValuePerUnit = _bot.Symbol.PipValue;
-
-            if (pipValuePerUnit <= 0)
-            {
-                _bot.Print("[EUR RISK] ERROR: PipValuePerUnit <= 0");
-                return 0;
-            }
-
-            // ✅ UNIT alapú számítás
-            double rawUnits = riskAmount / (slPips * pipValuePerUnit);
-
-            // Lot cap → UNIT cap
-            double capLots = _riskSizer.GetLotCap(score);
-            double capUnits = capLots * _bot.Symbol.LotSize;
-
-            double finalUnits = Math.Min(rawUnits, capUnits);
-
-            long normalized = (long)_bot.Symbol.NormalizeVolumeInUnits(
-                finalUnits,
-                RoundingMode.Down
-            );
-
-            _bot.Print(
-                $"[AUDUSD RISK FIX] risk={riskPercent:F2}% " +
-                $"slPips={slPips:F1} pipValUnit={pipValuePerUnit:E5} " +
-                $"rawUnits={rawUnits:F0} capUnits={capUnits:F0} finalUnits={normalized}"
-            );
-
-            return normalized < _bot.Symbol.VolumeInUnitsMin ? 0 : normalized;
+            return FxPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(score));
         }
     }
 }

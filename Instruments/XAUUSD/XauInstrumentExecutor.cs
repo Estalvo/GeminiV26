@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.METAL;
 
 namespace GeminiV26.Instruments.XAUUSD
@@ -79,7 +80,7 @@ namespace GeminiV26.Instruments.XAUUSD
             }
 
             var ms = _marketStateDetector.Evaluate();
-            
+
             // =========================
             // MARKET STATE – SOFT (XAU)
             // =========================
@@ -195,17 +196,19 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.Tp2Ratio = tp2Ratio;
 
             // =====================================================
-            // 6️⃣ VOLUME POLICY – RISK SIZER (XAU)
+            // 6️⃣ VOLUME POLICY – METAL POSITION SIZER (XAU)
             // =====================================================
-            long volumeUnits = _riskSizer.CalculateVolumeInUnits(
+            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
+            long volumeUnits = MetalPositionSizer.Calculate(
                 _bot,
-                riskConfidence,
-                slPriceDist
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(riskConfidence)
             );
 
             if (volumeUnits <= 0)
             {
-                _bot.Print("[XAU EXEC] Volume invalid after RiskSizer → abort");
+                _bot.Print("[XAU EXEC] Volume invalid after MetalPositionSizer → abort");
                 return;
             }
             // 🔎 DEBUG (EXECUTOR SZINT)
@@ -277,7 +280,7 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.Tp2Price = result.Position.TakeProfit.HasValue
                 ? Convert.ToDouble(result.Position.TakeProfit.Value)
                 : Convert.ToDouble(tp2Price);
-            
+
             // =====================================================
             // 10 REGISTER CONTEXT
             // =====================================================
