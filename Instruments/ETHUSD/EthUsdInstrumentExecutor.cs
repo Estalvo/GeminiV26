@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.CRYPTO;
 using GeminiV26.Instruments.ETHUSD;
 
@@ -80,46 +81,14 @@ namespace GeminiV26.Instruments.ETHUSD
                 return;
 
             // =========================================================
-            // RISK-BASED VOLUME (ETH – price-value aware)
+            // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
             // =========================================================
             double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
-            double balance = _bot.Account.Balance;
-            double riskMoney = balance * (riskPercent / 100.0);
-
-            // value of 1 price unit move per 1 volume unit
-            double valuePerUnitPerPrice = 1.0;
-
-
-            if (valuePerUnitPerPrice <= 0 || double.IsNaN(valuePerUnitPerPrice))
-            {
-                _bot.Print("[ETHUSD][EXEC] abort: invalid valuePerUnitPerPrice");
-                return;
-            }
-
-            double lossPerUnit = slPriceDist * valuePerUnitPerPrice;
-            if (lossPerUnit <= 0 || double.IsNaN(lossPerUnit))
-            {
-                _bot.Print("[ETHUSD][EXEC] abort: invalid lossPerUnit");
-                return;
-            }
-
-            double rawUnits = riskMoney / lossPerUnit;
-
-            if (rawUnits < _bot.Symbol.VolumeInUnitsMin)
-            {
-                _bot.Print(
-                    $"[ETHUSD][EXEC] rawUnits too small → abort " +
-                    $"raw={rawUnits:F6} min={_bot.Symbol.VolumeInUnitsMin}"
-                );
-                return;
-            }
-
-            // ⚠️ IMPORTANT: lotCap MUST be in units
-            double lotCapUnits = _riskSizer.GetLotCap(riskConfidence);
-            double cappedUnits = Math.Min(rawUnits, lotCapUnits);
-
-            double volumeUnits =
-                _bot.Symbol.NormalizeVolumeInUnits(cappedUnits);
+            long volumeUnits = CryptoPositionSizer.Calculate(
+                _bot,
+                riskPercent,
+                slPriceDist,
+                _riskSizer.GetLotCap(riskConfidence));
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
@@ -159,7 +128,7 @@ namespace GeminiV26.Instruments.ETHUSD
             _bot.Print(
                 $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} FC={riskConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
-                $"rawUnits={rawUnits:F0} cap={lotCapUnits:F0} volUnits={volumeUnits}"
+                $"volUnits={volumeUnits}"
             );
 
             // =========================================================
@@ -210,7 +179,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
                 BeMode = BeMode.AfterTp1,
                 Tp2Price = tp2Price,
-                
+
                 MarketTrend = entry.Direction != TradeDirection.None
             };
 
