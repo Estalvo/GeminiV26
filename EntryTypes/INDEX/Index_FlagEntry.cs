@@ -413,6 +413,18 @@ namespace GeminiV26.EntryTypes.INDEX
 
             score = (int)Math.Round(score * scoreMultiplier);
 
+            bool missingImpulse =
+                string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
+
+            if (missingImpulse)
+            {
+                score = Math.Max(0, score - 6);
+
+                ctx.Log?.Invoke(
+                    "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
+                    $"symbol={ctx.Symbol} entry={Type} penalty=6 score={score}");
+            }
+
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][FINAL] dir={dir} score={score} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +
                 $"emaDistATR={distFromEmaAtr:F2} fatigue={fatigueCount}/{fatigueThreshold}"

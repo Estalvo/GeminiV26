@@ -836,6 +836,18 @@ namespace GeminiV26.EntryTypes.FX
             if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < tuning.MinScore + 2)
                 ApplyPenalty(3);
 
+            bool missingImpulse =
+                string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
+
+            if (missingImpulse)
+            {
+                score = Math.Max(0, score - 6);
+
+                ctx.Log?.Invoke(
+                    "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
+                    $"symbol={ctx.Symbol} entry={EntryType.FX_Flag} penalty=6 score={score}");
+            }
+
             // FINAL MIN SCORE
             int min = tuning.MinScore;
 
