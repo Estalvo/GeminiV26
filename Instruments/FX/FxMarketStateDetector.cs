@@ -19,6 +19,8 @@ namespace GeminiV26.Instruments.FX
 
         private readonly AverageTrueRange _atr;
         private readonly DirectionalMovementSystem _adx;
+        private readonly ExponentialMovingAverage _ema8;
+        private readonly ExponentialMovingAverage _ema21;
 
         private readonly FxInstrumentProfile _profile;
 
@@ -41,6 +43,9 @@ namespace GeminiV26.Instruments.FX
             _adx = bot.Indicators.DirectionalMovementSystem(
                 _bars,
                 ADX_PERIOD);
+
+            _ema8 = bot.Indicators.ExponentialMovingAverage(_bars.ClosePrices, 8);
+            _ema21 = bot.Indicators.ExponentialMovingAverage(_bars.ClosePrices, 21);
 
             string raw = symbol ?? string.Empty;
             string key = NormalizeFxSymbol(raw);
@@ -81,23 +86,27 @@ namespace GeminiV26.Instruments.FX
             double atrRaw = _atr.Result[i];
             double atrPips = atrRaw / _bot.Symbol.PipSize;
             double adx = _adx.ADX[i];
+            double emaDist = Math.Abs(_ema8.Result[i] - _ema21.Result[i]);
+            double emaDistAtr = atrRaw > 0 ? emaDist / atrRaw : 0;
 
             // === PROFIL VEZÉRELT ÉRTELMEZÉS ===
             bool isLowVol = atrPips < _profile.MinAtrPips;
             bool isTrend = adx >= _profile.MinAdxTrend;
+            bool isCompression = emaDistAtr < 0.4;
 
             // === DEBUG (szándékosan marad) ===
             _bot.Print(
                 $"[FX MSD] {_bot.SymbolName} | " +
                 $"atrPips={atrPips:F2} adx={adx:F1} | " +
-                $"lowVol={isLowVol} trend={isTrend}");
+                $"lowVol={isLowVol} trend={isTrend} compression={isCompression}");
 
             return new FxMarketState
             {
                 AtrPips = atrPips,
                 Adx = adx,
                 IsLowVol = isLowVol,
-                IsTrend = isTrend
+                IsTrend = isTrend,
+                IsCompression = isCompression
             };
         }
     }

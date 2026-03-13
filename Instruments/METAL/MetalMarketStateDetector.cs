@@ -62,25 +62,33 @@ namespace GeminiV26.Instruments.METAL
 
             double adx = _adx.ADX[i];
             double emaDist = System.Math.Abs(_ema8.Result[i] - _ema21.Result[i]);
+            double high = _bars.HighPrices[i];
+            double low = _bars.LowPrices[i];
+            double body = System.Math.Abs(_bars.ClosePrices[i] - _bars.OpenPrices[i]);
+
+            double upperWick = high - System.Math.Max(_bars.ClosePrices[i], _bars.OpenPrices[i]);
+            double lowerWick = System.Math.Min(_bars.ClosePrices[i], _bars.OpenPrices[i]) - low;
             double emaDistATR = atrRaw > 0 ? emaDist / atrRaw : 0;
 
             bool lowVol = atrPips < _minAtrPips;
             bool trend = adx > 30;
             bool compression = emaDistATR < 0.5;
             bool hardRange = compression && adx < 25;
+            bool isSpike = upperWick > body * 2 || lowerWick > body * 2;
 
             if (adx > 40)
                 hardRange = false;
 
             _bot.Print(
-                "[XAU MSD] atrPips={0:F1} adx={1:F1} emaDistATR={2:F2} lowVol={3} trend={4} compression={5} hardRange={6}",
+                "[XAU MSD] atrPips={0:F1} adx={1:F1} emaDistATR={2:F2} lowVol={3} trend={4} compression={5} hardRange={6} spike={7}",
                 atrPips,
                 adx,
                 emaDistATR,
                 lowVol,
                 trend,
                 compression,
-                hardRange);
+                hardRange,
+                isSpike);
 
             return new MetalMarketState
             {
@@ -91,7 +99,8 @@ namespace GeminiV26.Instruments.METAL
                 IsCompression = compression,
                 IsHardRange = hardRange,
                 IsRange = lowVol && !trend,
-                EmaDistanceAtr = emaDistATR
+                EmaDistanceAtr = emaDistATR,
+                IsSpike = isSpike
             };
         }
     }

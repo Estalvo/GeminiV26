@@ -18,5 +18,6 @@ namespace GeminiV26.Instruments.CRYPTO
 
         public bool IsLowVol { get; init; }
         public bool IsTrend { get; init; }
+        public bool IsExpansion { get; init; }
     }
 }

@@ -17,6 +17,7 @@ namespace GeminiV26.Instruments.METAL
         public bool IsCompression { get; set; }
         public bool IsHardRange { get; set; }
         public bool IsRange { get; set; }
+        public bool IsSpike { get; set; }
 
         public double EmaDistanceAtr { get; set; }
 
