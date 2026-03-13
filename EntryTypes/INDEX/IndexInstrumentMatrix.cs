@@ -54,7 +54,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = false,
-                    MaxPullbackPercentOfImpulse = 0.60,
+                    MaxPullbackPercentOfImpulse = 0.50,
 
                     // =========================
                     // SCORE CHARACTER
@@ -130,7 +130,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = true,
-                    MaxPullbackPercentOfImpulse = 0.55,
+                    MaxPullbackPercentOfImpulse = 0.50,
 
                     // =========================
                     // SCORE CHARACTER
@@ -206,7 +206,7 @@ namespace GeminiV26.Instruments.INDEX
                     // HYBRID PULLBACK CONTROL
                     // =========================
                     UseHybridPullbackDepth = false,
-                    MaxPullbackPercentOfImpulse = 0.65,
+                    MaxPullbackPercentOfImpulse = 0.55,
 
                     // =========================
                     // SCORE CHARACTER
