@@ -33,7 +33,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     FlagBars = 3,
                     MaxFlagAtrMult = 3.0,
-                    BreakoutBufferAtr = 0.08,
+                    BreakoutBufferAtr = 0.12,
                     MaxEmaDistanceAtr = 0.75,
 
                     // =========================
@@ -79,7 +79,7 @@ namespace GeminiV26.Instruments.INDEX
                     // TRADE VIABILITY
                     // =========================
                     MaxAdverseRBeforeTP1 = 0.40,
-                    MaxBarsWithoutProgress_M5 = 4,
+                    MaxBarsWithoutProgress_M5 = 3,
                     AllowEarlyExit = true,
 
                     AllowAsianSession = true
@@ -109,7 +109,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     FlagBars = 4,
                     MaxFlagAtrMult = 3.0,
-                    BreakoutBufferAtr = 0.08,
+                    BreakoutBufferAtr = 0.14,
                     MaxEmaDistanceAtr = 1.00,
 
                     // =========================
@@ -155,7 +155,7 @@ namespace GeminiV26.Instruments.INDEX
                     // TRADE VIABILITY
                     // =========================
                     MaxAdverseRBeforeTP1 = 0.45,
-                    MaxBarsWithoutProgress_M5 = 3,
+                    MaxBarsWithoutProgress_M5 = 2,
                     AllowEarlyExit = true,
 
                     AllowAsianSession = false
@@ -185,7 +185,7 @@ namespace GeminiV26.Instruments.INDEX
                     // =========================
                     FlagBars = 3,
                     MaxFlagAtrMult = 3.0,
-                    BreakoutBufferAtr = 0.07,
+                    BreakoutBufferAtr = 0.10,
                     MaxEmaDistanceAtr = 0.70,
 
                     // =========================
@@ -231,7 +231,7 @@ namespace GeminiV26.Instruments.INDEX
                     // TRADE VIABILITY
                     // =========================
                     MaxAdverseRBeforeTP1 = 0.30,
-                    MaxBarsWithoutProgress_M5 = 3,
+                    MaxBarsWithoutProgress_M5 = 2,
                     AllowEarlyExit = true,
 
                     AllowAsianSession = false
