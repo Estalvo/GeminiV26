@@ -119,6 +119,20 @@ namespace GeminiV26.EntryTypes.METAL
             var sellEval = EvaluateSide(TradeDirection.Short, ctx, session, tag, tuning, profile, hi, lo, rangeAtr, lastBar, last, baseReasons);
             ctx.Log?.Invoke($"[XAU_FLAG][SIDE_CHECK] buyValid={buyEval.IsValid} sellValid={sellEval.IsValid}");
 
+            if (!buyEval.IsValid && !sellEval.IsValid)
+            {
+                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyEval.IsValid} sellValid={sellEval.IsValid}");
+
+                return InvalidDecisionNone(
+                    ctx, session, tag,
+                    tuning.BaseScore, tuning.MinScore,
+                    "FLAG_DIRECTION_INVALID",
+                    baseReasons,
+                    buyEval,
+                    sellEval
+                );
+            }
+
             // ===== decision =====
             if (buyEval.IsValid && !sellEval.IsValid) return buyEval;
             if (!buyEval.IsValid && sellEval.IsValid) return sellEval;
@@ -145,7 +159,7 @@ namespace GeminiV26.EntryTypes.METAL
             var bias = ResolveHtfBias(ctx);
             ctx.Log?.Invoke($"[XAU_FLAG][FALLBACK_CHECK] score={fallbackScore} min={minScore} bias={bias}");
 
-            if (!buyEval.IsValid && !sellEval.IsValid && fallbackScore >= minScore)
+            if (fallbackScore >= minScore)
             {
                 if (bias == TradeDirection.Short || bias == TradeDirection.Long)
                 {

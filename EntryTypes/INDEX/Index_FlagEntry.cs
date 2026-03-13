@@ -102,13 +102,20 @@ namespace GeminiV26.EntryTypes.INDEX
             longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
             shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
 
-            if (longEval.IsValid && shortEval.IsValid)
+            bool buyValid = longEval.IsValid;
+            bool sellValid = shortEval.IsValid;
+
+            if (!buyValid && !sellValid)
+            {
+                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
+                return Reject(ctx, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score), TradeDirection.None);
+            }
+
+            if (buyValid && sellValid)
                 return longEval.Score >= shortEval.Score ? longEval : shortEval;
 
-            if (longEval.IsValid) return longEval;
-            if (shortEval.IsValid) return shortEval;
-
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            if (buyValid) return longEval;
+            return shortEval;
         }
 
         private EntryEvaluation EvaluateDir(

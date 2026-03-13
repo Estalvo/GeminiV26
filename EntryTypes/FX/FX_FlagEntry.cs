@@ -47,15 +47,21 @@ namespace GeminiV26.EntryTypes.FX
             ApplyScoreModifier(longEval, matrix);
             ApplyScoreModifier(shortEval, matrix);
 
+            bool buyValid = longEval.IsValid;
+            bool sellValid = shortEval.IsValid;
+
+            if (!buyValid && !sellValid)
+            {
+                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
+                return Invalid(ctx, TradeDirection.None, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score));
+            }
+
             // Prefer VALID; if both valid -> higher score wins
-            if (longEval.IsValid && shortEval.IsValid)
+            if (buyValid && sellValid)
                 return (longEval.Score >= shortEval.Score) ? longEval : shortEval;
 
-            if (longEval.IsValid) return longEval;
-            if (shortEval.IsValid) return shortEval;
-
-            // If none valid -> return the "better" one (higher score), so TR logs show the closest candidate
-            return (longEval.Score >= shortEval.Score) ? longEval : shortEval;
+            if (buyValid) return longEval;
+            return shortEval;
         }
 
         // =====================================================
