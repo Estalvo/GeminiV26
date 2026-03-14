@@ -1,34 +1,27 @@
-﻿using cAlgo.API;
-using cAlgo.API.Indicators;
-using GeminiV26.Core;
-using GeminiV26.Core.TradeManagement;
-using GeminiV26.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using cAlgo.API;
+using GeminiV26.Core;
+using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.GBPUSD
 {
     public class GbpUsdExitManager
     {
         private readonly Robot _bot;
-
-        private readonly Dictionary<long, PositionContext> _contexts = new();
         private readonly TradeViabilityMonitor _tvm;
         private readonly TrendTradeManager _trendTradeManager;
         private readonly AdaptiveTrailingEngine _adaptiveTrailingEngine;
         private readonly StructureTracker _structureTracker;
 
-        private const double BeOffsetR = 0.10;
+        private readonly Dictionary<long, PositionContext> _contexts = new();
 
-        private const double AtrMultTight = 0.8;
-        private const double AtrMultNormal = 1.4;
-        private const double AtrMultLoose = 2.0;
+        private const double BeOffsetR = 0.10;
 
         public GbpUsdExitManager(Robot bot)
         {
             _bot = bot;
-            _tvm = new TradeViabilityMonitor(bot);
+            _tvm = new TradeViabilityMonitor(_bot);
             _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
             _adaptiveTrailingEngine = new AdaptiveTrailingEngine(_bot);
             _structureTracker = new StructureTracker(_bot, _bot.Bars);
@@ -36,51 +29,47 @@ namespace GeminiV26.Instruments.GBPUSD
 
         public void RegisterContext(PositionContext ctx)
         {
-            _contexts[ctx.PositionId] = ctx;
+            _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
-        // =====================================================
-        // BAR-LEVEL EXIT (Trade Viability Monitor)
-        // =====================================================
-        public void OnBar(Position pos)
+        public void OnBar(Position position)
         {
-            if (!_contexts.TryGetValue(pos.Id, out var ctx))
+            if (position == null)
                 return;
 
-            if (ctx.Tp1Hit)
+            long key = Convert.ToInt64(position.Id);
+
+            if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
                 return;
 
-            if (!pos.StopLoss.HasValue)
-                return;
-
-            var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
-
-            if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
-            {
-                _bot.Print(
-                    $"[GBPUSD TVM EXIT] pos={pos.Id} " +
-                    $"reason={ctx.DeadTradeReason} " +
-                    $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
-                );
-
-                _bot.ClosePosition(pos);
-                ctx.ExitReason = ExitReason.EarlyExit;
-            }
+            ctx.BarsSinceEntryM5++;
         }
 
-        // =====================================================
-        // TICK EXIT
-        // =====================================================
         public void OnTick()
         {
-            foreach (var ctx in _contexts.Values)
+            var keys = new List<long>(_contexts.Keys);
+
+            foreach (var key in keys)
             {
-                var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
+                if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                    continue;
+
+                Position pos = null;
+                foreach (var p in _bot.Positions)
+                {
+                    if (Convert.ToInt64(p.Id) == key)
+                    {
+                        pos = p;
+                        break;
+                    }
+                }
+
                 if (pos == null || !pos.StopLoss.HasValue)
                     continue;
 
                 var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                if (sym == null)
+                    continue;
 
                 double rDist = ctx.RiskPriceDistance;
                 if (rDist <= 0)
@@ -88,33 +77,65 @@ namespace GeminiV26.Instruments.GBPUSD
 
                 if (!ctx.Tp1Hit)
                 {
-                    double tp1Trigger =
-                        pos.TradeType == TradeType.Buy
-                            ? pos.EntryPrice + rDist * ctx.Tp1R
-                            : pos.EntryPrice - rDist * ctx.Tp1R;
+                    if (ctx.Tp1R <= 0)
+                        ctx.Tp1R = 0.5;
 
-                    if (CheckTp1Hit(pos, rDist, ctx.Tp1R))
+                    double tp1Price =
+                        ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
+                            ? ctx.Tp1Price.Value
+                            : ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
+
+                    if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
+                        ctx.Tp1Price = tp1Price;
+
+                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
+
+                    bool reached;
+                    if (m1 != null && m1.Count > 0)
                     {
-                        if (!ExecuteTp1(pos, ctx))
+                        var m1Bar = m1.LastBar;
+                        reached = pos.TradeType == TradeType.Buy
+                            ? m1Bar.High >= tp1Price
+                            : m1Bar.Low <= tp1Price;
+                    }
+                    else
+                    {
+                        reached =
+                            (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
+                            (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
+                    }
+
+                    if (reached)
+                    {
+                        _bot.Print($"[GBPUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
+                        ExecuteTp1(pos, ctx, rDist);
+                        return;
+                    }
+
+                    const int MinBarsBeforeTvm = 4;
+                    ctx.BarsSinceEntryM5 = (int)Math.Max(
+                        1,
+                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+                    );
+
+                    if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
+                    {
+                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+
+                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
-                            _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
-                            continue;
+                            _bot.Print($"[GBPUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}");
+                            _bot.ClosePosition(pos);
+                            _contexts.Remove(key);
+                            return;
                         }
-
-                        ctx.Tp1Hit = true;
-                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} tp1={ctx.Tp1Price}");
-                        ApplyBreakEven(pos, ctx);
-                        ctx.TrailingMode = ctx.FinalConfidence >= 80
-                            ? TrailingMode.Loose
-                            : TrailingMode.Tight;
-
-                        continue;
                     }
 
                     continue;
                 }
 
-                                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
+                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
                 var structure = _structureTracker.GetSnapshot();
                 var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
 
@@ -123,166 +144,78 @@ namespace GeminiV26.Instruments.GBPUSD
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
 
                 TryExtendTp2(pos, ctx, decision);
-                _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} sl={pos.StopLoss} tp={pos.TakeProfit}");
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
             }
         }
 
-        // =====================================================
-        // TP1 CHECK
-        // =====================================================
-        private bool CheckTp1Hit(Position pos, double rDist, double tp1R)
+        public void Manage(Position pos)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            if (sym == null || tp1R <= 0)
-                return false;
-
-            _contexts.TryGetValue(pos.Id, out var ctx);
-            double tp1Price = ctx != null && ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
-                ? ctx.Tp1Price.Value
-                : (pos.TradeType == TradeType.Buy
-                    ? pos.EntryPrice + rDist * tp1R
-                    : pos.EntryPrice - rDist * tp1R);
-
-            if (ctx != null && (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0))
-                ctx.Tp1Price = tp1Price;
-
-            return pos.TradeType == TradeType.Buy
-                ? sym.Bid >= tp1Price
-                : sym.Ask <= tp1Price;
+            _bot.Print($"[GBPUSD][INFO] Manage() called, exit handled in OnTick()");
         }
 
-        // =====================================================
-        // TP1 EXECUTION
-        // =====================================================
-        private bool ExecuteTp1(Position pos, PositionContext ctx)
+        private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (sym == null)
-                return false;
-
-            double fraction = ctx.Tp1CloseFraction > 0 && ctx.Tp1CloseFraction < 1
-                ? ctx.Tp1CloseFraction
-                : 0.5;
-
-            double rawUnitsD = pos.VolumeInUnits * fraction;
-            long flooredUnits = (long)Math.Floor(rawUnitsD);
-            long normalizedUnits = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
-            long minUnits = (long)sym.VolumeInUnitsMin;
-
-            if (normalizedUnits < minUnits)
-                return false;
-
-            if (normalizedUnits >= pos.VolumeInUnits)
-                normalizedUnits = (long)sym.NormalizeVolumeInUnits((long)Math.Floor(pos.VolumeInUnits - minUnits), RoundingMode.Down);
-
-            if (normalizedUnits < minUnits)
-                return false;
-
-            var result = _bot.ClosePosition(pos, normalizedUnits);
-            if (!result.IsSuccessful)
-                return false;
-
-            ctx.Tp1ClosedVolumeInUnits = normalizedUnits;
-            ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - normalizedUnits);
-            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} closedUnits={normalizedUnits} remainingUnits={ctx.RemainingVolumeInUnits}");
-            return true;
-        }
-
-        // =====================================================
-        // BREAK EVEN
-        // =====================================================
-        private void ApplyBreakEven(Position pos, PositionContext ctx)
-        {
-            if (ctx.BePrice > 0)
                 return;
 
-            double bePrice = pos.TradeType == TradeType.Buy
-                ? pos.EntryPrice + ctx.RiskPriceDistance * BeOffsetR
-                : pos.EntryPrice - ctx.RiskPriceDistance * BeOffsetR;
+            double frac = ctx.Tp1CloseFraction;
+            if (frac <= 0 || frac >= 1)
+                frac = 0.5;
 
-            _bot.ModifyPosition(pos, Normalize(bePrice, pos.SymbolName), pos.TakeProfit);
+            long closeUnits = (long)sym.NormalizeVolumeInUnits(
+                (long)Math.Floor(pos.VolumeInUnits * frac),
+                RoundingMode.Down
+            );
+
+            long minUnits = (long)sym.VolumeInUnitsMin;
+            if (closeUnits < minUnits)
+                return;
+
+            if (closeUnits >= pos.VolumeInUnits)
+                closeUnits = (long)sym.NormalizeVolumeInUnits(
+                    (long)Math.Floor(pos.VolumeInUnits - minUnits),
+                    RoundingMode.Down
+                );
+
+            if (closeUnits < minUnits)
+                return;
+
+            var closeResult = _bot.ClosePosition(pos, closeUnits);
+            if (!closeResult.IsSuccessful)
+                return;
+
+            ctx.Tp1ClosedVolumeInUnits = closeUnits;
+            ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
+            ctx.Tp1Hit = true;
+
+            double bePrice = ctx.EntryPrice + Direction(pos) * rDist * BeOffsetR;
+            if (pos.StopLoss.HasValue)
+            {
+                bePrice = pos.TradeType == TradeType.Buy
+                    ? Math.Max(bePrice, pos.StopLoss.Value)
+                    : Math.Min(bePrice, pos.StopLoss.Value);
+            }
+
+            _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
 
             ctx.BePrice = bePrice;
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} be={bePrice}");
+            ctx.BeMode = BeMode.AfterTp1;
+
+            if (ctx.TrailingMode == TrailingMode.None)
+                ctx.TrailingMode = TrailingMode.Normal;
         }
 
-        // =====================================================
-        // TRAILING
-        // =====================================================
-        private void ApplyTrailing(Position pos, PositionContext ctx)
-        {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            var atr = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Exponential);
-
-            double atrVal = atr.Result.LastValue;
-            if (atrVal <= 0)
-                return;
-
-            double mult = ctx.TrailingMode switch
-            {
-                TrailingMode.Tight => AtrMultTight,
-                TrailingMode.Normal => AtrMultNormal,
-                TrailingMode.Loose => AtrMultLoose,
-                _ => AtrMultNormal
-            };
-
-            double desiredSl = pos.TradeType == TradeType.Buy
-                ? sym.Bid - atrVal * mult
-                : sym.Ask + atrVal * mult;
-
-            desiredSl = Normalize(desiredSl, pos.SymbolName);
-
-            if (pos.TradeType == TradeType.Buy && desiredSl <= pos.StopLoss.Value)
-                return;
-            if (pos.TradeType == TradeType.Sell && desiredSl >= pos.StopLoss.Value)
-                return;
-
-            _bot.ModifyPosition(pos, desiredSl, pos.TakeProfit);
-        }
-
-        private double Normalize(double price, string symbol)
-        {
-            var s = _bot.Symbols.GetSymbol(symbol);
-            return Math.Round(Math.Round(price / s.TickSize) * s.TickSize, s.Digits);
-        }
-
-        private double GetCurrentR(Position pos, PositionContext ctx)
-        {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-
-            double move = pos.TradeType == TradeType.Buy
-                ? sym.Bid - ctx.EntryPrice
-                : ctx.EntryPrice - sym.Ask;
-
-            return move / ctx.RiskPriceDistance;
-        }
-
-        private int BarsSinceEntry(PositionContext ctx)
-        {
-            int idx = _bot.Bars.OpenTimes.GetIndexByTime(ctx.EntryTime);
-            return idx < 0 ? 0 : _bot.Bars.Count - idx;
-        }
+        private static int Direction(Position pos)
+            => pos.TradeType == TradeType.Buy ? 1 : -1;
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
-            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
-            {
-                if (!decision.AllowTp2Extension)
-                    _bot.Print("[TTM] TP2 extension skipped=notAllowed");
+            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue)
                 return;
-            }
 
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
-            double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;
-
-            if (desiredR <= currentR + 0.0001)
-            {
-                _bot.Print("[TTM] TP2 extension skipped=no progression");
-                return;
-            }
 
             double newTp = pos.TradeType == TradeType.Buy
                 ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
@@ -290,24 +223,13 @@ namespace GeminiV26.Instruments.GBPUSD
 
             double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
             bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
-            if (!outward)
-            {
-                _bot.Print("[TTM] TP2 extension skipped=not outward");
-                return;
-            }
 
-            if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
-            {
-                _bot.Print("[TTM] TP2 extension skipped=same target");
+            if (!outward)
                 return;
-            }
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
-            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? _bot.Symbols.GetSymbol(pos.SymbolName)?.Bid : _bot.Symbols.GetSymbol(pos.SymbolName)?.Ask)} oldTp={currentTp} newTp={newTp}");
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
-            _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
         }
-
     }
 }
