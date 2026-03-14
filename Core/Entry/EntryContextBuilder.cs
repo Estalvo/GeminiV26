@@ -163,11 +163,17 @@ namespace GeminiV26.Core.Entry
                 double slopeM5 = ctx.Ema21Slope_M5 / ctx.AtrM5;
                 double slopeM15 = ctx.Ema21Slope_M15 / ctx.AtrM15;
 
-                const double SlopeDeadzone = 0.05;
+                // instrument-aware deadzone
+                double slopeDeadzone =
+                    isCrypto ? 0.02 :
+                    isFx     ? 0.035 :
+                    isIndex  ? 0.035 :
+                    isMetal  ? 0.04 :
+                            0.05;
 
-                if (slopeM15 > SlopeDeadzone && slopeM5 > SlopeDeadzone)
+                if (slopeM15 > slopeDeadzone && slopeM5 > slopeDeadzone)
                     ctx.TrendDirection = TradeDirection.Long;
-                else if (slopeM15 < -SlopeDeadzone && slopeM5 < -SlopeDeadzone)
+                else if (slopeM15 < -slopeDeadzone && slopeM5 < -slopeDeadzone)
                     ctx.TrendDirection = TradeDirection.Short;
             }
 
@@ -519,10 +525,10 @@ namespace GeminiV26.Core.Entry
             // instrument-aware compression
             double compressionMult =
                 isCrypto ? 0.35 :
-                isMetal ? 0.50 :
-                isMetal ? 0.40 :
-                isIndex ? 0.45 :
-                        0.50;
+                isMetal  ? 0.50 :
+                isFx     ? 0.40 :
+                isIndex  ? 0.45 :
+                           0.50;
 
             bool isCompressed =
                 ctx.AtrM5 > 0 &&
