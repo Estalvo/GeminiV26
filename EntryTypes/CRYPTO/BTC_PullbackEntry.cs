@@ -612,7 +612,7 @@ namespace GeminiV26.EntryTypes.Crypto
             bool isPullbackSetup = Type == EntryType.Crypto_Pullback;
 
             // 1) Minimum confidence (only for pullback)
-            if (isPullbackSetup && score < 45)
+            if (isPullbackSetup && score < MIN_SCORE)
             {
                 Console.WriteLine($"[BTC FILTER] rejected: pullback low confidence {score}");
                 ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback low confidence {score}");
