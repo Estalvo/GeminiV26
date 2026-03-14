@@ -200,7 +200,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (missingImpulse)
             {
-                score = Math.Max(0, score - 6);
+                score = score; //Math.Max(0, score - 6); csak 7végére 0!
 
                 ctx.Log?.Invoke(
                     "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
