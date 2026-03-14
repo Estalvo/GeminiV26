@@ -1,4 +1,6 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.Exposure;
+using GeminiV26.Core.Risk.RiskProfiles;
 using GeminiV26.Risk;
 
 namespace GeminiV26.Instruments.NAS100
@@ -26,12 +28,9 @@ namespace GeminiV26.Instruments.NAS100
         // RISK % – score alapján
         // Cél: 1 jó trade = napi 100–200 USD
         // =====================================================
-        public double GetRiskPercent(int score)
+        public double GetRiskPercent(int finalConfidence)
         {
-            // Indexeken óvatosabb, mint XAU
-            if (score >= 85) return 0.60;   // top quality
-            if (score >= 75) return 0.45;   // jó setup
-            return 0.35;                    // baseline
+            return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
         // =====================================================
@@ -84,21 +83,13 @@ namespace GeminiV26.Instruments.NAS100
         // =====================================================
         // LOT CAP – HARD LIMIT
         // =====================================================
-        public double GetLotCap(int score)
+        public double GetLotCap(int finalConfidence)
         {
-            double n = (score - 55) / 35.0;
-            if (n < 0.0) n = 0.0;
-            if (n > 1.0) n = 1.0;
-
-            double baseCap = 2.0 + n * 1.0;
-
-            if (score >= 80)
-                baseCap += 0.5;
-
-            if (score >= 85)
-                baseCap += 0.5;
-
-            return baseCap;
+            double riskPercent = RiskProfileEngine.GetRiskPercent(finalConfidence);
+            return LotCapEngine.CalculateLotCap(
+                LotCapEngine.ReferenceBalance,
+                LotCapEngine.ReferenceSlDistance,
+                riskPercent);
         }
     }
 }

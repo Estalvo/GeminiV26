@@ -1,4 +1,6 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.Exposure;
+using GeminiV26.Core.Risk.RiskProfiles;
 using GeminiV26.Risk;
 using System;
 
@@ -22,15 +24,9 @@ namespace GeminiV26.Instruments.GBPUSD
         //private const double SlWide = 1.95;
         //private const double SlTight = 1.45;
 
-        public double GetRiskPercent(int score)
+        public double GetRiskPercent(int finalConfidence)
         {
-            double n = NormalizeScore(score);
-
-            if (n < 0.15) return 0.0;          // régi <60
-            if (n < 0.40) return RiskLow;      // ~65–70
-            if (n < 0.65) return RiskMed;      // ~75
-            if (n < 0.85) return RiskHigh;     // ~82–85
-            return RiskMax;                    // top setup
+            return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
         public double GetStopLossAtrMultiplier(int score, EntryType _ /* FX ignores entry type */)
@@ -73,21 +69,13 @@ namespace GeminiV26.Instruments.GBPUSD
             tp2Ratio = 1.0 - tp1Ratio;
         }
 
-        public double GetLotCap(int score)
+        public double GetLotCap(int finalConfidence)
         {
-            double n = (score - 55) / 35.0;
-            if (n < 0.0) n = 0.0;
-            if (n > 1.0) n = 1.0;
-
-            double baseCap = 2.0 + n * 1.0;
-
-            if (score >= 80)
-                baseCap += 0.5;
-
-            if (score >= 85)
-                baseCap += 0.5;
-
-            return baseCap;
+            double riskPercent = RiskProfileEngine.GetRiskPercent(finalConfidence);
+            return LotCapEngine.CalculateLotCap(
+                LotCapEngine.ReferenceBalance,
+                LotCapEngine.ReferenceSlDistance,
+                riskPercent);
         }
 
         private static double NormalizeScore(int score)

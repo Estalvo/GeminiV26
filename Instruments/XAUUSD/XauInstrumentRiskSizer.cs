@@ -24,6 +24,8 @@
 
 using cAlgo.API;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.Exposure;
+using GeminiV26.Core.Risk.RiskProfiles;
 using GeminiV26.Risk;
 using System;
 
@@ -36,9 +38,7 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         public double GetRiskPercent(int finalConfidence)
         {
-            if (finalConfidence >= 85) return 0.40;
-            if (finalConfidence >= 75) return 0.30;
-            return 0.18;
+            return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
         // =========================================================
@@ -95,19 +95,11 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         public double GetLotCap(int finalConfidence)
         {
-            double n = (finalConfidence - 55) / 35.0;
-            if (n < 0.0) n = 0.0;
-            if (n > 1.0) n = 1.0;
-
-            double baseCap = 2.0 + n * 1.0;
-
-            if (finalConfidence >= 80)
-                baseCap += 0.5;
-
-            if (finalConfidence >= 85)
-                baseCap += 0.5;
-
-            return baseCap;
+            double riskPercent = RiskProfileEngine.GetRiskPercent(finalConfidence);
+            return LotCapEngine.CalculateLotCap(
+                LotCapEngine.ReferenceBalance,
+                LotCapEngine.ReferenceSlDistance,
+                riskPercent);
         }
 
         // =========================================================

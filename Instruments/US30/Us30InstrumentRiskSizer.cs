@@ -1,4 +1,6 @@
 ﻿using GeminiV26.Core.Entry;
+using GeminiV26.Core.Risk.Exposure;
+using GeminiV26.Core.Risk.RiskProfiles;
 using GeminiV26.Risk;
 
 namespace GeminiV26.Instruments.US30
@@ -31,13 +33,9 @@ namespace GeminiV26.Instruments.US30
         // =========================
         // RISK %
         // =========================
-        public double GetRiskPercent(int score)
+        public double GetRiskPercent(int finalConfidence)
         {
-            if (score < 60) return 0.0;
-            if (score < 70) return RiskLow;
-            if (score < 80) return RiskMed;
-            if (score < 90) return RiskHigh;
-            return RiskMax;
+            return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
         // =========================
@@ -123,21 +121,13 @@ namespace GeminiV26.Instruments.US30
         // =========================
         // LOT CAP
         // =========================
-        public double GetLotCap(int score)
+        public double GetLotCap(int finalConfidence)
         {
-            double n = (score - 55) / 35.0;
-            if (n < 0.0) n = 0.0;
-            if (n > 1.0) n = 1.0;
-
-            double baseCap = 2.0 + n * 1.0;
-
-            if (score >= 80)
-                baseCap += 0.5;
-
-            if (score >= 85)
-                baseCap += 0.5;
-
-            return baseCap;
+            double riskPercent = RiskProfileEngine.GetRiskPercent(finalConfidence);
+            return LotCapEngine.CalculateLotCap(
+                LotCapEngine.ReferenceBalance,
+                LotCapEngine.ReferenceSlDistance,
+                riskPercent);
         }
     }
 }
