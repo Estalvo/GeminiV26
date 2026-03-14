@@ -16,7 +16,7 @@ namespace GeminiV26.EntryTypes.Crypto
         private const double BreakBufferAtr = 0.03;
         private const double MaxDistFromEmaAtr = 1.2;
 
-        private const int MinScore = 20;
+        private const int MinScore = 16;
         private const int HtfAgainstPenalty = 8;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -162,12 +162,26 @@ namespace GeminiV26.EntryTypes.Crypto
             bool bullBreak = close > hi + buf;
             bool bearBreak = close < lo - buf;
 
-            if (dir == TradeDirection.Long && !bullBreak)
+            // --- NEW: reclaim after breakout ---
+            bool bullReclaim =
+                close > hi &&
+                ctx.LastClosedBarInTrendDirection &&
+                ctx.HasReactionCandle_M5;
+
+            bool bearReclaim =
+                close < lo &&
+                ctx.LastClosedBarInTrendDirection &&
+                ctx.HasReactionCandle_M5;
+
+            bool longValid = bullBreak || bullReclaim;
+            bool shortValid = bearBreak || bearReclaim;
+
+            if (dir == TradeDirection.Long && !longValid)
                 return Invalid(ctx, "NO_BREAK_LONG");
 
-            if (dir == TradeDirection.Short && !bearBreak)
+            if (dir == TradeDirection.Short && !shortValid)
                 return Invalid(ctx, "NO_BREAK_SHORT");
-
+                
             // Candle quality
             if (dir == TradeDirection.Long && close > open) score += 6;
             if (dir == TradeDirection.Short && close < open) score += 6;
