@@ -40,7 +40,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =============================
             // Dynamic window (tightest)
             // =============================
-            int bestStart = -1;
+            int bestStart = -1;            
             double bestRange = double.MaxValue;
 
             for (int len = MinFlagBars; len <= MaxFlagBars; len++)
@@ -80,7 +80,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             // width guard
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
-            if (profile != null && rangeAtr < profile.MinFlagAtrMult)
+            if (rangeAtr < 0.15)
                 return Invalid(ctx, "FLAG_TOO_TIGHT");
     
             if (profile != null && rangeAtr > profile.MaxFlagAtrMult)
