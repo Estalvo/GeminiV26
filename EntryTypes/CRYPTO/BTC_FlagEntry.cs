@@ -40,7 +40,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =============================
             // Dynamic window (tightest)
             // =============================
-            int bestStart = -1;            
+            int bestStart = -1;
             double bestRange = double.MaxValue;
 
             for (int len = MinFlagBars; len <= MaxFlagBars; len++)
@@ -55,7 +55,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 for (int i = start; i <= flagEnd; i++)
                 {
                     double bodyHigh = Math.Max(bars[i].Open, bars[i].Close);
-                    double bodyLow  = Math.Min(bars[i].Open, bars[i].Close);
+                    double bodyLow = Math.Min(bars[i].Open, bars[i].Close);
 
                     hiTmp = Math.Max(hiTmp, bodyHigh);
                     loTmp = Math.Min(loTmp, bodyLow);
@@ -74,15 +74,27 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "NO_FLAG_WINDOW");
 
             int flagStart = bestStart;
-            double range = bestRange;
 
+            // breakout bounds wick alapon
+            double hi = double.MinValue;
+            double lo = double.MaxValue;
+
+            for (int i = flagStart; i <= flagEnd; i++)
+            {
+                hi = Math.Max(hi, bars[i].High);
+                lo = Math.Min(lo, bars[i].Low);
+            }
+
+            // width body alapon
+            double range = bestRange;
             double rangeAtr = range / ctx.AtrM5;
 
             // width guard
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
+
             if (rangeAtr < 0.15)
                 return Invalid(ctx, "FLAG_TOO_TIGHT");
-    
+
             if (profile != null && rangeAtr > profile.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE");
 
