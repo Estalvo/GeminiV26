@@ -153,6 +153,19 @@ namespace GeminiV26.Core.Entry
             ctx.Ema21Slope_M5 = ema21_m5.Result[m5Idx] - ema21_m5.Result[m5Idx - 3];
             ctx.Ema21Slope_M15 = ema21_m15.Result[m15Idx] - ema21_m15.Result[m15Idx - 3];
 
+            // =================================================
+            // INSTRUMENT FLAGS
+            // =================================================
+            bool isIndex = IsIndexSymbol(symbol);
+            bool isCrypto = IsCryptoSymbol(symbol);
+            bool isMetal = IsMetalSymbol(symbol);
+
+            bool isFx =
+                !isIndex &&
+                !isCrypto &&
+                !isMetal &&
+                FxInstrumentMatrix.Contains(SymbolRouting.NormalizeSymbol(symbol));
+
             // -------------------------
             // HARD TREND (MOST MÁR ATR KÉSZ)
             // -------------------------
@@ -176,20 +189,7 @@ namespace GeminiV26.Core.Entry
                 else if (slopeM15 < -slopeDeadzone && slopeM5 < -slopeDeadzone)
                     ctx.TrendDirection = TradeDirection.Short;
             }
-
-            // =================================================
-            // INSTRUMENT FLAGS
-            // =================================================
-            bool isIndex = IsIndexSymbol(symbol);
-            bool isCrypto = IsCryptoSymbol(symbol);
-            bool isMetal = IsMetalSymbol(symbol);
-
-            bool isFx =
-                !isIndex &&
-                !isCrypto &&
-                !isMetal &&
-                FxInstrumentMatrix.Contains(SymbolRouting.NormalizeSymbol(symbol));
-
+            
             // =================================================
             // CRYPTO TREND OVERRIDE (DI-dominant in strong trend)
             // =================================================
