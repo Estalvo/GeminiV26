@@ -127,7 +127,7 @@ namespace GeminiV26.Instruments.BTCUSD
                     if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
                         ctx.Tp1Price = tp1Price;
 
-                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute1, pos.SymbolName);
+                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
                     bool reached;
                     if (m1 != null && m1.Count > 0)
@@ -185,7 +185,7 @@ namespace GeminiV26.Instruments.BTCUSD
                         if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
                             var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+                            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
 
                             if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                             {

@@ -150,37 +150,44 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
 
-                    double priceNow =
-                        pos.TradeType == TradeType.Buy
-                            ? sym.Bid
-                            : sym.Ask;
+                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
-                    bool hit =
-                        pos.TradeType == TradeType.Buy
-                            ? sym.Bid >= tp1Price
-                            : sym.Ask <= tp1Price;
+                    bool hit;
+                    if (m1 != null && m1.Count > 0)
+                    {
+                        var m1Bar = m1.LastBar;
+                        hit = pos.TradeType == TradeType.Buy
+                            ? m1Bar.High >= tp1Price
+                            : m1Bar.Low <= tp1Price;
+                    }
+                    else
+                    {
+                        hit =
+                            (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
+                            (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
+                    }
 
                     if (hit)
                     {
-                        _bot.Print($"[EXIT] TP1 HIT symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={priceNow} tp1={tp1Price}");
+                        _bot.Print($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
                         return;
                     }
 
-                    // =========================
-                    // TVM – Early Exit (TP1 előtt)
-                    // =========================
+                    const int MinBarsBeforeTvm = 4;
+                    ctx.BarsSinceEntryM5 = (int)Math.Max(
+                        1,
+                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
+                    );
+
+                    if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
                         var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
                         var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
-                            _bot.Print(
-                                $"[XAU TVM EXIT] pos={pos.Id} " +
-                                $"reason={ctx.DeadTradeReason} " +
-                                $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00}"
-                            );
+                            _bot.Print($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}");
 
                             _bot.ClosePosition(pos);
 
