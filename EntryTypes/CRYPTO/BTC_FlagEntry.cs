@@ -54,8 +54,11 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 for (int i = start; i <= flagEnd; i++)
                 {
-                    hiTmp = Math.Max(hiTmp, bars[i].High);
-                    loTmp = Math.Min(loTmp, bars[i].Low);
+                    double bodyHigh = Math.Max(bars[i].Open, bars[i].Close);
+                    double bodyLow  = Math.Min(bars[i].Open, bars[i].Close);
+
+                    hiTmp = Math.Max(hiTmp, bodyHigh);
+                    loTmp = Math.Min(loTmp, bodyLow);
                 }
 
                 double r = hiTmp - loTmp;
@@ -73,22 +76,17 @@ namespace GeminiV26.EntryTypes.Crypto
             int flagStart = bestStart;
             double range = bestRange;
 
-            double hi = double.MinValue;
-            double lo = double.MaxValue;
-
-            for (int i = flagStart; i <= flagEnd; i++)
-            {
-                hi = Math.Max(hi, bars[i].High);
-                lo = Math.Min(lo, bars[i].Low);
-            }
-
             double rangeAtr = range / ctx.AtrM5;
 
             // width guard
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
-            if (profile != null && range > ctx.AtrM5 * profile.MaxFlagAtrMult)
+            if (profile != null && rangeAtr < profile.MinFlagAtrMult)
+                return Invalid(ctx, "FLAG_TOO_TIGHT");
+    
+            if (profile != null && rangeAtr > profile.MaxFlagAtrMult)
                 return Invalid(ctx, "FLAG_TOO_WIDE");
 
+            
             // =============================
             // Evaluate BOTH directions
             // =============================
