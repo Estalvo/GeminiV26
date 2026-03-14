@@ -110,7 +110,7 @@ namespace GeminiV26.Core.Entry
 
                 hasPullback = pullbackBars >= rules.MinPullbackBars
                     && pullbackDepthR <= rules.MaxPullbackDepthR
-                    && pullbackDepthR <= 0.5
+                    // && pullbackDepthR <= 0.5
                     && trendAlignmentMaintained;
             }
 
