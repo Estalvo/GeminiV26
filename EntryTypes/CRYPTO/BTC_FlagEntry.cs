@@ -134,6 +134,18 @@ namespace GeminiV26.EntryTypes.Crypto
             int score = 0;
 
             // =============================
+            // Impulse freshness (crypto continuation)
+            // =============================
+            if (!ctx.HasImpulse_M5)
+            {
+                score -= 6;
+            }
+            else if (ctx.BarsSinceImpulse_M5 > 6)
+            {
+                score -= 4;
+            }
+
+            // =============================
             // Compression (soft)
             // =============================
             bool compression =
@@ -213,7 +225,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score = score; //Math.Max(0, score - 6); csak 7végére 0!
 
                 ctx.Log?.Invoke(
-                    "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
+                    "[FLAG] Missing impulse context" +
                     $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
             }
 
