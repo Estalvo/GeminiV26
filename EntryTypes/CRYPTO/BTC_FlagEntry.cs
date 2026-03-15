@@ -181,19 +181,30 @@ namespace GeminiV26.EntryTypes.Crypto
             // =============================
             double buf = ctx.AtrM5 * BreakBufferAtr;
 
-            bool bullBreak = close > hi + buf;
-            bool bearBreak = close < lo - buf;
+            bool bullBreak =
+                close > hi + buf &&
+                ctx.HasImpulse_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 6;
+
+            bool bearBreak =
+                close < lo - buf &&
+                ctx.HasImpulse_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 6;
 
             // --- NEW: reclaim after breakout ---
             bool bullReclaim =
                 close > hi &&
                 ctx.LastClosedBarInTrendDirection &&
-                ctx.HasReactionCandle_M5;
+                ctx.HasReactionCandle_M5 &&
+                ctx.HasImpulse_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 6;
 
             bool bearReclaim =
                 close < lo &&
                 ctx.LastClosedBarInTrendDirection &&
-                ctx.HasReactionCandle_M5;
+                ctx.HasReactionCandle_M5 &&
+                ctx.HasImpulse_M5 &&
+                ctx.BarsSinceImpulse_M5 <= 6;
 
             bool longValid = bullBreak || bullReclaim;
             bool shortValid = bearBreak || bearReclaim;
