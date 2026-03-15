@@ -32,13 +32,18 @@ namespace GeminiV26.Core.Entry
                     return new TransitionRules
                     {
                         MaxImpulseAge = 6,
-                        ImpulseMultiplier = 1.4,
-                        MinImpulseStrength = 0.45,
+
+                        ImpulseMultiplier = 1.15,
+                        MinImpulseBodyRatio = 0.40,
+                        MinImpulseStrength = 0.35,
+
                         MaxPullbackDepthR = 0.45,
                         MinPullbackBars = 2,
                         OptimalPullbackDepthR = 0.40,
+
                         MaxFlagBars = 4,
                         MaxCompressionRatio = 0.70,
+
                         StrongAdxThreshold = 20
                     };
 
