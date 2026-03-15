@@ -177,10 +177,8 @@ namespace GeminiV26.Core.Entry
             state.BarsSincePullback = hasPullback ? 0 : Math.Min(state.BarsSincePullback + 1, 999);
             state.BarsSinceFlag = hasFlag ? 0 : Math.Min(state.BarsSinceFlag + 1, 999);
 
-            ctx.HasImpulse_M5 = ctx.HasImpulse_M5 || hasImpulse;
-            ctx.BarsSinceImpulse_M5 = hasImpulse
-                ? Math.Min(ctx.BarsSinceImpulse_M5, barsSinceImpulse)
-                : Math.Min(Math.Max(0, ctx.BarsSinceImpulse_M5), 999);
+            ctx.HasImpulse_M5 = hasImpulse;
+            ctx.BarsSinceImpulse_M5 = hasImpulse ? barsSinceImpulse : 999;
 
             if (hasPullback && ctx.AtrM5 > 0)
             {
