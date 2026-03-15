@@ -51,13 +51,18 @@ namespace GeminiV26.Core.Entry
                     return new TransitionRules
                     {
                         MaxImpulseAge = 7,
-                        ImpulseMultiplier = 1.3,
-                        MinImpulseStrength = 0.40,
+
+                        ImpulseMultiplier = 1.35,
+                        MinImpulseBodyRatio = 0.55,
+                        MinImpulseStrength = 0.42,
+
                         MaxPullbackDepthR = 0.50,
                         MinPullbackBars = 2,
                         OptimalPullbackDepthR = 0.42,
-                        MaxFlagBars = 5,
+
+                        MaxFlagBars = 6,
                         MaxCompressionRatio = 0.80,
+
                         StrongAdxThreshold = 25
                     };
 
@@ -65,27 +70,56 @@ namespace GeminiV26.Core.Entry
                     return new TransitionRules
                     {
                         MaxImpulseAge = 6,
-                        ImpulseMultiplier = 1.35,
-                        MinImpulseStrength = 0.45,
+
+                        ImpulseMultiplier = 1.30,
+                        MinImpulseBodyRatio = 0.45,
+                        MinImpulseStrength = 0.42,
+
                         MaxPullbackDepthR = 0.55,
                         MinPullbackBars = 2,
                         OptimalPullbackDepthR = 0.40,
+
+                        MaxFlagBars = 6,
+                        MaxCompressionRatio = 0.80,
+
+                        StrongAdxThreshold = 22
+                    };
+
+                case InstrumentType.FX:
+                    return new TransitionRules
+                    {
+                        MaxImpulseAge = 7,
+
+                        ImpulseMultiplier = 1.25,
+                        MinImpulseBodyRatio = 0.45,
+                        MinImpulseStrength = 0.38,
+
+                        MaxPullbackDepthR = 0.50,
+                        MinPullbackBars = 2,
+                        OptimalPullbackDepthR = 0.40,
+
                         MaxFlagBars = 5,
                         MaxCompressionRatio = 0.75,
-                        StrongAdxThreshold = 22
+
+                        StrongAdxThreshold = 25
                     };
 
                 default:
                     return new TransitionRules
                     {
                         MaxImpulseAge = 7,
-                        ImpulseMultiplier = 1.5,
-                        MinImpulseStrength = 0.50,
+
+                        ImpulseMultiplier = 1.40,
+                        MinImpulseBodyRatio = 0.50,
+                        MinImpulseStrength = 0.45,
+
                         MaxPullbackDepthR = 0.50,
                         MinPullbackBars = 2,
                         OptimalPullbackDepthR = 0.40,
+
                         MaxFlagBars = 5,
                         MaxCompressionRatio = 0.75,
+
                         StrongAdxThreshold = 30
                     };
             }
