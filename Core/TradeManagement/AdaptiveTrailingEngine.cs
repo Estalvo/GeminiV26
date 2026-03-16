@@ -13,7 +13,7 @@ namespace GeminiV26.Core.TradeManagement
         public AdaptiveTrailingEngine(Robot bot)
         {
             _bot = bot;
-            _atr = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Exponential);
+            _atr = _bot.Indicators.AverageTrueRange(_bot.Bars, 14, MovingAverageType.Exponential);
         }
 
         public void Apply(Position pos, PositionContext ctx, TrendDecision decision, StructureSnapshot structure, TrailingProfile profile)
@@ -86,7 +86,14 @@ namespace GeminiV26.Core.TradeManagement
                 return;
             }
 
-            _bot.ModifyPosition(pos, newSl, pos.TakeProfit);
+            var result = _bot.ModifyPosition(pos, newSl, pos.TakeProfit);
+
+            if (!result.IsSuccessful)
+            {
+                _bot.Print($"[TRAIL] modify FAILED pos={pos.Id} error={result.Error}");
+                return;
+            }
+
             ctx.LastTrailingStopTarget = newSl;
             ctx.LastStopLossPrice = newSl;
             _bot.Print($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}");
@@ -103,7 +110,18 @@ namespace GeminiV26.Core.TradeManagement
                     return false;
                 }
 
-                double anchor = structure.LastHigherLow?.Price ?? structure.LastSwingLow.Price;
+                double anchor;
+
+                if (structure.LastHigherLow != null)
+                    anchor = structure.LastHigherLow.Price;
+                else if (structure.LastSwingLow != null)
+                    anchor = structure.LastSwingLow.Price;
+                else
+                {
+                    newSl = 0;
+                    return false;
+                }
+
                 _bot.Print($"[TRAIL][STRUCT] lastSwingLow={anchor}");
                 newSl = anchor - buffer;
                 return true;
@@ -170,7 +188,9 @@ namespace GeminiV26.Core.TradeManagement
                 multiplier = profile.AtrMultiplierNormal;
             }
 
-            double price = pos.TradeType == TradeType.Buy ? _bot.Symbol.Bid : _bot.Symbol.Ask;
+            var s = _bot.Symbol;
+            double price = pos.TradeType == TradeType.Buy ? s.Bid : s.Ask;
+            
             newSl = pos.TradeType == TradeType.Buy
                 ? price - atr * multiplier
                 : price + atr * multiplier;
