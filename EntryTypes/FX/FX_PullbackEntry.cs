@@ -49,7 +49,7 @@ namespace GeminiV26.EntryTypes.FX
 
             double atrRelativeThreshold = atrAvg20 * ATR_REL_EXPANSION_FACTOR;
             bool atrRelativePass = ctx.AtrM5 >= atrRelativeThreshold;
-            ctx?.Log?.Invoke($"[FX_PB ATR] atr={ctx.AtrM5:F2} avg20={atrAvg20:F2} thr={atrRelativeThreshold:F2} pass={atrRelativePass}");
+            ctx?.Log?.Invoke($"[FX_PB ATR] atr={ctx.AtrM5:G6} avg20={atrAvg20:G6} thr={atrRelativeThreshold:G6} pass={atrRelativePass}");
 
             if (!atrRelativePass)
             {
