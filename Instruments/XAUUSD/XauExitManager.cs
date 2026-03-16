@@ -145,28 +145,33 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
+                    // ------------------------------------------------
+                    // TP1 HIT DETECTION
+                    // ------------------------------------------------
+
                     bool hit =
                         (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
                         (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
-                    
+
+                    _bot.Print($"[TP1 CHECK] pos={pos.Id} entry={pos.EntryPrice} sl={pos.StopLoss} tp1={tp1Price} bid={sym.Bid} ask={sym.Ask} ctxRisk={ctx.RiskPriceDistance} rDist={rDist} tp1R={ctx.Tp1R} tp1Hit={ctx.Tp1Hit}");
+                                        
+                    if (!hit && m1 != null && m1.Count > 0)
                     {
                         var m1Bar = m1.LastBar;
+
                         hit = pos.TradeType == TradeType.Buy
                             ? m1Bar.High >= tp1Price
                             : m1Bar.Low <= tp1Price;
                     }
-                    else
-                    {
-                        hit =
-                            (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
-                            (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
-                    }
+
+                    
 
                     if (hit)
                     {
+                        _bot.Print($"[TP1 HIT] pos={pos.Id} tp1={tp1Price}");
                         _bot.Print($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
-                        return;
+                        continue;
                     }
 
                     const int MinBarsBeforeTvm = 4;
@@ -208,7 +213,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 // =========================
                 // TRAILING (TP1 után)
                 // =========================
-                                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
+                var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
                 var structure = _structureTracker.GetSnapshot();
                 var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
 
@@ -239,13 +244,18 @@ namespace GeminiV26.Instruments.XAUUSD
             long flooredUnits = (long)Math.Floor(rawUnitsD);
             long closeVolume = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
 
+            _bot.Print($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
+            
             if (closeVolume < sym.VolumeInUnitsMin)
+            {
+                _bot.Print($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
                 return;
+            }
 
             var closeResult = _bot.ClosePosition(pos, closeVolume);
             if (!closeResult.IsSuccessful)
             {
-                _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price}");
+                _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
                 return;
             }
 
