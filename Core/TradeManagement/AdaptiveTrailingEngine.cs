@@ -27,34 +27,24 @@ namespace GeminiV26.Core.TradeManagement
 
             double oldSl = pos.StopLoss.Value;
             double newSl;
-            bool valid;
+            bool valid = true;
 
             switch (decision.TrailingMode)
             {
                 case AdaptiveTrailingMode.Structure:
                     valid = TryBuildStructureStop(pos, structure, profile, atr, out newSl);
                     if (!valid)
-                    {
-                        _bot.Print("[TRAIL][STRUCT] skipped=no confirmed structure");
                         return;
-                    }
-                    _bot.Print($"[TRAIL][STRUCT] oldSL={oldSl} newSL={newSl}");
                     break;
 
                 case AdaptiveTrailingMode.Liquidity:
                     valid = TryBuildLiquidityStop(pos, structure, profile, atr, out newSl);
                     if (!valid)
-                    {
-                        _bot.Print("[TRAIL][LIQ] skipped=no liquidityLevel");
                         return;
-                    }
-                    _bot.Print($"[TRAIL][LIQ] oldSL={oldSl} newSL={newSl}");
                     break;
 
                 default:
-                    BuildVolatilityStop(pos, profile, atr, out newSl, out string regime, out double multiplier);
-                    _bot.Print($"[TRAIL][VOL] regime={regime} multiplier={multiplier:0.00}");
-                    _bot.Print($"[TRAIL][VOL] oldSL={oldSl} newSL={newSl}");
+                    BuildVolatilityStop(pos, profile, atr, out newSl, out _, out _);
                     break;
             }
 
@@ -67,22 +57,22 @@ namespace GeminiV26.Core.TradeManagement
 
             newSl = Normalize(newSl);
 
+            if (newSl <= 0)
+                return;
+                
             if (!ImprovesStop(pos, newSl, oldSl))
-            {
-                _bot.Print("[TRAIL] skipped=no improvement");
+            {                
                 return;
             }
 
             double minDelta = Math.Max(profile.MinSlUpdateDeltaPips * _bot.Symbol.PipSize, atr * 0.05);
             if (Math.Abs(newSl - oldSl) < minDelta)
             {
-                _bot.Print("[TRAIL] skipped=minDelta");
                 return;
             }
 
             if (ctx.LastTrailingStopTarget.HasValue && Math.Abs(ctx.LastTrailingStopTarget.Value - newSl) < (_bot.Symbol.PipSize * 0.1))
             {
-                _bot.Print("[TRAIL] skipped=sameTarget");
                 return;
             }
 
@@ -121,8 +111,7 @@ namespace GeminiV26.Core.TradeManagement
                     newSl = 0;
                     return false;
                 }
-
-                _bot.Print($"[TRAIL][STRUCT] lastSwingLow={anchor}");
+                
                 newSl = anchor - buffer;
                 return true;
             }
@@ -145,7 +134,6 @@ namespace GeminiV26.Core.TradeManagement
                 return false;
             }
 
-            _bot.Print($"[TRAIL][STRUCT] lastSwingHigh={sellAnchor}");
             newSl = sellAnchor + buffer;
             return true;
         }
@@ -163,7 +151,7 @@ namespace GeminiV26.Core.TradeManagement
                 }
 
                 double liquidityLevel = structure.LastSwingLow.Price;
-                _bot.Print($"[TRAIL][LIQ] liquidityLevel={liquidityLevel}");
+                
                 newSl = liquidityLevel - buffer;
                 return true;
             }
@@ -175,7 +163,7 @@ namespace GeminiV26.Core.TradeManagement
             }
 
             double shortLiquidityLevel = structure.LastSwingHigh.Price;
-            _bot.Print($"[TRAIL][LIQ] liquidityLevel={shortLiquidityLevel}");
+          
             newSl = shortLiquidityLevel + buffer;
             return true;
         }
