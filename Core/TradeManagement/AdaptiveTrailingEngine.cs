@@ -133,7 +133,18 @@ namespace GeminiV26.Core.TradeManagement
                 return false;
             }
 
-            double sellAnchor = structure.LastLowerHigh?.Price ?? structure.LastSwingHigh.Price;
+            double sellAnchor;
+
+            if (structure.LastLowerHigh != null)
+                sellAnchor = structure.LastLowerHigh.Price;
+            else if (structure.LastSwingHigh != null)
+                sellAnchor = structure.LastSwingHigh.Price;
+            else
+            {
+                newSl = 0;
+                return false;
+            }
+
             _bot.Print($"[TRAIL][STRUCT] lastSwingHigh={sellAnchor}");
             newSl = sellAnchor + buffer;
             return true;
@@ -171,7 +182,9 @@ namespace GeminiV26.Core.TradeManagement
 
         private void BuildVolatilityStop(Position pos, TrailingProfile profile, double atr, out double newSl, out string regime, out double multiplier)
         {
-            double atrPips = atr / _bot.Symbol.PipSize;
+            var s = _bot.Symbol;
+            double atrPips = atr / s.PipSize;
+
             if (atrPips < 15)
             {
                 regime = "Low";
