@@ -110,9 +110,6 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (pos == null)
                     continue;
 
-                if (ctx.RiskPriceDistance <= 0)
-                    continue;
-
                 if (!pos.StopLoss.HasValue)
                     continue;
 
@@ -120,16 +117,12 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (sym == null)
                     continue;
 
-                // -------------------------------------------------
-                // SSOT: TP1Price preferált, ha executor már kiszámolta.
-                // Ha nincs TP1Price, akkor számolunk:
-                // - prefer: ctx.RiskPriceDistance
-                // - fallback: pos.EntryPrice vs pos.StopLoss (végső)
-                // -------------------------------------------------
-
                 double rDist = GetRiskDistance(pos, ctx);
                 if (rDist <= 0)
+                {
+                    _bot.Print($"[XAUUSD][TP1][SKIP] pos={pos.Id} invalid rDist ctxRisk={ctx.RiskPriceDistance} entry={pos.EntryPrice} sl={pos.StopLoss}");
                     continue;
+                }
 
                 // =========================
                 // TP1 (TP1 előtt nincs trailing)
@@ -152,8 +145,10 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
-                    bool hit;
-                    if (m1 != null && m1.Count > 0)
+                    bool hit =
+                        (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
+                        (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
+                    
                     {
                         var m1Bar = m1.LastBar;
                         hit = pos.TradeType == TradeType.Buy
