@@ -36,9 +36,7 @@ namespace GeminiV26.EntryTypes.Crypto
             
             if (bars == null || bars.Count < 20)
                 return Block(ctx, "M5_NOT_READY", score);
-
-            int lastClosed = bars.Count - 2;
-           
+                       
             TradeDirection dir = ctx.TrendDirection;
             var originalTrendDir = ctx.TrendDirection;
 
