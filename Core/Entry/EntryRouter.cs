@@ -41,12 +41,12 @@ namespace GeminiV26.Core.Entry
                     var eval = entryType.Evaluate(ctx);
 
                     if (eval != null)
-                        eval.Reason = "[ROUTER] " + eval.Reason;
+                        eval.Reason = "[ROUTER] " + (eval.Reason ?? "");
 
                     // DEBUG – marad
                     System.Diagnostics.Debug.WriteLine(
                         $"[DEBUG_ROUTER] {ctx.Symbol} {entryType.GetType().Name} " +
-                        $"{(eval == null ? "eval=NULL" : $"score={eval.Score} valid={eval.IsValid} dir={eval.Direction} reason={eval.Reason}")}"
+                        $"{(eval == null ? "eval=NULL" : $"score={eval.Score} valid={eval.IsValid} dir={eval.Direction} reason={eval.Reason ?? ""}")}"
                     );
 
                     if (eval == null)
