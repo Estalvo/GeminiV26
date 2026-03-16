@@ -118,11 +118,17 @@ namespace GeminiV26.Instruments.XAUUSD
                     continue;
 
                 double rDist = GetRiskDistance(pos, ctx);
+
                 if (rDist <= 0)
                 {
-                    _bot.Print($"[XAUUSD][TP1][SKIP] pos={pos.Id} invalid rDist ctxRisk={ctx.RiskPriceDistance} entry={pos.EntryPrice} sl={pos.StopLoss}");
-                    continue;
+                    rDist = Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
+
+                    if (rDist > 0)
+                        ctx.RiskPriceDistance = rDist;
                 }
+
+                if (rDist <= 0)
+                    continue;
 
                 // =========================
                 // TP1 (TP1 előtt nincs trailing)
@@ -131,55 +137,56 @@ namespace GeminiV26.Instruments.XAUUSD
                 {
                     double tp1R = ResolveTp1R(ctx);
 
-                    double tp1Price = ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
-                        ? ctx.Tp1Price.Value
-                        : (pos.TradeType == TradeType.Buy
-                            ? pos.EntryPrice + rDist * tp1R
-                            : pos.EntryPrice - rDist * tp1R);
+                    double tp1Price;
 
-                    if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
+                    if (ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0)
+                    {
+                        tp1Price = ctx.Tp1Price.Value;
+                    }
+                    else
+                    {
+                        tp1Price = pos.TradeType == TradeType.Buy
+                            ? pos.EntryPrice + rDist * tp1R
+                            : pos.EntryPrice - rDist * tp1R;
+
                         ctx.Tp1Price = tp1Price;
+                    }
 
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
-
-                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
                     // ------------------------------------------------
                     // TP1 HIT DETECTION
                     // ------------------------------------------------
 
                     bool hit =
-                        (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
-                        (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
-
-                    _bot.Print($"[TP1 CHECK] pos={pos.Id} entry={pos.EntryPrice} sl={pos.StopLoss} tp1={tp1Price} bid={sym.Bid} ask={sym.Ask} ctxRisk={ctx.RiskPriceDistance} rDist={rDist} tp1R={ctx.Tp1R} tp1Hit={ctx.Tp1Hit}");
+                        pos.TradeType == TradeType.Buy
+                            ? sym.Bid >= tp1Price
+                            : sym.Bid <= tp1Price;
                                         
-                    if (!hit && m1 != null && m1.Count > 0)
+                    if (!hit)
                     {
-                        var m1Bar = m1.LastBar;
+                        var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
 
-                        hit = pos.TradeType == TradeType.Buy
-                            ? m1Bar.High >= tp1Price
-                            : m1Bar.Low <= tp1Price;
+                        if (m1 != null && m1.Count > 0)
+                        {
+                            var bar = m1.LastBar;
+
+                            hit = pos.TradeType == TradeType.Buy
+                                ? bar.High >= tp1Price
+                                : bar.Low <= tp1Price;
+                        }
                     }
-
-                    
-
+ 
                     if (hit)
-                    {
-                        _bot.Print($"[TP1 HIT] pos={pos.Id} tp1={tp1Price}");
+                    {                        
                         _bot.Print($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
 
                     const int MinBarsBeforeTvm = 4;
-                    ctx.BarsSinceEntryM5 = (int)Math.Max(
-                        1,
-                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
-                    );
-
+                    
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
                         var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
@@ -203,7 +210,7 @@ namespace GeminiV26.Instruments.XAUUSD
                                 RValue = ctx.MaeR
                             });
 
-                            return;
+                            continue;
                         }
                     }
 
