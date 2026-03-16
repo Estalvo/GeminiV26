@@ -110,9 +110,18 @@ namespace GeminiV26.Core.TradeManagement
                 _ => 1.0
             };
 
-            _bot.Print($"[TTM] state={state} score={score} mode={mode}");
-            if (allowTp2Extension)
-                _bot.Print($"[TTM] TP2 extension allowed multiplier={tp2Multiplier:0.00}");
+            bool stateChanged =
+                ctx.PostTp1TrendState != state.ToString() ||
+                ctx.PostTp1TrendScore != score ||
+                ctx.PostTp1TrailingMode != mode.ToString();
+
+            if (stateChanged)
+            {
+                _bot.Print($"[TTM] state={state} score={score} mode={mode}");
+
+                if (allowTp2Extension)
+                    _bot.Print($"[TTM] TP2 extension allowed multiplier={tp2Multiplier:0.00}");
+            }
 
             return new TrendDecision
             {
