@@ -23,18 +23,23 @@ namespace GeminiV26.EntryTypes.FX
         // =========================
         // TUNING
         // =========================
-        private const int MinScore = 55;
-
         private const double MinPullbackAtr = 0.05;   // micro PB
-        private const double MaxPullbackAtr = 0.25;   // ne legyen rendes flag
-
         private const double MinSlope = 0.00010;      // FX-safe
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
+            
+            var fx = FxInstrumentMatrix.Get(ctx.Symbol);
+            
+            if (fx == null)
+                return Invalid(ctx, "NO_FX_PROFILE");
 
+            if (!fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
+                return Invalid(ctx, "NO_SESSION_TUNING");
+         
+            int minScore = Math.Max(40, tuning.MinScore - 5);
             // =================================================
             // TREND IRÁNY
             // =================================================
@@ -59,10 +64,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.PullbackDepthAtr_M5 < MinPullbackAtr)
                 return Invalid(ctx, "PB_TOO_SHALLOW");
 
-            if (ctx.PullbackDepthAtr_M5 > MaxPullbackAtr)
+            if (ctx.PullbackDepthAtr_M5 > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
-            int score = 45;
+            int score = 50;
 
             // =================================================
             // EMA VISZONY
@@ -74,7 +79,7 @@ namespace GeminiV26.EntryTypes.FX
             // REAKCIÓ (kulcs!)
             // =================================================
             if (!ctx.LastClosedBarInTrendDirection && !ctx.HasReactionCandle_M5)
-                score -= 8;   // ha egyik sincs, gyenge
+                score -= 6;   // ha egyik sincs, gyenge
 
             // =================================================
             // SCORE
@@ -90,13 +95,13 @@ namespace GeminiV26.EntryTypes.FX
                 score += 10;
 
             if (ctx.IsAtrExpanding_M5)
-                score -= 5;
+                score += 3;
 
             if (ctx.Session == FxSession.NewYork)
                 score += 2;
 
             TradeDirection dir =
-                score >= MinScore ? bias : TradeDirection.None;
+                score >= minScore ? bias : TradeDirection.None;
 
             return new EntryEvaluation
             {
