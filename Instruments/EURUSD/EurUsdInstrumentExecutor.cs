@@ -45,33 +45,24 @@ namespace GeminiV26.Instruments.EURUSD
 
         public void ExecuteEntry(EntryEvaluation entry)
         {
-            var ms = _marketStateDetector.Evaluate();
+            var ms = _marketStateDetector?.Evaluate();
 
-            /*if (_marketStateDetector == null)
+            if (entry == null)
             {
-                _bot.Print("[EUR EXEC] SKIP: MarketStateDetector NULL");
-                return; // vagy continue, attól függ hol vagy
-            }
-
-            if (ms == null)
-            {
-                _bot.Print("[EUR EXEC] BLOCKED: MarketState NULL");
+                _bot.Print("[EUR EXEC] BLOCKED: entry NULL");
                 return;
             }
 
-            if (ms.IsLowVol)
+            _bot.Print(
+                $"[EUR EXEC] ENTRY RECEIVED type={entry.Type} dir={entry.Direction} score={entry.Score} reason={entry.Reason}"
+            );
+
+            if (entry.Direction == TradeDirection.None)
             {
-                _bot.Print("[EUR EXEC] BLOCKED: Low volatility");
+                _bot.Print("[EUR EXEC] BLOCKED: direction NONE");
                 return;
             }
-
-            if (!ms.IsTrend)
-            {
-                _bot.Print("[EUR EXEC] BLOCKED: No trend");
-                return;
-            }
-            */
-
+            
             // =========================
             // MARKET STATE – SOFT (FX)
             // =========================
@@ -101,6 +92,10 @@ namespace GeminiV26.Instruments.EURUSD
             int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
             int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
+            _bot.Print(
+                $"[EUR EXEC] CONF entryScore={entry.Score} logic={logicConfidence} final={finalConfidence} statePenalty={statePenalty} riskConf={riskConfidence}"
+            );
+
             double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
@@ -126,6 +121,10 @@ namespace GeminiV26.Instruments.EURUSD
 
             long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
 
+            _bot.Print(
+                $"[EUR EXEC] RISK risk%={riskPercent:F3} slDist={slPriceDist:F5} volume={volumeUnits}"
+            );
+            
             if (volumeUnits <= 0)
             {
                 _bot.Print("[EUR EXEC] BLOCKED: volume invalid");
@@ -145,6 +144,10 @@ namespace GeminiV26.Instruments.EURUSD
             double slPips = slPriceDist / _bot.Symbol.PipSize;
             double tp2Pips = Math.Abs(tp2Price - entryPrice) / _bot.Symbol.PipSize;
 
+            _bot.Print(
+                $"[EUR EXEC] SEND ORDER type={tradeType} vol={volumeUnits} slPips={slPips:F1} tp2Pips={tp2Pips:F1}"
+            );
+                
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
                 _bot.SymbolName,
@@ -152,7 +155,7 @@ namespace GeminiV26.Instruments.EURUSD
                 _botLabel,
                 slPips,
                 tp2Pips);
-
+                    
             if (!result.IsSuccessful || result.Position == null)
             {
                 _bot.Print("[EUR EXEC] Order execution FAILED");
@@ -211,7 +214,7 @@ namespace GeminiV26.Instruments.EURUSD
             _bot.Print(
                 $"[EUR EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}"
-            );
+            );            
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)
