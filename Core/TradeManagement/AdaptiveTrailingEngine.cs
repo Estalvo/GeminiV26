@@ -200,8 +200,7 @@ namespace GeminiV26.Core.TradeManagement
                 regime = "Normal";
                 multiplier = profile.AtrMultiplierNormal;
             }
-
-            var s = _bot.Symbol;
+            
             double price = pos.TradeType == TradeType.Buy ? s.Bid : s.Ask;
             
             newSl = pos.TradeType == TradeType.Buy
