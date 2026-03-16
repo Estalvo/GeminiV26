@@ -38,7 +38,7 @@ namespace GeminiV26.EntryTypes.METAL
             reasons.Add($"Base={baseScore}");
 
             // =========================
-            // HARD MARKET STATE GATES (XAU)
+            // HARD MARKET STATE GATES
             // =========================
             bool trend = ctx.MarketState?.IsTrend == true;
             ctx.Log?.Invoke(
@@ -50,32 +50,48 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.MarketState.Adx < 16.0)
             {
                 if (!ctx.HasImpulse_M5)
-                {
                     return Reject(ctx, "ADX_LOW_NO_IMPULSE");
-                }
 
                 score -= 12;
                 reasons.Add("ADX_LOW_WITH_IMPULSE(-12)");
             }
 
             // =========================
-            // TIME MEMORY (XAU)
+            // TIME MEMORY
             // =========================
 
-            // túl friss impulzus → SOFT
+            // túl friss impulzus
             if (ctx.BarsSinceImpulse_M5 == 0)
             {
                 score -= FreshImpulsePenalty;
                 reasons.Add($"FRESH_IMPULSE(-{FreshImpulsePenalty})");
             }
 
-            // túl régi impulzus → HARD
+            // túl régi impulzus
             if (ctx.BarsSinceImpulse_M5 > 6)
                 return RejectDecision(ctx, score, "STALE_IMPULSE", reasons);
 
             // pullback ne húzódjon el
             if (ctx.PullbackBars_M5 > 3)
                 return RejectDecision(ctx, score, "PULLBACK_TOO_LONG", reasons);
+
+            // =========================
+            // PULLBACK TIMING (SOFT)
+            // =========================
+
+            // friss impulzus és még nincs pullback
+            if (ctx.BarsSinceImpulse_M5 <= 1 && ctx.PullbackBars_M5 == 0)
+            {
+                score -= FreshImpulsePenalty;
+                reasons.Add("IMPULSE_NO_PULLBACK(-8)");
+            }
+
+            // pullback épp kezdődik
+            else if (ctx.PullbackBars_M5 == 1)
+            {
+                score -= 4;
+                reasons.Add("EARLY_PULLBACK(-4)");
+            }
 
             // =========================
             // VOLATILITY SPIKE FILTER
@@ -166,7 +182,7 @@ namespace GeminiV26.EntryTypes.METAL
                     return RejectDecision(ctx, score, "PULLBACK_TOO_DEEP", reasons);
                 }
             }
-            else
+            else if (ctx.PullbackBars_M5 >= 1)   // csak ha tényleg van pullback
             {
                 score += 10;
                 reasons.Add("+PB_OK(10)");
@@ -194,7 +210,7 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             // =========================
-            // DYNAMIC MIN SCORE (XAU)
+            // DYNAMIC MIN SCORE
             // =========================
             int minScore = 68;
 
@@ -207,12 +223,11 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.BarsSinceImpulse_M5 >= 4)
                 minScore += 4;
 
-            // FINAL CHECK
             score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (score < minScore)
                 return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
-                
+
             // =========================
             // ACCEPT
             // =========================
@@ -227,15 +242,11 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                //LogicConfidence = ctx.LogicConfidence,  
                 IsValid = true,
                 Reason = note
             };
         }
 
-        // =====================================================
-        // REJECT HELPERS
-        // =====================================================
         private EntryEvaluation Reject(EntryContext ctx, string reason)
         {
             return new EntryEvaluation
