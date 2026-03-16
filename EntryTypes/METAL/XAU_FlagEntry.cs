@@ -44,6 +44,7 @@ namespace GeminiV26.EntryTypes.METAL
         private const int SessionWidePenaltyPer01Atr = 4;
         private const int SessionWidePenaltyCap = 10;
         private const double SessionWideHardFactor = 1.6;
+        private const int NoBreakoutPenalty = 4;
 
         private const string VersionTag = "XAU_FLAG_V2B_STRONGHTF";
 
@@ -275,9 +276,22 @@ namespace GeminiV26.EntryTypes.METAL
             reasons.Add($"DBG_ALIGN htfBias={ctx.MetalHtfAllowedDirection} aligned={htfBiasAligned} trend={trendAligned}");
 
             if (breakout)
+            {
                 reasons.Add("BREAKOUT_OK");
+            }
             else
-                reasons.Add("BREAKOUT_NOT_REQUIRED");
+            {
+                if (bodyRatio < 0.30)
+                {
+                    score -= 6;
+                    reasons.Add("WEAK_BODY_BREAK(-6)");
+                }
+                else
+                {
+                    score -= 3;
+                    reasons.Add("NO_BREAKOUT(-3)");
+                }
+            }
 
             if (!htfBiasAligned)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "HTF_BIAS_MISMATCH", reasons);
