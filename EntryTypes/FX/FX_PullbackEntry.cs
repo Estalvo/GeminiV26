@@ -24,7 +24,7 @@ namespace GeminiV26.EntryTypes.FX
         {
             int score = 60;   // baseline
             int penalty = 0;  // accumulated penalty (budgeted)
-            int penaltyBudget = 10;   // FlagEntry-style penalty budget
+            int penaltyBudget = 14;   // FlagEntry-style penalty budget
 
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, "CTX_NOT_READY", score);
@@ -127,7 +127,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!ctx.HasReactionCandle_M5) weakCount++;
             if (!ctx.LastClosedBarInTrendDirection) weakCount++;
 
-            if (weakCount >= 3)
+            if (weakCount >= 3 && !ctx.M1TriggerInTrendDirection)
             {
                 ctx?.Log?.Invoke($"[PB FILTER] weak structure blocked | weakCount={weakCount}");
                 return Block(ctx, "PB_WEAK_STRUCTURE", score);
@@ -149,7 +149,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!ctx.LastClosedBarInTrendDirection)
                 ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "PB_LASTBAR_NOT_TREND_DIR");
 
-            if (ctx.PullbackDepthAtr_M5 > 0.5)
+            if (ctx.PullbackDepthAtr_M5 > 0.75)
             {
                 var bars = ctx.M5;
                 int lastClosed = bars.Count - 2;
