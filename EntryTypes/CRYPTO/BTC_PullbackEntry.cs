@@ -30,6 +30,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Block(ctx, "NO_CRYPTO_PROFILE", score);
 
             var bars = ctx.M5;
+            int lastClosed = bars.Count - 2;
+
+            var bar = bars[lastClosed];
+            
             if (bars == null || bars.Count < 20)
                 return Block(ctx, "M5_NOT_READY", score);
 
