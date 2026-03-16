@@ -67,6 +67,18 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.PullbackDepthAtr_M5 > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
+            // =================================================
+            // CONTINUATION CONFIRMATION
+            // =================================================
+
+            bool continuationSignal =
+                ctx.LastClosedBarInTrendDirection ||
+                ctx.HasReactionCandle_M5 ||
+                ctx.M1TriggerInTrendDirection;
+
+            if (!continuationSignal)
+                return Invalid(ctx, "NO_CONTINUATION_SIGNAL");
+
             int score = 50;
 
             // =================================================
