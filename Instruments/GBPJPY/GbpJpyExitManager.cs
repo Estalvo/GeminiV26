@@ -71,53 +71,66 @@ namespace GeminiV26.Instruments.GBPJPY
                 if (sym == null)
                     continue;
 
-                double rDist = ctx.RiskPriceDistance;
+                double rDist = GetRiskDistance(pos, ctx);
+
+                if (rDist <= 0)
+                {
+                    rDist = Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
+
+                    if (rDist > 0)
+                        ctx.RiskPriceDistance = rDist;
+                }
+
                 if (rDist <= 0)
                     continue;
 
                 if (!ctx.Tp1Hit)
                 {
-                    if (ctx.Tp1R <= 0)
-                        ctx.Tp1R = 0.5;
+                    double tp1R = ResolveTp1R(ctx);
 
-                    double tp1Price =
-                        ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0
-                            ? ctx.Tp1Price.Value
-                            : ctx.EntryPrice + Direction(pos) * rDist * ctx.Tp1R;
-
-                    if (!ctx.Tp1Price.HasValue || ctx.Tp1Price.Value <= 0)
-                        ctx.Tp1Price = tp1Price;
-
-                    var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
-
-                    bool reached;
-                    if (m1 != null && m1.Count > 0)
+                    double tp1Price;
+                    if (ctx.Tp1Price.HasValue && ctx.Tp1Price.Value > 0)
                     {
-                        var m1Bar = m1.LastBar;
-                        reached = pos.TradeType == TradeType.Buy
-                            ? m1Bar.High >= tp1Price
-                            : m1Bar.Low <= tp1Price;
+                        tp1Price = ctx.Tp1Price.Value;
                     }
                     else
                     {
-                        reached =
-                            (pos.TradeType == TradeType.Buy && sym.Bid >= tp1Price) ||
-                            (pos.TradeType == TradeType.Sell && sym.Ask <= tp1Price);
+                        tp1Price = pos.TradeType == TradeType.Buy
+                            ? pos.EntryPrice + rDist * tp1R
+                            : pos.EntryPrice - rDist * tp1R;
+
+                        ctx.Tp1Price = tp1Price;
+                    }
+
+                    if (ctx.Tp1R <= 0)
+                        ctx.Tp1R = tp1R;
+
+                    bool reached =
+                        pos.TradeType == TradeType.Buy
+                            ? sym.Bid >= tp1Price
+                            : sym.Bid <= tp1Price;
+
+                    if (!reached)
+                    {
+                        var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
+
+                        if (m1 != null && m1.Count > 0)
+                        {
+                            var m1Bar = m1.LastBar;
+                            reached = pos.TradeType == TradeType.Buy
+                                ? m1Bar.High >= tp1Price
+                                : m1Bar.Low <= tp1Price;
+                        }
                     }
 
                     if (reached)
                     {
                         _bot.Print($"[GBPJPY][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
                         ExecuteTp1(pos, ctx, rDist);
-                        return;
+                        continue;
                     }
 
                     const int MinBarsBeforeTvm = 4;
-                    ctx.BarsSinceEntryM5 = (int)Math.Max(
-                        1,
-                        (_bot.Server.Time - ctx.EntryTime).TotalSeconds / 300.0
-                    );
-
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
                         var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
@@ -128,7 +141,7 @@ namespace GeminiV26.Instruments.GBPJPY
                             _bot.Print($"[GBPJPY][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}");
                             _bot.ClosePosition(pos);
                             _contexts.Remove(key);
-                            return;
+                            continue;
                         }
                     }
 
@@ -189,13 +202,15 @@ namespace GeminiV26.Instruments.GBPJPY
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
             ctx.Tp1Hit = true;
 
-            double bePrice = ctx.EntryPrice + Direction(pos) * rDist * BeOffsetR;
-            if (pos.StopLoss.HasValue)
-            {
-                bePrice = pos.TradeType == TradeType.Buy
-                    ? Math.Max(bePrice, pos.StopLoss.Value)
-                    : Math.Min(bePrice, pos.StopLoss.Value);
-            }
+            ApplyBreakEven(pos, ctx, rDist);
+        }
+
+        private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
+        {
+            double bePrice =
+                pos.TradeType == TradeType.Buy
+                    ? pos.EntryPrice + rDist * BeOffsetR
+                    : pos.EntryPrice - rDist * BeOffsetR;
 
             _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
 
@@ -206,8 +221,35 @@ namespace GeminiV26.Instruments.GBPJPY
                 ctx.TrailingMode = TrailingMode.Normal;
         }
 
-        private static int Direction(Position pos)
-            => pos.TradeType == TradeType.Buy ? 1 : -1;
+        private double ResolveTp1R(PositionContext ctx)
+        {
+            if (ctx.Tp1R > 0)
+                return ctx.Tp1R;
+
+            if (ctx.FinalConfidence >= 85)
+                return 0.40;
+
+            if (ctx.FinalConfidence >= 70)
+                return 0.50;
+
+            return 0.60;
+        }
+
+        private double GetRiskDistance(Position pos, PositionContext ctx)
+        {
+            if (ctx.RiskPriceDistance > 0)
+                return ctx.RiskPriceDistance;
+
+            if (ctx.LastStopLossPrice.HasValue && ctx.LastStopLossPrice.Value > 0 && ctx.EntryPrice > 0)
+            {
+                double d = Math.Abs(ctx.EntryPrice - ctx.LastStopLossPrice.Value);
+                if (d > 0)
+                    return d;
+            }
+
+            double d2 = Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
+            return d2 > 0 ? d2 : 0;
+        }
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
