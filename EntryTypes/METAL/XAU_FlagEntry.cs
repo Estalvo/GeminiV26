@@ -218,6 +218,12 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add($"FLAG_WIDE_GLOBAL(-{p}) rangeAtr={rangeAtr:F2} lim={((double)profile.MaxFlagAtrMult):F2}");
             }
 
+            if (rangeAtr > 1.2)
+            {
+                score -= 5;
+                reasons.Add("WIDE_FLAG(-5)");
+            }
+            
             // session
             double sessionLimit = (double)tuning.MaxFlagAtrMult > 0 ? (double)tuning.MaxFlagAtrMult : (double)profile.MaxFlagAtrMult;
             if (sessionLimit > 0 && rangeAtr > sessionLimit)
