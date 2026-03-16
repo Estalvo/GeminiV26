@@ -128,18 +128,21 @@ namespace GeminiV26.EntryTypes.FX
                     ctx.IsRange_M5;
 
                 if (lowEnergy && adxNow < dynamicMinAdx)
-                    return Invalid(ctx, flagDir, $"LOW_ENERGY_NO_TREND {adxNow:F1}<{dynamicMinAdx:F1}", score);
+                {
+                    ApplyPenalty(6);
+                    ctx.Log?.Invoke($"[{ctx.Symbol}][FLAG_SOFT_LOW_ENERGY] candDir={flagDir} adx={adxNow:F1}<{dynamicMinAdx:F1}");
+                }
 
-                double hardFloor = dynamicMinAdx - 4.0;
+                double hardFloor = dynamicMinAdx - 6.0;
 
                 bool strongContextForAdx =
                     score >= (tuning.MinScore + 6) &&
                     !ctx.IsRange_M5;
 
-                if (adxNow < hardFloor)
+                if (adxNow < hardFloor - 2)
                 {
                     if (!strongContextForAdx)
-                        return Invalid(ctx, flagDir, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor:F1}", score);
+                        return Invalid(ctx, flagDir, $"VERY_LOW_ADX {adxNow:F1}<{hardFloor - 2:F1}", score);
 
                     ApplyPenalty(4);
                     ctx.Log?.Invoke($"[{ctx.Symbol}][A_ADX_SOFT] candDir={flagDir} adx={adxNow:F1} < {hardFloor:F1} strongContext => penalty=4 score={score}");
@@ -216,7 +219,7 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, flagDir, "ASIA_NO_ATR_EXPANSION", score);
 
                 int asiaBarsSinceBreakPre =
-                    ctx.TrendDirection == TradeDirection.Long
+                    flagDir == TradeDirection.Long
                     ? ctx.BarsSinceHighBreak_M5
                     : ctx.BarsSinceLowBreak_M5;
 
@@ -332,6 +335,7 @@ namespace GeminiV26.EntryTypes.FX
             ctx.Log?.Invoke($"[FX_FLAG RANGE] candDir={flagDir} bars={tuning.FlagBars} rangeATR={rangeAtr:F2}");
 
             double maxFlagAtr = tuning.MaxFlagAtrMult;
+            maxFlagAtr += 0.10;
             if (ctx.Session == FxSession.London) maxFlagAtr += 0.10;
             if (ctx.Session == FxSession.NewYork) maxFlagAtr += 0.30;
             if (fx.Volatility == FxVolatilityClass.Low) maxFlagAtr += 0.20;
@@ -530,7 +534,7 @@ namespace GeminiV26.EntryTypes.FX
             if (breakoutReason == "M1_BREAKOUT")
             {
                 minBreakoutBars =
-                    ctx.Session == FxSession.Asia ? 1 : 2;
+                    ctx.Session == FxSession.Asia ? 1 : 1;
             }
             else if (breakoutReason == "RANGE_BREAK_DIR")
             {
@@ -657,10 +661,18 @@ namespace GeminiV26.EntryTypes.FX
                     (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !lastClosesInFlagDir);
 
                 if (meh)
-                    return Invalid(ctx, flagDir, "LOW_ENERGY_CONT", score);
-
-                if (strongTrendContext) ApplyPenalty(1);
-                else { ApplyPenalty(3); minBoost += 1; }
+                {
+                    ApplyPenalty(4);
+                }
+                else if (strongTrendContext)
+                {
+                    ApplyPenalty(1);
+                }
+                else
+                {
+                    ApplyPenalty(3);
+                    minBoost += 1;
+                }
             }
 
             if (!breakout && !hasM1Confirmation)
