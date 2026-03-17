@@ -993,10 +993,38 @@ namespace GeminiV26.Core
                 _usdChfEntryLogic?.Evaluate();
 
             if (IsNasSymbol(_bot.SymbolName))
+            {
                 _nasEntryLogic?.Evaluate();
+                if (_nasEntryLogic != null)
+                {
+                    _ctx.LogicBiasDirection = FromTradeType(_nasEntryLogic.LastBias);
+                    _ctx.LogicBiasConfidence = _nasEntryLogic.LastLogicConfidence;
+                }
+            }
+
+            if (IsSymbol("US30"))
+            {
+                _us30EntryLogic?.Evaluate();
+                if (_us30EntryLogic != null)
+                {
+                    _us30EntryLogic.CheckEntry(out var us30Dir, out var us30LogicConfidence);
+                    if (us30Dir != TradeDirection.None && us30LogicConfidence > 0)
+                    {
+                        _ctx.LogicBiasDirection = us30Dir;
+                        _ctx.LogicBiasConfidence = us30LogicConfidence;
+                    }
+                }
+            }
 
             if (IsSymbol("GER40"))
+            {
                 _ger40EntryLogic?.Evaluate();
+                if (_ger40EntryLogic != null)
+                {
+                    _ctx.LogicBiasDirection = FromTradeType(_ger40EntryLogic.LastBias);
+                    _ctx.LogicBiasConfidence = _ger40EntryLogic.LastLogicConfidence;
+                }
+            }
 
             if (IsSymbol("BTCUSD"))
             {
@@ -1045,6 +1073,19 @@ namespace GeminiV26.Core
 
             foreach (var e in symbolSignals)
             {
+                if (e != null)
+                {
+                    e.LogicConfidence = _ctx.LogicBiasConfidence;
+
+                    if (e.Direction == TradeDirection.None && e.LogicConfidence > 0)
+                    {
+                        _bot.Print($"[DIR][LOGIC_ERROR] logic produced confidence but no direction sym={_bot.SymbolName} type={e.Type} logicConf={e.LogicConfidence}");
+
+                        if (_ctx.LogicBiasDirection != TradeDirection.None)
+                            e.Direction = _ctx.LogicBiasDirection;
+                    }
+                }
+
                 _bot.Print($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}");
             }
 
@@ -1320,6 +1361,9 @@ namespace GeminiV26.Core
 
                 _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
                 _bot.Print($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}");
+
+                _ctx.LogicBiasDirection = selected.Direction;
+                _ctx.LogicBiasConfidence = selected.LogicConfidence;
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
