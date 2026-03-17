@@ -62,6 +62,8 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // ENTRY LOGIC – GER40
             // =========================
+            _entryLogic.Evaluate();
+            _entryLogic.ApplyToEntryEvaluation(entry);
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
             // =========================
