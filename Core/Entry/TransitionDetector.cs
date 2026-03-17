@@ -361,7 +361,10 @@ namespace GeminiV26.Core.Entry
                 }
 
                 double strongImpulseThreshold = Math.Max(rules.MinImpulseStrength, 0.60);
-                double maxPullbackDepth = Math.Min(rules.MaxPullbackDepthR, 0.50);
+                double maxPullbackDepth =
+                    ResolveInstrumentType(ctx) == InstrumentType.INDEX
+                        ? rules.MaxPullbackDepthR
+                        : Math.Min(rules.MaxPullbackDepthR, 0.50);
 
                 relaxedContinuation =
                     impulseStrength > strongImpulseThreshold &&
