@@ -6,33 +6,20 @@ using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.FX
 {
-    /// <summary>
-    /// FX Micro Continuation Entry
-    /// Phase 3.8
-    ///
-    /// Cél:
-    /// - Erős trendben sekély pullback utáni folytatás
-    /// - NEM impulse chase
-    /// - NEM klasszikus flag
-    /// - Trend grind / EMA-slide piacokra
-    /// </summary>
     public class FX_MicroContinuationEntry : IEntryType
     {
         public EntryType Type => EntryType.FX_MicroContinuation;
 
-        // =========================
-        // TUNING
-        // =========================
-        private const double MinPullbackAtr = 0.05;   // micro PB
-        private const double MinSlope = 0.00010;      // FX-safe
+        private const double MinPullbackAtr = 0.05;
+        private const double MinSlope = 0.00010;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
-            
+
             var fx = FxInstrumentMatrix.Get(ctx.Symbol);
-            
+
             if (fx == null)
                 return Invalid(ctx, "NO_FX_PROFILE");
 
@@ -51,13 +38,14 @@ namespace GeminiV26.EntryTypes.FX
             if (longEval.IsValid && shortEval.IsValid)
                 return longEval.Score >= shortEval.Score ? longEval : shortEval;
 
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            return Invalid(ctx, "NO_VALID_SIDE");
         }
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx, FxFlagSessionTuning tuning)
         {
             int minScore = Math.Max(40, tuning.MinScore - 5);
-            double pullbackDepthAtr =
+
+            double pullbackDepthR =
                 dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
 
             bool trendOk =
@@ -68,52 +56,36 @@ namespace GeminiV26.EntryTypes.FX
             if (!trendOk)
                 return Invalid(ctx, "NO_TREND_SLOPE");
 
-            // =================================================
-            // TREND KÖRNYEZET (ne chop)
-            // =================================================
             if (ctx.IsRange_M5)
                 return Invalid(ctx, "IN_RANGE");
 
-            // =================================================
-            // MICRO PULLBACK
-            // =================================================
-            if (pullbackDepthAtr < MinPullbackAtr)
+            if (pullbackDepthR < MinPullbackAtr)
                 return Invalid(ctx, "PB_TOO_SHALLOW");
 
-            if (pullbackDepthAtr > tuning.MaxPullbackAtr * 0.45)
+            if (pullbackDepthR > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
-            // =================================================
-            // CONTINUATION CONFIRMATION
-            // =================================================
+            // ✅ FIX: side-aware M1
+            bool m1Aligned = ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
 
             bool continuationSignal =
                 ctx.LastClosedBarInTrendDirection ||
                 ctx.HasReactionCandle_M5 ||
-                ctx.M1TriggerInTrendDirection;
+                m1Aligned;
 
             if (!continuationSignal)
                 return Invalid(ctx, "NO_CONTINUATION_SIGNAL");
 
             int score = 50;
 
-            // =================================================
-            // EMA VISZONY
-            // =================================================
             if (!ctx.PullbackTouchedEma21_M5)
-                score -= 6;   // micro grindnál gyakori EMA-slide
+                score -= 6;
 
-            // =================================================
-            // REAKCIÓ (kulcs!)
-            // =================================================
             if (!ctx.LastClosedBarInTrendDirection && !ctx.HasReactionCandle_M5)
-                score -= 6;   // ha egyik sincs, gyenge
+                score -= 6;
 
-            // =================================================
-            // SCORE
-            // =================================================
-            
-            if (ctx.M1TriggerInTrendDirection)
+            // ✅ FIX: side-aware scoring
+            if (m1Aligned)
                 score += 15;
 
             if (ctx.IsPullbackDecelerating_M5)
@@ -140,8 +112,8 @@ namespace GeminiV26.EntryTypes.FX
                 IsValid = finalDir != TradeDirection.None,
                 Reason =
                     $"FX_MICRO_CONT score={score} " +
-                    $"pbATR={pullbackDepthAtr:F2} " +
-                    $"m1={ctx.M1TriggerInTrendDirection}"
+                    $"pbR={pullbackDepthR:F2} " +
+                    $"m1={m1Aligned}"
             };
         }
 
