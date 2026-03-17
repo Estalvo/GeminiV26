@@ -13,6 +13,7 @@ namespace GeminiV26.Core.Entry
     ///     - long transition
     ///     - short transition
     /// - az entry layer dönti el, hogy ebből lesz-e valid long / short setup
+    /// - a detector leíró állapotot ad vissza, NEM agresszív rejectet
     /// </summary>
     public sealed class TransitionDetector
     {
@@ -38,14 +39,7 @@ namespace GeminiV26.Core.Entry
             var rules = TransitionRules.ForInstrument(ResolveInstrumentType(ctx));
             int last = ctx.M5.Count - 2;
 
-            // =========================================================
-            // LONG SIDE
-            // =========================================================
             var longSide = EvaluateSide(ctx, rules, last, TradeDirection.Long, state.LongState);
-
-            // =========================================================
-            // SHORT SIDE
-            // =========================================================
             var shortSide = EvaluateSide(ctx, rules, last, TradeDirection.Short, state.ShortState);
 
             // =========================================================
@@ -80,21 +74,19 @@ namespace GeminiV26.Core.Entry
 
             // =========================================================
             // Backward compatibility layer
+            // Neutrális projection: csak akkor tükrözünk vissza irányt,
+            // ha az egyik oldal érdemben tradable state-ben van, a másik nem.
             // =========================================================
-            // Régi mezők: itt NEM döntünk irányról agresszíven.
-            // Ha csak az egyik oldal valid, azt tükrözzük vissza.
-            // Ha mindkettő valid vagy egyik sem, maradjon neutrális.
-            if (longSide.IsValid && !shortSide.IsValid)
+            if (longSide.IsTradable && !shortSide.IsTradable)
             {
                 ApplyLegacyProjection(ctx, longSide, TradeDirection.Long);
             }
-            else if (!longSide.IsValid && shortSide.IsValid)
+            else if (!longSide.IsTradable && shortSide.IsTradable)
             {
                 ApplyLegacyProjection(ctx, shortSide, TradeDirection.Short);
             }
             else
             {
-                // neutral / ambiguous
                 ctx.HasImpulse_M5 = longSide.HasImpulse || shortSide.HasImpulse;
                 ctx.BarsSinceImpulse_M5 = Math.Min(
                     longSide.HasImpulse ? longSide.BarsSinceImpulse : 999,
@@ -105,19 +97,17 @@ namespace GeminiV26.Core.Entry
                 ctx.Transition = new TransitionEvaluation
                 {
                     HasImpulse = ctx.HasImpulse_M5,
-                    HasPullback = false,
-                    HasFlag = false,
+                    HasPullback = longSide.HasPullback || shortSide.HasPullback,
+                    HasFlag = longSide.HasFlag || shortSide.HasFlag,
                     BarsSinceImpulse = ctx.BarsSinceImpulse_M5 >= 999 ? -1 : ctx.BarsSinceImpulse_M5,
-                    PullbackBars = 0,
-                    FlagBars = 0,
-                    PullbackDepthR = 0.0,
-                    CompressionScore = 0.0,
-                    QualityScore = 0.0,
+                    PullbackBars = Math.Max(longSide.PullbackBars, shortSide.PullbackBars),
+                    FlagBars = Math.Max(longSide.FlagBars, shortSide.FlagBars),
+                    PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
+                    CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
+                    QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
                     IsValid = false,
                     BonusScore = 0,
-                    Reason = longSide.IsValid && shortSide.IsValid
-                        ? "BothSidesValid"
-                        : "NoDirectionalConsensus"
+                    Reason = "NoDirectionalConsensus"
                 };
             }
 
@@ -145,25 +135,24 @@ namespace GeminiV26.Core.Entry
             // Logs
             // =========================================================
             ctx.Log?.Invoke(
-                $"[TRANSITION][LONG] impulse={longSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={longSide.BarsSinceImpulse} " +
+                $"[TRANSITION][LONG] phase={longSide.Phase} " +
+                $"impulse={longSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={longSide.BarsSinceImpulse} " +
                 $"pullback={longSide.HasPullback.ToString().ToLowerInvariant()} pbBars={longSide.PullbackBars} pbDepthR={longSide.PullbackDepthR:0.00} " +
                 $"flag={longSide.HasFlag.ToString().ToLowerInvariant()} flagBars={longSide.FlagBars} comp={longSide.CompressionScore:0.00} " +
-                $"valid={longSide.IsValid.ToString().ToLowerInvariant()} score={longSide.QualityScore:0.00} bonus={longSide.BonusScore} reason={longSide.Reason}");
+                $"tradable={longSide.IsTradable.ToString().ToLowerInvariant()} score={longSide.QualityScore:0.00} bonus={longSide.BonusScore} reason={longSide.Reason}");
 
             ctx.Log?.Invoke(
-                $"[TRANSITION][SHORT] impulse={shortSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={shortSide.BarsSinceImpulse} " +
+                $"[TRANSITION][SHORT] phase={shortSide.Phase} " +
+                $"impulse={shortSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={shortSide.BarsSinceImpulse} " +
                 $"pullback={shortSide.HasPullback.ToString().ToLowerInvariant()} pbBars={shortSide.PullbackBars} pbDepthR={shortSide.PullbackDepthR:0.00} " +
                 $"flag={shortSide.HasFlag.ToString().ToLowerInvariant()} flagBars={shortSide.FlagBars} comp={shortSide.CompressionScore:0.00} " +
-                $"valid={shortSide.IsValid.ToString().ToLowerInvariant()} score={shortSide.QualityScore:0.00} bonus={shortSide.BonusScore} reason={shortSide.Reason}");
+                $"tradable={shortSide.IsTradable.ToString().ToLowerInvariant()} score={shortSide.QualityScore:0.00} bonus={shortSide.BonusScore} reason={shortSide.Reason}");
 
             ctx.Log?.Invoke(
                 $"[TRACE][TRANSITION_STATE] symbol={ctx.Symbol} " +
                 $"longImpulseSince={state.LongState.BarsSinceImpulse} longPullbackSince={state.LongState.BarsSincePullback} longFlagSince={state.LongState.BarsSinceFlag} " +
                 $"shortImpulseSince={state.ShortState.BarsSinceImpulse} shortPullbackSince={state.ShortState.BarsSincePullback} shortFlagSince={state.ShortState.BarsSinceFlag}");
 
-            // =========================================================
-            // Return value: neutral aggregate
-            // =========================================================
             return new TransitionEvaluation
             {
                 HasImpulse = longSide.HasImpulse || shortSide.HasImpulse,
@@ -177,15 +166,15 @@ namespace GeminiV26.Core.Entry
                 PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
                 CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
                 QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
-                IsValid = longSide.IsValid || shortSide.IsValid,
+                IsValid = longSide.IsTradable || shortSide.IsTradable,
                 BonusScore = Math.Max(longSide.BonusScore, shortSide.BonusScore),
-                Reason = longSide.IsValid && shortSide.IsValid
-                    ? "BothSidesValid"
-                    : longSide.IsValid
-                        ? "LongOnlyValid"
-                        : shortSide.IsValid
-                            ? "ShortOnlyValid"
-                            : "NoValidTransition"
+                Reason = longSide.IsTradable && shortSide.IsTradable
+                    ? "BothSidesTradable"
+                    : longSide.IsTradable
+                        ? "LongSideTradable"
+                        : shortSide.IsTradable
+                            ? "ShortSideTradable"
+                            : "Neutral"
             };
         }
 
@@ -199,6 +188,9 @@ namespace GeminiV26.Core.Entry
             int impulseIndex = -1;
             double impulseRange = 0.0;
             double impulseStrength = 0.0;
+            bool hasImpulse = false;
+            bool weakImpulse = false;
+            int barsSinceImpulse = 999;
 
             // =========================================================
             // IMPULSE
@@ -235,11 +227,11 @@ namespace GeminiV26.Core.Entry
                     ? Clamp01(range / normalizationAtr)
                     : 0.0;
 
+                hasImpulse = true;
                 break;
             }
 
-            bool hasImpulse = impulseIndex >= 0;
-            int barsSinceImpulse = hasImpulse
+            barsSinceImpulse = hasImpulse
                 ? last - impulseIndex
                 : Math.Min(runtimeState.BarsSinceImpulse + 1, 999);
 
@@ -251,12 +243,13 @@ namespace GeminiV26.Core.Entry
                 impulseStrength = 0.0;
             }
 
-            bool weakImpulse = hasImpulse && impulseStrength < rules.MinImpulseStrength;
+            weakImpulse = hasImpulse && impulseStrength < rules.MinImpulseStrength;
             if (weakImpulse)
             {
                 hasImpulse = false;
                 impulseIndex = -1;
                 impulseRange = 0.0;
+                impulseStrength = 0.0;
             }
 
             // =========================================================
@@ -269,6 +262,8 @@ namespace GeminiV26.Core.Entry
             double pullbackQuality = 0.0;
             bool trendAlignmentMaintained = false;
             bool hasPullback = false;
+            bool pullbackForming = false;
+            bool pullbackDeep = false;
 
             if (hasImpulse && pullbackStart <= last)
             {
@@ -297,6 +292,8 @@ namespace GeminiV26.Core.Entry
                     }
 
                     pullbackQuality = Clamp01(1.0 - Math.Abs(pullbackDepthR - rules.OptimalPullbackDepthR));
+                    pullbackForming = pullbackBars > 0;
+                    pullbackDeep = pullbackDepthR > rules.MaxPullbackDepthR;
                 }
 
                 hasPullback =
@@ -321,50 +318,30 @@ namespace GeminiV26.Core.Entry
             {
                 flagStart = pullbackEnd + 1;
 
-                if (flagStart <= pullbackEnd || flagStart > last)
+                if (flagStart > pullbackEnd && flagStart <= last)
                 {
-                    UpdateRuntime(runtimeState, hasImpulse, hasPullback, false);
-                    return BuildSideResult(
-                        direction, hasImpulse, barsSinceImpulse, impulseRange, impulseStrength,
-                        hasPullback, pullbackBars, pullbackDepthR, pullbackQuality,
-                        false, 0, 0.0, 0.0, false, false, 0.0, 0,
-                        "FLAG_NOT_DETECTED");
-                }
+                    flagBars = last - flagStart + 1;
 
-                flagBars = last - flagStart + 1;
+                    if (flagBars > 0 && flagBars <= 50)
+                    {
+                        double avgRange = AverageRange(ctx, flagStart, last);
+                        compression = impulseRange > 0 ? avgRange / impulseRange : 1.0;
+                        compressionScore = Clamp01(1.0 - compression);
 
-                if (flagBars > 50)
-                {
-                    UpdateRuntime(runtimeState, hasImpulse, hasPullback, false);
-                    return BuildSideResult(
-                        direction, hasImpulse, barsSinceImpulse, impulseRange, impulseStrength,
-                        hasPullback, pullbackBars, pullbackDepthR, pullbackQuality,
-                        false, flagBars, 0.0, 0.0, false, false, 0.0, 0,
-                        "FLAG_INVALID_BAR_COUNT");
-                }
+                        noStructureBreak = ValidateNoStructureBreak(
+                            ctx, flagStart, last, direction, pullbackStart, pullbackEnd);
 
-                if (flagBars > 0)
-                {
-                    double avgRange = AverageRange(ctx, flagStart, last);
-                    compression = impulseRange > 0 ? avgRange / impulseRange : 1.0;
-                    compressionScore = Clamp01(1.0 - compression);
+                        flagStructureBroken = !noStructureBreak;
 
-                    noStructureBreak = ValidateNoStructureBreak(
-                        ctx, flagStart, last, direction, pullbackStart, pullbackEnd);
-
-                    flagStructureBroken = !noStructureBreak;
-
-                    hasFlag =
-                        flagBars <= rules.MaxFlagBars &&
-                        compression <= rules.MaxCompressionRatio &&
-                        noStructureBreak;
+                        hasFlag =
+                            flagBars <= rules.MaxFlagBars &&
+                            compression <= rules.MaxCompressionRatio &&
+                            noStructureBreak;
+                    }
                 }
 
                 double strongImpulseThreshold = Math.Max(rules.MinImpulseStrength, 0.60);
-                double maxPullbackDepth =
-                    ResolveInstrumentType(ctx) == InstrumentType.INDEX
-                        ? rules.MaxPullbackDepthR
-                        : Math.Min(rules.MaxPullbackDepthR, 0.50);
+                double maxPullbackDepth = rules.MaxPullbackDepthR;
 
                 relaxedContinuation =
                     impulseStrength > strongImpulseThreshold &&
@@ -374,44 +351,60 @@ namespace GeminiV26.Core.Entry
             }
 
             // =========================================================
-            // FINAL VALIDITY
+            // EARLY CONTINUATION / PHASE
             // =========================================================
-                bool earlyContinuation =
-                    hasImpulse &&
-                    !hasPullback &&
-                    barsSinceImpulse <= 2 &&
-                    ctx.MarketState != null &&
-                    ctx.MarketState.IsTrend;
+            bool earlyContinuation =
+                hasImpulse &&
+                !hasPullback &&
+                pullbackBars == 0 &&
+                barsSinceImpulse <= 3 &&
+                ctx.MarketState != null &&
+                ctx.MarketState.IsTrend;
 
-                bool isValid =
-                    (hasImpulse && hasPullback && (hasFlag || relaxedContinuation))
-                    || earlyContinuation;
+            string phase = BuildPhase(
+                hasImpulse,
+                hasPullback,
+                hasFlag,
+                earlyContinuation,
+                pullbackForming,
+                pullbackDeep,
+                barsSinceImpulse);
+
+            // =========================================================
+            // TRADABLE STATE (leíró, nem agresszív detector döntés)
+            // =========================================================
+            bool isTradable =
+                (hasImpulse && hasPullback && (hasFlag || relaxedContinuation))
+                || earlyContinuation;
 
             double qualityScore = 0.0;
             int bonus = 0;
 
-            if (isValid)
+            if (hasImpulse)
             {
                 qualityScore =
                     (impulseStrength * 0.4) +
                     (compressionScore * 0.3) +
                     (pullbackQuality * 0.3);
 
-                bonus = Clamp((int)(qualityScore * 10.0), 5, 18);
+                bonus = isTradable
+                    ? Clamp((int)(qualityScore * 10.0), 5, 18)
+                    : 0;
             }
 
-            string reason = isValid
-                ? (hasFlag ? "OK" : "OK_RELAXED_CONTINUATION")
-                : BuildReason(
-                    hasImpulse,
-                    hasPullback,
-                    hasFlag,
-                    flagStructureBroken,
-                    weakImpulse,
-                    pullbackDepthR,
-                    rules.MaxPullbackDepthR,
-                    compression,
-                    rules.MaxCompressionRatio);
+            string reason = BuildReason(
+                hasImpulse,
+                hasPullback,
+                hasFlag,
+                earlyContinuation,
+                relaxedContinuation,
+                flagStructureBroken,
+                weakImpulse,
+                pullbackForming,
+                pullbackDeep,
+                compression,
+                rules.MaxCompressionRatio,
+                barsSinceImpulse);
 
             UpdateRuntime(runtimeState, hasImpulse, hasPullback, hasFlag);
 
@@ -430,10 +423,11 @@ namespace GeminiV26.Core.Entry
                 compression,
                 compressionScore,
                 relaxedContinuation,
-                isValid,
+                isTradable,
                 qualityScore,
                 bonus,
-                reason);
+                reason,
+                phase);
         }
 
         private static void ApplyLegacyProjection(
@@ -444,11 +438,10 @@ namespace GeminiV26.Core.Entry
             ctx.HasImpulse_M5 = side.HasImpulse;
             ctx.BarsSinceImpulse_M5 = side.HasImpulse ? side.BarsSinceImpulse : 999;
 
-            ctx.TransitionValid = side.IsValid;
+            ctx.TransitionValid = side.IsTradable;
             ctx.TransitionScoreBonus = side.BonusScore;
             ctx.Transition = BuildEvaluation(side);
 
-            // Legacy fields downstreamnak
             ctx.ImpulseDirection = direction;
             ctx.TrendDirection = direction;
         }
@@ -466,7 +459,7 @@ namespace GeminiV26.Core.Entry
                 PullbackDepthR = side.PullbackDepthR,
                 CompressionScore = side.CompressionScore,
                 QualityScore = side.QualityScore,
-                IsValid = side.IsValid,
+                IsValid = side.IsTradable,
                 BonusScore = side.BonusScore,
                 Reason = side.Reason
             };
@@ -487,10 +480,11 @@ namespace GeminiV26.Core.Entry
             double compression,
             double compressionScore,
             bool relaxedContinuation,
-            bool isValid,
+            bool isTradable,
             double qualityScore,
             int bonus,
-            string reason)
+            string reason,
+            string phase)
         {
             return new SideEvaluation
             {
@@ -511,10 +505,11 @@ namespace GeminiV26.Core.Entry
                 CompressionScore = compressionScore,
                 RelaxedContinuation = relaxedContinuation,
 
-                IsValid = isValid,
+                IsTradable = isTradable,
                 QualityScore = qualityScore,
                 BonusScore = bonus,
-                Reason = reason
+                Reason = reason,
+                Phase = phase
             };
         }
 
@@ -610,10 +605,11 @@ namespace GeminiV26.Core.Entry
             public double CompressionScore { get; set; }
             public bool RelaxedContinuation { get; set; }
 
-            public bool IsValid { get; set; }
+            public bool IsTradable { get; set; }
             public double QualityScore { get; set; }
             public int BonusScore { get; set; }
             public string Reason { get; set; }
+            public string Phase { get; set; }
         }
 
         private static int FindPullbackEnd(
@@ -778,43 +774,91 @@ namespace GeminiV26.Core.Entry
             };
         }
 
+        private static string BuildPhase(
+            bool hasImpulse,
+            bool hasPullback,
+            bool hasFlag,
+            bool earlyContinuation,
+            bool pullbackForming,
+            bool pullbackDeep,
+            int barsSinceImpulse)
+        {
+            if (!hasImpulse)
+                return "NONE";
+
+            if (earlyContinuation)
+                return "EARLY_CONTINUATION";
+
+            if (!hasPullback && barsSinceImpulse <= 3)
+                return "IMPULSE_ONLY";
+
+            if (!hasPullback && barsSinceImpulse > 3)
+                return "IMPULSE_DECAY";
+
+            if (pullbackDeep)
+                return "PULLBACK_DEEP";
+
+            if (pullbackForming && !hasFlag)
+                return "PULLBACK_FORMING";
+
+            if (hasFlag)
+                return "FLAG_READY";
+
+            return "NEUTRAL";
+        }
+
         private static string BuildReason(
             bool hasImpulse,
             bool hasPullback,
             bool hasFlag,
+            bool earlyContinuation,
+            bool relaxedContinuation,
             bool flagStructureBroken,
             bool weakImpulse,
-            double pullbackDepthR,
-            double maxPullbackDepthR,
+            bool pullbackForming,
+            bool pullbackDeep,
             double compression,
-            double maxCompression)
+            double maxCompression,
+            int barsSinceImpulse)
         {
             if (weakImpulse)
-                return "WeakImpulse";
+                return "WEAK_IMPULSE";
 
             if (!hasImpulse)
-                return "MissingImpulse";
+                return "MISSING_IMPULSE";
+
+            if (earlyContinuation)
+                return "EARLY_CONTINUATION";
 
             if (!hasPullback)
             {
-                if (pullbackDepthR > maxPullbackDepthR)
-                    return "PullbackTooDeep";
+                if (barsSinceImpulse <= 3)
+                    return "PULLBACK_NOT_FORMED";
 
-                return "InvalidPullback";
+                return "IMPULSE_DECAY";
             }
+
+            if (pullbackDeep)
+                return "PULLBACK_DEEP";
+
+            if (relaxedContinuation)
+                return "RELAXED_CONTINUATION";
 
             if (!hasFlag)
             {
                 if (flagStructureBroken)
-                    return "FlagStructureBreak";
+                    return "FLAG_STRUCTURE_BREAK";
 
                 if (compression > maxCompression)
-                    return "WeakCompression";
+                    return "WEAK_COMPRESSION";
 
-                return "InvalidFlag";
+                if (pullbackForming)
+                    return "FLAG_NOT_FORMED";
+
+                return "NEUTRAL";
             }
 
-            return "Unknown";
+            return "OK";
         }
     }
 }
