@@ -212,7 +212,8 @@ namespace GeminiV26.Instruments.EURUSD
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entryContext.FinalDirection != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5
             };
 
             // ✅ 1 sor, safe: kanonikus FinalConfidence kiszámolása (CSV/analytics)

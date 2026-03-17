@@ -202,7 +202,8 @@ namespace GeminiV26.Instruments.ETHUSD
                 BeMode = BeMode.AfterTp1,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entryContext.FinalDirection != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5
             };
 
             ctx.Tp1Price =

@@ -361,5 +361,7 @@ namespace GeminiV26.Core
         public double? LastTrailingStopTarget { get; set; }
 
         public bool MarketTrend { get; set; }
+
+        public double Adx_M5 { get; set; }
     }
 }

@@ -213,6 +213,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
                 MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5,
 
                 BeMode = BeMode.AfterTp1,
 

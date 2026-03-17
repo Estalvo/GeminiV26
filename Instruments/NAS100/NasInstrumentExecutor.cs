@@ -197,6 +197,7 @@ namespace GeminiV26.Instruments.NAS100
                 Tp2Price = tp2Price,
 
                 MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5,
 
                 BeOffsetR = 0.10,
                 Tp1Hit = false,

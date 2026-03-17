@@ -156,6 +156,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 Tp1R = 0.25,
 
                 MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5,
 
                 InitialStopLossR = 1.0,
                 BeMode = BeMode.AfterTp1

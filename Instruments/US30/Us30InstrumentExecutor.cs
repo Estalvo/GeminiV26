@@ -180,6 +180,7 @@ namespace GeminiV26.Instruments.US30
                 BeMode = BeMode.AfterTp1,
 
                 MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5,
 
                 TrailingMode =
                     riskConfidence >= 85 ? TrailingMode.Loose :
