@@ -97,6 +97,12 @@ namespace GeminiV26.EntryTypes.FX
 
             score = tuning.BaseScore + 6;
 
+            // FIX: side-specific impulse
+            bool hasImpulse =
+                flagDir == TradeDirection.Long ? ctx.HasImpulseLong_M5 :
+                flagDir == TradeDirection.Short ? ctx.HasImpulseShort_M5 :
+                false;
+                
             ctx.Log?.Invoke(
                 $"[FX_FLAG START] sym={ctx.Symbol} sess={ctx.Session} candDir={flagDir} " +
                 $"trendDir={ctx.TrendDirection} " +
@@ -104,7 +110,7 @@ namespace GeminiV26.EntryTypes.FX
                 $"ema50>200={(ctx.Ema50_M5 > ctx.Ema200_M5)} " +
                 $"ema8>21={(ctx.Ema8_M5 > ctx.Ema21_M5)} " +
                 $"ema21Slope={ctx.Ema21Slope_M5:F4} " +
-                $"impulse={ctx.HasImpulse_M5} range={ctx.IsRange_M5}"
+                $"impulse={hasImpulse} range={ctx.IsRange_M5}"
             );
 
             // =====================================================
@@ -124,7 +130,7 @@ namespace GeminiV26.EntryTypes.FX
 
                 bool lowEnergy =
                     !ctx.IsAtrExpanding_M5 &&
-                    !ctx.HasImpulse_M5 &&
+                    !hasImpulse &&
                     ctx.IsRange_M5;
 
                 if (lowEnergy && adxNow < dynamicMinAdx)
@@ -240,6 +246,10 @@ namespace GeminiV26.EntryTypes.FX
             var lastBar = ctx.M5[lastClosedIndex];
             double lastClose = lastBar.Close;
 
+            bool lastBarInDir =
+                (flagDir == TradeDirection.Long && lastBar.Close > lastBar.Open) ||
+                (flagDir == TradeDirection.Short && lastBar.Close < lastBar.Open);
+
             double lastBody = Math.Abs(lastBar.Close - lastBar.Open);
             double lastRange = lastBar.High - lastBar.Low;
             bool lastStrongBody = lastRange > 0 && (lastBody / lastRange) >= 0.55;
@@ -268,20 +278,23 @@ namespace GeminiV26.EntryTypes.FX
             double emaDistAtr = Math.Abs(lastClose - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (emaDistAtr < 0.10) ApplyPenalty(3);
-            if (emaDistAtr < 0.18 && ctx.HasImpulse_M5) ApplyPenalty(2);
-            if (emaDistAtr > tuning.MaxPullbackAtr * 1.5 && !ctx.HasImpulse_M5) ApplyPenalty(6);
+            if (emaDistAtr < 0.18 && hasImpulse) ApplyPenalty(2);
+            if (emaDistAtr > tuning.MaxPullbackAtr * 1.5 && !hasImpulse) ApplyPenalty(6);
 
-            if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 && ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5)
+            if (emaDistAtr > tuning.MaxPullbackAtr * 1.1 && hasImpulse && !ctx.IsAtrExpanding_M5)
                 ApplyPenalty(4);
 
             // Soft bias (keep)
-            if (ctx.TrendDirection == TradeDirection.Short && lastClose < ctx.Ema21_M5) ApplyReward(3);
-            else if (ctx.TrendDirection == TradeDirection.Long && lastClose > ctx.Ema21_M5) ApplyReward(3);
+            if (ctx.TrendDirection == flagDir)
+            {
+                if (flagDir == TradeDirection.Long && lastClose > ctx.Ema21_M5) ApplyReward(3);
+                if (flagDir == TradeDirection.Short && lastClose < ctx.Ema21_M5) ApplyReward(3);
+            }
 
             // =====================================================
             // IMPULSE QUALITY – FX CONTINUATION SAFE
             // =====================================================
-            if (ctx.HasImpulse_M5)
+            if (hasImpulse)
             {
                 double iq = GetImpulseQuality(ctx, 5);
 
@@ -293,30 +306,30 @@ namespace GeminiV26.EntryTypes.FX
             {
                 bool compressionValid =
                     !ctx.IsRange_M5 &&
-                    ctx.LastClosedBarInTrendDirection &&
+                    lastBarInDir &&
                     emaDistAtr < tuning.MaxPullbackAtr;
 
                 if (compressionValid) ApplyReward(2);
                 else ApplyPenalty(2);
             }
 
-            if (ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 4)
+            if (hasImpulse && ctx.BarsSinceImpulse_M5 > 4)
             {
                 if (!ctx.IsAtrExpanding_M5) ApplyPenalty(6);
                 if (ctx.IsRange_M5) ApplyPenalty(4);
             }
 
-            if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5 && ctx.IsRange_M5)
+            if (!hasImpulse && !ctx.IsAtrExpanding_M5 && ctx.IsRange_M5)
                 ApplyPenalty(4);
 
-            if (!ctx.HasImpulse_M5 && !ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5)
+            if (!hasImpulse && !ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5)
                 ApplyPenalty(1);
 
-            if (!ctx.HasImpulse_M5)
+            if (!hasImpulse)
             {
                 bool hasReaction =
                     ctx.HasReactionCandle_M5 ||
-                    ctx.LastClosedBarInTrendDirection;
+                    lastBarInDir;
 
                 if (!hasReaction)
                     ApplyPenalty(1);
@@ -484,7 +497,7 @@ namespace GeminiV26.EntryTypes.FX
                 lastClosesInFlagDir &&
                 (
                     strongBody ||
-                    (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5)
+                    (hasImpulse && ctx.IsAtrExpanding_M5)
                 );
 
             bool breakout = cleanBreakout || structuralBreakout;
@@ -658,7 +671,7 @@ namespace GeminiV26.EntryTypes.FX
 
                 bool meh =
                     ctx.IsRange_M5 ||
-                    (!ctx.HasImpulse_M5 && !ctx.HasReactionCandle_M5 && !lastClosesInFlagDir);
+                    (!hasImpulse && !ctx.HasReactionCandle_M5 && !lastClosesInFlagDir);
 
                 if (meh)
                 {
@@ -763,7 +776,7 @@ namespace GeminiV26.EntryTypes.FX
             {
                 ApplyReward(3);
 
-                if (ctx.HasImpulse_M5 && ctx.IsAtrExpanding_M5) ApplyReward(2);
+                if (hasImpulse && ctx.IsAtrExpanding_M5) ApplyReward(2);
                 if (strongBody) ApplyReward(1);
             }
 
@@ -805,7 +818,7 @@ namespace GeminiV26.EntryTypes.FX
                         ctx.Ema8_M5 > ctx.Ema21_M5 &&
                         ctx.Ema21Slope_M5 > 0 &&
                         lastClosesInFlagDir &&
-                        (ctx.HasImpulse_M5 || hasM1Confirmation);
+                        (hasImpulse || hasM1Confirmation);
 
                     if (!transitionLong)
                     {
@@ -829,7 +842,7 @@ namespace GeminiV26.EntryTypes.FX
                         ctx.Ema8_M5 < ctx.Ema21_M5 &&
                         ctx.Ema21Slope_M5 < 0 &&
                         lastClosesInFlagDir &&
-                        (ctx.HasImpulse_M5 || hasM1Confirmation);
+                        (hasImpulse || hasM1Confirmation);
 
                     if (!transitionShort)
                     {
@@ -1027,13 +1040,6 @@ namespace GeminiV26.EntryTypes.FX
         // NOTE: ctx.M1TriggerInTrendDirection is trend-based. We guard it so it won't confirm the opposite side.
         private static bool HasM1PullbackConfirmDirectional(EntryContext ctx, TradeDirection dir)
         {
-            if (!ctx.M1TriggerInTrendDirection)
-                return false;
-
-            // Guard: only accept if trendDir matches candidate OR trendDir unknown
-            if (ctx.TrendDirection != TradeDirection.None && ctx.TrendDirection != dir)
-                return false;
-
             if (ctx.M1 == null || ctx.M1.Count < 3)
                 return false;
 
