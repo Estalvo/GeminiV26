@@ -46,6 +46,10 @@ namespace GeminiV26.EntryTypes.METAL
             double hi = ctx.FlagHigh;
             double lo = ctx.FlagLow;
 
+            var bars = ctx.M5;
+            int last = bars.Count - 2;
+            var bar = bars[last];
+
             ctx.Log?.Invoke($"[FLAG DEBUG] hi={ctx.FlagHigh} lo={ctx.FlagLow} atr={ctx.AtrM5} range={(ctx.FlagHigh - ctx.FlagLow)}");
             ctx.Log?.Invoke($"[FLAG DEBUG] hasFlagLong={ctx.HasFlagLong_M5} hasFlagShort={ctx.HasFlagShort_M5}");
 
@@ -65,11 +69,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (rangeAtr <= 0 || rangeAtr > tuning.MaxFlagAtrMult * 1.3)
                 return Invalid(ctx, "FLAG_TOO_WIDE_HARD");
-                
-            var bars = ctx.M5;
-            int last = bars.Count - 2;
-            var bar = bars[last];
-
+              
             // ===== spike filter =====
             bool wickBoth = bar.High >= hi && bar.Low <= lo;
             bool closeUp = bar.Close > hi;
