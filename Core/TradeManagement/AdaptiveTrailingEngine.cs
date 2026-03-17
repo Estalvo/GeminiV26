@@ -2,6 +2,7 @@ using System;
 using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core.TradeManagement
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
+using GeminiV26.Core.Entry;
 using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.NAS100

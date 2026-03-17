@@ -19,6 +19,7 @@
 
 using cAlgo.API;
 using GeminiV26.Core;
+using GeminiV26.Core.Entry;
 using GeminiV26.Core.TradeManagement;
 using GeminiV26.Data;
 using GeminiV26.Data.Models;
