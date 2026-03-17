@@ -308,24 +308,29 @@ namespace GeminiV26.EntryTypes.METAL
             if (!ctx.IsValidFlagStructure_M5)
                 return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "FLAG_STRUCTURE_INVALID", reasons);
 
-            // ===== HTF bias handling: small penalty + stronger breakout quality when against =====
             if (isHtfAgainst)
             {
-                // HTF-against requires stronger definition:
-                // - MUST be closeBreak (not just wick)
-                // - MUST exceed boundary by a minimum ATR margin
-                // - MUST have slightly higher body ratio
-                if (!closeBreak)
-                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "HTF_AGAINST_NEEDS_CLOSEBREAK", reasons);
+                bool weakAgainst =
+                    !closeBreak ||
+                    breakAtr < HtfAgainstMinCloseBreakAtr * 0.7;
 
-                if (breakAtr < HtfAgainstMinCloseBreakAtr)
-                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, $"HTF_AGAINST_WEAK_BREAK(minAtr={HtfAgainstMinCloseBreakAtr:F2})", reasons);
+                if (weakAgainst)
+                {
+                    score -= 8;
+                    reasons.Add("HTF_AGAINST_WEAK(-8)");
+                }
 
                 if (bodyRatio < HtfAgainstMinBodyRatio)
-                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, $"HTF_AGAINST_WEAK_BODY(minBody={HtfAgainstMinBodyRatio:F2})", reasons);
+                {
+                    score -= 3;
+                    reasons.Add("HTF_AGAINST_WEAK_BODY(-3)");
+                }
 
-                score -= HtfAgainstPenalty;
-                reasons.Add($"HTF_AGAINST(-{HtfAgainstPenalty})");
+                // EXTRA: ha breakout sincs ÉS body is gyenge → kill
+                if (!closeBreak && bodyRatio < 0.4)
+                {
+                    return InvalidDecisionDir(ctx, session, tag, score, minScore, dir, "HTF_AGAINST_NO_QUALITY", reasons);
+                }
             }
             else
             {
