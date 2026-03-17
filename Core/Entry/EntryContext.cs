@@ -152,6 +152,36 @@ namespace GeminiV26.Core.Entry
         public TransitionEvaluation Transition { get; set; }
 
         // =========================
+        // 2-SIDED TRANSITION
+        // =========================
+        public bool HasImpulseLong_M5 { get; set; }
+        public bool HasImpulseShort_M5 { get; set; }
+
+        public int BarsSinceImpulseLong_M5 { get; set; } = 999;
+        public int BarsSinceImpulseShort_M5 { get; set; } = 999;
+
+        public bool HasPullbackLong_M5 { get; set; }
+        public bool HasPullbackShort_M5 { get; set; }
+
+        public int PullbackBarsLong_M5 { get; set; }
+        public int PullbackBarsShort_M5 { get; set; }
+
+        public double PullbackDepthRLong_M5 { get; set; }
+        public double PullbackDepthRShort_M5 { get; set; }
+
+        public bool HasFlagLong_M5 { get; set; }
+        public bool HasFlagShort_M5 { get; set; }
+
+        public int FlagBarsLong_M5 { get; set; }
+        public int FlagBarsShort_M5 { get; set; }
+
+        public double FlagCompressionScoreLong_M5 { get; set; }
+        public double FlagCompressionScoreShort_M5 { get; set; }
+
+        public TransitionEvaluation TransitionLong { get; set; }
+        public TransitionEvaluation TransitionShort { get; set; }
+
+        // =========================
         // FLAG RANGE
         // =========================
         public double FlagHigh { get; set; }
