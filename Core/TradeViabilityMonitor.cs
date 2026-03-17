@@ -1,5 +1,6 @@
 ﻿using System;
 using cAlgo.API;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core
 {
@@ -111,18 +112,26 @@ namespace GeminiV26.Core
 
         private void UpdateMfeMae(PositionContext ctx, Position pos, double risk)
         {
+            if (ctx.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][TVM_CTX_ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                return;
+            }
+
+            bool isLong = ctx.FinalDirection == TradeDirection.Long;
+
             double currentPrice =
-                pos.TradeType == TradeType.Buy
+                isLong
                     ? pos.Symbol.Bid
                     : pos.Symbol.Ask;
 
             double favorableMove =
-                pos.TradeType == TradeType.Buy
+                isLong
                     ? currentPrice - ctx.EntryPrice
                     : ctx.EntryPrice - currentPrice;
 
             double adverseMove =
-                pos.TradeType == TradeType.Buy
+                isLong
                     ? ctx.EntryPrice - currentPrice
                     : currentPrice - ctx.EntryPrice;
 

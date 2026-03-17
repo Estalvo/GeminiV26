@@ -1331,6 +1331,7 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
+                DirectionGuard.Validate(_ctx, null, _bot.Print);
 
                 if (!ValidateDirectionConsistency(_ctx, selected))
                 {
