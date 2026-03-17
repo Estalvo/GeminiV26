@@ -56,6 +56,8 @@ namespace GeminiV26.Instruments.GBPJPY
                 _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
+            DirectionGuard.Validate(entryContext, null, _bot.Print);
+
 
             _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
 
