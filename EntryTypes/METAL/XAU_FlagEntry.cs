@@ -148,7 +148,10 @@ namespace GeminiV26.EntryTypes.METAL
                     : ctx.BarsSinceImpulseShort_M5;
 
             if (barsSinceImpulse > tuning.MaxBarsSinceImpulse)
-                return InvalidDir(ctx, dir, "STALE_IMPULSE", score);
+            {
+                score -= 6;
+                reasons.Add("IMPULSE_STALE");
+            }
 
             // ===== IMPULSE QUALITY (v2.22) =====
             if (barsSinceImpulse <= 1)
@@ -174,7 +177,10 @@ namespace GeminiV26.EntryTypes.METAL
                     : ctx.HasFlagShort_M5;
 
             if (!hasFlag)
-                return InvalidDir(ctx, dir, "NO_FLAG", score);
+            {
+                reasons.Add("FLAG_NOT_READY");
+                score -= 4; // enyhe büntetés, nem kill
+            }
 
             // ===== BREAKOUT (SOURCE OF TRUTH) =====
             bool breakoutConfirmed =
@@ -206,9 +212,13 @@ namespace GeminiV26.EntryTypes.METAL
                 bodyRatio >= 0.45 &&
                 ctx.LastClosedBarInTrendDirection;
 
-            bool breakout =
-                (breakoutConfirmed && breakAtr >= MinCloseBreakAtr && strongBody) ||
-                earlyBreakout;
+            bool breakoutPossible = hasFlag;
+
+            if (!breakoutPossible)
+            {
+                reasons.Add("NO_FLAG_CONTEXT");
+                score -= 3;
+            }
 
             if (breakoutInstant && !breakoutConfirmed)
             {
