@@ -330,24 +330,58 @@ namespace GeminiV26.Core.Entry
                 range5 > 0 &&
                 range5 < ctx.AtrM5 * 3.0;
 
-            // === LONG FLAG ===
-            // pullback lefelé, tehát lower highs + lower lows
-            int pbBars = ctx.PullbackBarsLong_M5; // shortnál Short_M5
+            // ===== FLAG DETECTION (FIXED) =====
+
+            // reset
+            ctx.FlagHigh = 0;
+            ctx.FlagLow = 0;
+
+            // LONG
+            int pbBarsLong = ctx.PullbackBarsLong_M5;
+
+            bool structureOkLong =
+                ctx.M5.ClosePrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 1];
 
             bool longFlag =
                 validRange &&
-                pbBars >= 3 &&
-                ctx.PullbackDepthRLong_M5 <= 0.8;
+                pbBarsLong >= 3 &&
+                ctx.PullbackDepthRLong_M5 <= 0.8 &&
+                structureOkLong;
 
-            // === SHORT FLAG ===
-            // pullback felfelé, tehát higher highs + higher lows
+            // SHORT
             int pbBarsShort = ctx.PullbackBarsShort_M5;
+
+            bool structureOkShort =
+                ctx.M5.ClosePrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 1];
 
             bool shortFlag =
                 validRange &&
                 pbBarsShort >= 3 &&
-                ctx.PullbackDepthRShort_M5 <= 0.8;
+                ctx.PullbackDepthRShort_M5 <= 0.8 &&
+                structureOkShort;
 
+            // ASSIGN (először)
+            ctx.HasFlagLong_M5 = longFlag;
+            ctx.HasFlagShort_M5 = shortFlag;
+
+            // ===== FLAG RANGE =====
+            if (longFlag && !shortFlag)
+            {
+                ctx.FlagHigh = ctx.M5.HighPrices.Maximum(pbBarsLong);
+                ctx.FlagLow  = ctx.M5.LowPrices.Minimum(pbBarsLong);
+            }
+            else if (shortFlag && !longFlag)
+            {
+                ctx.FlagHigh = ctx.M5.HighPrices.Maximum(pbBarsShort);
+                ctx.FlagLow  = ctx.M5.LowPrices.Minimum(pbBarsShort);
+            }
+            else
+            {
+                ctx.HasFlagLong_M5 = false;
+                ctx.HasFlagShort_M5 = false;
+            }
+
+            // ATR
             ctx.FlagAtr_M5 = range5;
 
             // =================================================
