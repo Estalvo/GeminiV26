@@ -36,8 +36,27 @@ namespace GeminiV26.Instruments.NAS100
             _botLabel = botLabel;
         }
 
-        public void ExecuteEntry(EntryEvaluation entry)
+        public void ExecuteEntry(EntryEvaluation entry, EntryContext entryContext)
         {
+            if (entry == null)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
+                return;
+            }
+
+            if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                return;
+            }
+
+            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                // DO NOT TRUST entry.Direction
+            }
             if (_marketStateDetector != null)
             {
                 var ms = _marketStateDetector.Evaluate();
@@ -77,7 +96,7 @@ namespace GeminiV26.Instruments.NAS100
 
             // === ORIGINAL LOGIC CONTINUES ===
             var tradeType =
-                entry.Direction == TradeDirection.Long
+                entryContext.FinalDirection == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
@@ -160,6 +179,7 @@ namespace GeminiV26.Instruments.NAS100
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
                 EntryScore = entry.Score,
                 LogicConfidence = logicConfidence,
                 EntryTime = _bot.Server.Time,
@@ -173,7 +193,7 @@ namespace GeminiV26.Instruments.NAS100
                 Tp2Ratio = tp2Ratio,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entry.Direction != TradeDirection.None,
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
 
                 BeOffsetR = 0.10,
                 Tp1Hit = false,
