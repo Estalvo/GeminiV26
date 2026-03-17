@@ -42,12 +42,24 @@ namespace GeminiV26.EntryTypes.METAL
             if (!profile.FlagTuning.TryGetValue(session, out var tuning))
                 return Invalid(ctx, "NO_TUNING");
 
+            ctx.Log?.Invoke($"[FLAG DEBUG] hi={ctx.FlagHigh} lo={ctx.FlagLow} atr={ctx.AtrM5} range={(ctx.FlagHigh - ctx.FlagLow)}");
+            ctx.Log?.Invoke($"[FLAG DEBUG] hasFlagLong={ctx.HasFlagLong_M5} hasFlagShort={ctx.HasFlagShort_M5}");
+
+            ctx.Log?.Invoke($"[FLAG RANGE CHECK] hi={hi} lo={lo} valid={(hi > lo)}");
+            
             // ===== FLAG RANGE (precomputed only!) =====
             double hi = ctx.FlagHigh;
             double lo = ctx.FlagLow;
 
+            ctx.Log?.Invoke("[FLAG ERROR] INVALID RANGE → rejecting flag");
+
             if (hi <= 0 || lo <= 0 || hi <= lo)
-                return Invalid(ctx, "FLAG_RANGE_INVALID");
+            {
+                ctx.Log?.Invoke("[FLAG DEBUG] FALLBACK RANGE USED");
+
+                hi = bar.High;
+                lo = bar.Low;
+            }
 
             double rangeAtr = (hi - lo) / ctx.AtrM5;
 

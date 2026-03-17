@@ -82,8 +82,7 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (barsSinceImpulse == 0)
             {
-                score -= FreshImpulsePenalty;
-                reasons.Add("FRESH_IMPULSE");
+                return InvalidDir(ctx, dir, "IMPULSE_TOO_FRESH", score);
             }
 
             // =========================
@@ -93,12 +92,6 @@ namespace GeminiV26.EntryTypes.METAL
                 dir == TradeDirection.Long
                     ? ctx.PullbackBarsLong_M5
                     : ctx.PullbackBarsShort_M5;
-
-            // early continuation könnyebb
-            if (pbBars == 0 && hasImpulse)
-            {
-                minScore = 60;
-            }
             
             double pbDepth =
                 dir == TradeDirection.Long
@@ -109,16 +102,15 @@ namespace GeminiV26.EntryTypes.METAL
 
             // EARLY CONTINUATION DETECTION
             bool earlyContinuation =
-                noPullback &&
+                pbBars > 0 &&          // ← EZ A KULCS FIX
                 hasImpulse &&
                 barsSinceImpulse <= 2 &&
                 ctx.LastClosedBarInTrendDirection;
 
             // ha early continuation → NEM büntetjük
-            if (noPullback && !earlyContinuation)
+            if (noPullback)
             {
-                score -= 6;
-                reasons.Add("NO_PULLBACK");
+            return InvalidDir(ctx, dir, "NO_PULLBACK", score);
             }
             else if (earlyContinuation)
             {
