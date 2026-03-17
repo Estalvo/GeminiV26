@@ -9,232 +9,179 @@ namespace GeminiV26.EntryTypes.METAL
     {
         public EntryType Type => EntryType.XAU_Pullback;
 
-        // === METAL softening knobs ===
-        private const int FreshImpulsePenalty = 8;
-        private const int AtrSpikePenalty = 8;
-        private const int DeepPullbackPenalty = 10;
+        private const int BarsNotReadyMin = 20;
+        private const int ScoreDeadband = 2;
+
+        private const int FreshImpulsePenalty = 6;
         private const int NoM1Penalty = 6;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowPullback)
-                return Reject(ctx, "SESSION_MATRIX_PULLBACK_DISABLED");
+                return Reject(ctx, "SESSION_DISABLED");
 
-            if (ctx == null || !ctx.IsReady)
+            if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < BarsNotReadyMin)
                 return Reject(ctx, "CTX_NOT_READY");
 
-            var reasons = new List<string>(8);
-
-            // =========================
-            // DIRECTION (TREND ONLY)
-            // =========================
-            TradeDirection dir = ctx.TrendDirection;
-            if (dir != TradeDirection.Long && dir != TradeDirection.Short)
-                return Reject(ctx, "NO_TREND_DIR");
-
-            int baseScore = 60;
-            int score = baseScore;
-            reasons.Add($"Base={baseScore}");
-
-            // =========================
-            // HARD MARKET STATE GATES
-            // =========================
-            bool trend = ctx.MarketState?.IsTrend == true;
-            ctx.Log?.Invoke(
-                $"[PB][TREND_CHECK] trend={trend.ToString().ToLowerInvariant()} adx={ctx.MarketState?.Adx:0.00}");
-
-            if (!trend)
+            if (ctx.MarketState?.IsTrend != true)
                 return Reject(ctx, "NO_TREND_STATE");
 
-            if (ctx.MarketState.Adx < 16.0)
-            {
-                if (!ctx.HasImpulse_M5)
-                    return Reject(ctx, "ADX_LOW_NO_IMPULSE");
+            var buy = EvaluateSide(TradeDirection.Long, ctx, matrix);
+            var sell = EvaluateSide(TradeDirection.Short, ctx, matrix);
 
-                score -= 12;
-                reasons.Add("ADX_LOW_WITH_IMPULSE(-12)");
+            if (!buy.IsValid && !sell.IsValid)
+                return RejectBoth(ctx, buy, sell);
+
+            if (buy.IsValid && !sell.IsValid) return buy;
+            if (!buy.IsValid && sell.IsValid) return sell;
+
+            int diff = buy.Score - sell.Score;
+
+            if (Math.Abs(diff) <= ScoreDeadband)
+            {
+                // döntés: melyik oldal reagált előbb
+                if (ctx.BarsSinceImpulseLong_M5 < ctx.BarsSinceImpulseShort_M5)
+                    return buy;
+
+                if (ctx.BarsSinceImpulseShort_M5 < ctx.BarsSinceImpulseLong_M5)
+                    return sell;
             }
 
-            // =========================
-            // TIME MEMORY
-            // =========================
+            return diff >= 0 ? buy : sell;
+        }
 
-            // túl friss impulzus
-            if (ctx.BarsSinceImpulse_M5 == 0)
+        private EntryEvaluation EvaluateSide(
+            TradeDirection dir,
+            EntryContext ctx,
+            SessionMatrixConfig matrix)
+        {
+            int score = 60;
+            int minScore = 68;
+
+            var reasons = new List<string>();
+
+            // =========================
+            // IMPULSE (2-sided)
+            // =========================
+            bool hasImpulse =
+                dir == TradeDirection.Long
+                    ? ctx.HasImpulseLong_M5
+                    : ctx.HasImpulseShort_M5;
+
+            if (!hasImpulse)
+                return InvalidDir(ctx, dir, "NO_IMPULSE", score);
+
+            int barsSinceImpulse =
+                dir == TradeDirection.Long
+                    ? ctx.BarsSinceImpulseLong_M5
+                    : ctx.BarsSinceImpulseShort_M5;
+
+            if (barsSinceImpulse > 6)
+                return InvalidDir(ctx, dir, "STALE_IMPULSE", score);
+
+            if (barsSinceImpulse == 0)
             {
                 score -= FreshImpulsePenalty;
-                reasons.Add($"FRESH_IMPULSE(-{FreshImpulsePenalty})");
-            }
-
-            // túl régi impulzus
-            if (ctx.BarsSinceImpulse_M5 > 6)
-                return RejectDecision(ctx, score, "STALE_IMPULSE", reasons);
-
-            // pullback ne húzódjon el
-            if (ctx.PullbackBars_M5 > 3)
-                return RejectDecision(ctx, score, "PULLBACK_TOO_LONG", reasons);
-
-            // =========================
-            // PULLBACK TIMING (SOFT)
-            // =========================
-
-            // friss impulzus és még nincs pullback
-            if (ctx.BarsSinceImpulse_M5 <= 1 && ctx.PullbackBars_M5 == 0)
-            {
-                score -= FreshImpulsePenalty;
-                reasons.Add("IMPULSE_NO_PULLBACK(-8)");
-            }
-
-            // pullback épp kezdődik
-            else if (ctx.PullbackBars_M5 == 1)
-            {
-                score -= 4;
-                reasons.Add("EARLY_PULLBACK(-4)");
+                reasons.Add("FRESH_IMPULSE");
             }
 
             // =========================
-            // VOLATILITY SPIKE FILTER
+            // PULLBACK
             // =========================
-            if (ctx.BarsSinceImpulse_M5 <= 1 && ctx.IsAtrExpanding_M5)
+            int pbBars =
+                dir == TradeDirection.Long
+                    ? ctx.PullbackBarsLong_M5
+                    : ctx.PullbackBarsShort_M5;
+
+            double pbDepth =
+                dir == TradeDirection.Long
+                    ? ctx.PullbackDepthRLong_M5
+                    : ctx.PullbackDepthRShort_M5;
+
+            if (pbBars == 0)
             {
-                score -= AtrSpikePenalty;
-                reasons.Add($"ATR_SPIKE(-{AtrSpikePenalty})");
+                score -= 6;
+                reasons.Add("NO_PULLBACK");
             }
 
-            // =========================
-            // IMPULSE REQUIREMENT
-            // =========================
-            if (ctx.HasImpulse_M5 || ctx.IsAtrExpanding_M5)
+            if (pbBars > 3)
+                return InvalidDir(ctx, dir, "PULLBACK_TOO_LONG", score);
+
+            if (pbDepth > 1.8)
+                return InvalidDir(ctx, dir, "PULLBACK_TOO_DEEP", score);
+
+            if (pbDepth > 1.2)
             {
-                score += 10;
-                reasons.Add("+IMPULSE(10)");
+                score -= 6;
+                reasons.Add("DEEP_PULLBACK");
+                minScore += 4;
             }
             else
             {
-                score -= 10;
-                reasons.Add("WEAK_IMPULSE(-10)");
+                score += 8;
+                reasons.Add("PB_OK");
             }
 
             // =========================
-            // PULLBACK QUALITY
+            // REACTION (core edge)
             // =========================
-            if (ctx.PullbackDepthAtr_M5 > 0.5)
-            {
-                var bars = ctx.M5;
-                int lastClosed = bars.Count - 2;
+            bool reaction =
+                ctx.HasReactionCandle_M5 ||
+                ctx.HasRejectionWick_M5 ||
+                ctx.LastClosedBarInTrendDirection;
 
-                int compressionBars = Math.Max(0, Math.Min(ctx.PullbackBars_M5, 10));
-                int compressionStart = Math.Max(0, lastClosed - compressionBars + 1);
-
-                double compressionHigh = double.MinValue;
-                double compressionLow = double.MaxValue;
-
-                for (int i = compressionStart; i <= lastClosed; i++)
-                {
-                    compressionHigh = Math.Max(compressionHigh, bars[i].High);
-                    compressionLow = Math.Min(compressionLow, bars[i].Low);
-                }
-
-                double compressionRange = compressionHigh - compressionLow;
-                double atr = Math.Max(0, ctx.AtrM5);
-
-                bool compressionDetected =
-                    compressionBars >= 3 &&
-                    compressionBars <= 10 &&
-                    compressionRange <= atr * 0.6;
-
-                if (!compressionDetected)
-                {
-                    ctx.Log?.Invoke("[PB] rejected: deep pullback without compression");
-                    return RejectDecision(ctx, score, "PULLBACK_TOO_DEEP", reasons);
-                }
-
-                TradeDirection impulseDirection =
-                    ctx.ImpulseDirection != TradeDirection.None ? ctx.ImpulseDirection : dir;
-
-                bool breakoutAligned =
-                    (impulseDirection == TradeDirection.Long && bars[lastClosed].Close > compressionHigh) ||
-                    (impulseDirection == TradeDirection.Short && bars[lastClosed].Close < compressionLow);
-
-                if (!breakoutAligned)
-                {
-                    ctx.Log?.Invoke("[PB] rejected: breakout against impulse");
-                    return RejectDecision(ctx, score, "PULLBACK_TOO_DEEP", reasons);
-                }
-
-                ctx.Log?.Invoke("[PB] DeepPullbackContinuation accepted");
-            }
-
-            if (ctx.PullbackDepthAtr_M5 > 1.8)
-            {
-                bool htfAligned =
-                    ctx.MetalHtfAllowedDirection == TradeDirection.None ||
-                    ctx.MetalHtfAllowedDirection == dir;
-
-                if (htfAligned)
-                {
-                    score -= DeepPullbackPenalty;
-                    reasons.Add($"DEEP_PULLBACK_SOFT(-{DeepPullbackPenalty}) dATR={ctx.PullbackDepthAtr_M5:F2}");
-                }
-                else
-                {
-                    return RejectDecision(ctx, score, "PULLBACK_TOO_DEEP", reasons);
-                }
-            }
-            else if (ctx.PullbackBars_M5 >= 1)   // csak ha tényleg van pullback
+            if (reaction)
             {
                 score += 10;
-                reasons.Add("+PB_OK(10)");
+                reasons.Add("REACTION_OK");
+            }
+            else
+            {
+                score -= 6;
+                reasons.Add("NO_REACTION");
             }
 
             // =========================
-            // M1 TRIGGER
+            // M1 trigger
             // =========================
-            if (ctx.M1TriggerInTrendDirection)
+            bool m1 =
+                ctx.M1TriggerInTrendDirection ||
+                ctx.M1ReversalTrigger;
+
+            if (m1)
             {
                 score += 10;
-                reasons.Add("+M1(10)");
+                reasons.Add("M1_OK");
             }
             else
             {
                 score -= NoM1Penalty;
-                reasons.Add($"NO_M1(-{NoM1Penalty})");
+                reasons.Add("NO_M1");
             }
 
-            // Router floor kompatibilitás
-            if (score > 0 && score < 20)
+            // =========================
+            // HTF (soft only)
+            // =========================
+            bool against =
+                ctx.MetalHtfAllowedDirection != TradeDirection.None &&
+                ctx.MetalHtfAllowedDirection != dir;
+
+            if (against)
             {
-                reasons.Add($"FLOOR_TO_20(from {score})");
-                score = 20;
+                score -= 5;
+                reasons.Add("HTF_AGAINST");
             }
 
             // =========================
-            // DYNAMIC MIN SCORE
+            // FINAL
             // =========================
-            int minScore = 68;
-
-            if (ctx.PullbackDepthAtr_M5 > 1.2)
-                minScore += 4;
-
-            if (ctx.PullbackDepthAtr_M5 > 1.8)
-                minScore += 4;
-
-            if (ctx.BarsSinceImpulse_M5 >= 4)
-                minScore += 4;
-
             score += (int)Math.Round(matrix.EntryScoreModifier);
 
-            if (score < minScore)
-                return RejectDecision(ctx, score, $"LOW_SCORE({score})", reasons, minScore);
+            bool valid = score >= minScore;
 
-            // =========================
-            // ACCEPT
-            // =========================
-            string note =
-                $"[XAU_PB] {ctx.Symbol} dir={dir} " +
-                $"Score={score} Min={minScore} Decision=ACCEPT | " +
-                string.Join(" | ", reasons);
+            if (!valid)
+                return InvalidDir(ctx, dir, "LOW_SCORE", score);
 
             return new EntryEvaluation
             {
@@ -243,9 +190,11 @@ namespace GeminiV26.EntryTypes.METAL
                 Direction = dir,
                 Score = score,
                 IsValid = true,
-                Reason = note
+                Reason = $"ACCEPT {dir} score={score} pbBars={pbBars} depth={pbDepth:F2}"
             };
         }
+
+        // =========================
 
         private EntryEvaluation Reject(EntryContext ctx, string reason)
         {
@@ -253,33 +202,42 @@ namespace GeminiV26.EntryTypes.METAL
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
+                Direction = TradeDirection.None,
                 IsValid = false,
                 Reason = reason
             };
         }
 
-        private EntryEvaluation RejectDecision(
+        private EntryEvaluation RejectBoth(
             EntryContext ctx,
-            int score,
-            string reason,
-            List<string> reasons,
-            int? minScore = null)
+            EntryEvaluation buy,
+            EntryEvaluation sell)
         {
-            string note =
-                $"[XAU_PB] {ctx?.Symbol} dir={ctx?.TrendDirection} " +
-                $"Score={score}" +
-                (minScore.HasValue ? $" Min={minScore.Value}" : "") +
-                $" Decision=REJECT Reason={reason} | " +
-                (reasons != null ? string.Join(" | ", reasons) : "");
-
             return new EntryEvaluation
             {
-                Symbol = ctx?.Symbol,
+                Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = ctx?.TrendDirection ?? TradeDirection.None,
+                Direction = TradeDirection.None,
+                IsValid = false,
+                Score = Math.Max(buy.Score, sell.Score),
+                Reason = $"REJECT BOTH buy={buy.Score}/{buy.IsValid} sell={sell.Score}/{sell.IsValid}"
+            };
+        }
+
+        private EntryEvaluation InvalidDir(
+            EntryContext ctx,
+            TradeDirection dir,
+            string reason,
+            int score)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = dir,
                 Score = Math.Max(0, score),
                 IsValid = false,
-                Reason = note
+                Reason = reason
             };
         }
     }
