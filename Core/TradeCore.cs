@@ -647,6 +647,19 @@ namespace GeminiV26.Core
                     pctx.FinalDirection = _ctx?.FinalDirection != TradeDirection.None
                         ? _ctx.FinalDirection
                         : FromTradeType(pos.TradeType);
+
+                    if (pctx.FinalDirection == TradeDirection.None)
+                    {
+                        _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={pctx.PositionId} sym={pctx.Symbol}");
+                        return;
+                    }
+
+                    if (_ctx != null && pctx.FinalDirection != _ctx.FinalDirection)
+                    {
+                        _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} stage=position posId={pctx.PositionId} posFinal={pctx.FinalDirection} entryFinal={_ctx.FinalDirection}");
+                        return;
+                    }
+
                     _contextRegistry.RegisterPosition(pctx);
                     _bot.Print($"[DIR][POS_CTX] posId={pctx.PositionId} sym={pctx.Symbol} finalDir={pctx.FinalDirection}");
                 }
@@ -1320,16 +1333,17 @@ namespace GeminiV26.Core
                 var htfDirection = ResolveHtfAllowedDirection(_ctx);
                 _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} htf={htfDirection} logic={_ctx.LogicBiasDirection} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
 
-                var execDirection = _ctx.FinalDirection;
-                if (_ctx.RoutedDirection != _ctx.FinalDirection || selected.Direction != _ctx.FinalDirection)
+                if (!ValidateDirectionConsistency(_ctx, selected))
                 {
-                    _bot.Print($"[DIR][MISMATCH] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection} entry={selected.Direction} exec={execDirection}");
-                    _bot.Print("[TC] ENTRY BLOCKED: direction mismatch before execution");
                     return;
                 }
 
                 selected.Direction = _ctx.FinalDirection;
                 _bot.Print($"[DIR][EXEC_PRE] sym={_bot.SymbolName} entryDir={selected.Direction} finalCtxDir={_ctx.FinalDirection}");
+                _bot.Print($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}");
+
+                if (!HasDirectionTraceCompleteness(_ctx))
+                    _bot.Print($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}");
 
                 var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
 
@@ -1619,6 +1633,33 @@ namespace GeminiV26.Core
                 if (!_ger40ImpulseGate.AllowEntry(gateDir)) return;
                 _ger40Executor.ExecuteEntry(selected);
             }
+        }
+
+        private bool ValidateDirectionConsistency(EntryContext entryContext, EntryEvaluation entry)
+        {
+            if (entryContext == null || entry == null)
+            {
+                _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=null_context_or_entry");
+                _bot.Print("[TC] ENTRY BLOCKED: direction consistency check failed");
+                return false;
+            }
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] sym={_bot.SymbolName} entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} stage=exec entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                _bot.Print("[TC] ENTRY BLOCKED: direction mismatch before execution");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool HasDirectionTraceCompleteness(EntryContext ctx)
+        {
+            return ctx != null
+                && ctx.RoutedDirection != TradeDirection.None
+                && ctx.FinalDirection != TradeDirection.None;
         }
 
         private void ApplyTransitionScoreBoost(EntryContext ctx, List<EntryEvaluation> symbolSignals)

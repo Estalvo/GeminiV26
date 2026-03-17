@@ -25,6 +25,13 @@ namespace GeminiV26.Core.TradeManagement
             if (atr <= 0)
                 return;
 
+            if (ctx?.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][EXIT_ILLEGAL_SOURCE] source=TradeType posId={pos?.Id} reason=missing_final_direction");
+                return;
+            }
+
+            bool isLong = ctx.FinalDirection == TradeDirection.Long;
             double oldSl = pos.StopLoss.Value;
             double newSl;
             bool valid = true;
@@ -32,25 +39,25 @@ namespace GeminiV26.Core.TradeManagement
             switch (decision.TrailingMode)
             {
                 case AdaptiveTrailingMode.Structure:
-                    valid = TryBuildStructureStop(pos, structure, profile, atr, out newSl);
+                    valid = TryBuildStructureStop(isLong, structure, profile, atr, out newSl);
                     if (!valid)
                         return;
                     break;
 
                 case AdaptiveTrailingMode.Liquidity:
-                    valid = TryBuildLiquidityStop(pos, structure, profile, atr, out newSl);
+                    valid = TryBuildLiquidityStop(isLong, structure, profile, atr, out newSl);
                     if (!valid)
                         return;
                     break;
 
                 default:
-                    BuildVolatilityStop(pos, profile, atr, out newSl, out _, out _);
+                    BuildVolatilityStop(isLong, profile, atr, out newSl, out _, out _);
                     break;
             }
 
             if (ctx.BePrice > 0)
             {
-                newSl = pos.TradeType == TradeType.Buy
+                newSl = isLong
                     ? Math.Max(newSl, ctx.BePrice)
                     : Math.Min(newSl, ctx.BePrice);
             }
@@ -60,7 +67,7 @@ namespace GeminiV26.Core.TradeManagement
             if (newSl <= 0)
                 return;
                 
-            if (!ImprovesStop(pos, newSl, oldSl))
+            if (!ImprovesStop(isLong, newSl, oldSl))
             {                
                 return;
             }
@@ -89,10 +96,10 @@ namespace GeminiV26.Core.TradeManagement
             _bot.Print($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}");
         }
 
-        private bool TryBuildStructureStop(Position pos, StructureSnapshot structure, TrailingProfile profile, double atr, out double newSl)
+        private bool TryBuildStructureStop(bool isLong, StructureSnapshot structure, TrailingProfile profile, double atr, out double newSl)
         {
             double buffer = atr * profile.StructureBufferAtr;
-            if (pos.TradeType == TradeType.Buy)
+            if (isLong)
             {
                 if (structure.LastHigherLow == null && structure.LastSwingLow == null)
                 {
@@ -138,11 +145,11 @@ namespace GeminiV26.Core.TradeManagement
             return true;
         }
 
-        private bool TryBuildLiquidityStop(Position pos, StructureSnapshot structure, TrailingProfile profile, double atr, out double newSl)
+        private bool TryBuildLiquidityStop(bool isLong, StructureSnapshot structure, TrailingProfile profile, double atr, out double newSl)
         {
             double buffer = atr * (profile.StructureBufferAtr * 0.8);
 
-            if (pos.TradeType == TradeType.Buy)
+            if (isLong)
             {
                 if (structure.LastSwingLow == null)
                 {
@@ -168,7 +175,7 @@ namespace GeminiV26.Core.TradeManagement
             return true;
         }
 
-        private void BuildVolatilityStop(Position pos, TrailingProfile profile, double atr, out double newSl, out string regime, out double multiplier)
+        private void BuildVolatilityStop(bool isLong, TrailingProfile profile, double atr, out double newSl, out string regime, out double multiplier)
         {
             var s = _bot.Symbol;
             double atrPips = atr / s.PipSize;
@@ -189,16 +196,16 @@ namespace GeminiV26.Core.TradeManagement
                 multiplier = profile.AtrMultiplierNormal;
             }
             
-            double price = pos.TradeType == TradeType.Buy ? s.Bid : s.Ask;
+            double price = isLong ? s.Bid : s.Ask;
             
-            newSl = pos.TradeType == TradeType.Buy
+            newSl = isLong
                 ? price - atr * multiplier
                 : price + atr * multiplier;
         }
 
-        private bool ImprovesStop(Position pos, double candidate, double current)
+        private bool ImprovesStop(bool isLong, double candidate, double current)
         {
-            return pos.TradeType == TradeType.Buy
+            return isLong
                 ? candidate > current
                 : candidate < current;
         }
