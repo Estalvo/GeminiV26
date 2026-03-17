@@ -3,6 +3,7 @@ using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Instruments.FX;
+using FxTuning = GeminiV26.Instruments.FX.FxFlagSessionTuning;
 
 namespace GeminiV26.EntryTypes.FX
 {
@@ -41,7 +42,10 @@ namespace GeminiV26.EntryTypes.FX
             return Invalid(ctx, "NO_VALID_SIDE");
         }
 
-        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx, FxFlagSessionTuning tuning)
+        private EntryEvaluation EvaluateSide(
+            TradeDirection dir,
+            EntryContext ctx,
+            FxTuning tuning)
         {
             int minScore = Math.Max(40, tuning.MinScore - 5);
 
