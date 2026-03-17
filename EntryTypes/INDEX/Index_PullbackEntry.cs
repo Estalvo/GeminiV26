@@ -25,7 +25,30 @@ namespace GeminiV26.EntryTypes.INDEX
                 return null;
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
+            if (p == null)
+                return null;
 
+            var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+
+            bool longValid = longEval != null && longEval.IsValid;
+            bool shortValid = shortEval != null && shortEval.IsValid;
+
+            if (!longValid && !shortValid)
+                return null;
+
+            if (longValid && shortValid)
+                return longEval.Score >= shortEval.Score ? longEval : shortEval;
+
+            return longValid ? longEval : shortEval;
+        }
+
+        private EntryEvaluation EvaluateSide(
+            EntryContext ctx,
+            dynamic p,
+            SessionMatrixConfig matrix,
+            TradeDirection dir)
+        {
             // =============================
             // MATRIX DRIVEN THRESHOLDS
             // =============================
@@ -44,11 +67,31 @@ namespace GeminiV26.EntryTypes.INDEX
                 p.PullbackStyle == IndexPullbackStyle.Structure ? 6 :
                 MaxPullbackBars;
 
-            TradeDirection dir = ctx.TrendDirection;
-            if (dir == TradeDirection.None)
-                return null;
-
             int score = BaseScore;
+
+            var bars = ctx.M5;
+            int lastClosed = bars.Count - 2;
+
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasImpulseShort_M5 :
+                false;
+
+            double pullbackDepthAtr =
+                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 :
+                dir == TradeDirection.Short ? ctx.PullbackDepthRShort_M5 :
+                ctx.PullbackDepthAtr_M5;
+
+            bool hasFlag =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
+                ctx.IsValidFlagStructure_M5;
+
+            bool lastBarInDir =
+                (dir == TradeDirection.Long && bars[lastClosed].Close > bars[lastClosed].Open) ||
+                (dir == TradeDirection.Short && bars[lastClosed].Close < bars[lastClosed].Open);
+
+            bool m1TriggerInDir = HasDirectionalM1Trigger(ctx, dir);
 
             // =====================================================
             // CHOP SOFT (matrix ADX)
@@ -81,7 +124,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
 
             bool impulseStale =
-                !ctx.HasImpulse_M5 ||
+                !hasImpulse ||
                 ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse;
 
             int fatigueCount = 0;
@@ -99,14 +142,11 @@ namespace GeminiV26.EntryTypes.INDEX
             // PULLBACK STRUCTURAL GATES
             // =====================================================
 
-            if (ctx.IsAtrExpanding_M5 && ctx.PullbackDepthAtr_M5 > 0.6)
+            if (ctx.IsAtrExpanding_M5 && pullbackDepthAtr > 0.6)
                 score -= 6;
 
-            if (ctx.PullbackDepthAtr_M5 > 0.5)
+            if (pullbackDepthAtr > 0.5)
             {
-                var bars = ctx.M5;
-                int lastClosed = bars.Count - 2;
-
                 int compressionBars = Math.Max(0, Math.Min(ctx.PullbackBars_M5, 10));
                 int compressionStart = Math.Max(0, lastClosed - compressionBars + 1);
 
@@ -129,7 +169,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
                 if (!compressionDetected)
                 {
-                    ctx.Log?.Invoke("[PB] rejected: deep pullback without compression");
+                    ctx.Log?.Invoke($"[PB] dir={dir} rejected: deep pullback without compression");
                     return null;
                 }
 
@@ -142,15 +182,15 @@ namespace GeminiV26.EntryTypes.INDEX
 
                 if (!breakoutAligned)
                 {
-                    ctx.Log?.Invoke("[PB] rejected: breakout against impulse");
+                    ctx.Log?.Invoke($"[PB] dir={dir} rejected: breakout against impulse");
                     return null;
                 }
 
-                ctx.Log?.Invoke("[PB] DeepPullbackContinuation accepted");
+                ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
             }
 
-            if (ctx.PullbackDepthAtr_M5 <= 0 ||
-                ctx.PullbackDepthAtr_M5 > maxPullbackDepthAtr)
+            if (pullbackDepthAtr <= 0 ||
+                pullbackDepthAtr > maxPullbackDepthAtr)
                 return null;
 
             if (ctx.PullbackBars_M5 > maxPullbackBars)
@@ -159,7 +199,7 @@ namespace GeminiV26.EntryTypes.INDEX
             if (!ctx.HasReactionCandle_M5)
                 return null;
 
-            if (!ctx.LastClosedBarInTrendDirection)
+            if (!lastBarInDir)
                 score -= 10;
 
             double distFromEma =
@@ -172,15 +212,15 @@ namespace GeminiV26.EntryTypes.INDEX
             // CONTEXT BONUSES
             // =====================================================
 
-            if (ctx.M1TriggerInTrendDirection)
+            if (m1TriggerInDir)
                 score += 10;
 
             if (ctx.MarketState?.IsTrend == true)
                 score += 6;
 
-            if (ctx.HasImpulse_M5 &&
+            if (hasImpulse &&
                 ctx.BarsSinceImpulse_M5 <= 2 &&
-                ctx.PullbackDepthAtr_M5 < 0.6)
+                pullbackDepthAtr < 0.6)
             {
                 score += 8;
             }
@@ -197,8 +237,8 @@ namespace GeminiV26.EntryTypes.INDEX
             // =====================================================
             // FLAG PRIORITY
             // =====================================================
-            if (ctx.IsValidFlagStructure_M5 &&
-                ctx.M1TriggerInTrendDirection)
+            if (hasFlag &&
+                m1TriggerInDir)
                 score -= 12;
 
             // =====================================================
@@ -210,7 +250,7 @@ namespace GeminiV26.EntryTypes.INDEX
             {
                 Console.WriteLine(
                     $"[IDX_PULLBACK][REJECT] LOW_SCORE({score}) | " +
-                    $"dir={dir} | pbATR={ctx.PullbackDepthAtr_M5:F2} | " +
+                    $"dir={dir} | pbATR={pullbackDepthAtr:F2} | " +
                     $"pbBars={ctx.PullbackBars_M5} | fatigue={trendFatigue} | " +
                     $"ADX={ctx.Adx_M5:F1}"
                 );
@@ -219,7 +259,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             Console.WriteLine(
                 $"[IDX_PULLBACK][PASS] dir={dir} score={score} | " +
-                $"pbATR={ctx.PullbackDepthAtr_M5:F2} | pbBars={ctx.PullbackBars_M5} | " +
+                $"pbATR={pullbackDepthAtr:F2} | pbBars={ctx.PullbackBars_M5} | " +
                 $"fatigue={trendFatigue} | ADX={ctx.Adx_M5:F1}"
             );
 
@@ -232,8 +272,28 @@ namespace GeminiV26.EntryTypes.INDEX
                 IsValid = true,
                 Reason =
                     $"IDX_PULLBACK_4.1 dir={dir} score={score} " +
-                    $"pbATR={ctx.PullbackDepthAtr_M5:F2} pbBars={ctx.PullbackBars_M5} fatigue={trendFatigue}"
+                    $"pbATR={pullbackDepthAtr:F2} pbBars={ctx.PullbackBars_M5} fatigue={trendFatigue}"
             };
+        }
+
+        private static bool HasDirectionalM1Trigger(EntryContext ctx, TradeDirection dir)
+        {
+            if (ctx == null || ctx.M1 == null || ctx.M1.Count < 3)
+                return false;
+
+            int lastClosed = ctx.M1.Count - 2;
+            int prevClosed = ctx.M1.Count - 3;
+
+            var last = ctx.M1[lastClosed];
+            var prev = ctx.M1[prevClosed];
+
+            if (dir == TradeDirection.Long)
+                return last.Close > last.Open && last.Close > prev.High;
+
+            if (dir == TradeDirection.Short)
+                return last.Close < last.Open && last.Close < prev.Low;
+
+            return false;
         }
     }
 }
