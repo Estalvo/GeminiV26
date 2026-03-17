@@ -60,10 +60,10 @@ namespace GeminiV26.EntryTypes.FX
                     shortEval.Score += 3;
 
                 var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
+            
+            return winner;
             }
-            return longValid ? longEval : shortEval;
-        
-
+            
         private EntryEvaluation EvaluateSide(
             EntryContext ctx,
             dynamic fx,
