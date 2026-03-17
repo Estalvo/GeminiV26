@@ -63,7 +63,8 @@ namespace GeminiV26.EntryTypes.FX
             
             return winner;
             }
-            
+        }
+           
         private EntryEvaluation EvaluateSide(
             EntryContext ctx,
             dynamic fx,
