@@ -28,6 +28,7 @@
 
 using cAlgo.API;
 using cAlgo.API.Indicators;
+using GeminiV26.Core.Entry;
 using GeminiV26.Interfaces;
 using System;
 
@@ -69,6 +70,7 @@ namespace GeminiV26.Instruments.NAS100
         // Output
         public int LastLogicConfidence { get; private set; }
         public TradeType LastBias { get; private set; }
+        public TradeDirection LastDirection { get; private set; }
 
         public NasEntryLogic(Robot bot)
         {
@@ -99,6 +101,7 @@ namespace GeminiV26.Instruments.NAS100
             // Safe defaults
             LastBias = LastBias == 0 ? TradeType.Buy : LastBias;
             LastLogicConfidence = 50;
+            LastDirection = MapBiasToDirection(LastBias);
 
             if (_m5 == null || _m5.Count < MinBars)
             {
@@ -181,6 +184,10 @@ namespace GeminiV26.Instruments.NAS100
             // Clamp
             conf = Math.Max(0, Math.Min(100, conf));
             LastLogicConfidence = conf;
+            LastDirection = MapBiasToDirection(LastBias);
+
+            if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
+                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
 
             // =========================
             // DEBUG (INFORMATÍV)
@@ -191,6 +198,29 @@ namespace GeminiV26.Instruments.NAS100
                 $"adx={adx:F1} atr={atr:F2} | " +
                 $"htfBull={htfBull}"
             );
+        }
+
+        public void ApplyToEntryEvaluation(EntryEvaluation entry)
+        {
+            if (entry == null)
+                return;
+
+            entry.Direction = LastDirection;
+            entry.LogicConfidence = LastLogicConfidence;
+
+            if (entry.LogicConfidence > 0 && entry.Direction == TradeDirection.None)
+                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+        }
+
+        private static TradeDirection MapBiasToDirection(TradeType bias)
+        {
+            if (bias == TradeType.Buy)
+                return TradeDirection.Long;
+
+            if (bias == TradeType.Sell)
+                return TradeDirection.Short;
+
+            return TradeDirection.None;
         }
 
         // =========================================================

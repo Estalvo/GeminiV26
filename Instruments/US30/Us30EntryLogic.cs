@@ -18,6 +18,8 @@ namespace GeminiV26.Instruments.US30
         private readonly Robot _bot;
 
         public int LastLogicConfidence { get; private set; }
+        public TradeDirection LastDirection { get; private set; }
+        public TradeType LastBias { get; private set; }
 
         public Us30EntryLogic(Robot bot)
         {
@@ -30,6 +32,9 @@ namespace GeminiV26.Instruments.US30
         {
             direction = TradeDirection.None;
             confidence = 0;
+            LastDirection = TradeDirection.None;
+            LastBias = TradeType.Buy;
+            LastLogicConfidence = 0;
 
             // =========================
             // M5 Bars
@@ -96,6 +101,13 @@ namespace GeminiV26.Instruments.US30
             if (!valid)
                 return false;
 
+            LastDirection = direction;
+            LastBias = direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
+            LastLogicConfidence = confidence;
+
+            if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
+                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+
             return true;
         }
 
@@ -121,10 +133,31 @@ namespace GeminiV26.Instruments.US30
         // =========================
         public void Evaluate()
         {
-            if (CheckEntry(out _, out int conf))
-                LastLogicConfidence = conf;
-            else
+            if (!CheckEntry(out var direction, out var confidence))
+            {
+                LastDirection = TradeDirection.None;
                 LastLogicConfidence = 0;
+                return;
+            }
+
+            LastDirection = direction;
+            LastLogicConfidence = confidence;
+            LastBias = direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
+
+            if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
+                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+        }
+
+        public void ApplyToEntryEvaluation(EntryEvaluation entry)
+        {
+            if (entry == null)
+                return;
+
+            entry.Direction = LastDirection;
+            entry.LogicConfidence = LastLogicConfidence;
+
+            if (entry.LogicConfidence > 0 && entry.Direction == TradeDirection.None)
+                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
         }
     }
 }
