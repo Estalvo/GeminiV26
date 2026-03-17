@@ -98,14 +98,15 @@ namespace GeminiV26.Instruments.NAS100
         /// </summary>
         public void Evaluate()
         {
-            // Safe defaults
-            LastBias = LastBias == 0 ? TradeType.Buy : LastBias;
-            LastLogicConfidence = 50;
-            LastDirection = MapBiasToDirection(LastBias);
+            // Safe defaults (no signal state)
+            LastBias = TradeType.None;
+            LastLogicConfidence = 0;
+            LastDirection = TradeDirection.None;
 
             if (_m5 == null || _m5.Count < MinBars)
             {
                 _bot.Print($"[NAS LOGIC] bars<{MinBars} (count={_m5?.Count ?? 0}) -> default bias/conf");
+                _bot.Print($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
                 return;
             }
 
@@ -131,6 +132,7 @@ namespace GeminiV26.Instruments.NAS100
             // SIGNAL + BIAS
             // =========================
             NasEntrySignal signal = NasEntrySignal.None;
+            TradeType computedBias = TradeType.None;
 
             double deadzone = atr * 0.1;
 
@@ -142,22 +144,22 @@ namespace GeminiV26.Instruments.NAS100
             else if (emaDiff > 0)
             {
                 signal = NasEntrySignal.LongTrend;
-                LastBias = TradeType.Buy;
+                computedBias = TradeType.Buy;
             }
             else
             {
                 signal = NasEntrySignal.ShortTrend;
-                LastBias = TradeType.Sell;
+                computedBias = TradeType.Sell;
             }
 
             // =========================
             // LOGIC CONFIDENCE (SOFT SCORING)
             // =========================
-            int conf = 50;
+            int conf = 0;
 
             // Trend exists
             if (signal != NasEntrySignal.None)
-                conf += 10;
+                conf = 50;
 
             if (adx >= AdxTrend)    // 18
                 conf += 5;
@@ -182,8 +184,12 @@ namespace GeminiV26.Instruments.NAS100
                 conf += 5;
 
             // Clamp
-            conf = Math.Max(0, Math.Min(100, conf));
-            LastLogicConfidence = conf;
+            int computedConfidence = signal == NasEntrySignal.None
+                ? 0
+                : Math.Max(0, Math.Min(100, conf));
+
+            LastBias = computedBias;
+            LastLogicConfidence = computedConfidence;
             LastDirection = MapBiasToDirection(LastBias);
 
             if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
@@ -198,6 +204,7 @@ namespace GeminiV26.Instruments.NAS100
                 $"adx={adx:F1} atr={atr:F2} | " +
                 $"htfBull={htfBull}"
             );
+            _bot.Print($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
         }
 
         public void ApplyToEntryEvaluation(EntryEvaluation entry)
