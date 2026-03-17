@@ -91,6 +91,7 @@ namespace GeminiV26.Core.Entry
         public TradeDirection ImpulseDirection;
 
         public bool HasBreakout_M1;
+        // LEGACY / DIAGNOSTIC ONLY
         public TradeDirection BreakoutDirection;
 
         // =========================
@@ -220,6 +221,7 @@ namespace GeminiV26.Core.Entry
         // REVERSAL
         // =========================
         public int ReversalEvidenceScore;
+        // LEGACY / DIAGNOSTIC ONLY
         public TradeDirection ReversalDirection;
 
         // =========================
@@ -244,6 +246,7 @@ namespace GeminiV26.Core.Entry
         // =========================
         // DIRECTION FLOW (SSOT)
         // =========================
+        // LEGACY / DIAGNOSTIC ONLY (pre-routing analytics)
         public TradeDirection LogicBiasDirection { get; set; } = TradeDirection.None;
         public int LogicBiasConfidence { get; set; } = 0;
         public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
