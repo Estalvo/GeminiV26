@@ -56,6 +56,12 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         public void RegisterContext(PositionContext ctx)
         {
+            if (ctx == null || ctx.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx?.PositionId}");
+                return;
+            }
+
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
@@ -86,6 +92,13 @@ namespace GeminiV26.Instruments.BTCUSD
             {
                 if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
                     continue;
+
+                _bot.Print($"[DIR][EXIT_CTX] posId={key} finalDir={ctx.FinalDirection}");
+                if (ctx.FinalDirection == TradeDirection.None)
+                {
+                    _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={key}");
+                    continue;
+                }
 
                 Position pos = null;
                 foreach (var p in _bot.Positions)
@@ -134,7 +147,7 @@ namespace GeminiV26.Instruments.BTCUSD
                     }
                     else
                     {
-                        tp1Price = pos.TradeType == TradeType.Buy
+                        tp1Price = IsLong(ctx)
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R;
 
@@ -145,7 +158,7 @@ namespace GeminiV26.Instruments.BTCUSD
                         ctx.Tp1R = tp1R;
 
                     bool reached =
-                        pos.TradeType == TradeType.Buy
+                        IsLong(ctx)
                             ? sym.Bid >= tp1Price
                             : sym.Bid <= tp1Price;
 
@@ -157,7 +170,7 @@ namespace GeminiV26.Instruments.BTCUSD
                         {
                             var m1Bar = m1.LastBar;
 
-                            reached = pos.TradeType == TradeType.Buy
+                            reached = IsLong(ctx)
                                 ? m1Bar.High >= tp1Price
                                 : m1Bar.Low <= tp1Price;
 
@@ -242,7 +255,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
                 _bot.Print(
                     $"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} " +
-                    $"direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} " +
+                    $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
                     $"sl={pos.StopLoss} tp={pos.TakeProfit}"
                 );
 
@@ -314,7 +327,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             _bot.Print(
                 $"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} " +
-                $"direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym.Bid : sym.Ask)} " +
+                $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
                 $"closedUnits={closeUnits}"
             );
 
@@ -348,13 +361,13 @@ namespace GeminiV26.Instruments.BTCUSD
             double trailDist = atr * mult;
 
             double desiredSl =
-                pos.TradeType == TradeType.Buy
+                IsLong(ctx)
                     ? _bot.Symbol.Bid - trailDist
                     : _bot.Symbol.Ask + trailDist;
 
             if (ctx.BePrice > 0)
             {
-                desiredSl = pos.TradeType == TradeType.Buy
+                desiredSl = IsLong(ctx)
                     ? Math.Max(desiredSl, ctx.BePrice)
                     : Math.Min(desiredSl, ctx.BePrice);
             }
@@ -364,8 +377,8 @@ namespace GeminiV26.Instruments.BTCUSD
             double minImprove = Math.Max(minImprovePip, minImproveAtr);
 
             bool improve =
-                (pos.TradeType == TradeType.Buy && desiredSl > pos.StopLoss.Value + minImprove) ||
-                (pos.TradeType == TradeType.Sell && desiredSl < pos.StopLoss.Value - minImprove);
+                (IsLong(ctx) && desiredSl > pos.StopLoss.Value + minImprove) ||
+                (!IsLong(ctx) && desiredSl < pos.StopLoss.Value - minImprove);
 
             if (!improve)
                 return;
@@ -376,7 +389,7 @@ namespace GeminiV26.Instruments.BTCUSD
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
             double bePrice =
-                pos.TradeType == TradeType.Buy
+                IsLong(ctx)
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
@@ -451,12 +464,12 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
             }
 
-            double newTp = pos.TradeType == TradeType.Buy
+            double newTp = IsLong(ctx)
                 ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
                 : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
 
             double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
-            bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
+            bool outward = IsLong(ctx) ? newTp > currentTp : newTp < currentTp;
 
             if (!outward)
             {
@@ -475,7 +488,7 @@ namespace GeminiV26.Instruments.BTCUSD
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             _bot.Print(
                 $"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} " +
-                $"direction={pos.TradeType} currentPrice={(pos.TradeType == TradeType.Buy ? sym?.Bid : sym?.Ask)} " +
+                $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym?.Bid : sym?.Ask)} " +
                 $"oldTp={currentTp} newTp={newTp}"
             );
 
@@ -484,5 +497,10 @@ namespace GeminiV26.Instruments.BTCUSD
 
             _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
         }
+        private static bool IsLong(PositionContext ctx)
+        {
+            return ctx?.FinalDirection == TradeDirection.Long;
+        }
+
     }
 }
