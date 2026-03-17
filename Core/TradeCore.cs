@@ -1000,10 +1000,34 @@ namespace GeminiV26.Core
                 _usdChfEntryLogic?.Evaluate();
 
             if (IsNasSymbol(_bot.SymbolName))
+            {
                 _nasEntryLogic?.Evaluate();
+                if (_nasEntryLogic != null)
+                {
+                    _ctx.LogicBiasDirection = FromTradeType(_nasEntryLogic.LastBias);
+                    _ctx.LogicBiasConfidence = _nasEntryLogic.LastLogicConfidence;
+                }
+            }
 
             if (IsSymbol("GER40"))
+            {
                 _ger40EntryLogic?.Evaluate();
+                if (_ger40EntryLogic != null)
+                {
+                    _ctx.LogicBiasDirection = FromTradeType(_ger40EntryLogic.LastBias);
+                    _ctx.LogicBiasConfidence = _ger40EntryLogic.LastLogicConfidence;
+                }
+            }
+
+            if (IsSymbol("US30"))
+            {
+                _us30EntryLogic?.Evaluate();
+                if (_us30EntryLogic != null)
+                {
+                    _ctx.LogicBiasDirection = FromTradeType(_us30EntryLogic.LastBias);
+                    _ctx.LogicBiasConfidence = _us30EntryLogic.LastLogicConfidence;
+                }
+            }
 
             if (IsSymbol("BTCUSD"))
             {
