@@ -932,8 +932,15 @@ namespace GeminiV26.Core
             _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
             _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
 
-            _ctx.LogicBiasDirection = TradeDirection.None;
-            _ctx.LogicBiasConfidence = 0;
+            bool hasValidLogic =
+                _ctx.LogicBiasDirection != TradeDirection.None &&
+                _ctx.LogicBiasConfidence > 0;
+
+            if (!isIndexSymbol || !hasValidLogic)
+            {
+                _ctx.LogicBiasDirection = TradeDirection.None;
+                _ctx.LogicBiasConfidence = 0;
+            }
 
             TradeType xauBias = TradeType.Buy;
             int xauBiasConfidence = 0;
