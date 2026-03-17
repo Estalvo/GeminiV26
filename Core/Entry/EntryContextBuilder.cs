@@ -325,11 +325,7 @@ namespace GeminiV26.Core.Entry
             }
 
             double range5 = hi - lo;
-
-            ctx.IsValidFlagStructure_M5 =
-                ctx.AtrM5 > 0 &&
-                range5 > 0 &&
-                range5 < ctx.AtrM5 * 3.0;
+            
             ctx.FlagAtr_M5 = range5;
 
             // =================================================
