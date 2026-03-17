@@ -76,6 +76,7 @@ namespace GeminiV26.Instruments.NAS100
             // ENTRY LOGIC – NAS
             // =========================
             _entryLogic.Evaluate();
+            _entryLogic.ApplyToEntryEvaluation(entry);
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
             int statePenalty = 0;

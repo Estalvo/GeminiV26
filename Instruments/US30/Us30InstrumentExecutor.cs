@@ -70,6 +70,7 @@ namespace GeminiV26.Instruments.US30
             // ENTRY LOGIC � US30
             // =========================
             _entryLogic.Evaluate();
+            _entryLogic.ApplyToEntryEvaluation(entry);
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
             // =========================
