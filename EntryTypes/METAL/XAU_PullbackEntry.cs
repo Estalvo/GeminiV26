@@ -59,6 +59,12 @@ namespace GeminiV26.EntryTypes.METAL
             int score = 60;
             int minScore = 64;
 
+            // early continuation könnyebb
+            if (pbBars == 0 && hasImpulse)
+            {
+                minScore = 60;
+            }
+
             var reasons = new List<string>();
 
             // =========================
@@ -99,10 +105,25 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.PullbackDepthRLong_M5
                     : ctx.PullbackDepthRShort_M5;
 
-            if (pbBars == 0)
+           bool noPullback = pbBars == 0;
+
+            // EARLY CONTINUATION DETECTION
+            bool earlyContinuation =
+                noPullback &&
+                hasImpulse &&
+                barsSinceImpulse <= 2 &&
+                ctx.LastClosedBarInTrendDirection;
+
+            // ha early continuation → NEM büntetjük
+            if (noPullback && !earlyContinuation)
             {
                 score -= 6;
                 reasons.Add("NO_PULLBACK");
+            }
+            else if (earlyContinuation)
+            {
+                score += 8;
+                reasons.Add("EARLY_CONTINUATION");
             }
 
             if (pbBars > 3)
@@ -122,12 +143,13 @@ namespace GeminiV26.EntryTypes.METAL
             {
                 bool compression =
                     ctx.HasReactionCandle_M5 ||
-                    ctx.HasRejectionWick_M5;
+                    ctx.HasRejectionWick_M5 ||
+                    ctx.LastClosedBarInTrendDirection;
 
                 if (compression)
                 {
                     score += 4;
-                    reasons.Add("DEEP_PB_CONTINUATION");
+                    reasons.Add("DEEP_PB_ALLOWED");
                 }
                 else
                 {
@@ -208,7 +230,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Direction = dir,
                 Score = score,
                 IsValid = true,
-                Reason = $"ACCEPT {dir} score={score} pbBars={pbBars} depth={pbDepth:F2}"
+                Reason = $"ACCEPT {dir} score={score} pbBars={pbBars} depth={pbDepth:F2} early={earlyContinuation}"
             };
         }
 
