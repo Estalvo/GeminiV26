@@ -376,7 +376,16 @@ namespace GeminiV26.Core.Entry
             // =========================================================
             // FINAL VALIDITY
             // =========================================================
-            bool isValid = hasImpulse && hasPullback && (hasFlag || relaxedContinuation);
+                bool earlyContinuation =
+                    hasImpulse &&
+                    !hasPullback &&
+                    barsSinceImpulse <= 2 &&
+                    ctx.MarketState != null &&
+                    ctx.MarketState.IsTrend;
+
+                bool isValid =
+                    (hasImpulse && hasPullback && (hasFlag || relaxedContinuation))
+                    || earlyContinuation;
 
             double qualityScore = 0.0;
             int bonus = 0;
