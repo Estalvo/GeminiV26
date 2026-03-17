@@ -120,6 +120,10 @@ namespace GeminiV26.EntryTypes.FX
                 dir == TradeDirection.Short ? ctx.HasPullbackShort_M5 :
                 false;
 
+            int barsSinceImpulse =
+                dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
+                ctx.BarsSinceImpulseShort_M5;                
+
             // HARD GATE: nincs pullback → nincs trade
             if (!hasPullback)
             {
