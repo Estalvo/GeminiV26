@@ -35,7 +35,7 @@ namespace GeminiV26.EntryTypes.FX
             if (longEval.IsValid && shortEval.IsValid)
                 return longEval.Score >= shortEval.Score ? longEval : shortEval;
 
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            return Invalid(ctx, "NO_VALID_SIDE");
         }
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
@@ -43,7 +43,7 @@ namespace GeminiV26.EntryTypes.FX
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
 
-            double pullbackDepthAtr =
+            double pullbackDepthR =
                 dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
 
             // =====================================================
@@ -85,12 +85,10 @@ namespace GeminiV26.EntryTypes.FX
             if (!hasImpulse)
                 return Invalid(ctx, "NoImpulse");
 
-            // túl mély pullback = nem continuation
-            if (pullbackDepthAtr > MaxPullbackAtr)
+            if (pullbackDepthR > MaxPullbackAtr)
                 return Invalid(ctx, "TooDeepPullback");
 
-            // túl kicsi pullback = csúcson belépés
-            if (pullbackDepthAtr < MinPullbackAtr)
+            if (pullbackDepthR < MinPullbackAtr)
                 return Invalid(ctx, "NoMeaningfulPullback");
 
             // ATR expanding = kifulladó impulse chase FX-en
@@ -99,7 +97,7 @@ namespace GeminiV26.EntryTypes.FX
 
             int score = 30;
 
-            if (ctx.M1TriggerInTrendDirection)
+            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
                 score += 15;
 
             if (ctx.IsRange_M5)
@@ -122,8 +120,8 @@ namespace GeminiV26.EntryTypes.FX
                 IsValid = finalDir != TradeDirection.None,
                 Reason =
                     $"FX_CONT score={score} " +
-                    $"pbATR={pullbackDepthAtr:F2} " +
-                    $"m1={ctx.M1TriggerInTrendDirection}"
+                    $"pbR={pullbackDepthR:F2} " +
+                    $"m1={(ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)}"
             };
         }
 

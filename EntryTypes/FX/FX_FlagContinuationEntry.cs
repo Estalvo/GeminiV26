@@ -28,7 +28,7 @@ namespace GeminiV26.EntryTypes.FX
             if (longEval.IsValid && shortEval.IsValid)
                 return longEval.Score >= shortEval.Score ? longEval : shortEval;
 
-            return Invalid(ctx, "NO_TREND");
+            return Invalid(ctx, "NO_VALID_SIDE");
         }
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
@@ -74,14 +74,16 @@ namespace GeminiV26.EntryTypes.FX
             if (!ctx.HasReactionCandle_M5)
                 return Invalid(ctx, "NO_REACTION");
 
+            // ✅ FIX: side-aware M1 confirmation
             bool m1Confirm =
                 ctx.M1FlagBreakTrigger ||
-                ctx.M1TriggerInTrendDirection;
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
             if (!m1Confirm)
                 return Invalid(ctx, "NO_M1_CONFIRM");
 
-            if (ctx.M1TriggerInTrendDirection)
+            // ✅ FIX: side-aware score boost
+            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
                 score += 10;
 
             if (ctx.IsRange_M5)
