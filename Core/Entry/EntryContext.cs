@@ -13,13 +13,17 @@ namespace GeminiV26.Core.Entry
         // CORE
         // =========================
         public bool IsReady { get; set; }
-        public TradeDirection TrendDirection;
-
         public string Symbol;
         public Action<string> Log { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
         public Robot Bot { get; }
+
+        // =========================
+        // ⚠️ LEGACY TREND (READ ONLY)
+        // =========================
+        // NE írja detector!
+        public TradeDirection TrendDirection;
 
         // =========================
         // BARS
@@ -30,7 +34,6 @@ namespace GeminiV26.Core.Entry
 
         public int BarsSinceHighBreak_M5 { get; set; }
         public int BarsSinceLowBreak_M5 { get; set; }
-        public int BarsSinceImpulse_M5 { get; set; }
 
         public double PipSize { get; set; }
 
@@ -83,32 +86,49 @@ namespace GeminiV26.Core.Entry
         // M1 SIGNALS
         // =========================
         public bool HasImpulse_M1;
+
+        // ⚠️ LEGACY (NE használd új logikában)
         public TradeDirection ImpulseDirection;
 
         public bool HasBreakout_M1;
         public TradeDirection BreakoutDirection;
 
         // =========================
-        // M5 CORE LOGIC
+        // M5 LEGACY STATE
         // =========================
+        // ⚠️ csak backward compatibility
         public bool HasImpulse_M5;
-        public bool IsValidFlagStructure_M5;
+        public int BarsSinceImpulse_M5 { get; set; } = 999;
+
+        public int PullbackBars_M5;
+        public double PullbackDepthAtr_M5;
 
         // =========================
-        // RANGE
+        // 2-SIDED IMPULSE
         // =========================
-        public bool IsRange_M5;
-        public int RangeBarCount_M5;
-        public TradeDirection RangeBreakDirection;
-        public double RangeBreakAtrSize_M5;
-        public int RangeFakeoutBars_M1;
+        public bool HasImpulseLong_M5 { get; set; }
+        public bool HasImpulseShort_M5 { get; set; }
+
+        public int BarsSinceImpulseLong_M5 { get; set; } = 999;
+        public int BarsSinceImpulseShort_M5 { get; set; } = 999;
 
         // =========================
-        // PULLBACK
+        // 2-SIDED PULLBACK
+        // =========================
+        public bool HasPullbackLong_M5 { get; set; }
+        public bool HasPullbackShort_M5 { get; set; }
+
+        public int PullbackBarsLong_M5 { get; set; }
+        public int PullbackBarsShort_M5 { get; set; }
+
+        // R alapú (új)
+        public double PullbackDepthRLong_M5 { get; set; }
+        public double PullbackDepthRShort_M5 { get; set; }
+
+        // =========================
+        // PULLBACK MICRO STRUCTURE
         // =========================
         public bool PullbackTouchedEma21_M5;
-        public double PullbackDepthAtr_M5;
-        public int PullbackBars_M5;
 
         public bool IsPullbackDecelerating_M5 { get; set; }
         public bool HasRejectionWick_M5 { get; set; }
@@ -118,6 +138,64 @@ namespace GeminiV26.Core.Entry
         public double AvgBodyPrev3_M5 { get; set; }
 
         public bool LastClosedBarInTrendDirection { get; set; }
+
+        // =========================
+        // 2-SIDED FLAG
+        // =========================
+        public bool HasFlagLong_M5 { get; set; }
+        public bool HasFlagShort_M5 { get; set; }
+
+        public int FlagBarsLong_M5 { get; set; }
+        public int FlagBarsShort_M5 { get; set; }
+
+        public double FlagCompressionScoreLong_M5 { get; set; }
+        public double FlagCompressionScoreShort_M5 { get; set; }
+
+        // =========================
+        // FLAG RANGE
+        // =========================
+        public double FlagHigh { get; set; }
+        public double FlagLow { get; set; }
+
+        // =========================
+        // 2-SIDED BREAKOUT
+        // =========================
+        public bool FlagBreakoutUp { get; set; }
+        public bool FlagBreakoutDown { get; set; }
+
+        public bool FlagBreakoutUpConfirmed { get; set; }
+        public bool FlagBreakoutDownConfirmed { get; set; }
+
+        public int BreakoutUpBarsSince { get; set; } = 999;
+        public int BreakoutDownBarsSince { get; set; } = 999;
+
+        // =========================
+        // LEGACY BREAKOUT
+        // =========================
+        public bool FlagBreakoutConfirmed { get; set; }
+        public int BreakoutBarsSince { get; set; } = 999;
+
+        // =========================
+        // TRANSITION (2-SIDED)
+        // =========================
+        public TransitionEvaluation TransitionLong { get; set; }
+        public TransitionEvaluation TransitionShort { get; set; }
+
+        // =========================
+        // LEGACY TRANSITION
+        // =========================
+        public bool TransitionValid { get; set; }
+        public int TransitionScoreBonus { get; set; }
+        public TransitionEvaluation Transition { get; set; }
+
+        // =========================
+        // RANGE
+        // =========================
+        public bool IsRange_M5;
+        public int RangeBarCount_M5;
+        public TradeDirection RangeBreakDirection;
+        public double RangeBreakAtrSize_M5;
+        public int RangeFakeoutBars_M1;
 
         // =========================
         // VOLATILITY
@@ -143,70 +221,6 @@ namespace GeminiV26.Core.Entry
         // =========================
         public int ReversalEvidenceScore;
         public TradeDirection ReversalDirection;
-
-        // =========================
-        // TRANSITION
-        // =========================
-        public bool TransitionValid { get; set; }
-        public int TransitionScoreBonus { get; set; }
-        public TransitionEvaluation Transition { get; set; }
-
-        // =========================
-        // 2-SIDED TRANSITION
-        // =========================
-        public bool HasImpulseLong_M5 { get; set; }
-        public bool HasImpulseShort_M5 { get; set; }
-
-        public int BarsSinceImpulseLong_M5 { get; set; } = 999;
-        public int BarsSinceImpulseShort_M5 { get; set; } = 999;
-
-        public bool HasPullbackLong_M5 { get; set; }
-        public bool HasPullbackShort_M5 { get; set; }
-
-        public int PullbackBarsLong_M5 { get; set; }
-        public int PullbackBarsShort_M5 { get; set; }
-
-        public double PullbackDepthRLong_M5 { get; set; }
-        public double PullbackDepthRShort_M5 { get; set; }
-
-        public bool HasFlagLong_M5 { get; set; }
-        public bool HasFlagShort_M5 { get; set; }
-
-        public int FlagBarsLong_M5 { get; set; }
-        public int FlagBarsShort_M5 { get; set; }
-
-        public double FlagCompressionScoreLong_M5 { get; set; }
-        public double FlagCompressionScoreShort_M5 { get; set; }
-
-        public TransitionEvaluation TransitionLong { get; set; }
-        public TransitionEvaluation TransitionShort { get; set; }
-
-        // =========================
-        // FLAG RANGE
-        // =========================
-        public double FlagHigh { get; set; }
-        public double FlagLow { get; set; }
-
-        // =================================================
-        // 🔥 NEW: 2-SIDED FLAG BREAKOUT (CORE FIX)
-        // =================================================
-
-        // instant breakout (current bar)
-        public bool FlagBreakoutUp { get; set; }
-        public bool FlagBreakoutDown { get; set; }
-
-        // confirmed breakout (state machine)
-        public bool FlagBreakoutUpConfirmed { get; set; }
-        public bool FlagBreakoutDownConfirmed { get; set; }
-
-        public int BreakoutUpBarsSince { get; set; } = 999;
-        public int BreakoutDownBarsSince { get; set; } = 999;
-
-        // =========================
-        // BACKWARD COMPATIBILITY
-        // =========================
-        public bool FlagBreakoutConfirmed { get; set; }
-        public int BreakoutBarsSince { get; set; } = 999;
 
         // =========================
         // HTF BIAS
