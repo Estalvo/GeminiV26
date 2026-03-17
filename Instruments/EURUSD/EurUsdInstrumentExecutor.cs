@@ -43,25 +43,32 @@ namespace GeminiV26.Instruments.EURUSD
             _botLabel = botLabel;
         }
 
-        public void ExecuteEntry(EntryEvaluation entry)
+        public void ExecuteEntry(EntryEvaluation entry, EntryContext entryContext)
         {
-            var ms = _marketStateDetector?.Evaluate();
-
             if (entry == null)
             {
-                _bot.Print("[EUR EXEC] BLOCKED: entry NULL");
+                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
                 return;
             }
+
+            if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                return;
+            }
+
+            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                // DO NOT TRUST entry.Direction
+            }
+            var ms = _marketStateDetector?.Evaluate();
 
             _bot.Print(
-                $"[EUR EXEC] ENTRY RECEIVED type={entry.Type} dir={entry.Direction} score={entry.Score} reason={entry.Reason}"
+                $"[EUR EXEC] ENTRY RECEIVED type={entry.Type} finalDir={entryContext.FinalDirection} score={entry.Score} reason={entry.Reason}"
             );
-
-            if (entry.Direction == TradeDirection.None)
-            {
-                _bot.Print("[EUR EXEC] BLOCKED: direction NONE");
-                return;
-            }
             
             // =========================
             // MARKET STATE – SOFT (FX)
@@ -80,7 +87,7 @@ namespace GeminiV26.Instruments.EURUSD
             _bot.Print("[EUR EXEC] ExecuteEntry START");
 
             var tradeType =
-                entry.Direction == TradeDirection.Long
+                entryContext.FinalDirection == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
@@ -168,6 +175,7 @@ namespace GeminiV26.Instruments.EURUSD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
 
                 // ✅ Rulebook mezők rendbetéve (viselkedést nem változtat)
                 EntryScore = entry.Score,
@@ -202,7 +210,7 @@ namespace GeminiV26.Instruments.EURUSD
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entry.Direction != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None
             };
 
             // ✅ 1 sor, safe: kanonikus FinalConfidence kiszámolása (CSV/analytics)

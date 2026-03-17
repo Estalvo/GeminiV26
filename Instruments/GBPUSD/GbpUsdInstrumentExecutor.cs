@@ -46,8 +46,27 @@ namespace GeminiV26.Instruments.GBPUSD
             _atr14 = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Exponential);
         }
 
-        public void ExecuteEntry(EntryEvaluation entry)
+        public void ExecuteEntry(EntryEvaluation entry, EntryContext entryContext)
         {
+            if (entry == null)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
+                return;
+            }
+
+            if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                return;
+            }
+
+            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                // DO NOT TRUST entry.Direction
+            }
             // =====================================================
             // FX MARKET STATE – SOFT GATE (GBPUSD / FX)
             // =====================================================
@@ -111,7 +130,7 @@ namespace GeminiV26.Instruments.GBPUSD
             // EXECUTION LOGIC
             // =====================================================
             var tradeType =
-                entry.Direction == TradeDirection.Long
+                entryContext.FinalDirection == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
@@ -180,6 +199,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
                 EntryScore = entry.Score,
                 LogicConfidence = logicConfidence,
                 EntryTime = _bot.Server.Time,
@@ -190,7 +210,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 Tp1R = tp1R,
                 Tp1Hit = false,
                 Tp1CloseFraction = tp1Ratio,
-                MarketTrend = entry.Direction != TradeDirection.None,
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
 
                 BeMode = BeMode.AfterTp1,
 

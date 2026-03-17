@@ -40,8 +40,27 @@ namespace GeminiV26.Instruments.USDJPY
             _botLabel = botLabel;
         }
 
-        public void ExecuteEntry(EntryEvaluation entry)
+        public void ExecuteEntry(EntryEvaluation entry, EntryContext entryContext)
         {
+            if (entry == null)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
+                return;
+            }
+
+            if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                return;
+            }
+
+            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                // DO NOT TRUST entry.Direction
+            }
             // =====================================================
             // FX MARKET STATE – SOFT GATE (USDJPY / FX)
             // =====================================================
@@ -88,7 +107,7 @@ namespace GeminiV26.Instruments.USDJPY
             int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
             var tradeType =
-                entry.Direction == TradeDirection.Long
+                entryContext.FinalDirection == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
@@ -152,6 +171,7 @@ namespace GeminiV26.Instruments.USDJPY
                 Symbol = result.Position.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
 
                 // =========================
                 // RULEBOOK PIPELINE
@@ -188,7 +208,7 @@ namespace GeminiV26.Instruments.USDJPY
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entry.Direction != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None
             };
 
             // ✅ Kanonikus 70/30 FinalConfidence

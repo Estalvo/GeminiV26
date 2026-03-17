@@ -1330,16 +1330,14 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                var htfDirection = ResolveHtfAllowedDirection(_ctx);
-                _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} htf={htfDirection} logic={_ctx.LogicBiasDirection} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
+                _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
 
                 if (!ValidateDirectionConsistency(_ctx, selected))
                 {
                     return;
                 }
 
-                selected.Direction = _ctx.FinalDirection;
-                _bot.Print($"[DIR][EXEC_PRE] sym={_bot.SymbolName} entryDir={selected.Direction} finalCtxDir={_ctx.FinalDirection}");
+                _bot.Print($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}");
                 _bot.Print($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}");
 
                 if (!HasDirectionTraceCompleteness(_ctx))
@@ -1362,7 +1360,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _xauExecutor?.ExecuteEntry(selected);
+                _xauExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsNasSymbol(_bot.SymbolName))
             {
@@ -1378,13 +1376,13 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _nasExecutor?.ExecuteEntry(selected);
+                _nasExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsUs30(_bot.SymbolName))
             {
                 if (!_us30SessionGate.AllowEntry(gateDir)) return;
                 if (!_us30ImpulseGate.AllowEntry(gateDir)) return;
-                _us30Executor.ExecuteEntry(selected);
+                _us30Executor.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GER40"))
             {
@@ -1400,7 +1398,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _ger40Executor?.ExecuteEntry(selected);
+                _ger40Executor?.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("EURUSD"))
@@ -1417,7 +1415,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _eurUsdExecutor?.ExecuteEntry(selected);
+                _eurUsdExecutor?.ExecuteEntry(selected, _ctx);
               
             }
             else if (IsSymbol("USDJPY"))
@@ -1434,7 +1432,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _usdJpyExecutor?.ExecuteEntry(selected);
+                _usdJpyExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GBPUSD"))
             {
@@ -1450,7 +1448,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _gbpUsdExecutor?.ExecuteEntry(selected);
+                _gbpUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("AUDUSD"))
@@ -1467,7 +1465,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _audUsdExecutor.ExecuteEntry(selected);
+                _audUsdExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("AUDNZD"))
@@ -1484,7 +1482,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _audNzdExecutor.ExecuteEntry(selected);
+                _audNzdExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("EURJPY"))
@@ -1501,7 +1499,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _eurJpyExecutor.ExecuteEntry(selected);
+                _eurJpyExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("GBPJPY"))
@@ -1518,7 +1516,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _gbpJpyExecutor.ExecuteEntry(selected);
+                _gbpJpyExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("NZDUSD"))
@@ -1535,7 +1533,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _nzdUsdExecutor.ExecuteEntry(selected);
+                _nzdUsdExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("USDCAD"))
@@ -1552,7 +1550,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _usdCadExecutor.ExecuteEntry(selected);
+                _usdCadExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("USDCHF"))
@@ -1569,14 +1567,14 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _usdChfExecutor.ExecuteEntry(selected);
+                _usdChfExecutor.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("BTCUSD"))
             {
                 // BTC: direction mismatch safety
                 TradeType routerTradeType =
-                    selected.Direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
+                    _ctx.FinalDirection == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
 
                 if (routerTradeType != gateDir)
                 {
@@ -1597,14 +1595,14 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print("[BTC GATE] ALLOWED (Session+Impulse)");
-                _btcUsdExecutor?.ExecuteEntry(selected);
+                _btcUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
 
             else if (IsSymbol("ETHUSD"))
             {
                 // ETH: direction mismatch safety
                 TradeType routerTradeType =
-                    selected.Direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
+                    _ctx.FinalDirection == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
 
                 if (routerTradeType != gateDir)
                 {
@@ -1625,13 +1623,13 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print("[ETH GATE] ALLOWED (Session+Impulse)");
-                _ethUsdExecutor?.ExecuteEntry(selected);
+                _ethUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsGer40(_bot.SymbolName))
             {
                 if (!_ger40SessionGate.AllowEntry(gateDir)) return;
                 if (!_ger40ImpulseGate.AllowEntry(gateDir)) return;
-                _ger40Executor.ExecuteEntry(selected);
+                _ger40Executor.ExecuteEntry(selected, _ctx);
             }
         }
 
@@ -1647,9 +1645,6 @@ namespace GeminiV26.Core
             if (entry.Direction != entryContext.FinalDirection)
             {
                 _bot.Print($"[DIR][EXEC_MISMATCH] sym={_bot.SymbolName} entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
-                _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} stage=exec entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
-                _bot.Print("[TC] ENTRY BLOCKED: direction mismatch before execution");
-                return false;
             }
 
             return true;

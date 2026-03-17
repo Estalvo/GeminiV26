@@ -63,8 +63,27 @@ namespace GeminiV26.Instruments.XAUUSD
         // =========================================================
         // EXECUTION – XAUUSD
         // =========================================================
-        public void ExecuteEntry(EntryEvaluation entry)
+        public void ExecuteEntry(EntryEvaluation entry, EntryContext entryContext)
         {
+            if (entry == null)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
+                return;
+            }
+
+            if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                return;
+            }
+
+            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+
+            if (entry.Direction != entryContext.FinalDirection)
+            {
+                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                // DO NOT TRUST entry.Direction
+            }
             // =====================================================
             // 1️⃣ MARKET STATE CHECK (XAU-SPECIFIC HARD GATE)
             // -----------------------------------------------------
@@ -99,7 +118,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // 2️⃣ TRADE TYPE (router döntése alapján)
             // =====================================================
             var tradeType =
-                entry.Direction == TradeDirection.Long
+                entryContext.FinalDirection == TradeDirection.Long
                     ? TradeType.Buy
                     : TradeType.Sell;
 
@@ -114,6 +133,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 Symbol = _bot.SymbolName,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
 
                 EntryScore = entry.Score,
 
@@ -133,7 +153,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 Tp1CloseFraction = 0.40,
                 Tp1R = 0.25,
 
-                MarketTrend = entry.Direction != TradeDirection.None,
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
 
                 InitialStopLossR = 1.0,
                 BeMode = BeMode.AfterTp1
