@@ -168,6 +168,11 @@ namespace GeminiV26.EntryTypes.INDEX
             double high = breakoutBar.High;
             double low = breakoutBar.Low;
 
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasImpulseShort_M5 :
+                false;
+
             DateTime traceBarTime = bars.OpenTimes[lastClosed];
             string traceKey = $"{ctx.Symbol}|{traceBarTime:O}|{dir}";
             int traceCount;
@@ -185,7 +190,7 @@ namespace GeminiV26.EntryTypes.INDEX
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][START] sym={ctx.Symbol} dir={dir} " +
                 $"adx={ctx.Adx_M5:F1} atr={ctx.AtrM5:F1} trend={ctx.MarketState?.IsTrend} lowVol={ctx.MarketState?.IsLowVol} " +
-                $"impulse={ctx.HasImpulse_M5} bsi={ctx.BarsSinceImpulse_M5}"
+                $"impulse={hasImpulse} bsi={ctx.BarsSinceImpulse_M5}"
             );
 
             // =====================================================
@@ -201,11 +206,11 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.Adx_M5 < chopAdxThreshold &&
                 Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < chopDiDiff &&
                 !ctx.IsAtrExpanding_M5;
-
+                
             if (chopZone)
                 return Reject(ctx, "CHOP_ZONE", score, dir);
 
-            if (!ctx.HasImpulse_M5)
+            if (!hasImpulse)
                 return Reject(ctx, "NO_IMPULSE", score, dir);
 
             if (ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse)
@@ -307,23 +312,28 @@ namespace GeminiV26.EntryTypes.INDEX
             // =====================================================
             bool structureOk;
 
+            bool hasFlag =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
+                ctx.IsValidFlagStructure_M5;
+                
             if (dir == TradeDirection.Long)
             {
                 structureOk =
                     ctx.BrokeLastSwingHigh_M5 ||
-                    (!requireStructure && close > ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5);
+                    (!requireStructure && close > ctx.Ema21_M5 && hasFlag);
             }
             else
             {
                 structureOk =
                     ctx.BrokeLastSwingLow_M5 ||
-                    (!requireStructure && close < ctx.Ema21_M5 && ctx.IsValidFlagStructure_M5);
+                    (!requireStructure && close < ctx.Ema21_M5 && hasFlag);
             }
 
             if (!structureOk)
                 return Reject(ctx, "NO_CONTINUATION_STRUCTURE", score, dir);
 
-            if (!ctx.IsValidFlagStructure_M5)
+            if (!hasFlag)
                 ApplyPenalty(6);
             else
                 ApplyReward(3);
@@ -456,10 +466,7 @@ namespace GeminiV26.EntryTypes.INDEX
         }
 
         private static bool HasDirectionalM1Trigger(EntryContext ctx, TradeDirection dir)
-        {
-            if (!ctx.M1TriggerInTrendDirection)
-                return false;
-
+        {            
             if (ctx.M1 == null || ctx.M1.Count < 3)
                 return false;
 
@@ -511,9 +518,14 @@ namespace GeminiV26.EntryTypes.INDEX
             int score,
             TradeDirection dir)
         {
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx?.HasImpulseLong_M5 == true :
+                dir == TradeDirection.Short ? ctx?.HasImpulseShort_M5 == true :
+                false;
+
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][REJECT] {reason} | score={Math.Max(0, score)} | dir={dir} | " +
-                $"ADX={ctx?.Adx_M5:F1} Impulse={ctx?.HasImpulse_M5} ATR={ctx?.AtrM5:F1}"
+                $"ADX={ctx?.Adx_M5:F1} Impulse={hasImpulse} ATR={ctx?.AtrM5:F1}"
             );
 
             return new EntryEvaluation
