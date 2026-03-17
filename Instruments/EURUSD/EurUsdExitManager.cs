@@ -29,6 +29,12 @@ namespace GeminiV26.Instruments.EURUSD
 
         public void RegisterContext(PositionContext ctx)
         {
+            if (ctx == null || ctx.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx?.PositionId}");
+                return;
+            }
+
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
@@ -53,6 +59,13 @@ namespace GeminiV26.Instruments.EURUSD
             {
                 if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
                     continue;
+
+                _bot.Print($"[DIR][EXIT_CTX] posId={key} finalDir={ctx.FinalDirection}");
+                if (ctx.FinalDirection == TradeDirection.None)
+                {
+                    _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={key}");
+                    continue;
+                }
 
                 Position pos = null;
                 foreach (var p in _bot.Positions)
@@ -95,7 +108,7 @@ namespace GeminiV26.Instruments.EURUSD
                     }
                     else
                     {
-                        tp1Price = pos.TradeType == TradeType.Buy
+                        tp1Price = IsLong(ctx)
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R;
 
@@ -106,7 +119,7 @@ namespace GeminiV26.Instruments.EURUSD
                         ctx.Tp1R = tp1R;
 
                     bool reached =
-                        pos.TradeType == TradeType.Buy
+                        IsLong(ctx)
                             ? sym.Bid >= tp1Price
                             : sym.Bid <= tp1Price;
 
@@ -117,7 +130,7 @@ namespace GeminiV26.Instruments.EURUSD
                         if (m1 != null && m1.Count > 0)
                         {
                             var m1Bar = m1.LastBar;
-                            reached = pos.TradeType == TradeType.Buy
+                            reached = IsLong(ctx)
                                 ? m1Bar.High >= tp1Price
                                 : m1Bar.Low <= tp1Price;
                         }
@@ -208,7 +221,7 @@ namespace GeminiV26.Instruments.EURUSD
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
             double bePrice =
-                pos.TradeType == TradeType.Buy
+                IsLong(ctx)
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
@@ -259,12 +272,12 @@ namespace GeminiV26.Instruments.EURUSD
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
 
-            double newTp = pos.TradeType == TradeType.Buy
+            double newTp = IsLong(ctx)
                 ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
                 : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
 
             double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
-            bool outward = pos.TradeType == TradeType.Buy ? newTp > currentTp : newTp < currentTp;
+            bool outward = IsLong(ctx) ? newTp > currentTp : newTp < currentTp;
 
             if (!outward)
                 return;
@@ -273,5 +286,10 @@ namespace GeminiV26.Instruments.EURUSD
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }
+        private static bool IsLong(PositionContext ctx)
+        {
+            return ctx?.FinalDirection == TradeDirection.Long;
+        }
+
     }
 }

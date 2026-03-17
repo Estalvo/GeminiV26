@@ -46,6 +46,12 @@ namespace GeminiV26.Instruments.ETHUSD
 
         public void RegisterContext(PositionContext ctx)
         {
+            if (ctx == null || ctx.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx?.PositionId}");
+                return;
+            }
+
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
         }
 
@@ -70,6 +76,13 @@ namespace GeminiV26.Instruments.ETHUSD
             {
                 if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
                     continue;
+
+                _bot.Print($"[DIR][EXIT_CTX] posId={key} finalDir={ctx.FinalDirection}");
+                if (ctx.FinalDirection == TradeDirection.None)
+                {
+                    _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={key}");
+                    continue;
+                }
 
                 Position pos = null;
 
@@ -120,7 +133,7 @@ namespace GeminiV26.Instruments.ETHUSD
                     }
                     else
                     {
-                        tp1Price = pos.TradeType == TradeType.Buy
+                        tp1Price = IsLong(ctx)
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R;
 
@@ -131,7 +144,7 @@ namespace GeminiV26.Instruments.ETHUSD
                         ctx.Tp1R = tp1R;
 
                     bool reached =
-                        pos.TradeType == TradeType.Buy
+                        IsLong(ctx)
                             ? sym.Bid >= tp1Price
                             : sym.Bid <= tp1Price;
 
@@ -143,7 +156,7 @@ namespace GeminiV26.Instruments.ETHUSD
                         {
                             var m1Bar = m1.LastBar;
 
-                            reached = pos.TradeType == TradeType.Buy
+                            reached = IsLong(ctx)
                                 ? m1Bar.High >= tp1Price
                                 : m1Bar.Low <= tp1Price;
                         }
@@ -271,7 +284,7 @@ namespace GeminiV26.Instruments.ETHUSD
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
             double bePrice =
-                pos.TradeType == TradeType.Buy
+                IsLong(ctx)
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
@@ -314,11 +327,6 @@ namespace GeminiV26.Instruments.ETHUSD
             return d2 > 0 ? d2 : 0;
         }
 
-        private static int Direction(Position pos)
-        {
-            return pos.TradeType == TradeType.Buy ? 1 : -1;
-        }
-
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
             if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue)
@@ -328,14 +336,14 @@ namespace GeminiV26.Instruments.ETHUSD
 
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
 
-            double newTp = pos.TradeType == TradeType.Buy
+            double newTp = IsLong(ctx)
                 ? pos.EntryPrice + ctx.RiskPriceDistance * desiredR
                 : pos.EntryPrice - ctx.RiskPriceDistance * desiredR;
 
             double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
 
             bool outward =
-                pos.TradeType == TradeType.Buy
+                IsLong(ctx)
                     ? newTp > currentTp
                     : newTp < currentTp;
 
@@ -347,5 +355,10 @@ namespace GeminiV26.Instruments.ETHUSD
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }
+        private static bool IsLong(PositionContext ctx)
+        {
+            return ctx?.FinalDirection == TradeDirection.Long;
+        }
+
     }
 }

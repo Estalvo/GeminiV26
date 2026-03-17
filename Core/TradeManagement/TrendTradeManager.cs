@@ -49,8 +49,15 @@ namespace GeminiV26.Core.TradeManagement
             if (atr <= 0)
                 atr = Math.Abs(_bot.Symbol.Bid - _bot.Symbol.Ask) * 4.0;
 
-            double priceNow = position.TradeType == TradeType.Buy ? _bot.Symbol.Bid : _bot.Symbol.Ask;
-            double move = position.TradeType == TradeType.Buy
+            bool isLong = ctx?.FinalDirection == TradeDirection.Long;
+            if (ctx?.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print($"[DIR][EXIT_ILLEGAL_SOURCE] source=TradeType posId={position?.Id} reason=missing_final_direction");
+                return new TrendDecision { State = TradeTrendState.Normal, Score = 0, TrailingMode = AdaptiveTrailingMode.Structure, AllowTp2Extension = false, Tp2ExtensionMultiplier = 1.0 };
+            }
+
+            double priceNow = isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask;
+            double move = isLong
                 ? priceNow - position.EntryPrice
                 : position.EntryPrice - priceNow;
 
@@ -64,25 +71,25 @@ namespace GeminiV26.Core.TradeManagement
             if (impulseStrong)
                 score++;
 
-            bool ema21Respected = position.TradeType == TradeType.Buy
+            bool ema21Respected = isLong
                 ? priceNow >= _ema21.Result.LastValue
                 : priceNow <= _ema21.Result.LastValue;
             if (ema21Respected)
                 score++;
 
-            bool ema50Respected = position.TradeType == TradeType.Buy
+            bool ema50Respected = isLong
                 ? priceNow >= _ema50.Result.LastValue
                 : priceNow <= _ema50.Result.LastValue;
             if (ema50Respected)
                 score++;
 
-            bool structureIntact = position.TradeType == TradeType.Buy
+            bool structureIntact = isLong
                 ? structure.LastHigherLow != null
                 : structure.LastLowerHigh != null;
             if (structureIntact)
                 score++;
 
-            double pullbackDepth = EstimatePullbackDepth(position, structure, priceNow);
+            double pullbackDepth = EstimatePullbackDepth(isLong, structure, priceNow);
             bool shallowPullback = atr > 0 && pullbackDepth <= atr * 0.5;
             if (shallowPullback)
                 score++;
@@ -133,9 +140,9 @@ namespace GeminiV26.Core.TradeManagement
             };
         }
 
-        private static double EstimatePullbackDepth(Position position, StructureSnapshot structure, double priceNow)
+        private static double EstimatePullbackDepth(bool isLong, StructureSnapshot structure, double priceNow)
         {
-            if (position.TradeType == TradeType.Buy)
+            if (isLong)
             {
                 if (structure.LastSwingHigh == null)
                     return 0;
