@@ -59,12 +59,6 @@ namespace GeminiV26.EntryTypes.METAL
             int score = 60;
             int minScore = 64;
 
-            // early continuation könnyebb
-            if (pbBars == 0 && hasImpulse)
-            {
-                minScore = 60;
-            }
-
             var reasons = new List<string>();
 
             // =========================
@@ -100,6 +94,12 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.PullbackBarsLong_M5
                     : ctx.PullbackBarsShort_M5;
 
+            // early continuation könnyebb
+            if (pbBars == 0 && hasImpulse)
+            {
+                minScore = 60;
+            }
+            
             double pbDepth =
                 dir == TradeDirection.Long
                     ? ctx.PullbackDepthRLong_M5
