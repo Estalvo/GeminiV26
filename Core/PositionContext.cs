@@ -24,6 +24,7 @@
 // =========================================================
 
 using System;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core
 {
@@ -48,6 +49,8 @@ namespace GeminiV26.Core
         public string EntryReason { get; set; } = string.Empty;
 
         public double RiskPriceDistance { get; set; }   // SL distance price-ban (entrykori)
+
+        public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
 
 
         // =========================================================

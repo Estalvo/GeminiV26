@@ -643,7 +643,13 @@ namespace GeminiV26.Core
                 }
 
                 if (_positionContexts.TryGetValue(pos.Id, out var pctx))
+                {
+                    pctx.FinalDirection = _ctx?.FinalDirection != TradeDirection.None
+                        ? _ctx.FinalDirection
+                        : FromTradeType(pos.TradeType);
                     _contextRegistry.RegisterPosition(pctx);
+                    _bot.Print($"[DIR][POS_CTX] posId={pctx.PositionId} sym={pctx.Symbol} finalDir={pctx.FinalDirection}");
+                }
 
                 _tradeMetaStore.TryGet(pos.Id, out var pendingMeta);
                 _logger.OnTradeOpened(BuildLogContext(pos, pendingMeta, pctx: _positionContexts.TryGetValue(pos.Id, out var ctxValue) ? ctxValue : null));
@@ -881,6 +887,7 @@ namespace GeminiV26.Core
             _ctx.TransitionValid = transition.IsValid;
             _ctx.TransitionScoreBonus = transition.BonusScore;
             _flagBreakoutDetector.Evaluate(_ctx);
+            _bot.Print($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}");
 
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
@@ -912,20 +919,44 @@ namespace GeminiV26.Core
             _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
             _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
 
-            TradeType xauBias = TradeType.Buy;   // default
+            _ctx.LogicBiasDirection = TradeDirection.None;
+            _ctx.LogicBiasConfidence = 0;
+
+            TradeType xauBias = TradeType.Buy;
             int xauBiasConfidence = 0;
+            TradeDirection cryptoBias = TradeDirection.None;
+            int cryptoLogicConfidence = 0;
 
             if (IsSymbol("XAUUSD"))
+            {
                 _xauEntryLogic?.Evaluate(out xauBias, out xauBiasConfidence);
+                _ctx.LogicBiasDirection = FromTradeType(xauBias);
+                _ctx.LogicBiasConfidence = xauBiasConfidence;
+            }
 
             if (IsSymbol("EURUSD"))
+            {
                 _eurUsdEntryLogic?.Evaluate();
+                _ctx.LogicBiasDirection = FromTradeType(_eurUsdEntryLogic.LastBias);
+                _ctx.LogicBiasConfidence = _eurUsdEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("GBPUSD"))
+            {
                 _gbpUsdEntryLogic?.Evaluate();
+                if (_gbpUsdEntryLogic != null && _gbpUsdEntryLogic.CheckEntry(out var gbpBias, out var gbpLogicConfidence))
+                {
+                    _ctx.LogicBiasDirection = gbpBias;
+                    _ctx.LogicBiasConfidence = gbpLogicConfidence;
+                }
+            }
 
             if (IsSymbol("USDJPY"))
+            {
                 _usdJpyEntryLogic?.Evaluate();
+                _ctx.LogicBiasDirection = FromTradeType(_usdJpyEntryLogic.LastBias);
+                _ctx.LogicBiasConfidence = _usdJpyEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("AUDUSD"))
                 _audUsdEntryLogic?.Evaluate();
@@ -955,10 +986,20 @@ namespace GeminiV26.Core
                 _ger40EntryLogic?.Evaluate();
 
             if (IsSymbol("BTCUSD"))
-                _btcUsdEntryLogic?.Evaluate(out _, out _);
+            {
+                _btcUsdEntryLogic?.Evaluate(out cryptoBias, out cryptoLogicConfidence);
+                _ctx.LogicBiasDirection = cryptoBias;
+                _ctx.LogicBiasConfidence = cryptoLogicConfidence;
+            }
 
             if (IsSymbol("ETHUSD"))
-                _ethUsdEntryLogic?.Evaluate(out _, out _);
+            {
+                _ethUsdEntryLogic?.Evaluate(out cryptoBias, out cryptoLogicConfidence);
+                _ctx.LogicBiasDirection = cryptoBias;
+                _ctx.LogicBiasConfidence = cryptoLogicConfidence;
+            }
+
+            _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
 
             _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
             _bot.Print($"[DEBUG] M5.Count={_ctx?.M5?.Count}");
@@ -987,15 +1028,11 @@ namespace GeminiV26.Core
 
             ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
-            // ===== IDE TEDD =====
             _bot.Print($"[DBG ENTRY] total candidates={symbolSignals.Count}");
 
             foreach (var e in symbolSignals)
             {
-                _bot.Print(
-                    $"[DBG ENTRY] type={e.Type} dir={e.Direction} " +
-                    $"valid={e.IsValid} score={e.Score} reason={e.Reason}"
-                );
+                _bot.Print($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}");
             }
 
         // =====================================================
@@ -1014,10 +1051,7 @@ namespace GeminiV26.Core
             _ctx.FxHtfConfidence01 = bias.Confidence01;
             _ctx.FxHtfReason = bias.Reason;
 
-            _bot.Print(
-                $"[FX HTF] allow={bias.AllowedDirection} " +
-                $"conf={bias.Confidence01:0.00} reason={bias.Reason}"
-            );
+            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
         }
 
         // =========================
@@ -1026,8 +1060,10 @@ namespace GeminiV26.Core
         else if (isCryptoSymbol && _cryptoBias != null)
         {
             var bias = _cryptoBias.Get(_bot.SymbolName);
-
-            _bot.Print($"[CRYPTO HTF] state={bias.State} allow={bias.AllowedDirection}");
+            _ctx.CryptoHtfAllowedDirection = bias.AllowedDirection;
+            _ctx.CryptoHtfConfidence01 = bias.Confidence01;
+            _ctx.CryptoHtfReason = bias.Reason;
+            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
 
             bool allowPullback = false;
             bool allowFlag = false;
@@ -1099,8 +1135,10 @@ namespace GeminiV26.Core
                 else if (isMetalSymbol && _metalBias != null)
                 {
                     var bias = _metalBias.Get(_bot.SymbolName);
-
-                    _bot.Print($"[XAU HTF] state={bias.State} allow={bias.AllowedDirection}");
+                    _ctx.MetalHtfAllowedDirection = bias.AllowedDirection;
+                    _ctx.MetalHtfConfidence01 = bias.Confidence01;
+                    _ctx.MetalHtfReason = bias.Reason;
+                    _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
 
                     if (bias.State == HtfBiasState.Neutral ||
                         bias.State == HtfBiasState.Transition)
@@ -1177,11 +1215,10 @@ namespace GeminiV26.Core
                 else if (isIndexSymbol && _indexBias != null)
                 {
                     var bias = _indexBias.Get(_bot.SymbolName);
-
-                    _bot.Print(
-                        $"[INDEX HTF] sym={_bot.SymbolName} " +
-                        $"state={bias.State} allow={bias.AllowedDirection}"
-                    );
+                    _ctx.IndexHtfAllowedDirection = bias.AllowedDirection;
+                    _ctx.IndexHtfConfidence01 = bias.Confidence01;
+                    _ctx.IndexHtfReason = bias.Reason;
+                    _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
 
                     if (bias.State == HtfBiasState.Neutral ||
                         bias.State == HtfBiasState.Transition)
@@ -1269,18 +1306,32 @@ namespace GeminiV26.Core
                 );
 
                 _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
+                _bot.Print($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}");
 
+                _ctx.RoutedDirection = selected.Direction;
+                _ctx.FinalDirection = selected.Direction;
 
-                // =====================================================
-                // DIRECTION VALIDATION
-                // =====================================================
-                if (selected.Direction == TradeDirection.None)
+                if (_ctx.FinalDirection == TradeDirection.None)
                 {
                     _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
                     return;
                 }
 
-                var gateDir = ToTradeTypeStrict(selected.Direction);
+                var htfDirection = ResolveHtfAllowedDirection(_ctx);
+                _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} htf={htfDirection} logic={_ctx.LogicBiasDirection} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
+
+                var execDirection = _ctx.FinalDirection;
+                if (_ctx.RoutedDirection != _ctx.FinalDirection || selected.Direction != _ctx.FinalDirection)
+                {
+                    _bot.Print($"[DIR][MISMATCH] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection} entry={selected.Direction} exec={execDirection}");
+                    _bot.Print("[TC] ENTRY BLOCKED: direction mismatch before execution");
+                    return;
+                }
+
+                selected.Direction = _ctx.FinalDirection;
+                _bot.Print($"[DIR][EXEC_PRE] sym={_bot.SymbolName} entryDir={selected.Direction} finalCtxDir={_ctx.FinalDirection}");
+
+                var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
 
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
@@ -1805,6 +1856,26 @@ namespace GeminiV26.Core
             if (d == TradeDirection.Long) return TradeType.Buy;
             if (d == TradeDirection.Short) return TradeType.Sell;
             throw new ArgumentException("TradeDirection.None is not allowed");
+        }
+
+        private TradeDirection ResolveHtfAllowedDirection(EntryContext ctx)
+        {
+            if (ctx == null)
+                return TradeDirection.None;
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol));
+            if (instrumentClass == InstrumentClass.FX) return ctx.FxHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.CRYPTO) return ctx.CryptoHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfAllowedDirection;
+            return TradeDirection.None;
+        }
+
+        private static TradeDirection FromTradeType(TradeType tradeType)
+        {
+            return tradeType == TradeType.Buy
+                ? TradeDirection.Long
+                : TradeDirection.Short;
         }
 
         private bool HasOpenGeminiPosition()

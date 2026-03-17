@@ -442,8 +442,7 @@ namespace GeminiV26.Core.Entry
             ctx.TransitionScoreBonus = side.BonusScore;
             ctx.Transition = BuildEvaluation(side);
 
-            ctx.ImpulseDirection = direction;
-            ctx.TrendDirection = direction;
+            ctx.Log?.Invoke($"[DIR][TRANSITION_LEGACY] sym={ctx.Symbol} projectedSide={direction} trendPreserved={ctx.TrendDirection} impulsePreserved={ctx.ImpulseDirection}");
         }
 
         private static TransitionEvaluation BuildEvaluation(SideEvaluation side)
