@@ -53,10 +53,10 @@ namespace GeminiV26.EntryTypes.FX
 
             if (longValid && shortValid)
             {
-                if (ctx.LogicBias == TradeDirection.Long)
+                if (ctx.FxHtfAllowedDirection == TradeDirection.Long)
                     longEval.Score += 3;
 
-                if (ctx.LogicBias == TradeDirection.Short)
+                if (ctx.FxHtfAllowedDirection == TradeDirection.Short)
                     shortEval.Score += 3;
 
                 var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
@@ -64,7 +64,7 @@ namespace GeminiV26.EntryTypes.FX
             return winner;
             }
         }
-           
+
         private EntryEvaluation EvaluateSide(
             EntryContext ctx,
             dynamic fx,
@@ -323,8 +323,8 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             bool logicMismatch =
-                ctx.LogicBias != TradeDirection.None &&
-                ctx.LogicBias != dir;
+                ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfAllowedDirection != dir;
 
             bool htfMismatch =
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
