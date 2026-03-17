@@ -57,7 +57,7 @@ namespace GeminiV26.EntryTypes.METAL
             SessionMatrixConfig matrix)
         {
             int score = 60;
-            int minScore = 68;
+            int minScore = 64;
 
             var reasons = new List<string>();
 
@@ -108,14 +108,32 @@ namespace GeminiV26.EntryTypes.METAL
             if (pbBars > 3)
                 return InvalidDir(ctx, dir, "PULLBACK_TOO_LONG", score);
 
-            if (pbDepth > 1.8)
-                return InvalidDir(ctx, dir, "PULLBACK_TOO_DEEP", score);
+            double max = 1.0;
+            double deepLimit = 1.4;
 
-            if (pbDepth > 1.2)
+            // HARD REJECT csak extrém eset
+            if (pbDepth > deepLimit)
             {
-                score -= 6;
-                reasons.Add("DEEP_PULLBACK");
-                minScore += 4;
+                return InvalidDir(ctx, dir, "PB_TOO_DEEP_HARD", score);
+            }
+
+            // DEEP PULLBACK (nem automatikus halál!)
+            if (pbDepth > max)
+            {
+                bool compression =
+                    ctx.HasReactionCandle_M5 ||
+                    ctx.HasRejectionWick_M5;
+
+                if (compression)
+                {
+                    score += 4;
+                    reasons.Add("DEEP_PB_CONTINUATION");
+                }
+                else
+                {
+                    score -= 4;
+                    reasons.Add("DEEP_PB_NO_CONFIRM");
+                }
             }
             else
             {
