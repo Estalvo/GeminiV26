@@ -60,9 +60,11 @@ namespace GeminiV26.EntryTypes.FX
                     shortEval.Score += 3;
 
                 var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
-            
-            return winner;
+                return winner;
             }
+
+            // 👉 EZ HIÁNYZOTT
+            return longValid ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(
@@ -164,11 +166,7 @@ namespace GeminiV26.EntryTypes.FX
                 ApplyPenalty(ref score, ref penalty, 8, penaltyBudget, ctx, "NO_IMPULSE");
             }
             else
-            {
-                int barsSinceImpulse =
-                    dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
-                    ctx.BarsSinceImpulseShort_M5;
-
+            {                
                 if (barsSinceImpulse <= 2)
                     score += 6;
                 else if (barsSinceImpulse <= 5)
@@ -326,16 +324,12 @@ namespace GeminiV26.EntryTypes.FX
                 );
             }
 
-            bool logicMismatch =
-                ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                ctx.FxHtfAllowedDirection != dir;
-
             bool htfMismatch =
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfAllowedDirection != dir;
 
-            // HARD GATE: ha mindkettő ellened van → tiltás
-            if (logicMismatch && htfMismatch)
+            // HARD GATE
+            if (htfMismatch)
             {
                 return Block(ctx, dir, "NO_DIRECTION_ALIGNMENT", score);
             }
