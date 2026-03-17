@@ -325,13 +325,27 @@ namespace GeminiV26.Core.Entry
             }
 
             double range5 = hi - lo;
-            bool validFlag =
+            bool validRange =
                 ctx.AtrM5 > 0 &&
                 range5 > 0 &&
                 range5 < ctx.AtrM5 * 3.0;
 
-            ctx.HasFlagLong_M5 = validFlag;
-            ctx.HasFlagShort_M5 = validFlag;
+            // === LONG FLAG ===
+            // pullback lefelé, tehát lower highs + lower lows
+            bool longFlag =
+                validRange &&
+                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 1] &&
+                ctx.M5.LowPrices[m5Idx] < ctx.M5.LowPrices[m5Idx - 1];
+
+            // === SHORT FLAG ===
+            // pullback felfelé, tehát higher highs + higher lows
+            bool shortFlag =
+                validRange &&
+                ctx.M5.HighPrices[m5Idx] > ctx.M5.HighPrices[m5Idx - 1] &&
+                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 1];
+
+            ctx.HasFlagLong_M5 = longFlag;
+            ctx.HasFlagShort_M5 = shortFlag;
 
             ctx.FlagAtr_M5 = range5;
 
