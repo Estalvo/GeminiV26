@@ -99,7 +99,7 @@ namespace GeminiV26.Instruments.NAS100
         public void Evaluate()
         {
             // Safe defaults (no signal state)
-            LastBias = TradeType.None;
+            LastBias = LastBias == 0 ? TradeType.Buy : LastBias;
             LastLogicConfidence = 0;
             LastDirection = TradeDirection.None;
 
@@ -132,7 +132,7 @@ namespace GeminiV26.Instruments.NAS100
             // SIGNAL + BIAS
             // =========================
             NasEntrySignal signal = NasEntrySignal.None;
-            TradeType computedBias = TradeType.None;
+            TradeType computedBias = LastBias;
 
             double deadzone = atr * 0.1;
 
