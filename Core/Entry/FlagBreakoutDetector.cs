@@ -66,9 +66,15 @@ namespace GeminiV26.Core.Entry
             // =========================
             // Hard readiness
             // =========================
-            if (!ctx.TransitionValid || ctx.Transition == null)
+            var t = ctx.TransitionLong; // vagy kombinált
+
+            bool hasImpulse =
+                (ctx.TransitionLong?.HasImpulse ?? false) ||
+                (ctx.TransitionShort?.HasImpulse ?? false);
+
+            if (!hasImpulse)
             {
-                _log?.Invoke("[FLAG_BREAKOUT][SKIP] transition invalid");
+                _log?.Invoke("[FLAG_BREAKOUT][WAIT] no impulse");
                 SyncStateBack(ctx, state);
                 return;
             }
@@ -82,9 +88,9 @@ namespace GeminiV26.Core.Entry
 
             int flagBars = Math.Max(0, ctx.Transition.FlagBars);
             int lastClosed = ctx.M5.Count - 2;
-            if (flagBars <= 0 || lastClosed <= 0)
+            if (flagBars <= 0)
             {
-                _log?.Invoke($"[FLAG_BREAKOUT][SKIP] invalid flagBars={flagBars} lastClosed={lastClosed}");
+                _log?.Invoke("[FLAG_BREAKOUT][WAIT] no flag yet");
                 SyncStateBack(ctx, state);
                 return;
             }
@@ -96,7 +102,7 @@ namespace GeminiV26.Core.Entry
             int start = Math.Max(0, flagEnd - flagBars + 1);
             if (start > flagEnd)
             {
-                _log?.Invoke($"[FLAG_BREAKOUT][SKIP] invalid range start={start} end={flagEnd}");
+                _log?.Invoke("[FLAG_BREAKOUT][WAIT] range not ready");
                 SyncStateBack(ctx, state);
                 return;
             }
