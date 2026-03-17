@@ -250,5 +250,11 @@ namespace GeminiV26.Core.Entry
 
         public SessionMatrixConfig SessionMatrixConfig { get; set; }
             = SessionMatrixDefaults.Neutral;
+
+        // =========================
+        // TEMP BACKWARD COMPAT
+        // =========================
+        public bool IsValidFlagStructure_M5 =>
+            HasFlagLong_M5 || HasFlagShort_M5;
     }
 }
