@@ -325,7 +325,14 @@ namespace GeminiV26.Core.Entry
             }
 
             double range5 = hi - lo;
-            
+            bool validFlag =
+                ctx.AtrM5 > 0 &&
+                range5 > 0 &&
+                range5 < ctx.AtrM5 * 3.0;
+
+            ctx.HasFlagLong_M5 = validFlag;
+            ctx.HasFlagShort_M5 = validFlag;
+
             ctx.FlagAtr_M5 = range5;
 
             // =================================================
