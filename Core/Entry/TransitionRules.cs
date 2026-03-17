@@ -94,7 +94,7 @@ namespace GeminiV26.Core.Entry
                         MinImpulseBodyRatio = 0.45,
                         MinImpulseStrength = 0.38,
 
-                        MaxPullbackDepthR = 0.50,
+                        MaxPullbackDepthR = 1.00,
                         MinPullbackBars = 2,
                         OptimalPullbackDepthR = 0.40,
 

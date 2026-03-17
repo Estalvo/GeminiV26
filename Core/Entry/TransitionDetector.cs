@@ -785,7 +785,7 @@ namespace GeminiV26.Core.Entry
 
             if (!hasPullback)
             {
-                if (pullbackDepthR > maxPullbackDepthR || pullbackDepthR > 0.5)
+                if (pullbackDepthR > maxPullbackDepthR)
                     return "PullbackTooDeep";
 
                 return "InvalidPullback";
