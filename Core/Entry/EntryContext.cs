@@ -241,6 +241,14 @@ namespace GeminiV26.Core.Entry
         public double MetalHtfConfidence01 { get; set; } = 0.0;
         public string MetalHtfReason { get; set; }
 
+        // =========================
+        // DIRECTION FLOW (SSOT)
+        // =========================
+        public TradeDirection LogicBiasDirection { get; set; } = TradeDirection.None;
+        public int LogicBiasConfidence { get; set; } = 0;
+        public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
+        public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
+
         public double TotalMoveSinceBreakAtr { get; set; }
 
         // =========================

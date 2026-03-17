@@ -52,15 +52,6 @@ namespace GeminiV26.Core.Entry
                     if (eval == null)
                         continue;
 
-                    bool isCryptoSymbol = SymbolRouting.ResolveInstrumentClass(ctx.Symbol) == InstrumentClass.CRYPTO;
-
-                    if (eval.Direction == TradeDirection.None && isCryptoSymbol)
-                    {
-                        eval.Direction = ctx.TrendDirection;
-                        ctx.Log?.Invoke(
-                            $"[ROUTER][DIR] trendDirection={ctx.TrendDirection} dirAssigned={eval.Direction}");
-                    }
-
                     // Instrument-keveredés kizárása
                     if (eval.Symbol != ctx.Symbol)
                         continue;
