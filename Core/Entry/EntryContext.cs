@@ -9,18 +9,20 @@ namespace GeminiV26.Core.Entry
 {
     public class EntryContext
     {
+        // =========================
+        // CORE
+        // =========================
         public bool IsReady { get; set; }
         public TradeDirection TrendDirection;
 
-        // =========================
-        // Instrument scope
-        // =========================
         public string Symbol;
-
         public Action<string> Log { get; set; }
 
+        public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
+        public Robot Bot { get; }
+
         // =========================
-        // Bars
+        // BARS
         // =========================
         public Bars M1;
         public Bars M5;
@@ -29,24 +31,22 @@ namespace GeminiV26.Core.Entry
         public int BarsSinceHighBreak_M5 { get; set; }
         public int BarsSinceLowBreak_M5 { get; set; }
         public int BarsSinceImpulse_M5 { get; set; }
+
         public double PipSize { get; set; }
+
         // =========================
         // EMA
         // =========================
         public double Ema8_M5;
         public double Ema21_M5;
         public double Ema21_M15;
-                
-        // =========================
-        // EMA STRUCTURE (M5 / M15)
-        // =========================
+
         public double Ema50_M5;
         public double Ema200_M5;
 
         public double Ema50_M15;
         public double Ema200_M15;
 
-        // slope = direction / strength
         public double Ema21Slope_M5;
         public double Ema21Slope_M15;
 
@@ -55,11 +55,15 @@ namespace GeminiV26.Core.Entry
         // =========================
         public double AtrM5;
         public double AtrM15;
+
         public double AtrSlope_M5;
         public double AtrAcceleration_M5;
-        
+
+        public double AtrPips_M5 { get; set; }
+        public double FlagAtr_M5 { get; set; }
+
         // =========================
-        // ADX / DMS (M5)
+        // ADX / DMS
         // =========================
         public double Adx_M5 { get; set; }
         public double AdxSlope_M5 { get; set; }
@@ -69,20 +73,15 @@ namespace GeminiV26.Core.Entry
         public double MinusDI_M5 { get; set; }
         public double DiSpread_M5 { get; set; }
 
-        // =================================================
-        // FX FLAG SUPPORT (Phase 3.8)
-        // =================================================
-        public double AtrPips_M5 { get; set; }
-
-        public double FlagAtr_M5 { get; set; }
-        
         // =========================
-        // Structure (M5)
+        // STRUCTURE
         // =========================
         public bool BrokeLastSwingHigh_M5;
         public bool BrokeLastSwingLow_M5;
 
-        // ===== M1 impulse / breakout =====
+        // =========================
+        // M1 SIGNALS
+        // =========================
         public bool HasImpulse_M1;
         public TradeDirection ImpulseDirection;
 
@@ -90,13 +89,13 @@ namespace GeminiV26.Core.Entry
         public TradeDirection BreakoutDirection;
 
         // =========================
-        // Impulse / Flag
+        // M5 CORE LOGIC
         // =========================
         public bool HasImpulse_M5;
         public bool IsValidFlagStructure_M5;
 
         // =========================
-        // Range
+        // RANGE
         // =========================
         public bool IsRange_M5;
         public int RangeBarCount_M5;
@@ -105,44 +104,12 @@ namespace GeminiV26.Core.Entry
         public int RangeFakeoutBars_M1;
 
         // =========================
-        // Pullback
+        // PULLBACK
         // =========================
         public bool PullbackTouchedEma21_M5;
         public double PullbackDepthAtr_M5;
-
-        // =========================
-        // Time memory (M5)
-        // =========================
         public int PullbackBars_M5;
 
-        // =========================
-        // Volatility / Volume
-        // =========================
-        public bool IsAtrExpanding_M5;
-        public bool IsVolumeIncreasing_M5;
-        public bool IsVolatilityAcceptable_Crypto { get; set; }
-                
-        // =========================
-        // Market State (INDEX / XAU / FX context)
-        // =========================
-        public IndexMarketState MarketState { get; set; }
-
-        // =========================
-        // M1 Triggers (EDGE)
-        // =========================
-        public bool M1TriggerInTrendDirection;
-        public bool M1FlagBreakTrigger;
-        public bool M1ReversalTrigger;
-
-        // =========================
-        // Reversal
-        // =========================
-        public int ReversalEvidenceScore;
-        public TradeDirection ReversalDirection;
-
-        // =================================================
-        // NEW: Pullback Deceleration + Reaction (M5)
-        // =================================================
         public bool IsPullbackDecelerating_M5 { get; set; }
         public bool HasRejectionWick_M5 { get; set; }
         public bool HasReactionCandle_M5 { get; set; }
@@ -150,57 +117,94 @@ namespace GeminiV26.Core.Entry
         public double AvgBodyLast3_M5 { get; set; }
         public double AvgBodyPrev3_M5 { get; set; }
 
-        // =========================
-        // Pullback confirmation
-        // =========================
         public bool LastClosedBarInTrendDirection { get; set; }
 
         // =========================
-        // Pullback -> Flag transition
+        // VOLATILITY
+        // =========================
+        public bool IsAtrExpanding_M5;
+        public bool IsVolumeIncreasing_M5;
+        public bool IsVolatilityAcceptable_Crypto { get; set; }
+
+        // =========================
+        // MARKET STATE
+        // =========================
+        public IndexMarketState MarketState { get; set; }
+
+        // =========================
+        // M1 TRIGGERS
+        // =========================
+        public bool M1TriggerInTrendDirection;
+        public bool M1FlagBreakTrigger;
+        public bool M1ReversalTrigger;
+
+        // =========================
+        // REVERSAL
+        // =========================
+        public int ReversalEvidenceScore;
+        public TradeDirection ReversalDirection;
+
+        // =========================
+        // TRANSITION
         // =========================
         public bool TransitionValid { get; set; }
         public int TransitionScoreBonus { get; set; }
         public TransitionEvaluation Transition { get; set; }
-        public bool FlagBreakoutConfirmed { get; set; }
-        public int BreakoutBarsSince { get; set; }
+
+        // =========================
+        // FLAG RANGE
+        // =========================
         public double FlagHigh { get; set; }
         public double FlagLow { get; set; }
 
-        // ===== FX HTF bias (lightweight) =====
+        // =================================================
+        // 🔥 NEW: 2-SIDED FLAG BREAKOUT (CORE FIX)
+        // =================================================
+
+        // instant breakout (current bar)
+        public bool FlagBreakoutUp { get; set; }
+        public bool FlagBreakoutDown { get; set; }
+
+        // confirmed breakout (state machine)
+        public bool FlagBreakoutUpConfirmed { get; set; }
+        public bool FlagBreakoutDownConfirmed { get; set; }
+
+        public int BreakoutUpBarsSince { get; set; } = 999;
+        public int BreakoutDownBarsSince { get; set; } = 999;
+
+        // =========================
+        // BACKWARD COMPATIBILITY
+        // =========================
+        public bool FlagBreakoutConfirmed { get; set; }
+        public int BreakoutBarsSince { get; set; } = 999;
+
+        // =========================
+        // HTF BIAS
+        // =========================
         public TradeDirection FxHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double FxHtfConfidence01 { get; set; } = 0.0;
         public string FxHtfReason { get; set; }
-        public double TotalMoveSinceBreakAtr { get; set; }
 
-        // ===== CRYPTO HTF bias (lightweight) =====
         public TradeDirection CryptoHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double CryptoHtfConfidence01 { get; set; } = 0.0;
         public string CryptoHtfReason { get; set; }
 
-        // =================================================
-        // INDEX HTF BIAS
-        // =================================================
         public TradeDirection IndexHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double IndexHtfConfidence01 { get; set; } = 0.0;
         public string IndexHtfReason { get; set; }
 
-        // =================================================
-        // METAL HTF BIAS
-        // =================================================
         public TradeDirection MetalHtfAllowedDirection { get; set; } = TradeDirection.None;
         public double MetalHtfConfidence01 { get; set; } = 0.0;
         public string MetalHtfReason { get; set; }
 
+        public double TotalMoveSinceBreakAtr { get; set; }
+
         // =========================
-        // Session
+        // SESSION
         // =========================
         public FxSession Session { get; set; }
 
-        public SessionMatrixConfig SessionMatrixConfig { get; set; } = SessionMatrixDefaults.Neutral;
-
-        public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
-
-        public Robot Bot { get; }
-        
+        public SessionMatrixConfig SessionMatrixConfig { get; set; }
+            = SessionMatrixDefaults.Neutral;
     }
 }
