@@ -16,20 +16,43 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
-            if (ctx.TrendDirection == TradeDirection.None)
-                return Invalid(ctx, "NO_TREND");
+            var longEval = EvaluateSide(TradeDirection.Long, ctx);
+            var shortEval = EvaluateSide(TradeDirection.Short, ctx);
+
+            if (longEval.IsValid && !shortEval.IsValid)
+                return longEval;
+
+            if (!longEval.IsValid && shortEval.IsValid)
+                return shortEval;
+
+            if (longEval.IsValid && shortEval.IsValid)
+                return longEval.Score >= shortEval.Score ? longEval : shortEval;
+
+            return Invalid(ctx, "NO_TREND");
+        }
+
+        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
+        {
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
+
+            double pullbackDepthAtr =
+                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
+
+            bool isValidFlagStructure =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5;
 
             bool hasValidImpulse =
-                ctx.HasImpulse_M5 ||
+                hasImpulse ||
                 (ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5);
 
             if (!hasValidImpulse)
                 return Invalid(ctx, "NO_IMPULSE");
 
-            if (!ctx.IsValidFlagStructure_M5)
+            if (!isValidFlagStructure)
                 return Invalid(ctx, "INVALID_FLAG");
 
-            if (ctx.PullbackDepthAtr_M5 < MinPullbackAtr)
+            if (pullbackDepthAtr < MinPullbackAtr)
                 return Invalid(ctx, "PB_TOO_SHALLOW");
 
             // =========================
@@ -42,7 +65,7 @@ namespace GeminiV26.EntryTypes.FX
 
             int score = 48;
 
-            if (ctx.PullbackDepthAtr_M5 > maxPb)
+            if (pullbackDepthAtr > maxPb)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
             if (!ctx.IsPullbackDecelerating_M5)
@@ -71,10 +94,10 @@ namespace GeminiV26.EntryTypes.FX
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = ctx.TrendDirection,
+                Direction = dir,
                 Score = score,
                 IsValid = true,
-                Reason = $"FX_FLAG_CONT score={score} pbATR={ctx.PullbackDepthAtr_M5:F2}"
+                Reason = $"FX_FLAG_CONT score={score} pbATR={pullbackDepthAtr:F2}"
             };
         }
 
