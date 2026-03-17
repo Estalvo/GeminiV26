@@ -332,20 +332,21 @@ namespace GeminiV26.Core.Entry
 
             // === LONG FLAG ===
             // pullback lefelé, tehát lower highs + lower lows
+            int pbBars = ctx.PullbackBarsLong_M5; // shortnál Short_M5
+
             bool longFlag =
                 validRange &&
-                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 1] &&
-                ctx.M5.LowPrices[m5Idx] < ctx.M5.LowPrices[m5Idx - 1];
+                pbBars >= 3 &&
+                ctx.PullbackDepthRLong_M5 <= 0.8;
 
             // === SHORT FLAG ===
             // pullback felfelé, tehát higher highs + higher lows
+            int pbBarsShort = ctx.PullbackBarsShort_M5;
+
             bool shortFlag =
                 validRange &&
-                ctx.M5.HighPrices[m5Idx] > ctx.M5.HighPrices[m5Idx - 1] &&
-                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 1];
-
-            ctx.HasFlagLong_M5 = longFlag;
-            ctx.HasFlagShort_M5 = shortFlag;
+                pbBarsShort >= 3 &&
+                ctx.PullbackDepthRShort_M5 <= 0.8;
 
             ctx.FlagAtr_M5 = range5;
 
