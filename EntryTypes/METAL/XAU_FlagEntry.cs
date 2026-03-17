@@ -51,6 +51,9 @@ namespace GeminiV26.EntryTypes.METAL
 
             double rangeAtr = (hi - lo) / ctx.AtrM5;
 
+            if (rangeAtr <= 0 || rangeAtr > tuning.MaxFlagAtrMult * 1.3)
+                return Invalid(ctx, "FLAG_TOO_WIDE_HARD");
+                
             var bars = ctx.M5;
             int last = bars.Count - 2;
             var bar = bars[last];
@@ -102,6 +105,22 @@ namespace GeminiV26.EntryTypes.METAL
 
             var reasons = new List<string>();
 
+            if (rangeAtr <= 0.8)
+            {
+                score += 6;
+                reasons.Add("FLAG_TIGHT");
+            }
+            else if (rangeAtr <= 1.1)
+            {
+                score += 3;
+                reasons.Add("FLAG_OK");
+            }
+            else
+            {
+                score -= 6;
+                reasons.Add("FLAG_LOOSE");
+            }
+
             // ===== IMPULSE (2-sided) =====
             bool hasImpulse =
                 dir == TradeDirection.Long
@@ -118,6 +137,23 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (barsSinceImpulse > tuning.MaxBarsSinceImpulse)
                 return InvalidDir(ctx, dir, "STALE_IMPULSE", score);
+
+            // ===== IMPULSE QUALITY (v2.22) =====
+            if (barsSinceImpulse <= 1)
+            {
+                score += 6;
+                reasons.Add("IMPULSE_FRESH");
+            }
+            else if (barsSinceImpulse <= 3)
+            {
+                score += 2;
+                reasons.Add("IMPULSE_OK");
+            }
+            else
+            {
+                score -= 3;
+                reasons.Add("IMPULSE_OLD");
+            }
 
             // ===== FLAG STRUCTURE =====
             bool hasFlag =
@@ -152,19 +188,37 @@ namespace GeminiV26.EntryTypes.METAL
 
             bool strongBody = bodyRatio >= MinBodyRatio;
 
-            bool breakout =
-                breakoutConfirmed &&
-                breakAtr >= MinCloseBreakAtr &&
-                strongBody;
+            bool earlyBreakout =
+                breakoutInstant &&
+                breakAtr >= 0.03 &&
+                bodyRatio >= 0.45 &&
+                ctx.LastClosedBarInTrendDirection;
 
-            if (!breakout)
+            bool breakout =
+                (breakoutConfirmed && breakAtr >= MinCloseBreakAtr && strongBody) ||
+                earlyBreakout;
+
+            if (breakoutInstant && !breakoutConfirmed)
             {
-                score -= (bodyRatio < 0.3) ? 6 : 3;
-                reasons.Add("NO_BREAKOUT");
+                score += 2;
+                reasons.Add("BREAKOUT_FORMING");
+            }
+
+            if (breakoutConfirmed && breakAtr >= MinCloseBreakAtr && strongBody)
+            {
+                score += 10;
+                reasons.Add("BREAKOUT_CONFIRMED");
+            }
+            else if (earlyBreakout)
+            {
+                score += 6;
+                reasons.Add("BREAKOUT_EARLY");
+                minScore -= 2;
             }
             else
             {
-                reasons.Add("BREAKOUT_OK");
+                score -= (bodyRatio < 0.3) ? 6 : 3;
+                reasons.Add("NO_BREAKOUT");
             }
 
             // ===== HTF =====
@@ -174,9 +228,12 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (isAgainst)
             {
+                score -= HtfAgainstPenalty;
+                reasons.Add("HTF_AGAINST");
+
                 if (breakAtr < HtfAgainstMinBreakAtr)
                 {
-                    score -= HtfAgainstPenalty;
+                    score -= 3;
                     reasons.Add("HTF_WEAK_BREAK");
                 }
 
@@ -186,8 +243,11 @@ namespace GeminiV26.EntryTypes.METAL
                     reasons.Add("HTF_WEAK_BODY");
                 }
 
-                if (!breakoutConfirmed && bodyRatio < 0.4)
-                    return InvalidDir(ctx, dir, "HTF_NO_QUALITY", score);
+                if (!breakoutConfirmed && !earlyBreakout)
+                {
+                    score -= 6;
+                    reasons.Add("HTF_NO_CONFIRM");
+                }
             }
 
             // ===== STRUCTURE FILTER =====
@@ -197,7 +257,9 @@ namespace GeminiV26.EntryTypes.METAL
             if (dir == TradeDirection.Short && IsHigherLow(ctx.M5, index))
                 return InvalidDir(ctx, dir, "HIGHER_LOW", score);
 
-            bool valid = score >= minScore;
+            int effectiveMinScore = earlyBreakout ? minScore - 2 : minScore;
+
+            bool valid = score >= effectiveMinScore;
 
             if (!valid)
                 return InvalidDir(ctx, dir, "LOW_SCORE", score);
@@ -209,7 +271,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Direction = dir,
                 Score = score,
                 IsValid = true,
-                Reason = $"ACCEPT {dir} score={score} breakout={breakoutConfirmed}"
+                Reason = $"ACCEPT {dir} score={score} breakoutConfirmed={breakoutConfirmed} earlyBreakout={earlyBreakout} breakAtr={breakAtr:F2} bodyRatio={bodyRatio:F2} rangeAtr={rangeAtr:F2}"
             };
         }
 
