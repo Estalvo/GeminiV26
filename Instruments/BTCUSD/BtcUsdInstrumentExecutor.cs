@@ -203,7 +203,8 @@ namespace GeminiV26.Instruments.BTCUSD
                 Tp2Price = tp2Price,
 
                 // 🔑 MARKET STATE SNAPSHOT
-                MarketTrend = entryContext.FinalDirection != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5
             };
 
             ctx.Tp1Price =

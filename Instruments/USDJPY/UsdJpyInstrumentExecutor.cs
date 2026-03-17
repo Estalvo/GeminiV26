@@ -210,7 +210,8 @@ namespace GeminiV26.Instruments.USDJPY
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,
                 Tp2Price = tp2Price,
 
-                MarketTrend = entryContext.FinalDirection != TradeDirection.None
+                MarketTrend = entryContext.FinalDirection != TradeDirection.None,
+                Adx_M5 = entryContext.Adx_M5
             };
 
             // ✅ Kanonikus 70/30 FinalConfidence

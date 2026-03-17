@@ -51,20 +51,19 @@ namespace GeminiV26.Core
             UpdateMfeMae(ctx, pos, risk);
 
             bool marketTrend = ctx.MarketTrend;
-            double adxNow = EstimateAdxLikeStrength(m5, 5);
             bool atrShrinking = IsAtrShrinking(m5);
 
             if (barsSinceEntry <= 3)
             {
-                return EvaluateEarlyPhase(ctx, barsSinceEntry, adxNow, atrShrinking, marketTrend);
+                return EvaluateEarlyPhase(ctx, barsSinceEntry, atrShrinking, marketTrend);
             }
 
             if (barsSinceEntry <= 10)
             {
-                return EvaluateDevelopmentPhase(ctx, barsSinceEntry, adxNow, marketTrend, m5, pos.TradeType);
+                return EvaluateDevelopmentPhase(ctx, barsSinceEntry, marketTrend, m5, pos.TradeType);
             }
 
-            return EvaluateMaturePhase(ctx, barsSinceEntry, adxNow, marketTrend);
+            return EvaluateMaturePhase(ctx, barsSinceEntry, marketTrend);
         }
 
         private int ComputeBarsSinceEntryByIndex(
@@ -148,18 +147,36 @@ namespace GeminiV26.Core
         private bool EvaluateEarlyPhase(
             PositionContext ctx,
             int barsSinceEntry,
-            double adxNow,
             bool atrShrinking,
             bool marketTrend)
         {
             _bot.Print(
                 $"[TVM PHASE] EARLY bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={adxNow:0.0} trend={marketTrend}"
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}"
             );
+
+            if (!ctx.MarketTrend)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "TREND_LOST";
+                return true;
+            }
+
+            bool noFollowThrough =
+                barsSinceEntry >= 3 &&
+                ctx.MfeR < 0.15 &&
+                ctx.MaeR > 0.25;
+
+            if (noFollowThrough)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "NO_FOLLOW_THROUGH";
+                return true;
+            }
 
             bool noProgress = barsSinceEntry >= 2 && ctx.MfeR < 0.10;
             bool adverseExpansion = ctx.MaeR > 0.35;
-            bool momentumWeak = adxNow < 20.0 || atrShrinking;
+            bool momentumWeak = ctx.Adx_M5 < 20.0 || atrShrinking;
             bool fastAdverse = ctx.MaeR > 0.25 && barsSinceEntry <= 2;
 
             _bot.Print(
@@ -201,19 +218,44 @@ namespace GeminiV26.Core
         private bool EvaluateDevelopmentPhase(
             PositionContext ctx,
             int barsSinceEntry,
-            double adxNow,
             bool marketTrend,
             Bars m5,
             TradeType tradeType)
         {
             _bot.Print(
                 $"[TVM PHASE] DEVELOPMENT bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={adxNow:0.0} trend={marketTrend}"
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}"
             );
+
+            if (!ctx.MarketTrend)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "TREND_LOST";
+                return true;
+            }
+
+            bool noFollowThrough =
+                barsSinceEntry >= 3 &&
+                ctx.MfeR < 0.15 &&
+                ctx.MaeR > 0.25;
+
+            if (noFollowThrough)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "NO_FOLLOW_THROUGH";
+                return true;
+            }
+
+            if (barsSinceEntry >= 4 && ctx.MfeR <= 0.05)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "NO_PROGRESS";
+                return true;
+            }
 
             bool momentumDecay = IsMomentumDecaying(m5, 4);
             bool structureBreak = ctx.MaeR > 0.60 || IsStructureWeakening(tradeType, m5);
-            bool noContinuation = barsSinceEntry >= 6 && ctx.MfeR < 0.25;
+            bool noContinuation = barsSinceEntry >= 4 && ctx.MfeR < 0.20;
 
             _bot.Print(
                 $"[TVM DEVELOPMENT] momentumDecay={momentumDecay} noContinuation={noContinuation} " +
@@ -246,13 +288,19 @@ namespace GeminiV26.Core
         private bool EvaluateMaturePhase(
             PositionContext ctx,
             int barsSinceEntry,
-            double adxNow,
             bool marketTrend)
         {
             _bot.Print(
                 $"[TVM PHASE] MATURE bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={adxNow:0.0} trend={marketTrend}"
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}"
             );
+
+            if (!ctx.MarketTrend)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "TREND_LOST";
+                return true;
+            }
 
             bool maximumAdverseExcursion = ctx.MaeR > 0.80;
             bool weakDevelopment = barsSinceEntry > 12 && ctx.MfeR < 0.30;
@@ -314,24 +362,6 @@ namespace GeminiV26.Core
             double previousStrength = EstimateDirectionalStrength(m5, window, window);
 
             return recentStrength < previousStrength;
-        }
-
-        private double EstimateAdxLikeStrength(Bars m5, int window)
-        {
-            if (m5 == null)
-                return 0.0;
-
-            if (window < 2)
-                window = 2;
-
-            int maxWindow = m5.Count - 1;
-            if (maxWindow < 2)
-                return 0.0;
-
-            if (window > maxWindow)
-                window = maxWindow;
-
-            return EstimateDirectionalStrength(m5, 0, window);
         }
 
         private double EstimateDirectionalStrength(Bars m5, int startOffset, int window)
