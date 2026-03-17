@@ -23,6 +23,29 @@ namespace GeminiV26.EntryTypes.FX
             if (!ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
+            var longEval = EvaluateSide(TradeDirection.Long, ctx);
+            var shortEval = EvaluateSide(TradeDirection.Short, ctx);
+
+            if (longEval.IsValid && !shortEval.IsValid)
+                return longEval;
+
+            if (!longEval.IsValid && shortEval.IsValid)
+                return shortEval;
+
+            if (longEval.IsValid && shortEval.IsValid)
+                return longEval.Score >= shortEval.Score ? longEval : shortEval;
+
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+        }
+
+        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
+        {
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
+
+            double pullbackDepthAtr =
+                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
+
             // =====================================================
             // TREND DIRECTION — PULLBACK LOGIKA (SZENT)
             // =====================================================
@@ -34,29 +57,24 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.Ema21Slope_M15 < -MinSlope &&
                 ctx.Ema21Slope_M5 < -MinSlope;
 
-            TradeDirection bias = TradeDirection.None;
-
             if (!up && !down)
             {
-                double softSlope = ctx.Ema21Slope_M15 + ctx.Ema21Slope_M5;
-
-                if (softSlope > 0)
-                    bias = TradeDirection.Long;
-                else if (softSlope < 0)
-                    bias = TradeDirection.Short;
-
                 return new EntryEvaluation
                 {
                     Symbol = ctx.Symbol,
                     Type = Type,
-                    Direction = bias,
+                    Direction = TradeDirection.None,
                     Score = 0,
                     IsValid = false,
                     Reason = "NoTrend;"
                 };
             }
 
-            bias = up ? TradeDirection.Long : TradeDirection.Short;
+            if (dir == TradeDirection.Long && !up)
+                return Invalid(ctx, "NoTrend");
+
+            if (dir == TradeDirection.Short && !down)
+                return Invalid(ctx, "NoTrend");
 
             // =====================================================
             // IMPULSE CONDITIONS (REAL CONTEXT FIELDS)
@@ -64,15 +82,15 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.Adx_M5 < 22)
                 return Invalid(ctx, "WeakTrend");
 
-            if (!ctx.HasImpulse_M5)
+            if (!hasImpulse)
                 return Invalid(ctx, "NoImpulse");
 
             // túl mély pullback = nem continuation
-            if (ctx.PullbackDepthAtr_M5 > MaxPullbackAtr)
+            if (pullbackDepthAtr > MaxPullbackAtr)
                 return Invalid(ctx, "TooDeepPullback");
 
             // túl kicsi pullback = csúcson belépés
-            if (ctx.PullbackDepthAtr_M5 < MinPullbackAtr)
+            if (pullbackDepthAtr < MinPullbackAtr)
                 return Invalid(ctx, "NoMeaningfulPullback");
 
             // ATR expanding = kifulladó impulse chase FX-en
@@ -90,21 +108,21 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // SCORE → DIRECTION
             // =====================================================
-            TradeDirection dir = TradeDirection.None;
+            TradeDirection finalDir = TradeDirection.None;
 
             if (score >= MinScore)
-                dir = bias;
+                finalDir = dir;
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = dir,
+                Direction = finalDir,
                 Score = score,
-                IsValid = dir != TradeDirection.None,
+                IsValid = finalDir != TradeDirection.None,
                 Reason =
                     $"FX_CONT score={score} " +
-                    $"pbATR={ctx.PullbackDepthAtr_M5:F2} " +
+                    $"pbATR={pullbackDepthAtr:F2} " +
                     $"m1={ctx.M1TriggerInTrendDirection}"
             };
         }

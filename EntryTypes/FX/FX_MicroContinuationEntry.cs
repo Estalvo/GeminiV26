@@ -38,18 +38,34 @@ namespace GeminiV26.EntryTypes.FX
 
             if (!fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, "NO_SESSION_TUNING");
-         
-            int minScore = Math.Max(40, tuning.MinScore - 5);
-            // =================================================
-            // TREND IRÁNY
-            // =================================================
-            TradeDirection bias = TradeDirection.None;
 
-            if (ctx.Ema21Slope_M5 > MinSlope && ctx.Ema21Slope_M15 > 0)
-                bias = TradeDirection.Long;
-            else if (ctx.Ema21Slope_M5 < -MinSlope && ctx.Ema21Slope_M15 < 0)
-                bias = TradeDirection.Short;
-            else
+            var longEval = EvaluateSide(TradeDirection.Long, ctx, tuning);
+            var shortEval = EvaluateSide(TradeDirection.Short, ctx, tuning);
+
+            if (longEval.IsValid && !shortEval.IsValid)
+                return longEval;
+
+            if (!longEval.IsValid && shortEval.IsValid)
+                return shortEval;
+
+            if (longEval.IsValid && shortEval.IsValid)
+                return longEval.Score >= shortEval.Score ? longEval : shortEval;
+
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+        }
+
+        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx, FxFlagSessionTuning tuning)
+        {
+            int minScore = Math.Max(40, tuning.MinScore - 5);
+            double pullbackDepthAtr =
+                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
+
+            bool trendOk =
+                dir == TradeDirection.Long
+                    ? (ctx.Ema21Slope_M5 > MinSlope && ctx.Ema21Slope_M15 > 0)
+                    : (ctx.Ema21Slope_M5 < -MinSlope && ctx.Ema21Slope_M15 < 0);
+
+            if (!trendOk)
                 return Invalid(ctx, "NO_TREND_SLOPE");
 
             // =================================================
@@ -61,10 +77,10 @@ namespace GeminiV26.EntryTypes.FX
             // =================================================
             // MICRO PULLBACK
             // =================================================
-            if (ctx.PullbackDepthAtr_M5 < MinPullbackAtr)
+            if (pullbackDepthAtr < MinPullbackAtr)
                 return Invalid(ctx, "PB_TOO_SHALLOW");
 
-            if (ctx.PullbackDepthAtr_M5 > tuning.MaxPullbackAtr * 0.45)
+            if (pullbackDepthAtr > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
             // =================================================
@@ -112,19 +128,19 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.Session == FxSession.NewYork)
                 score += 2;
 
-            TradeDirection dir =
-                score >= minScore ? bias : TradeDirection.None;
+            TradeDirection finalDir =
+                score >= minScore ? dir : TradeDirection.None;
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = dir,
+                Direction = finalDir,
                 Score = score,
-                IsValid = dir != TradeDirection.None,
+                IsValid = finalDir != TradeDirection.None,
                 Reason =
                     $"FX_MICRO_CONT score={score} " +
-                    $"pbATR={ctx.PullbackDepthAtr_M5:F2} " +
+                    $"pbATR={pullbackDepthAtr:F2} " +
                     $"m1={ctx.M1TriggerInTrendDirection}"
             };
         }
