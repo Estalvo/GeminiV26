@@ -43,7 +43,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
                 $"[POSITION SIZER] {bot.SymbolName} " +
                 $"balance={balance:F2} risk%={riskPercent:F3} " +
                 $"riskAmount={riskAmount:F2} slPips={slPips:F2} " +
-                $"rawLots={rawLots:F4} rawUnits={rawUnits:F0} " +
+                $"rawUnits={rawUnits:F0} " +
                 $"capUnits={capUnits:F0} normalized={normalized}");
 
             if (normalized < bot.Symbol.VolumeInUnitsMin)
