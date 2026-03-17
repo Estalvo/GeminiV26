@@ -53,14 +53,16 @@ namespace GeminiV26.EntryTypes.FX
 
             if (longValid && shortValid)
             {
-                var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
-                ctx?.Log?.Invoke(
-                    $"[FX_PullbackEntry] BOTH_VALID winner={winner.Direction} long={longEval.Score} short={shortEval.Score}");
-                return winner;
-            }
+                if (ctx.LogicBias == TradeDirection.Long)
+                    longEval.Score += 3;
 
+                if (ctx.LogicBias == TradeDirection.Short)
+                    shortEval.Score += 3;
+
+                var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
+            }
             return longValid ? longEval : shortEval;
-        }
+        
 
         private EntryEvaluation EvaluateSide(
             EntryContext ctx,
@@ -112,6 +114,17 @@ namespace GeminiV26.EntryTypes.FX
                 dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
                 ctx.IsValidFlagStructure_M5;
 
+            bool hasPullback =
+                dir == TradeDirection.Long ? ctx.HasPullbackLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasPullbackShort_M5 :
+                false;
+
+            // HARD GATE: nincs pullback → nincs trade
+            if (!hasPullback)
+            {
+                return Block(ctx, dir, "NO_PULLBACK_STRUCTURE", score);
+            }
+
             // =========================
             // ADX HARD / SOFT (copied style from FlagEntry)
             // =========================
@@ -147,9 +160,13 @@ namespace GeminiV26.EntryTypes.FX
             }
             else
             {
-                if (ctx.BarsSinceImpulse_M5 <= 2)
+                int barsSinceImpulse =
+                    dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
+                    ctx.BarsSinceImpulseShort_M5;
+
+                if (barsSinceImpulse <= 2)
                     score += 6;
-                else if (ctx.BarsSinceImpulse_M5 <= 5)
+                else if (barsSinceImpulse <= 5)
                     score += 2;
                 else
                     ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "IMPULSE_TOO_OLD");
@@ -261,7 +278,7 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.IsAtrExpanding_M5) fuel += 3;
             else fuel -= 3;
 
-            if (ctx.BarsSinceImpulse_M5 <= 2) fuel += 4;
+            if (barsSinceImpulse <= 2) fuel += 4;
 
             score += fuel;
 
@@ -302,6 +319,20 @@ namespace GeminiV26.EntryTypes.FX
                     ctx,
                     hasDirectionalM1Trigger ? "FLAG_ACTIVE_WITH_M1" : "FLAG_ACTIVE_NO_M1"
                 );
+            }
+
+            bool logicMismatch =
+                ctx.LogicBias != TradeDirection.None &&
+                ctx.LogicBias != dir;
+
+            bool htfMismatch =
+                ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfAllowedDirection != dir;
+
+            // HARD GATE: ha mindkettő ellened van → tiltás
+            if (logicMismatch && htfMismatch)
+            {
+                return Block(ctx, dir, "NO_DIRECTION_ALIGNMENT", score);
             }
 
             // =========================
