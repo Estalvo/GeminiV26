@@ -17,16 +17,21 @@ namespace GeminiV26.Core.Risk.PositionSizing
             double balance = bot.Account.Balance;
             double riskAmount = balance * (riskPercent / 100.0);
             double slPips = slPriceDistance / bot.Symbol.PipSize;
+
             if (slPips <= 0)
                 return 0;
 
-            double pipValuePerLot = bot.Symbol.PipValue * bot.Symbol.LotSize;
-            if (pipValuePerLot <= 0)
+            // ✅ FIX: pipValue PER UNIT (nem per lot!)
+            double pipValuePerUnit = bot.Symbol.PipValue;
+            if (pipValuePerUnit <= 0)
                 return 0;
 
-            double rawLots = riskAmount / (slPips * pipValuePerLot);
-            double rawUnits = rawLots * bot.Symbol.LotSize;
+            // ✅ közvetlen units számítás
+            double rawUnits = riskAmount / (slPips * pipValuePerUnit);
+
+            // cap már eleve units-ben kellene legyen
             double capUnits = lotCap * bot.Symbol.LotSize;
+
             double finalUnits = Math.Min(rawUnits, capUnits);
 
             long normalized =
