@@ -113,7 +113,12 @@ namespace GeminiV26.Core
         {
             if (ctx.FinalDirection == TradeDirection.None)
             {
-                _bot.Print($"[DIR][TVM_CTX_ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                if (!ctx.MissingDirLogged)
+                {
+                    _bot.Print($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                    ctx.MissingDirLogged = true;
+                }
+
                 return;
             }
 

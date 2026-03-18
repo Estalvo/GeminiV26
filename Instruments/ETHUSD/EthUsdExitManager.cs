@@ -47,9 +47,17 @@ namespace GeminiV26.Instruments.ETHUSD
 
         public void RegisterContext(PositionContext ctx)
         {
-            if (ctx == null || ctx.FinalDirection == TradeDirection.None)
+            if (ctx == null)
+                return;
+
+            if (ctx.FinalDirection == TradeDirection.None)
             {
-                _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx?.PositionId}");
+                if (!ctx.MissingDirLogged)
+                {
+                    _bot.Print($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                    ctx.MissingDirLogged = true;
+                }
+
                 return;
             }
 
@@ -78,12 +86,8 @@ namespace GeminiV26.Instruments.ETHUSD
                 if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
                     continue;
 
-                _bot.Print($"[DIR][EXIT_CTX] posId={key} finalDir={ctx.FinalDirection}");
                 if (ctx.FinalDirection == TradeDirection.None)
-                {
-                    _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={key}");
                     continue;
-                }
 
                 Position pos = null;
 
@@ -233,7 +237,6 @@ namespace GeminiV26.Instruments.ETHUSD
 
         public void Manage(Position pos)
         {
-            _bot.Print("[ETHUSD][INFO] Manage() called, exit handled in OnTick()");
         }
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)

@@ -221,6 +221,7 @@ namespace GeminiV26.Instruments.BTCUSD
                                              TrailingMode.Tight;
 
             _positionContexts[posId] = ctx;
+            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
             _exitManager.RegisterContext(ctx);
 
             _bot.Print(

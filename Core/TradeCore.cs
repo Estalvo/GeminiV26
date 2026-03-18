@@ -647,6 +647,7 @@ namespace GeminiV26.Core
                     pctx.FinalDirection = _ctx?.FinalDirection != TradeDirection.None
                         ? _ctx.FinalDirection
                         : FromTradeType(pos.TradeType);
+                    _bot.Print($"[DIR][SET] posId={pctx.PositionId} finalDir={pctx.FinalDirection}");
 
                     if (pctx.FinalDirection == TradeDirection.None)
                     {
@@ -1354,6 +1355,7 @@ namespace GeminiV26.Core
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
+                _bot.Print($"[DIR][SET] posId={_ctx.PositionId} finalDir={_ctx.FinalDirection}");
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {

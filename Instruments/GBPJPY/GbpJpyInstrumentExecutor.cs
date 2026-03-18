@@ -228,6 +228,7 @@ namespace GeminiV26.Instruments.GBPJPY
             ctx.ComputeFinalConfidence();
 
             _positionContexts[ctx.PositionId] = ctx;
+            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
             _exitManager.RegisterContext(ctx);
 
             _bot.Print(

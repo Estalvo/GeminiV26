@@ -71,9 +71,17 @@ namespace GeminiV26.Instruments.XAUUSD
         // TradeCore/Executor hívja sikeres belépés után
         public void RegisterContext(PositionContext ctx)
         {
-            if (ctx == null || ctx.FinalDirection == TradeDirection.None)
+            if (ctx == null)
+                return;
+
+            if (ctx.FinalDirection == TradeDirection.None)
             {
-                _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx?.PositionId}");
+                if (!ctx.MissingDirLogged)
+                {
+                    _bot.Print($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                    ctx.MissingDirLogged = true;
+                }
+
                 return;
             }
 
@@ -113,12 +121,8 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             foreach (var ctx in _contexts.Values)
             {
-                _bot.Print($"[DIR][EXIT_CTX] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
                 if (ctx.FinalDirection == TradeDirection.None)
-                {
-                    _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={ctx.PositionId}");
                     continue;
-                }
 
                 var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
                 if (pos == null)
