@@ -1355,7 +1355,7 @@ namespace GeminiV26.Core
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
-                _bot.Print($"[DIR][SET] posId={_ctx.PositionId} finalDir={_ctx.FinalDirection}");
+                _bot.Print($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}");
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
