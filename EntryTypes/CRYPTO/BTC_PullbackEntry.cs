@@ -6,7 +6,7 @@ using GeminiV26.EntryTypes.Crypto;
 namespace GeminiV26.EntryTypes.Crypto
 {
     public class BTC_PullbackEntry : IEntryType
-    {        
+    {
         public EntryType Type => EntryType.Crypto_Pullback;
         private const int MIN_SCORE = 34;
         private const int BiasAgainstPenalty = 8;
@@ -33,74 +33,33 @@ namespace GeminiV26.EntryTypes.Crypto
             int lastClosed = bars.Count - 2;
 
             var bar = bars[lastClosed];
-            
+
             if (bars == null || bars.Count < 20)
                 return Block(ctx, "M5_NOT_READY", score);
-                       
+
             TradeDirection dir = ctx.TrendDirection;
             var originalTrendDir = ctx.TrendDirection;
 
             // =========================
-            // HTF DIRECTION OVERRIDE / PRACTICAL GATE
+            // HTF DIRECTIONAL BIAS (score-only)
             // =========================
             var allow = ctx.CryptoHtfAllowedDirection;
             var htfConf = ctx.CryptoHtfConfidence01;
 
-            // --- practical knobs ---
-            const double HTF_STRONG = 0.70;
-            const double HTF_SOFT_MIN = 0.40;          // ez alatt HTF-t ignoráljuk
-            const int SOFT_CONFLICT_EXTRA_SCORE = 8;   // ennyivel legyen erősebb a setup soft ellentétben
-            const int SOFT_CONFLICT_PENALTY = 4;       // opcionális: ha mégis engedjük, picit büntetjük
-
-            // 0) Ha nincs trend dir, próbáljuk HTF-ből pótolni (csak ha strong)
             if (dir != TradeDirection.Long && dir != TradeDirection.Short)
-            {
-                if (allow != TradeDirection.None && htfConf >= HTF_STRONG)
-                {
-                    dir = allow;
-                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_FALLBACK] conf={htfConf:0.00} dir-> {dir}");
-                }
-                else
-                {
-                    return Block(ctx, "NO_TREND_DIR", score);
-                }
-            }
+                return Block(ctx, "NO_TREND_DIR", score);
 
-            // 1) Ha van HTF allow és mismatch
             if (allow != TradeDirection.None && dir != allow)
             {
-                // 1a) STRONG HTF -> override
-                if (htfConf >= HTF_STRONG)
-                {
-                    dir = allow;
-                    Console.WriteLine($"[BTC_PULLBACK][HTF_DIR_OVERRIDE] conf={htfConf:0.00} dir-> {dir}");
-                }
-                // 1b) SOFT HTF -> practical gate (csak erős setup átmehet)
-                else if (htfConf >= HTF_SOFT_MIN)
-                {
-                    // itt kell egy fix MIN_SCORE a file-odban (pl. 40)
-                    // feltétel: score >= MIN_SCORE + EXTRA
-                    if (score >= MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE)
-                    {
-                        score -= SOFT_CONFLICT_PENALTY; // opcionális, hogy a conflict “fájjon” kicsit
-                        Console.WriteLine(
-                            $"[BTC_PULLBACK][HTF_SOFT_CONFLICT_ALLOW] conf={htfConf:0.00} allow={allow} keepDir={dir} " +
-                            $"scoreOk (>= {MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE}) scoreAdj=-{SOFT_CONFLICT_PENALTY}"
-                        );
-                    }
-                    else
-                    {
-                        return Block(ctx,
-                            $"HTF_SOFT_CONFLICT_NEED_STRONGER_SETUP conf={htfConf:0.00} allow={allow} needScore>={MIN_SCORE + SOFT_CONFLICT_EXTRA_SCORE}",
-                            score,
-                            dir);
-                    }
-                }
-                // 1c) very weak HTF -> ignore, no action
-                else
-                {
-                    Console.WriteLine($"[BTC_PULLBACK][HTF_WEAK_IGNORED] conf={htfConf:0.00} allow={allow} keepDir={dir}");
-                }
+                const int SoftConflictPenalty = 4;
+                score -= SoftConflictPenalty;
+                Console.WriteLine(
+                    $"[BTC_PULLBACK][HTF_SOFT_CONFLICT] conf={htfConf:0.00} allow={allow} keepDir={dir} scoreAdj=-{SoftConflictPenalty}"
+                );
+            }
+            else if (allow == TradeDirection.None)
+            {
+                Console.WriteLine($"[BTC_PULLBACK][HTF_NEUTRAL] conf={htfConf:0.00} keepDir={dir}");
             }
 
             // =========================
@@ -366,7 +325,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 return Block(ctx, "CRYPTO_PULLBACK_VOL_BLOCK_NO_IMPULSE", score, dir);
             }
-            
+
             // =========================
             // LOW VOL + NO CLEAN REACTION HARD
             // =========================
@@ -404,7 +363,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (diCompression)
                 score -= 6;
-                
+
             // =========================
             // ULTRA SOFT LATE TREND MICRO PENALTY
             // =========================
@@ -417,7 +376,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 score -= 2;   // extrém finom korrekció
             }
-            
+
             // =========================
             // LATE IMPULSE / EXPANSION EXHAUSTION BLOCK
             // =========================
@@ -454,7 +413,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     score,
                     dir);
             }
-            
+
             // =========================
             // ADX ROLL OVER CONTINUATION BLOCK
             // =========================
@@ -496,7 +455,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 int raw = ctx.BarsSinceImpulse_M5 - 5;
                 int agePenalty = Math.Max(0, Math.Min(3, raw));
-                
+
                 score -= agePenalty;
 
                 Console.WriteLine($"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}");
@@ -506,7 +465,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // REAL PULLBACK REQUIREMENT (INSTITUTIONAL GUARD)
             // =========================
 
-            if (!ctx.IsPullbackDecelerating_M5 && 
+            if (!ctx.IsPullbackDecelerating_M5 &&
                 !ctx.HasReactionCandle_M5 &&
                 ctx.BarsSinceImpulse_M5 <= 2)
             {
@@ -565,26 +524,18 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (htfConflict && htfConf > 0)
             {
-                // lineáris büntetés
                 int htfPenalty = (int)Math.Round(3 + 10 * htfConf);
                 score -= htfPenalty;
 
-                Console.WriteLine($"[BTC_PULLBACK][HTF_PENALTY] conf={htfConf:0.00} penalty={htfPenalty}");
-
-                // domináns HTF + gyenge M5 → hard block
-                bool strongHtf = htfConf >= 0.7;
                 bool weakLocal =
                     ctx.Adx_M5 < 28 ||
                     !validPullbackReaction ||
                     fuelScore < 4;
 
-                if (strongHtf && weakLocal)
-                {
-                    return Block(ctx,
-                        $"HTF_DOMINANT_BLOCK conf={htfConf:0.00}",
-                        score,
-                        dir);
-                }
+                if (htfConf >= 0.7 && weakLocal)
+                    score -= 3;
+
+                Console.WriteLine($"[BTC_PULLBACK][HTF_PENALTY] conf={htfConf:0.00} penalty={htfPenalty} weakLocal={weakLocal}");
             }
 
             // =========================

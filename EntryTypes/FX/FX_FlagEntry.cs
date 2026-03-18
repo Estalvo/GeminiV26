@@ -236,7 +236,11 @@ namespace GeminiV26.EntryTypes.FX
                 }
 
                 if (ctx.FxHtfAllowedDirection == TradeDirection.None && ctx.FxHtfConfidence01 >= 0.50)
-                    return Invalid(ctx, flagDir, $"ASIA_HTF_TRANSITION_BLOCK conf={ctx.FxHtfConfidence01:F2}", score);
+                {
+                    ApplyPenalty(2);
+                    minBoost += 1;
+                    ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=2 conf={ctx.FxHtfConfidence01:F2}");
+                }
             }
 
             // =====================================================
@@ -634,20 +638,12 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.Log?.Invoke($"[FX_FLAG ADX] candDir={flagDir} slope={adxSlopeNow:F2} atrExp={ctx.IsAtrExpanding_M5}");
             }
 
-            // NY + HTF TRANSITION GUARD
+            // NY + HTF TRANSITION BIAS
             if (ctx.Session == FxSession.NewYork && htfTransitionZone && !breakout && !hasM1Confirmation)
             {
-                int strictMin = tuning.MinScore + 6;
-
-                if (score < strictMin)
-                {
-                    return Invalid(ctx, flagDir,
-                        $"NY_HTF_TRANSITION_NEEDS_CONFIRM conf={ctx.FxHtfConfidence01:F2}",
-                        score);
-                }
-
                 ApplyPenalty(3);
                 minBoost += 2;
+                ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=3 conf={ctx.FxHtfConfidence01:F2}");
             }
 
             bool softM1 =

@@ -1081,13 +1081,10 @@ namespace GeminiV26.Core
             }
 
         // =====================================================
-        // HTF BIAS GATE (Asset-group level)
-        // Handles FX / Crypto / Metals / Index policies
+        // HTF BIAS = SCORE-ONLY CONTEXT (Asset-group level)
+        // Handles FX / Crypto / Metals / Index policies without filtering
         // =====================================================
 
-        // =========================
-        // FX
-        // =========================
         if (isFxSymbol && _fxBias != null)
         {
             var bias = _fxBias.Get(_bot.SymbolName);
@@ -1097,200 +1094,38 @@ namespace GeminiV26.Core
             _ctx.FxHtfReason = bias.Reason;
 
             _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            ApplyHtfBiasScoreOnly(symbolSignals, bias, "FX");
         }
-
-        // =========================
-        // CRYPTO
-        // =========================
         else if (isCryptoSymbol && _cryptoBias != null)
         {
             var bias = _cryptoBias.Get(_bot.SymbolName);
             _ctx.CryptoHtfAllowedDirection = bias.AllowedDirection;
             _ctx.CryptoHtfConfidence01 = bias.Confidence01;
             _ctx.CryptoHtfReason = bias.Reason;
+
             _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
-
-            bool allowPullback = false;
-            bool allowFlag = false;
-
-            // =====================================================
-            // 1) TRANSITION / NEUTRAL
-            //    -> Pullback only
-            //    -> No direction filter
-            // =====================================================
-            if (bias.State == HtfBiasState.Neutral ||
-                bias.State == HtfBiasState.Transition)
-            {
-                allowPullback = true;
-                allowFlag = bias.State == HtfBiasState.Transition;
-
-                if (bias.State == HtfBiasState.Transition)
-                {
-                    _bot.Print($"[CRYPTO HTF POLICY] state=Transition allowPullback={allowPullback} allowFlag={allowFlag}");
-                }
-
-                _bot.Print("[TC] CRYPTO HTF NOTE: Transition/Neutral -> pullback/flag policy, no direction filter");
-
-                symbolSignals = symbolSignals
-                    .Where(e =>
-                        e == null ||
-                        !e.IsValid ||
-                        (allowPullback && e.Type == EntryType.Crypto_Pullback) ||
-                        (allowFlag && e.Type == EntryType.Crypto_Flag))
-                    .ToList();
-
-                if (symbolSignals.All(e => e == null || !e.IsValid))
-                {
-                    foreach (var s in symbolSignals)
-                    {
-                        _bot.Print(
-                            $"[TC][CRYPTO HTF CAND] type={s?.Type} " +
-                            $"valid={s?.IsValid} dir={s?.Direction} " +
-                            $"score={s?.Score} reason={s?.Reason}");
-                    }
-
-                    _bot.Print("[TC] CRYPTO HTF BLOCK: no valid pullback/flag in Transition/Neutral");
-                    return;
-                }
-            }
-
-            // =====================================================
-            // 2) TREND (Bull / Bear)
-            // =====================================================
-            else
-            {
-                if (bias.AllowedDirection != TradeDirection.None)
-                {
-                    symbolSignals = symbolSignals
-                        .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                        .ToList();
-
-                    if (symbolSignals.All(e => e == null || !e.IsValid))
-                    {
-                        _bot.Print("[TC] CRYPTO HTF BLOCK: all candidates filtered by allowed direction");
-                        return;
-                    }
-                }
-            }
+            ApplyHtfBiasScoreOnly(symbolSignals, bias, "CRYPTO");
         }
+        else if (isMetalSymbol && _metalBias != null)
+        {
+            var bias = _metalBias.Get(_bot.SymbolName);
+            _ctx.MetalHtfAllowedDirection = bias.AllowedDirection;
+            _ctx.MetalHtfConfidence01 = bias.Confidence01;
+            _ctx.MetalHtfReason = bias.Reason;
 
-                // =========================
-                // METALS (XAU)
-                // =========================
-                else if (isMetalSymbol && _metalBias != null)
-                {
-                    var bias = _metalBias.Get(_bot.SymbolName);
-                    _ctx.MetalHtfAllowedDirection = bias.AllowedDirection;
-                    _ctx.MetalHtfConfidence01 = bias.Confidence01;
-                    _ctx.MetalHtfReason = bias.Reason;
-                    _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            ApplyHtfBiasScoreOnly(symbolSignals, bias, "XAU");
+        }
+        else if (isIndexSymbol && _indexBias != null)
+        {
+            var bias = _indexBias.Get(_bot.SymbolName);
+            _ctx.IndexHtfAllowedDirection = bias.AllowedDirection;
+            _ctx.IndexHtfConfidence01 = bias.Confidence01;
+            _ctx.IndexHtfReason = bias.Reason;
 
-                    if (bias.State == HtfBiasState.Neutral ||
-                        bias.State == HtfBiasState.Transition)
-                    {
-                        _bot.Print("[TC] XAU HTF POLICY: Transition/Neutral -> Pullback primary, strong flag fallback");
-
-                        var pullbackSignals = symbolSignals
-                            .Where(e => e != null && e.Type == EntryType.XAU_Pullback)
-                            .ToList();
-
-                        bool pullbackValid = pullbackSignals.Any(e => e.IsValid);
-                        if (pullbackValid)
-                        {
-                            symbolSignals = symbolSignals
-                                .Where(e => e == null || !e.IsValid || e.Type == EntryType.XAU_Pullback)
-                                .ToList();
-                        }
-                        else
-                        {
-                            var fallbackFlags = symbolSignals
-                                .Where(e => e != null && e.Type == EntryType.XAU_Flag && e.IsValid)
-                                .ToList();
-
-                            if (fallbackFlags.Any())
-                            {
-                                foreach (var entry in fallbackFlags)
-                                {
-                                    _bot.Print($"[TC][XAU HTF CAND] type=XAU_Flag valid={entry.IsValid} score={entry.Score}");
-                                }
-                            }
-
-                            symbolSignals = symbolSignals
-                                .Where(e =>
-                                    e == null ||
-                                    !e.IsValid ||
-                                    e.Type == EntryType.XAU_Pullback ||
-                                    e.Type == EntryType.XAU_Flag ||
-                                    e.Type == EntryType.XAU_Reversal ||
-                                    e.Type == EntryType.XAU_Impulse)
-                                .ToList();
-                        }
-
-                        if (symbolSignals.All(e => e == null || !e.IsValid))
-                        {
-                            foreach (var s in symbolSignals)
-                            {
-                                _bot.Print(
-                                    $"[TC][XAU HTF CAND] type={s?.Type} " +
-                                    $"valid={s?.IsValid} dir={s?.Direction} " +
-                                    $"score={s?.Score} reason={s?.Reason}");
-                            }
-
-                            _bot.Print("[TC] XAU HTF BLOCK: no valid pullback/flag fallback in Transition/Neutral");
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        symbolSignals = symbolSignals
-                            .Where(e => e == null || !e.IsValid || e.Direction == bias.AllowedDirection)
-                            .ToList();
-
-                        if (symbolSignals.All(e => e == null || !e.IsValid))
-                        {
-                            _bot.Print("[TC] XAU HTF BLOCK: all candidates filtered by bias");
-                            return;
-                        }
-                    }
-                }
-
-                // =========================
-                // INDEX
-                // =========================
-                else if (isIndexSymbol && _indexBias != null)
-                {
-                    var bias = _indexBias.Get(_bot.SymbolName);
-                    _ctx.IndexHtfAllowedDirection = bias.AllowedDirection;
-                    _ctx.IndexHtfConfidence01 = bias.Confidence01;
-                    _ctx.IndexHtfReason = bias.Reason;
-                    _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
-
-                    if (bias.State == HtfBiasState.Neutral ||
-                        bias.State == HtfBiasState.Transition)
-                    {
-                        _bot.Print("[TC] INDEX HTF BLOCK: state=Transition/Neutral");
-                        return;
-                    }
-
-                    const int HtfAlignedMinScore = 75;
-
-                    symbolSignals = symbolSignals
-                        .Where(e =>
-                            e == null ||
-                            !e.IsValid ||
-                            (
-                                e.Direction == bias.AllowedDirection &&
-                                e.Score >= HtfAlignedMinScore
-                            )
-                        )
-                        .ToList();
-
-                    if (symbolSignals.All(e => e == null || !e.IsValid))
-                    {
-                        _bot.Print("[TC] INDEX HTF BLOCK: all candidates filtered by bias");
-                        return;
-                    }
-                }
+            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
+        }
 
                 // =====================================================
                 // ROUTER
@@ -2134,6 +1969,63 @@ namespace GeminiV26.Core
                 return "Transition";
 
             return setup;
+        }
+
+        private void ApplyHtfBiasScoreOnly(List<EntryEvaluation> symbolSignals, HtfBiasSnapshot bias, string assetTag)
+        {
+            if (symbolSignals == null || bias == null)
+                return;
+
+            const double MisalignedPenalty = 0.70;
+            const double TransitionPenalty = 0.85;
+            const double AlignedDirectionalBoost = 1.10;
+
+            _bot.Print($"[HTF][BIAS] asset={assetTag} direction={bias.AllowedDirection} state={bias.State} impact=ScoreOnly conf={bias.Confidence01:0.00}");
+
+            int alignedCandidates = 0;
+            int misalignedCandidates = 0;
+
+            foreach (var candidate in symbolSignals)
+            {
+                if (candidate == null || !candidate.IsValid || candidate.Direction == TradeDirection.None)
+                    continue;
+
+                bool hasDirectionalBias = bias.AllowedDirection != TradeDirection.None;
+                bool aligned = hasDirectionalBias && candidate.Direction == bias.AllowedDirection;
+                bool misaligned = hasDirectionalBias && candidate.Direction != bias.AllowedDirection;
+
+                if (aligned)
+                    alignedCandidates++;
+
+                if (misaligned)
+                    misalignedCandidates++;
+
+                double multiplier = 1.0;
+
+                if (misaligned)
+                    multiplier *= MisalignedPenalty;
+
+                if (bias.State == HtfBiasState.Transition)
+                    multiplier *= TransitionPenalty;
+                else if (aligned && (bias.State == HtfBiasState.Bull || bias.State == HtfBiasState.Bear))
+                    multiplier *= AlignedDirectionalBoost;
+
+                int originalScore = candidate.Score;
+                candidate.Score = Math.Max(1, (int)Math.Round(candidate.Score * multiplier));
+
+                _bot.Print(
+                    $"[HTF][CANDIDATE] asset={assetTag} type={candidate.Type} dir={candidate.Direction} " +
+                    $"aligned={aligned} multiplier={multiplier:0.00} score={originalScore}->{candidate.Score} state={bias.State}");
+            }
+
+            string statePenaltyText = bias.State == HtfBiasState.Transition
+                ? TransitionPenalty.ToString("0.00")
+                : "1.00";
+
+            _bot.Print(
+                $"[HTF][APPLIED] asset={assetTag} dir={bias.AllowedDirection} state={bias.State} " +
+                $"penalty={statePenaltyText} directionalPenalty={MisalignedPenalty:0.00} " +
+                $"alignedCandidates={alignedCandidates} misaligned={misalignedCandidates}");
         }
 
         private static string ResolveMarketRegime(EntryContext entryCtx)
