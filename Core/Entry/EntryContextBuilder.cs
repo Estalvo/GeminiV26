@@ -330,59 +330,115 @@ namespace GeminiV26.Core.Entry
                 range5 > 0 &&
                 range5 < ctx.AtrM5 * 3.0;
 
-            // ===== FLAG DETECTION (FIXED) =====
+            // =================================================
+            // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
+            // =================================================
 
             // reset
+            ctx.HasFlagLong_M5 = false;
+            ctx.HasFlagShort_M5 = false;
             ctx.FlagHigh = 0;
             ctx.FlagLow = 0;
+            ctx.FlagAtr_M5 = 0;
 
-            // LONG
-            int pbBarsLong = ctx.PullbackBarsLong_M5;
+            // ---- lookback (adaptive alap később lehet instrument szerint)
+            int lookback = 6;
 
-            bool structureOkLong =
-                ctx.M5.ClosePrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 1];
+            double flagHi = double.MinValue;
+            double flagLo = double.MaxValue;
 
-            bool longFlag =
-                validRange &&
-                pbBarsLong >= 3 &&
-                ctx.PullbackDepthRLong_M5 <= 0.8 &&
-                structureOkLong;
+            // safety (index ne menjen ki)
+            int start = Math.Max(0, m5Idx - lookback + 1);
 
-            // SHORT
-            int pbBarsShort = ctx.PullbackBarsShort_M5;
+            for (int i = start; i <= m5Idx; i++)
+            {
+                flagHi = Math.Max(flagHi, ctx.M5.HighPrices[i]);
+                flagLo = Math.Min(flagLo, ctx.M5.LowPrices[i]);
+            }
 
-            bool structureOkShort =
-                ctx.M5.ClosePrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 1];
+            double flagRange = flagHi - flagLo;
+
+            // ============================
+            // 1) COMPRESSION
+            // ============================
+
+            bool isTight =
+                ctx.AtrM5 > 0 &&
+                flagRange > 0 &&
+                flagRange < ctx.AtrM5 * 1.2;
+
+            // ============================
+            // 2) MICRO STRUCTURE
+            // ============================
+
+            // LOWER HIGHS → SHORT flag
+            bool hasLowerHighs =
+                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 2] &&
+                ctx.M5.HighPrices[m5Idx - 2] < ctx.M5.HighPrices[m5Idx - 4];
+
+            // HIGHER LOWS → LONG flag
+            bool hasHigherLows =
+                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 2] &&
+                ctx.M5.LowPrices[m5Idx - 2] > ctx.M5.LowPrices[m5Idx - 4];
+
+            // ============================
+            // 3) DECELERATION (MÁR KISZÁMOLT)
+            // ============================
+
+            bool decelerating = ctx.IsPullbackDecelerating_M5;
+
+            // ============================
+            // 4) FINAL FLAG DECISION
+            // ============================
 
             bool shortFlag =
-                validRange &&
-                pbBarsShort >= 3 &&
-                ctx.PullbackDepthRShort_M5 <= 0.8 &&
-                structureOkShort;
+                isTight &&
+                decelerating &&
+                hasLowerHighs;
 
-            // ASSIGN (először)
-            ctx.HasFlagLong_M5 = longFlag;
+            bool longFlag =
+                isTight &&
+                decelerating &&
+                hasHigherLows;
+
+            // ============================
+            // 5) ASSIGN
+            // ============================
+
             ctx.HasFlagShort_M5 = shortFlag;
+            ctx.HasFlagLong_M5 = longFlag;
 
-            // ===== FLAG RANGE =====
-            if (longFlag && !shortFlag)
+            // csak akkor mentjük a range-et ha EGYÉRTELMŰ
+            if (shortFlag && !longFlag)
             {
-                ctx.FlagHigh = ctx.M5.HighPrices.Maximum(pbBarsLong);
-                ctx.FlagLow  = ctx.M5.LowPrices.Minimum(pbBarsLong);
+                ctx.FlagHigh = flagHi;
+                ctx.FlagLow = flagLo;
             }
-            else if (shortFlag && !longFlag)
+            else if (longFlag && !shortFlag)
             {
-                ctx.FlagHigh = ctx.M5.HighPrices.Maximum(pbBarsShort);
-                ctx.FlagLow  = ctx.M5.LowPrices.Minimum(pbBarsShort);
+                ctx.FlagHigh = flagHi;
+                ctx.FlagLow = flagLo;
             }
             else
             {
-                ctx.HasFlagLong_M5 = false;
+                // konfliktus / nincs flag
                 ctx.HasFlagShort_M5 = false;
+                ctx.HasFlagLong_M5 = false;
             }
 
-            // ATR
-            ctx.FlagAtr_M5 = range5;
+            // ATR-normalizált méret
+            ctx.FlagAtr_M5 = flagRange;
+
+            // ============================
+            // DEBUG (opcionális, de most hasznos)
+            // ============================
+
+            _bot.Print(
+                $"[FLAG V2.22] tight={isTight} decel={decelerating} " +
+                $"LH={hasLowerHighs} HL={hasHigherLows} " +
+                $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
+                $"range={flagRange} atr={ctx.AtrM5}"
+            );
 
             // =================================================
             // ATR EXPANSION
