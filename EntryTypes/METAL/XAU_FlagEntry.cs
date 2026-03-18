@@ -57,17 +57,18 @@ namespace GeminiV26.EntryTypes.METAL
             
             ctx.Log?.Invoke("[FLAG ERROR] INVALID RANGE → rejecting flag");
 
-            if (hi <= 0 || lo <= 0 || hi <= lo)
-            {
-                ctx.Log?.Invoke("[FLAG DEBUG] FALLBACK RANGE USED");
+            bool hasValidRange = hi > lo && hi > 0 && lo > 0;
 
-                hi = bar.High;
-                lo = bar.Low;
+            if (!hasValidRange)
+            {
+                ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
             }
 
-            double rangeAtr = (hi - lo) / ctx.AtrM5;
+            double rangeAtr = hasValidRange && ctx.AtrM5 > 0
+                ? (hi - lo) / ctx.AtrM5
+                : 0;
 
-            if (rangeAtr <= 0 || rangeAtr > tuning.MaxFlagAtrMult * 1.3)
+            if (hasValidRange && (rangeAtr <= 0 || rangeAtr > tuning.MaxFlagAtrMult * 1.3))
                 return Invalid(ctx, "FLAG_TOO_WIDE_HARD");
               
             // ===== spike filter =====
@@ -178,8 +179,8 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (!hasFlag)
             {
-                reasons.Add("FLAG_NOT_READY");
-                score -= 4; // enyhe büntetés, nem kill
+                reasons.Add("FLAG_WEAK_OR_FORMING");
+                score -= 2; // enyhébb büntetés
             }
 
             // ===== BREAKOUT (SOURCE OF TRUTH) =====
@@ -212,7 +213,7 @@ namespace GeminiV26.EntryTypes.METAL
                 bodyRatio >= 0.45 &&
                 ctx.LastClosedBarInTrendDirection;
 
-            bool breakoutPossible = hasFlag;
+            bool breakoutPossible = true; // breakout a source of truth
 
             if (!breakoutPossible)
             {
