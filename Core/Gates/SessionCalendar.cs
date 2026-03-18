@@ -19,14 +19,13 @@ public class SessionCalendar
     }
 
     public TimeSpan GetLondonOpenUtc(DateTime utc)
-        => new TimeSpan(7, 0, 0);
-
-    public TimeSpan GetLondonOpenUtc(DateTime utc)
     {
         var realOpen = IsEuDst(utc) ? new TimeSpan(7, 0, 0) : new TimeSpan(8, 0, 0);
 
         return realOpen - TimeSpan.FromHours(1); // 👈 EZ A LÉNYEG
     }
+
+    public TimeSpan GetLondonCloseUtc(DateTime utc) => IsEuDst(utc) ? new TimeSpan(15, 0, 0) : new TimeSpan(16, 0, 0);
 
     public TimeSpan GetNyOpenUtc(DateTime utc) => IsUsDst(utc) ? new TimeSpan(12, 0, 0) : new TimeSpan(13, 0, 0);
 
