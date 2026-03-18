@@ -16,6 +16,15 @@ namespace GeminiV26.Core.TradeManagement
         public bool AllowTp2Extension { get; init; }
         public double TrendTp2ExtensionMultiplier { get; init; }
         public double StrongTrendTp2ExtensionMultiplier { get; init; }
+        public double LowConfidenceSlAtrMultiplier { get; init; }
+        public double TrendSlAtrMultiplier { get; init; }
+        public double StrongTrendSlAtrMultiplier { get; init; }
+        public double LowConfidenceTpAtrMultiplier { get; init; }
+        public double TrendTpAtrMultiplier { get; init; }
+        public double StrongTrendTpAtrMultiplier { get; init; }
+        public double Tp2MinDeltaAtr { get; init; }
+        public int StructureFallbackBars { get; init; }
+        public int ForceVolatilityTrailAfterBars { get; init; }
     }
 
     public static class TrailingProfiles
@@ -32,7 +41,16 @@ namespace GeminiV26.Core.TradeManagement
             AllowLiquidityTrailing = false,
             AllowTp2Extension = true,
             TrendTp2ExtensionMultiplier = 1.22,
-            StrongTrendTp2ExtensionMultiplier = 1.45
+            StrongTrendTp2ExtensionMultiplier = 1.45,
+            LowConfidenceSlAtrMultiplier = 1.0,
+            TrendSlAtrMultiplier = 1.5,
+            StrongTrendSlAtrMultiplier = 2.0,
+            LowConfidenceTpAtrMultiplier = 1.0,
+            TrendTpAtrMultiplier = 1.5,
+            StrongTrendTpAtrMultiplier = 2.0,
+            Tp2MinDeltaAtr = 0.20,
+            StructureFallbackBars = 6,
+            ForceVolatilityTrailAfterBars = 6
         };
 
         public static TrailingProfile Index => new()
@@ -47,7 +65,16 @@ namespace GeminiV26.Core.TradeManagement
             AllowLiquidityTrailing = true,
             AllowTp2Extension = true,
             TrendTp2ExtensionMultiplier = 1.23,
-            StrongTrendTp2ExtensionMultiplier = 1.48
+            StrongTrendTp2ExtensionMultiplier = 1.48,
+            LowConfidenceSlAtrMultiplier = 1.0,
+            TrendSlAtrMultiplier = 1.5,
+            StrongTrendSlAtrMultiplier = 2.0,
+            LowConfidenceTpAtrMultiplier = 1.0,
+            TrendTpAtrMultiplier = 1.5,
+            StrongTrendTpAtrMultiplier = 2.0,
+            Tp2MinDeltaAtr = 0.20,
+            StructureFallbackBars = 6,
+            ForceVolatilityTrailAfterBars = 6
         };
 
         public static TrailingProfile Crypto => new()
@@ -62,7 +89,16 @@ namespace GeminiV26.Core.TradeManagement
             AllowLiquidityTrailing = true,
             AllowTp2Extension = true,
             TrendTp2ExtensionMultiplier = 1.25,
-            StrongTrendTp2ExtensionMultiplier = 1.50
+            StrongTrendTp2ExtensionMultiplier = 1.50,
+            LowConfidenceSlAtrMultiplier = 1.0,
+            TrendSlAtrMultiplier = 1.5,
+            StrongTrendSlAtrMultiplier = 2.0,
+            LowConfidenceTpAtrMultiplier = 1.0,
+            TrendTpAtrMultiplier = 1.5,
+            StrongTrendTpAtrMultiplier = 2.0,
+            Tp2MinDeltaAtr = 0.20,
+            StructureFallbackBars = 7,
+            ForceVolatilityTrailAfterBars = 6
         };
 
         public static TrailingProfile Metal => new()
@@ -77,7 +113,16 @@ namespace GeminiV26.Core.TradeManagement
             AllowLiquidityTrailing = true,
             AllowTp2Extension = true,
             TrendTp2ExtensionMultiplier = 1.24,
-            StrongTrendTp2ExtensionMultiplier = 1.46
+            StrongTrendTp2ExtensionMultiplier = 1.46,
+            LowConfidenceSlAtrMultiplier = 1.0,
+            TrendSlAtrMultiplier = 1.5,
+            StrongTrendSlAtrMultiplier = 2.0,
+            LowConfidenceTpAtrMultiplier = 1.0,
+            TrendTpAtrMultiplier = 1.5,
+            StrongTrendTpAtrMultiplier = 2.0,
+            Tp2MinDeltaAtr = 0.20,
+            StructureFallbackBars = 6,
+            ForceVolatilityTrailAfterBars = 6
         };
 
         public static TrailingProfile ResolveBySymbol(string symbolName)
