@@ -72,44 +72,33 @@ namespace GeminiV26.Core.Entry
             ctx.TransitionLong = BuildEvaluation(longSide);
             ctx.TransitionShort = BuildEvaluation(shortSide);
 
-            // =========================================================
-            // Backward compatibility layer
-            // Neutrális projection: csak akkor tükrözünk vissza irányt,
-            // ha az egyik oldal érdemben tradable state-ben van, a másik nem.
-            // =========================================================
-            if (longSide.IsTradable && !shortSide.IsTradable)
-            {
-                ApplyLegacyProjection(ctx, longSide, TradeDirection.Long);
-            }
-            else if (!longSide.IsTradable && shortSide.IsTradable)
-            {
-                ApplyLegacyProjection(ctx, shortSide, TradeDirection.Short);
-            }
-            else
-            {
-                ctx.HasImpulse_M5 = longSide.HasImpulse || shortSide.HasImpulse;
-                ctx.BarsSinceImpulse_M5 = Math.Min(
-                    longSide.HasImpulse ? longSide.BarsSinceImpulse : 999,
-                    shortSide.HasImpulse ? shortSide.BarsSinceImpulse : 999);
+            ctx.HasImpulse_M5 = longSide.HasImpulse || shortSide.HasImpulse;
 
-                ctx.TransitionValid = false;
-                ctx.TransitionScoreBonus = 0;
-                ctx.Transition = new TransitionEvaluation
-                {
-                    HasImpulse = ctx.HasImpulse_M5,
-                    HasPullback = longSide.HasPullback || shortSide.HasPullback,
-                    HasFlag = longSide.HasFlag || shortSide.HasFlag,
-                    BarsSinceImpulse = ctx.BarsSinceImpulse_M5 >= 999 ? -1 : ctx.BarsSinceImpulse_M5,
-                    PullbackBars = Math.Max(longSide.PullbackBars, shortSide.PullbackBars),
-                    FlagBars = Math.Max(longSide.FlagBars, shortSide.FlagBars),
-                    PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
-                    CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
-                    QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
-                    IsValid = false,
-                    BonusScore = 0,
-                    Reason = "NoDirectionalConsensus"
-                };
-            }
+            ctx.BarsSinceImpulse_M5 = Math.Min(
+                longSide.HasImpulse ? longSide.BarsSinceImpulse : 999,
+                shortSide.HasImpulse ? shortSide.BarsSinceImpulse : 999);
+
+            // 🚫 HARD RULE: Transition NEVER creates tradable signal
+            ctx.TransitionValid = false;
+            ctx.TransitionScoreBonus = 0;
+
+            // 🚫 PURE NEUTRAL AGGREGATION (NO DIRECTION)
+            ctx.Transition = new TransitionEvaluation
+            {
+                HasImpulse = ctx.HasImpulse_M5,
+                HasPullback = longSide.HasPullback || shortSide.HasPullback,
+                HasFlag = longSide.HasFlag || shortSide.HasFlag,
+                BarsSinceImpulse = ctx.BarsSinceImpulse_M5 >= 999 ? -1 : ctx.BarsSinceImpulse_M5,
+                PullbackBars = Math.Max(longSide.PullbackBars, shortSide.PullbackBars),
+                FlagBars = Math.Max(longSide.FlagBars, shortSide.FlagBars),
+                PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
+                CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
+                QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
+
+                IsValid = false,
+                BonusScore = 0,
+                Reason = "Neutral_NoProjection"
+            };
 
             // =========================================================
             // PullbackDepthAtr backward fill
@@ -435,14 +424,29 @@ namespace GeminiV26.Core.Entry
             SideEvaluation side,
             TradeDirection direction)
         {
-            ctx.HasImpulse_M5 = side.HasImpulse;
-            ctx.BarsSinceImpulse_M5 = side.HasImpulse ? side.BarsSinceImpulse : 999;
+            // LEGACY DISABLED — DO NOT PROJECT DIRECTION
 
-            ctx.TransitionValid = side.IsTradable;
-            ctx.TransitionScoreBonus = side.BonusScore;
-            ctx.Transition = BuildEvaluation(side);
+            ctx.TransitionValid = false;
+            ctx.TransitionScoreBonus = 0;
 
-            ctx.Log?.Invoke($"[DIR][TRANSITION_LEGACY] sym={ctx.Symbol} projectedSide={direction} trendPreserved={ctx.TrendDirection} impulsePreserved={ctx.ImpulseDirection}");
+            ctx.Transition = new TransitionEvaluation
+            {
+                HasImpulse = side.HasImpulse,
+                HasPullback = side.HasPullback,
+                HasFlag = side.HasFlag,
+                BarsSinceImpulse = side.HasImpulse ? side.BarsSinceImpulse : -1,
+                PullbackBars = side.PullbackBars,
+                FlagBars = side.FlagBars,
+                PullbackDepthR = side.PullbackDepthR,
+                CompressionScore = side.CompressionScore,
+                QualityScore = side.QualityScore,
+
+                IsValid = false,
+                BonusScore = 0,
+                Reason = "LegacyDisabled"
+            };
+
+            ctx.Log?.Invoke("[TRANSITION_LEGACY_DISABLED]");
         }
 
         private static TransitionEvaluation BuildEvaluation(SideEvaluation side)

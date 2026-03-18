@@ -86,7 +86,9 @@ namespace GeminiV26.Core.Entry
                 return;
             }
 
-            int flagBars = Math.Max(0, ctx.Transition.FlagBars);
+            int flagBars = Math.Max(
+                ctx.FlagBarsLong_M5,
+                ctx.FlagBarsShort_M5);
             int lastClosed = ctx.M5.Count - 2;
             if (flagBars <= 0)
             {
