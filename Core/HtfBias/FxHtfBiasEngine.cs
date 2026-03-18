@@ -169,44 +169,22 @@ namespace GeminiV26.Core.HtfBias
             bool strongStructure = gapAtr >= StrongGapAtr;
             bool adxAcceptable = adx >= MinAdxDirectional;
             bool adxHealthy = adx >= HealthyAdx;
+            bool slopeSupportsDirection = bullishPremise ? slope50Atr > 0 : slope50Atr < 0;
+            bool directionClear = (bullAlign || bearAlign) && slopeSupportsDirection;
             bool structureTradable = gapAtr >= MinGapAtrDirectional && adxAcceptable;
             bool strongTrend = strongStructure && adxHealthy;
             bool weakTrendButTradable = structureTradable && !strongTrend;
             bool earlyTrendFormation = gapAtr < HealthyGapAtr && adx < HealthyAdx && slopeScore < 0.35;
 
-            if (weakStructure || !adxAcceptable)
-            {
-                double conf = Clamp01(TransitionBaseConfidence + 0.12 * gapScore + 0.10 * adxScore + 0.06 * slopeScore);
-                string weakReason = weakStructure ? "weak structure" : "low ADX";
-                SetState(
-                    c.Snapshot,
-                    HtfBiasState.Transition,
-                    TradeDirection.None,
-                    $"FX_HTF TRANSITION {weakReason}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
-                    conf);
-                return;
-            }
-
-            if (excessiveDislocation && !strongTrend)
-            {
-                double conf = Clamp01(TransitionBaseConfidence + 0.08 * gapScore + 0.08 * adxScore);
-                SetState(
-                    c.Snapshot,
-                    HtfBiasState.Transition,
-                    TradeDirection.None,
-                    $"FX_HTF TRANSITION stretched pullback, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
-                    conf);
-                return;
-            }
-
-            if (earlyTrendFormation && pullback)
+            if ((weakStructure && !directionClear) || (!adxAcceptable && !slopeSupportsDirection))
             {
                 double conf = Clamp01(TransitionBaseConfidence + 0.10 * gapScore + 0.08 * adxScore + 0.05 * slopeScore);
+                string weakReason = weakStructure ? "weak structure, direction unclear" : "low ADX, slope not confirming";
                 SetState(
                     c.Snapshot,
                     HtfBiasState.Transition,
                     TradeDirection.None,
-                    $"FX_HTF TRANSITION early trend formation, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}",
+                    $"FX_HTF TRANSITION {weakReason}, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}, distATR={distFastAtr:0.00}",
                     conf);
                 return;
             }
@@ -217,20 +195,44 @@ namespace GeminiV26.Core.HtfBias
 
             if (strongTrend)
             {
-                string reason = healthyPullback
-                    ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, healthy pullback, conf={trendConfidence:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}"
-                    : $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, conf={trendConfidence:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+                double strongConf = excessiveDislocation
+                    ? Clamp01(Math.Max(0.42, trendConfidence * 0.60))
+                    : trendConfidence;
+                string reason = excessiveDislocation
+                    ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} extended, reduced confidence, conf={strongConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}"
+                    : healthyPullback
+                        ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, healthy pullback, conf={strongConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}"
+                        : $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, conf={strongConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
 
-                SetState(c.Snapshot, state, direction, reason, trendConfidence);
+                SetState(c.Snapshot, state, direction, reason, strongConf);
+                return;
+            }
+
+            if (earlyTrendFormation)
+            {
+                double earlyConf = Clamp01(0.30 + 0.05 * gapScore + 0.03 * adxScore + 0.04 * slopeScore);
+                earlyConf = Math.Min(earlyConf, 0.40);
+                string reason = pullback
+                    ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} early trend, low confidence, conf={earlyConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}"
+                    : $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} early trend formation, low confidence, conf={earlyConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}";
+
+                SetState(c.Snapshot, state, direction, reason, earlyConf);
                 return;
             }
 
             if (weakTrendButTradable)
             {
                 double weakConf = Math.Max(MinTrendConfidence, Math.Min(trendConfidence, 0.60));
+                if (excessiveDislocation)
+                    weakConf = Clamp01(Math.Max(0.30, weakConf * 0.60));
+
                 string reason;
 
-                if (healthyPullback || deepPullback)
+                if (excessiveDislocation)
+                {
+                    reason = $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} extended, reduced confidence, conf={weakConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+                }
+                else if (healthyPullback || deepPullback)
                 {
                     reason = $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} weak structure, pullback intact, conf={weakConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
                 }
@@ -243,12 +245,45 @@ namespace GeminiV26.Core.HtfBias
                 return;
             }
 
+            if (!adxAcceptable)
+            {
+                double lowAdxConf = Clamp01(0.30 + 0.08 * gapScore + 0.06 * slopeScore + 0.04 * locationScore);
+                lowAdxConf = Math.Min(lowAdxConf, 0.45);
+                SetState(
+                    c.Snapshot,
+                    state,
+                    direction,
+                    $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} low ADX, directional bias preserved, conf={lowAdxConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}",
+                    lowAdxConf);
+                return;
+            }
+
+            if (weakStructure)
+            {
+                double weakStructureConf = Clamp01(0.32 + 0.06 * adxScore + 0.08 * slopeScore + 0.03 * locationScore);
+                weakStructureConf = Math.Min(weakStructureConf, 0.48);
+                string reason = pullback
+                    ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} weak structure, tradable pullback, conf={weakStructureConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}"
+                    : $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} weak structure, tradable, conf={weakStructureConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+
+                SetState(c.Snapshot, state, direction, reason, weakStructureConf);
+                return;
+            }
+
+            if (excessiveDislocation)
+            {
+                double extendedConf = Clamp01(Math.Max(0.30, trendConfidence * 0.60));
+                string reason = $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} extended, reduced confidence, conf={extendedConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+                SetState(c.Snapshot, state, direction, reason, extendedConf);
+                return;
+            }
+
             double fallbackConf = Clamp01(TransitionBaseConfidence + 0.08 * gapScore + 0.08 * adxScore + 0.05 * slopeScore);
             SetState(
                 c.Snapshot,
                 HtfBiasState.Transition,
                 TradeDirection.None,
-                $"FX_HTF TRANSITION weak structure, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
+                $"FX_HTF TRANSITION conflicting signals, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}, distATR={distFastAtr:0.00}",
                 fallbackConf);
         }
 
