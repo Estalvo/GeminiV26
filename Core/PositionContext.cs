@@ -52,6 +52,8 @@ namespace GeminiV26.Core
 
         public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
 
+        public bool MissingDirLogged { get; set; }
+
 
         // =========================================================
         // CONFIDENCE PIPELINE (Rulebook 1.0)

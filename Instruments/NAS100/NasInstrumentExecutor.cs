@@ -215,6 +215,7 @@ namespace GeminiV26.Instruments.NAS100
             ctx.ComputeFinalConfidence();
 
             _positionContexts[positionKey] = ctx;
+            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
             _exitManager.RegisterContext(ctx);
         }
 

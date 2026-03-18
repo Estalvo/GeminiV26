@@ -308,6 +308,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // 10 REGISTER CONTEXT
             // =====================================================
             _positionContexts[ctx.PositionId] = ctx;
+            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
             _exitManager.RegisterContext(ctx);
 
             _bot.Print(
