@@ -2,15 +2,20 @@
 using cAlgo.API;
 using cAlgo.API.Indicators;
 using System;
+using System.Collections.Generic;
 
 namespace GeminiV26.Core.HtfBias
 {
-    // FX HTF Bias v2
-    // - Bias TF: H4
-    // - Update tick: H1 closed bar
-    // - KEY RULE: FX-en nem fordulunk Bear-ra csak azért, mert a close lecsúszott az EMA50 alá.
-    //            Bear = csak EMA alignment alapján (EMA50 < EMA200).
-    // - Price location csak confidence (minőség), nem irány.
+    /// <summary>
+    /// FX HTF Bias Engine.
+    ///
+    /// Design intent:
+    /// - conservative, structure-first FX bias model
+    /// - H4 structure, recalculated on closed H1 bars
+    /// - EMA50/EMA200 alignment defines directional premise
+    /// - pullbacks stay directional when macro structure is still healthy
+    /// - Transition is reserved for weak / unclear / early structure only
+    /// </summary>
     public sealed class FxHtfBiasEngine : IHtfBiasProvider
     {
         private readonly Robot _bot;
@@ -20,18 +25,28 @@ namespace GeminiV26.Core.HtfBias
 
         private const int EmaFast = 50;
         private const int EmaSlow = 200;
+        private const int AtrPeriod = 14;
+        private const int AdxPeriod = 14;
+        private const int SlopeLookback = 3;
 
-        // Energiaküszöb: ha EMA gap túl kicsi a H4 ATR-hez képest, akkor "Transition" (nem tiszta trend)
-        private const double MinEmaGapAtr = 0.10;
+        private const double MinGapAtrDirectional = 0.10;
+        private const double HealthyGapAtr = 0.18;
+        private const double StrongGapAtr = 0.32;
 
-        // Location: ha nagyon messze van a close az EMA50-től, akkor romlik a confidence
-        private const double MaxDistFromFastAtr = 3.0;
+        private const double MinAdxDirectional = 12.0;
+        private const double HealthyAdx = 16.0;
+        private const double StrongAdx = 24.0;
 
-        // FX-ben a confidence sose legyen 0 (hogy a router ne "teljesen vakon" büntessen)
-        private const double MinConf = 0.25;
+        private const double MildPullbackAtr = 0.35;
+        private const double HealthyPullbackAtr = 0.90;
+        private const double DeepPullbackAtr = 1.35;
+        private const double MaxDistFromFastAtr = 2.60;
+        private const double StrongSlopeAtr = 0.18;
 
-        // Ha EMA alignment long, de close az EMA50 alatt van → csak Transition/Neutral (nem Bear)
-        private const double UnderFastTransitionConf = 0.55;
+        private const double MinTrendConfidence = 0.35;
+        private const double BaseTrendConfidence = 0.42;
+        private const double StrongTrendFloor = 0.70;
+        private const double TransitionBaseConfidence = 0.32;
 
         private sealed class FxBiasContext
         {
@@ -40,10 +55,11 @@ namespace GeminiV26.Core.HtfBias
             public ExponentialMovingAverage Ema50;
             public ExponentialMovingAverage Ema200;
             public AverageTrueRange AtrH4;
+            public DirectionalMovementSystem Dms;
             public HtfBiasSnapshot Snapshot = new();
         }
 
-        private readonly System.Collections.Generic.Dictionary<string, FxBiasContext> _ctx = new();
+        private readonly Dictionary<string, FxBiasContext> _ctx = new(StringComparer.OrdinalIgnoreCase);
 
         public FxHtfBiasEngine(Robot bot)
         {
@@ -66,11 +82,9 @@ namespace GeminiV26.Core.HtfBias
                     H1 = _bot.MarketData.GetBars(UpdateTf, symbolName)
                 };
 
-                // Default safe snapshot (sosem hagyjuk "üresen")
-                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF INIT NEUTRAL", 0.5);
+                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF INIT NEUTRAL", 0.50);
 
-                // Ha nincs elég adat, ismerjük be, de legyen snapshot
-                if (c.H4 == null || c.H4.Count < EmaSlow + 5 || c.H1 == null || c.H1.Count < 10)
+                if (c.H4 == null || c.H4.Count < EmaSlow + 8 || c.H1 == null || c.H1.Count < 10)
                 {
                     _ctx[symbolName] = c;
                     return;
@@ -78,17 +92,21 @@ namespace GeminiV26.Core.HtfBias
 
                 c.Ema50 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaFast);
                 c.Ema200 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaSlow);
-                c.AtrH4 = _bot.Indicators.AverageTrueRange(c.H4, 14, MovingAverageType.Exponential);
+                c.AtrH4 = _bot.Indicators.AverageTrueRange(c.H4, AtrPeriod, MovingAverageType.Exponential);
+                c.Dms = _bot.Indicators.DirectionalMovementSystem(c.H4, AdxPeriod);
 
                 _ctx[symbolName] = c;
             }
 
-            // Still not enough? keep last snapshot
-            if (c.H1 == null || c.H4 == null || c.H1.Count < 10 || c.H4.Count < EmaSlow + 5)
+            if (c.H1 == null || c.H4 == null || c.Ema50 == null || c.Ema200 == null || c.AtrH4 == null || c.Dms == null)
+                return;
+
+            if (c.H1.Count < 10 || c.H4.Count < EmaSlow + 8)
                 return;
 
             int h1Closed = c.H1.Count - 2;
-            if (h1Closed < 1) return;
+            if (h1Closed < 1)
+                return;
 
             DateTime tH1 = c.H1.OpenTimes[h1Closed];
             if (tH1 == c.Snapshot.LastUpdateH1Closed)
@@ -96,10 +114,15 @@ namespace GeminiV26.Core.HtfBias
 
             c.Snapshot.LastUpdateH1Closed = tH1;
 
-            // Use last CLOSED H4 bar
             int i = c.H4.Count - 2;
-            if (i < EmaSlow + 2) return;
+            if (i < EmaSlow + 4)
+                return;
 
+            EvaluateBias(c, i);
+        }
+
+        private void EvaluateBias(FxBiasContext c, int i)
+        {
             double e50 = c.Ema50.Result[i];
             double e200 = c.Ema200.Result[i];
             double close = c.H4.ClosePrices[i];
@@ -108,104 +131,183 @@ namespace GeminiV26.Core.HtfBias
             if (atr <= 0 || double.IsNaN(atr))
                 atr = Math.Max(_bot.Symbol.TickSize * 10, 1e-6);
 
+            double adx = c.Dms.ADX[i];
+            if (double.IsNaN(adx) || adx < 0)
+                adx = 0;
+
             bool bullAlign = e50 > e200;
             bool bearAlign = e50 < e200;
 
+            if (!bullAlign && !bearAlign)
+            {
+                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF NEUTRAL no alignment", 0.45);
+                return;
+            }
+
             double gapAtr = Math.Abs(e50 - e200) / atr;
-            bool energyOk = gapAtr >= MinEmaGapAtr;
+            double signedDistFastAtr = (close - e50) / atr;
+            double distFastAtr = Math.Abs(signedDistFastAtr);
+            double slope50Atr = ComputeAtrSlope(c.Ema50.Result, i, SlopeLookback, atr);
 
-            // Location / extension
-            double distFastAtr = Math.Abs(close - e50) / atr;
+            bool bullishPremise = bullAlign;
+            bool pullback = bullishPremise ? signedDistFastAtr < 0 : signedDistFastAtr > 0;
+            bool mildPullback = pullback && distFastAtr <= MildPullbackAtr;
+            bool healthyPullback = pullback && distFastAtr <= HealthyPullbackAtr;
+            bool deepPullback = pullback && distFastAtr > HealthyPullbackAtr && distFastAtr <= DeepPullbackAtr;
+            bool excessiveDislocation = distFastAtr > DeepPullbackAtr;
 
-            // Confidence model: 1 -> közel EMA50; 0 -> túl messze
-            double conf = 1.0 - Math.Min(distFastAtr / MaxDistFromFastAtr, 1.0);
-            conf = Math.Max(conf, MinConf);
+            double gapScore = Clamp01((gapAtr - MinGapAtrDirectional) / (StrongGapAtr - MinGapAtrDirectional));
+            double adxScore = Clamp01((adx - MinAdxDirectional) / (StrongAdx - MinAdxDirectional));
+            double slopeScore = bullishPremise
+                ? Clamp01(slope50Atr / StrongSlopeAtr)
+                : Clamp01((-slope50Atr) / StrongSlopeAtr);
 
-            // ===== RULE #1: alignment dönti el az irányt =====
-            if (bullAlign)
+            double locationScore = 1.0 - Clamp01(distFastAtr / MaxDistFromFastAtr);
+            double cleanlinessScore = BuildCleanlinessScore(gapScore, adxScore, slopeScore, locationScore, mildPullback, healthyPullback, deepPullback);
+
+            bool weakStructure = gapAtr < MinGapAtrDirectional;
+            bool strongStructure = gapAtr >= StrongGapAtr;
+            bool adxAcceptable = adx >= MinAdxDirectional;
+            bool adxHealthy = adx >= HealthyAdx;
+            bool structureTradable = gapAtr >= MinGapAtrDirectional && adxAcceptable;
+            bool strongTrend = strongStructure && adxHealthy;
+            bool weakTrendButTradable = structureTradable && !strongTrend;
+            bool earlyTrendFormation = gapAtr < HealthyGapAtr && adx < HealthyAdx && slopeScore < 0.35;
+
+            if (weakStructure || !adxAcceptable)
             {
-                // ===== 1️⃣ Weak structure (EMA gap too small) =====
-                if (!energyOk)
-                {
-                    SetState(
-                        c.Snapshot,
-                        HtfBiasState.Transition,
-                        TradeDirection.None,
-                        $"FX_HTF TRANSITION (BULL weak structure) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                        0.45   // ↓ csökkentett confidence
-                    );
-                    return;
-                }
-
-                // ===== 2️⃣ Healthy pullback (trend él, csak retrace) =====
-                if (close < e50)
-                {
-                    double pullbackConf = Math.Max(conf, UnderFastTransitionConf);
-
-                    SetState(
-                        c.Snapshot,
-                        HtfBiasState.Transition,
-                        TradeDirection.None,
-                        $"FX_HTF TRANSITION (BULL pullback) conf={pullbackConf:0.00} distATR={distFastAtr:0.00}",
-                        pullbackConf
-                    );
-                    return;
-                }
-
-                // ===== 3️⃣ Clean bullish structure =====
+                double conf = Clamp01(TransitionBaseConfidence + 0.12 * gapScore + 0.10 * adxScore + 0.06 * slopeScore);
+                string weakReason = weakStructure ? "weak structure" : "low ADX";
                 SetState(
                     c.Snapshot,
-                    HtfBiasState.Bull,
-                    TradeDirection.Long,
-                    $"FX_HTF BULL conf={conf:0.00} gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                    conf
-                );
+                    HtfBiasState.Transition,
+                    TradeDirection.None,
+                    $"FX_HTF TRANSITION {weakReason}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
+                    conf);
                 return;
             }
 
-            if (bearAlign)
+            if (excessiveDislocation && !strongTrend)
             {
-                // ===== 1️⃣ Weak structure =====
-                if (!energyOk)
-                {
-                    SetState(
-                        c.Snapshot,
-                        HtfBiasState.Transition,
-                        TradeDirection.None,
-                        $"FX_HTF TRANSITION (BEAR weak structure) gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                        0.45
-                    );
-                    return;
-                }
-
-                // ===== 2️⃣ Healthy pullback =====
-                if (close > e50)
-                {
-                    double pullbackConf = Math.Max(conf, UnderFastTransitionConf);
-
-                    SetState(
-                        c.Snapshot,
-                        HtfBiasState.Transition,
-                        TradeDirection.None,
-                        $"FX_HTF TRANSITION (BEAR pullback) conf={pullbackConf:0.00} distATR={distFastAtr:0.00}",
-                        pullbackConf
-                    );
-                    return;
-                }
-
-                // ===== 3️⃣ Clean bearish structure =====
+                double conf = Clamp01(TransitionBaseConfidence + 0.08 * gapScore + 0.08 * adxScore);
                 SetState(
                     c.Snapshot,
-                    HtfBiasState.Bear,
-                    TradeDirection.Short,
-                    $"FX_HTF BEAR conf={conf:0.00} gapATR={gapAtr:0.00} distATR={distFastAtr:0.00}",
-                    conf
-                );
+                    HtfBiasState.Transition,
+                    TradeDirection.None,
+                    $"FX_HTF TRANSITION stretched pullback, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
+                    conf);
                 return;
             }
 
-            // Flat/rare tie
-            SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF NEUTRAL (no alignment)", 0.50);
+            if (earlyTrendFormation && pullback)
+            {
+                double conf = Clamp01(TransitionBaseConfidence + 0.10 * gapScore + 0.08 * adxScore + 0.05 * slopeScore);
+                SetState(
+                    c.Snapshot,
+                    HtfBiasState.Transition,
+                    TradeDirection.None,
+                    $"FX_HTF TRANSITION early trend formation, gapATR={gapAtr:0.00}, adx={adx:0.0}, slopeATR={slope50Atr:0.00}",
+                    conf);
+                return;
+            }
+
+            double trendConfidence = BuildTrendConfidence(gapScore, adxScore, slopeScore, locationScore, cleanlinessScore, strongTrend, healthyPullback, deepPullback);
+            HtfBiasState state = bullishPremise ? HtfBiasState.Bull : HtfBiasState.Bear;
+            TradeDirection direction = bullishPremise ? TradeDirection.Long : TradeDirection.Short;
+
+            if (strongTrend)
+            {
+                string reason = healthyPullback
+                    ? $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, healthy pullback, conf={trendConfidence:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}"
+                    : $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} strong structure, conf={trendConfidence:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+
+                SetState(c.Snapshot, state, direction, reason, trendConfidence);
+                return;
+            }
+
+            if (weakTrendButTradable)
+            {
+                double weakConf = Math.Max(MinTrendConfidence, Math.Min(trendConfidence, 0.60));
+                string reason;
+
+                if (healthyPullback || deepPullback)
+                {
+                    reason = $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} weak structure, pullback intact, conf={weakConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+                }
+                else
+                {
+                    reason = $"FX_HTF {(bullishPremise ? "BULL" : "BEAR")} weak structure, low confidence, conf={weakConf:0.00}, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}";
+                }
+
+                SetState(c.Snapshot, state, direction, reason, weakConf);
+                return;
+            }
+
+            double fallbackConf = Clamp01(TransitionBaseConfidence + 0.08 * gapScore + 0.08 * adxScore + 0.05 * slopeScore);
+            SetState(
+                c.Snapshot,
+                HtfBiasState.Transition,
+                TradeDirection.None,
+                $"FX_HTF TRANSITION weak structure, gapATR={gapAtr:0.00}, adx={adx:0.0}, distATR={distFastAtr:0.00}",
+                fallbackConf);
+        }
+
+        private static double BuildCleanlinessScore(
+            double gapScore,
+            double adxScore,
+            double slopeScore,
+            double locationScore,
+            bool mildPullback,
+            bool healthyPullback,
+            bool deepPullback)
+        {
+            double pullbackPenalty = deepPullback ? 0.22 : (healthyPullback ? 0.10 : 0.0);
+            double mildPullbackBoost = mildPullback ? 0.04 : 0.0;
+
+            return Clamp01(
+                0.34 * gapScore +
+                0.24 * adxScore +
+                0.20 * slopeScore +
+                0.22 * locationScore +
+                mildPullbackBoost -
+                pullbackPenalty);
+        }
+
+        private static double BuildTrendConfidence(
+            double gapScore,
+            double adxScore,
+            double slopeScore,
+            double locationScore,
+            double cleanlinessScore,
+            bool strongTrend,
+            bool healthyPullback,
+            bool deepPullback)
+        {
+            double conf = BaseTrendConfidence
+                + 0.16 * gapScore
+                + 0.13 * adxScore
+                + 0.09 * slopeScore
+                + 0.10 * locationScore
+                + 0.10 * cleanlinessScore;
+
+            if (healthyPullback)
+                conf -= 0.06;
+
+            if (deepPullback)
+                conf -= 0.12;
+
+            if (strongTrend)
+                conf = Math.Max(conf, StrongTrendFloor + 0.08 * cleanlinessScore + 0.06 * locationScore);
+
+            return Clamp01(conf);
+        }
+
+        private static double ComputeAtrSlope(IndicatorDataSeries series, int index, int lookback, double atr)
+        {
+            if (series == null || atr <= 0 || index - lookback < 0)
+                return 0;
+
+            return (series[index] - series[index - lookback]) / atr;
         }
 
         private void SetState(HtfBiasSnapshot snap, HtfBiasState st, TradeDirection dir, string reason, double conf01)
