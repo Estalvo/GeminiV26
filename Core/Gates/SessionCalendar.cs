@@ -18,7 +18,8 @@ public class SessionCalendar
         return utc >= start && utc < end;
     }
 
-    public TimeSpan GetLondonOpenUtc(DateTime utc) => IsEuDst(utc) ? new TimeSpan(7, 0, 0) : new TimeSpan(8, 0, 0);
+    public TimeSpan GetLondonOpenUtc(DateTime utc)
+        => new TimeSpan(7, 0, 0);
 
     public TimeSpan GetLondonCloseUtc(DateTime utc) => IsEuDst(utc) ? new TimeSpan(15, 0, 0) : new TimeSpan(16, 0, 0);
 
