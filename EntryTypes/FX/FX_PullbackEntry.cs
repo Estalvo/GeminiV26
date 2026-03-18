@@ -15,7 +15,6 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_Pullback;
 
-        // Keep your existing baseline. If you want fewer trades, raise this (e.g. 40–45).
         private const int MIN_SCORE = 35;
         private const int ATR_REL_LOOKBACK = 20;
         private const double ATR_REL_EXPANSION_FACTOR = 0.85;
@@ -45,16 +44,23 @@ namespace GeminiV26.EntryTypes.FX
             bool longValid = longEval.IsValid;
             bool shortValid = shortEval.IsValid;
 
+            // FIX #1:
+            // Ha mindkét oldal invalid, NEM gyártunk fallbackből tradelhető setupot.
+            // Diagnosztikai score marad, de no direction + invalid.
             if (!longValid && !shortValid)
             {
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_WEAK long={longEval.Score} short={shortEval.Score}");
+                int bestScore = Math.Max(longEval.Score, shortEval.Score);
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_INVALID long={longEval.Score} short={shortEval.Score}");
 
-                var fallback = longEval.Score >= shortEval.Score ? longEval : shortEval;
-
-                fallback.IsValid = true;
-                fallback.Reason = "PB_WEAK_BOTH";
-
-                return fallback;
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = EntryType.FX_Pullback,
+                    Direction = TradeDirection.None,
+                    Score = bestScore,
+                    IsValid = false,
+                    Reason = "PB_BOTH_INVALID"
+                };
             }
 
             if (longValid && shortValid)
@@ -69,7 +75,6 @@ namespace GeminiV26.EntryTypes.FX
                 return winner;
             }
 
-            // 👉 EZ HIÁNYZOTT
             return longValid ? longEval : shortEval;
         }
 
@@ -79,9 +84,9 @@ namespace GeminiV26.EntryTypes.FX
             SessionMatrixConfig matrix,
             TradeDirection dir)
         {
-            int score = 60;   // baseline
-            int penalty = 0;  // accumulated penalty (budgeted)
-            int penaltyBudget = 14;   // FlagEntry-style penalty budget
+            int score = 60;
+            int penalty = 0;
+            int penaltyBudget = 14;
 
             if (ctx == null || !ctx.IsReady)
                 return Block(ctx, dir, "CTX_NOT_READY", score);
@@ -105,9 +110,6 @@ namespace GeminiV26.EntryTypes.FX
             if (matrix.MinEmaDistance > 0 && System.Math.Abs(ctx.Ema8_M5 - ctx.Ema21_M5) < matrix.MinEmaDistance)
                 return Block(ctx, dir, "SESSION_MATRIX_EMA_DISTANCE_TOO_LOW", score);
 
-            // =========================
-            // SIDE-SPECIFIC DIRECTIONAL STATE
-            // =========================
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 :
                 dir == TradeDirection.Short ? ctx.HasImpulseShort_M5 :
@@ -130,18 +132,13 @@ namespace GeminiV26.EntryTypes.FX
 
             int barsSinceImpulse =
                 dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
-                ctx.BarsSinceImpulseShort_M5;                
+                ctx.BarsSinceImpulseShort_M5;
 
-            // HARD GATE: nincs pullback → nincs trade
             if (!hasPullback)
             {
                 return Block(ctx, dir, "NO_PULLBACK_STRUCTURE", score);
             }
 
-            // =========================
-            // ADX HARD / SOFT (copied style from FlagEntry)
-            // =========================
-            // Asia is noisier -> allow slightly lower ADX, but still hard-gate.
             double dynamicMinAdx = (ctx.Session == FxSession.Asia) ? 18.0 : 20.0;
             dynamicMinAdx = System.Math.Max(dynamicMinAdx, matrix.MinAdx);
 
@@ -157,10 +154,6 @@ namespace GeminiV26.EntryTypes.FX
                 ApplyPenalty(ref score, ref penalty, 5, penaltyBudget, ctx, "ADX_EXHAUST_SOFT");
             }
 
-            // =========================
-            // IMPULSE QUALITY (HARD-ish)
-            // =========================
-            // No impulse -> most pullbacks are just chop. FlagEntry is strict; we mimic that.
             if (!hasImpulse)
             {
                 if (ctx.Session == FxSession.Asia)
@@ -172,7 +165,7 @@ namespace GeminiV26.EntryTypes.FX
                 ApplyPenalty(ref score, ref penalty, 8, penaltyBudget, ctx, "NO_IMPULSE");
             }
             else
-            {                
+            {
                 if (barsSinceImpulse <= 2)
                     score += 6;
                 else if (barsSinceImpulse <= 5)
@@ -181,7 +174,6 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "IMPULSE_TOO_OLD");
             }
 
-            // HARD STRUCTURE CHECK (ne éljen túl 2 gyengeséget)
             int weakCount = 0;
 
             if (!ctx.PullbackTouchedEma21_M5) weakCount++;
@@ -204,9 +196,6 @@ namespace GeminiV26.EntryTypes.FX
                 return Block(ctx, dir, "PB_WEAK_STRUCTURE", score);
             }
 
-            // =========================
-            // PULLBACK QUALITY (mostly HARD)
-            // =========================
             if (!ctx.PullbackTouchedEma21_M5)
                 ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "PB_NO_EMA21_TOUCH");
 
@@ -266,16 +255,12 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
             }
 
-            // Depth gates (keep your original hard extreme)
             if (pullbackDepth > 1.6)
                 return Block(ctx, dir, "PB_TOO_DEEP_EXTREME", score);
 
             if (pullbackDepth > 1.0)
                 ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "PB_TOO_DEEP");
 
-            // =========================
-            // ENERGY MODEL (keep, but budgeted)
-            // =========================
             int fuel = 0;
 
             if (ctx.Adx_M5 >= 25) fuel += 4;
@@ -291,7 +276,6 @@ namespace GeminiV26.EntryTypes.FX
 
             score += fuel;
 
-            // Hard exhaustion (same as your original)
             if (ctx.Adx_M5 > 45 &&
                 ctx.AdxSlope_M5 <= 0 &&
                 !ctx.IsAtrExpanding_M5)
@@ -299,9 +283,6 @@ namespace GeminiV26.EntryTypes.FX
                 return Block(ctx, dir, "TREND_EXHAUSTION", score);
             }
 
-            // =========================
-            // SESSION MODULATION
-            // =========================
             if (ctx.Session == FxSession.Asia)
             {
                 ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "ASIA_SOFT");
@@ -313,9 +294,6 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyPenalty(ref score, ref penalty, 6, penaltyBudget, ctx, "NY_NO_M1_TRIGGER");
             }
 
-            // =========================
-            // FLAG COLLISION (SOFT BUT STRONG)
-            // =========================
             if (hasFlag)
             {
                 int flagPenalty = hasDirectionalM1Trigger ? 6 : 10;
@@ -334,9 +312,6 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfAllowedDirection != dir;
 
-            // =========================
-            // HTF SOFT
-            // =========================
             if (htfMismatch)
             {
                 double conf = ctx.FxHtfConfidence01;
@@ -350,19 +325,13 @@ namespace GeminiV26.EntryTypes.FX
                 }
             }
 
-            // =========================
-            // PENALTY BUDGET GUARD
-            // =========================
             if (penaltyBudget > 0 && penalty > penaltyBudget)
             {
                 int overflow = penalty - penaltyBudget;
-                score -= overflow; // extra büntetés, de NEM blokkol
+                score -= overflow;
                 ctx?.Log?.Invoke($"[FX_PullbackEntry] SOFT_BUDGET_OVERFLOW -{overflow} | score={score}");
             }
 
-            // =========================
-            // FINAL SCORE CHECK
-            // =========================
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
 
             if (score < MIN_SCORE)
@@ -412,8 +381,24 @@ namespace GeminiV26.EntryTypes.FX
             penalty += amount;
             score -= amount;
 
-            // FlagEntry-style debug line (no Console; keep it safe for cTrader compile)
             ctx?.Log?.Invoke($"[FX_PullbackEntry] PEN {tag} -{amount} | score={score} pen={penalty}/{budget}");
+        }
+
+        private EntryEvaluation Block(EntryContext ctx, TradeDirection dir, string reason, int score)
+        {
+            ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK {reason} dir={dir} | score={score}");
+
+            // FIX #2:
+            // invalid eval soha ne hordozzon végrehajtható irányt
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.FX_Pullback,
+                Direction = TradeDirection.None,
+                Score = score,
+                IsValid = false,
+                Reason = reason
+            };
         }
 
         private static double ComputeAtrAverage(EntryContext ctx, int lookback)
@@ -436,20 +421,6 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             return trSum / lookback;
-        }
-
-        private EntryEvaluation Block(EntryContext ctx, TradeDirection dir, string reason, int score)
-        {
-            ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK {reason} dir={dir} | score={score}");
-            return new EntryEvaluation
-            {
-                Symbol = ctx?.Symbol,
-                Type = EntryType.FX_Pullback,
-                Direction = dir,
-                Score = score,
-                IsValid = false,
-                Reason = reason
-            };
         }
     }
 }
