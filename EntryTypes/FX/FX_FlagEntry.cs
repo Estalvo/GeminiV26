@@ -342,10 +342,13 @@ namespace GeminiV26.EntryTypes.FX
             double lo = 0;
             double rangeAtr = 0;
 
-            if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out hi, out lo, out rangeAtr))
+            if (!TryComputeSimpleFlag(ctx, tuning.FlagBars, out hi, out lo, out rangeAtr, out bool hasValidRange))
                 return Invalid(ctx, flagDir, "FLAG_FAIL", score);
 
-            ctx.Log?.Invoke($"[FX_FLAG RANGE] candDir={flagDir} bars={tuning.FlagBars} rangeATR={rangeAtr:F2}");
+            if (!hasValidRange)
+                ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
+
+            ctx.Log?.Invoke($"[FX_FLAG RANGE] candDir={flagDir} bars={tuning.FlagBars} rangeATR={rangeAtr:F2} hasRange={hasValidRange}");
 
             double maxFlagAtr = tuning.MaxFlagAtrMult;
             maxFlagAtr += 0.10;
@@ -355,12 +358,23 @@ namespace GeminiV26.EntryTypes.FX
 
             ctx.Log?.Invoke($"[FX_FLAG RANGE] candDir={flagDir} maxAllowed={maxFlagAtr:F2}");
 
-            if (rangeAtr > maxFlagAtr)
-                return Invalid(ctx, flagDir, "FLAG_TOO_WIDE", score);
+            if (rangeAtr > 0)
+            {
+                if (rangeAtr > maxFlagAtr)
+                {
+                    ApplyPenalty(4);
+                    minBoost += 1;
+                    ctx.Log?.Invoke($"[FX_FLAG RANGE] candDir={flagDir} softWide rangeATR={rangeAtr:F2} maxAllowed={maxFlagAtr:F2}");
+                }
 
-            if (rangeAtr < 0.6) ApplyReward(2);
-            else if (rangeAtr < 0.9) ApplyReward(1);
-            else ApplyPenalty(2);
+                if (rangeAtr < 0.6) ApplyReward(2);
+                else if (rangeAtr < 0.9) ApplyReward(1);
+                else ApplyPenalty(2);
+            }
+            else
+            {
+                ApplyPenalty(2);
+            }
 
             // =====================================================
             // BREAKOUT CONFIRMATION (ENTRY TRIGGER) – DIRECTIONAL
@@ -424,13 +438,13 @@ namespace GeminiV26.EntryTypes.FX
 
             bool slopeRewarded = false;
 
-            if (flagDir == TradeDirection.Long)
+            if (hasValidRange && flagDir == TradeDirection.Long)
             {
                 if (flagSlopeAtr > maxDrift)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_UPWARD_LONG", score);
+                    ApplyPenalty(4);
 
                 if (flagSlopeAtr < -MaxSteep)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_DOWN_LONG", score);
+                    ApplyPenalty(4);
 
                 if (flagSlopeAtr >= -0.35 && flagSlopeAtr <= 0.10)
                 {
@@ -438,13 +452,13 @@ namespace GeminiV26.EntryTypes.FX
                     slopeRewarded = true;
                 }
             }
-            else if (flagDir == TradeDirection.Short)
+            else if (hasValidRange && flagDir == TradeDirection.Short)
             {
                 if (flagSlopeAtr < -maxDrift)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_DOWNWARD_SHORT", score);
+                    ApplyPenalty(4);
 
                 if (flagSlopeAtr > MaxSteep)
-                    return Invalid(ctx, flagDir, "FLAG_TOO_STEEP_UP_SHORT", score);
+                    ApplyPenalty(4);
 
                 if (flagSlopeAtr >= -0.10 && flagSlopeAtr <= 0.35)
                 {
@@ -467,8 +481,8 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             double buffer = ctx.AtrM5 * tuning.BreakoutAtrBuffer;
 
-            bool brokeUp = lastClose > hi + buffer;
-            bool brokeDown = lastClose < lo - buffer;
+            bool brokeUp = hasValidRange && lastClose > hi + buffer;
+            bool brokeDown = hasValidRange && lastClose < lo - buffer;
 
             TradeDirection m5BreakoutDir = TradeDirection.None;
             if (brokeUp && !brokeDown) m5BreakoutDir = TradeDirection.Long;
@@ -643,6 +657,7 @@ namespace GeminiV26.EntryTypes.FX
 
             // EARLY ENTRY RETEST GUARD (use flagDir + hi/lo)
             bool needsRetestGuard =
+                hasValidRange &&
                 !breakout &&
                 !ctx.HasReactionCandle_M5 &&
                 !lastClosesInFlagDir
@@ -913,7 +928,7 @@ namespace GeminiV26.EntryTypes.FX
 
             // ✅ IMPORTANT: NO HARD GATE on ctx.TrendDirection anymore
 
-            return Valid(ctx, flagDir, score, rangeAtr, $"FX_FLAG_V2_{ctx.Session}", flagDirReason, hi, lo, flagSlopeAtr, barsSinceBreak);
+            return Valid(ctx, flagDir, score, rangeAtr, $"FX_FLAG_V2_{ctx.Session}", flagDirReason, hi, lo, flagSlopeAtr, barsSinceBreak, hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN");
         }
 
         // =====================================================
@@ -925,10 +940,12 @@ namespace GeminiV26.EntryTypes.FX
             int bars,
             out double hi,
             out double lo,
-            out double rangeAtr)
+            out double rangeAtr,
+            out bool hasValidRange)
         {
             hi = double.MinValue;
             lo = double.MaxValue;
+            hasValidRange = false;
 
             if (ctx.M5 == null || ctx.M5.Count < bars + 3)
             {
@@ -952,8 +969,11 @@ namespace GeminiV26.EntryTypes.FX
                 lo = Math.Min(lo, bar.Low);
             }
 
-            rangeAtr = (hi - lo) / ctx.AtrM5;
-            return hi > lo;
+            hasValidRange = hi > lo && hi > 0 && lo > 0;
+            rangeAtr = hasValidRange && ctx.AtrM5 > 0
+                ? (hi - lo) / ctx.AtrM5
+                : 0;
+            return true;
         }
 
         private static double GetImpulseQuality(EntryContext ctx, int lookback)
@@ -986,7 +1006,8 @@ namespace GeminiV26.EntryTypes.FX
             double hi,
             double lo,
             double flagSlopeAtr,
-            int barsSinceBreak)
+            int barsSinceBreak,
+            string rangeState)
             => new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
@@ -997,7 +1018,7 @@ namespace GeminiV26.EntryTypes.FX
                 Reason =
                     $"{tag} score={score} rATR={rangeAtr:F2} " +
                     $"flagDir={flagDir}({flagDirReason}) trendDir={ctx.TrendDirection} " +
-                    $"hi={hi:F5} lo={lo:F5} slopeATR={flagSlopeAtr:F2} bSinceBreak={barsSinceBreak}"
+                    $"hi={hi:F5} lo={lo:F5} slopeATR={flagSlopeAtr:F2} bSinceBreak={barsSinceBreak} rangeState={rangeState}"
             };
 
         private static EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)

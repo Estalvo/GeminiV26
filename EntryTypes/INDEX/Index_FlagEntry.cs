@@ -245,49 +245,68 @@ namespace GeminiV26.EntryTypes.INDEX
                 lo = Math.Min(lo, bars[i].Low);
             }
 
-            double flagRange = hi - lo;
-            double flagAtr = flagRange / ctx.AtrM5;
+            bool hasValidRange = hi > lo && hi > 0 && lo > 0;
+
+            if (!hasValidRange)
+                ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
+
+            double flagRange = hasValidRange ? hi - lo : 0;
+            double flagAtr = hasValidRange && ctx.AtrM5 > 0
+                ? flagRange / ctx.AtrM5
+                : 0;
 
             ctx.Log?.Invoke(
-                $"[IDX_FLAG][RANGE] dir={dir} flagBars={flagBars} flagATR={flagAtr:F2} maxAllowed={maxFlagRangeAtr:F2}"
+                $"[IDX_FLAG][RANGE] dir={dir} flagBars={flagBars} flagATR={flagAtr:F2} maxAllowed={maxFlagRangeAtr:F2} hasRange={hasValidRange}"
             );
 
-            if (flagAtr > maxFlagRangeAtr)
-                return Reject(ctx, $"FLAG_TOO_WIDE({flagAtr:F2}>{maxFlagRangeAtr:F2})", score, dir);
+            if (flagAtr > 0)
+            {
+                if (flagAtr > maxFlagRangeAtr)
+                    ApplyPenalty(4);
 
-            if (flagAtr < 0.45)
-                ApplyReward(2);
-            else if (flagAtr > 1.0)
-                ApplyPenalty(3);
+                if (flagAtr < 0.45)
+                    ApplyReward(2);
+                else if (flagAtr > 1.0)
+                    ApplyPenalty(3);
+            }
+            else
+            {
+                ApplyPenalty(2);
+            }
 
             // =====================================================
             // FLAG SLOPE
             // =====================================================
             double firstOpen = bars[flagStart].Open;
             double lastFlagClose = bars[flagEnd].Close;
-            double flagSlopeAtr = (lastFlagClose - firstOpen) / ctx.AtrM5;
+            double flagSlopeAtr = ctx.AtrM5 > 0
+                ? (lastFlagClose - firstOpen) / ctx.AtrM5
+                : 0;
 
-            if (dir == TradeDirection.Long)
+            if (hasValidRange)
             {
-                if (flagSlopeAtr > MaxSameDirSlopeAtr)
-                    return Reject(ctx, $"FLAG_SLOPE_WRONG_LONG({flagSlopeAtr:F2})", score, dir);
+                if (dir == TradeDirection.Long)
+                {
+                    if (flagSlopeAtr > MaxSameDirSlopeAtr)
+                        ApplyPenalty(4);
 
-                if (flagSlopeAtr < -MaxOpposingSlopeAtr)
-                    return Reject(ctx, $"FLAG_TOO_STEEP_LONG({flagSlopeAtr:F2})", score, dir);
+                    if (flagSlopeAtr < -MaxOpposingSlopeAtr)
+                        ApplyPenalty(4);
 
-                if (flagSlopeAtr >= -0.25 && flagSlopeAtr <= 0.05)
-                    ApplyReward(3);
-            }
-            else
-            {
-                if (flagSlopeAtr < -MaxSameDirSlopeAtr)
-                    return Reject(ctx, $"FLAG_SLOPE_WRONG_SHORT({flagSlopeAtr:F2})", score, dir);
+                    if (flagSlopeAtr >= -0.25 && flagSlopeAtr <= 0.05)
+                        ApplyReward(3);
+                }
+                else
+                {
+                    if (flagSlopeAtr < -MaxSameDirSlopeAtr)
+                        ApplyPenalty(4);
 
-                if (flagSlopeAtr > MaxOpposingSlopeAtr)
-                    return Reject(ctx, $"FLAG_TOO_STEEP_SHORT({flagSlopeAtr:F2})", score, dir);
+                    if (flagSlopeAtr > MaxOpposingSlopeAtr)
+                        ApplyPenalty(4);
 
-                if (flagSlopeAtr >= -0.05 && flagSlopeAtr <= 0.25)
-                    ApplyReward(3);
+                    if (flagSlopeAtr >= -0.05 && flagSlopeAtr <= 0.25)
+                        ApplyReward(3);
+                }
             }
 
             // =====================================================
@@ -316,25 +335,25 @@ namespace GeminiV26.EntryTypes.INDEX
                 dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
                 dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
                 ctx.IsValidFlagStructure_M5;
-                
+
             if (dir == TradeDirection.Long)
             {
                 structureOk =
                     ctx.BrokeLastSwingHigh_M5 ||
-                    (!requireStructure && close > ctx.Ema21_M5 && hasFlag);
+                    (!requireStructure && close > ctx.Ema21_M5);
             }
             else
             {
                 structureOk =
                     ctx.BrokeLastSwingLow_M5 ||
-                    (!requireStructure && close < ctx.Ema21_M5 && hasFlag);
+                    (!requireStructure && close < ctx.Ema21_M5);
             }
 
             if (!structureOk)
-                return Reject(ctx, "NO_CONTINUATION_STRUCTURE", score, dir);
+                ApplyPenalty(4);
 
             if (!hasFlag)
-                ApplyPenalty(6);
+                ApplyPenalty(2);
             else
                 ApplyReward(3);
 
@@ -342,23 +361,43 @@ namespace GeminiV26.EntryTypes.INDEX
             // BREAKOUT
             // =====================================================
             double buffer = ctx.AtrM5 * breakoutBufferAtr;
-            bool bullBreak = close > hi + buffer;
-            bool bearBreak = close < lo - buffer;
+            bool bullBreak = hasValidRange && close > hi + buffer;
+            bool bearBreak = hasValidRange && close < lo - buffer;
+
+            bool breakoutSignal =
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir) ||
+                ctx.RangeBreakDirection == dir ||
+                (dir == TradeDirection.Long
+                    ? (ctx.FlagBreakoutUp || ctx.FlagBreakoutUpConfirmed)
+                    : (ctx.FlagBreakoutDown || ctx.FlagBreakoutDownConfirmed));
 
             bool breakoutConfirmed =
-                (dir == TradeDirection.Long && bullBreak) ||
-                (dir == TradeDirection.Short && bearBreak);
+                (dir == TradeDirection.Long && (bullBreak || breakoutSignal)) ||
+                (dir == TradeDirection.Short && (bearBreak || breakoutSignal));
 
             if (!breakoutConfirmed)
                 return Reject(ctx, "NO_FLAG_BREAKOUT", score, dir);
 
+            double breakDist = 0;
+
+            if (hasValidRange)
+            {
+                breakDist =
+                    dir == TradeDirection.Long
+                        ? Math.Max(0, close - hi)
+                        : Math.Max(0, lo - close);
+            }
+
             double follow = ctx.AtrM5 * 0.12;
 
-            if (dir == TradeDirection.Long && close < hi + follow)
-                return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+            if (hasValidRange)
+            {
+                if (dir == TradeDirection.Long && close < hi + follow)
+                    return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
 
-            if (dir == TradeDirection.Short && close > lo - follow)
-                return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+                if (dir == TradeDirection.Short && close > lo - follow)
+                    return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+            }
 
             // =====================================================
             // BREAKOUT BAR QUALITY
@@ -444,7 +483,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][FINAL] dir={dir} score={score} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +
-                $"emaDistATR={distFromEmaAtr:F2} fatigue={fatigueCount}/{fatigueThreshold}"
+                $"emaDistATR={distFromEmaAtr:F2} fatigue={fatigueCount}/{fatigueThreshold} hasRange={hasValidRange}"
             );
 
 
@@ -461,7 +500,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 Reason =
                     $"IDX_FLAG_PRO dir={dir} score={score} mult={scoreMultiplier:F2} " +
                     $"fatigue={fatigueCount}/{fatigueThreshold} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +
-                    $"emaATR={distFromEmaAtr:F2}"
+                    $"emaATR={distFromEmaAtr:F2} rangeState={(hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN")}"
             };
         }
 

@@ -4,7 +4,7 @@
 //
 // Alapelv:
 // - Flag setup csak VALÓDI M5 impulse UTÁN értelmezhető
-// - Flag struktúra HARD feltétel
+// - Flag struktúra opcionális minőségi jel
 // - Trend + impulse irány dönti el az irányt
 // - M1 breakout trigger HARD belépési pecsét
 // - Score = minőség, nem létezési feltétel
@@ -70,15 +70,17 @@ namespace GeminiV26.EntryTypes
             score += 25;
 
             // =========================================================
-            // 2️⃣ FLAG STRUKTÚRA – HARD (M5)
+            // 2️⃣ FLAG STRUKTÚRA – SOFT (M5)
             // =========================================================
             if (!ctx.IsValidFlagStructure_M5)
             {
-                eval.Reason += "NoFlagStructure;";
-                return eval;
+                eval.Reason += "FLAG_WEAK_OR_FORMING;";
+                score -= 2;
             }
-
-            score += 25;
+            else
+            {
+                score += 25;
+            }
 
             // =========================================================
             // 3️⃣ TREND + IMPULSE ALIGNMENT – HARD

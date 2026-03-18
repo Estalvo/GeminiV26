@@ -1,7 +1,6 @@
 ﻿using cAlgo.API;
 using GeminiV26.Core.Entry;
 using System;
-using System.Collections.Generic;
 
 namespace GeminiV26.EntryTypes.Crypto
 {
@@ -37,9 +36,6 @@ namespace GeminiV26.EntryTypes.Crypto
             int lastClosed = bars.Count - 2;
             int flagEnd = lastClosed - 1;
 
-            // =============================
-            // Dynamic window (tightest)
-            // =============================
             int bestStart = -1;
             double bestRange = double.MaxValue;
 
@@ -75,7 +71,6 @@ namespace GeminiV26.EntryTypes.Crypto
 
             int flagStart = bestStart;
 
-            // breakout bounds wick alapon
             double hi = double.MinValue;
             double lo = double.MaxValue;
 
@@ -85,25 +80,18 @@ namespace GeminiV26.EntryTypes.Crypto
                 lo = Math.Min(lo, bars[i].Low);
             }
 
-            // width body alapon
-            double range = bestRange;
-            double rangeAtr = range / ctx.AtrM5;
+            bool hasValidRange = hi > lo && hi > 0 && lo > 0;
+            if (!hasValidRange)
+                ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
 
-            // width guard
+            double rangeAtr = hasValidRange && ctx.AtrM5 > 0
+                ? (hi - lo) / ctx.AtrM5
+                : 0;
+
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
 
-            if (rangeAtr < 0.15)
-                return Invalid(ctx, "FLAG_TOO_TIGHT");
-
-            if (profile != null && rangeAtr > profile.MaxFlagAtrMult)
-                return Invalid(ctx, "FLAG_TOO_WIDE");
-
-            
-            // =============================
-            // Evaluate BOTH directions
-            // =============================
-            var longEval = EvaluateSide(ctx, TradeDirection.Long, hi, lo, rangeAtr, lastClosed);
-            var shortEval = EvaluateSide(ctx, TradeDirection.Short, hi, lo, rangeAtr, lastClosed);
+            var longEval = EvaluateSide(ctx, TradeDirection.Long, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
 
             bool buyValid = longEval.IsValid;
             bool sellValid = shortEval.IsValid;
@@ -125,17 +113,16 @@ namespace GeminiV26.EntryTypes.Crypto
             TradeDirection dir,
             double hi,
             double lo,
+            bool hasValidRange,
             double rangeAtr,
-            int lastIndex)
+            int lastIndex,
+            double maxFlagAtr)
         {
             var bars = ctx.M5;
             var bar = bars[lastIndex];
 
             int score = 0;
 
-            // =============================
-            // Impulse freshness (crypto continuation)
-            // =============================
             if (!ctx.HasImpulse_M5)
             {
                 score -= 6;
@@ -145,9 +132,6 @@ namespace GeminiV26.EntryTypes.Crypto
                 score -= 4;
             }
 
-            // =============================
-            // Compression (soft)
-            // =============================
             bool compression =
                 ctx.AtrSlope_M5 <= 0.30 &&
                 ctx.AdxSlope_M5 <= 1.5;
@@ -155,17 +139,43 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!compression)
                 score -= 6;
 
-            // =============================
-            // Volatility
-            // =============================
+            if (rangeAtr > 0)
+            {
+                if (rangeAtr <= 0.8)
+                {
+                    score += 3;
+                }
+                else if (rangeAtr > 1.2)
+                {
+                    score -= 3;
+                }
+
+                if (rangeAtr < 0.15)
+                    score -= 3;
+
+                if (maxFlagAtr > 0 && rangeAtr > maxFlagAtr)
+                    score -= 4;
+            }
+            else
+            {
+                score -= 2;
+            }
+
+            bool hasFlag =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
+                ctx.IsValidFlagStructure_M5;
+
+            string flagState = hasFlag ? "OK" : "FLAG_WEAK_OR_FORMING";
+
+            if (!hasFlag)
+                score -= 2;
+
             if (ctx.IsVolatilityAcceptable_Crypto)
                 score += 10;
             else
                 score -= 10;
 
-            // =============================
-            // EMA distance
-            // =============================
             double close = bar.Close;
             double open = bar.Open;
 
@@ -176,23 +186,22 @@ namespace GeminiV26.EntryTypes.Crypto
             else if (distFromEma > ctx.AtrM5 * MaxDistFromEmaAtr)
                 score -= 8;
 
-            // =============================
-            // Breakout logic
-            // =============================
             double buf = ctx.AtrM5 * BreakBufferAtr;
 
             bool bullBreak =
+                hasValidRange &&
                 close > hi + buf &&
                 ctx.HasImpulse_M5 &&
                 ctx.BarsSinceImpulse_M5 <= 6;
 
             bool bearBreak =
+                hasValidRange &&
                 close < lo - buf &&
                 ctx.HasImpulse_M5 &&
                 ctx.BarsSinceImpulse_M5 <= 6;
 
-            // --- NEW: reclaim after breakout ---
             bool bullReclaim =
+                hasValidRange &&
                 close > hi &&
                 ctx.LastClosedBarInTrendDirection &&
                 ctx.HasReactionCandle_M5 &&
@@ -200,28 +209,32 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.BarsSinceImpulse_M5 <= 6;
 
             bool bearReclaim =
+                hasValidRange &&
                 close < lo &&
                 ctx.LastClosedBarInTrendDirection &&
                 ctx.HasReactionCandle_M5 &&
                 ctx.HasImpulse_M5 &&
                 ctx.BarsSinceImpulse_M5 <= 6;
 
-            bool longValid = bullBreak || bullReclaim;
-            bool shortValid = bearBreak || bearReclaim;
+            bool breakoutSignal =
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir) ||
+                ctx.RangeBreakDirection == dir ||
+                (dir == TradeDirection.Long
+                    ? (ctx.FlagBreakoutUp || ctx.FlagBreakoutUpConfirmed)
+                    : (ctx.FlagBreakoutDown || ctx.FlagBreakoutDownConfirmed));
+
+            bool longValid = bullBreak || bullReclaim || (dir == TradeDirection.Long && breakoutSignal);
+            bool shortValid = bearBreak || bearReclaim || (dir == TradeDirection.Short && breakoutSignal);
 
             if (dir == TradeDirection.Long && !longValid)
                 return Invalid(ctx, "NO_BREAK_LONG");
 
             if (dir == TradeDirection.Short && !shortValid)
                 return Invalid(ctx, "NO_BREAK_SHORT");
-                
-            // Candle quality
+
             if (dir == TradeDirection.Long && close > open) score += 6;
             if (dir == TradeDirection.Short && close < open) score += 6;
 
-            // =============================
-            // HTF soft penalty
-            // =============================
             if (ctx.TrendDirection != TradeDirection.None &&
                 dir != ctx.TrendDirection)
             {
@@ -233,8 +246,6 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (missingImpulse)
             {
-                score = score; //Math.Max(0, score - 6); csak 7végére 0!
-
                 ctx.Log?.Invoke(
                     "[FLAG] Missing impulse context" +
                     $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
@@ -250,7 +261,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 Direction = dir,
                 Score = score,
                 IsValid = true,
-                Reason = $"CR_FLAG_V2 dir={dir} score={score} rangeATR={rangeAtr:F2}"
+                Reason = $"CR_FLAG_V2 dir={dir} score={score} rangeATR={rangeAtr:F2} rangeState={(hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN")} flagState={flagState}"
             };
         }
 
