@@ -55,14 +55,12 @@ namespace GeminiV26.EntryTypes.METAL
 
             ctx.Log?.Invoke($"[FLAG RANGE CHECK] hi={hi} lo={lo} valid={(hi > lo)}");
             
-            ctx.Log?.Invoke("[FLAG ERROR] INVALID RANGE → rejecting flag");
-
             bool hasValidRange = hi > lo && hi > 0 && lo > 0;
 
+            ctx.Log?.Invoke($"[FLAG RANGE CHECK] hi={hi} lo={lo} valid={hasValidRange}");
+
             if (!hasValidRange)
-            {
                 ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
-            }
 
             double rangeAtr = hasValidRange && ctx.AtrM5 > 0
                 ? (hi - lo) / ctx.AtrM5
@@ -72,12 +70,15 @@ namespace GeminiV26.EntryTypes.METAL
                 return Invalid(ctx, "FLAG_TOO_WIDE_HARD");
               
             // ===== spike filter =====
-            bool wickBoth = bar.High >= hi && bar.Low <= lo;
-            bool closeUp = bar.Close > hi;
-            bool closeDn = bar.Close < lo;
+            if (hasValidRange)
+            {
+                bool wickBoth = bar.High >= hi && bar.Low <= lo;
+                bool closeUp = bar.Close > hi;
+                bool closeDn = bar.Close < lo;
 
-            if (wickBoth && !closeUp && !closeDn)
-                return Invalid(ctx, "AMBIGUOUS_SPIKE");
+                if (wickBoth && !closeUp && !closeDn)
+                    return Invalid(ctx, "AMBIGUOUS_SPIKE");
+            }
 
             var buy = EvaluateSide(TradeDirection.Long, ctx, tuning, hi, lo, rangeAtr, bar, last);
             var sell = EvaluateSide(TradeDirection.Short, ctx, tuning, hi, lo, rangeAtr, bar, last);
@@ -118,20 +119,28 @@ namespace GeminiV26.EntryTypes.METAL
 
             var reasons = new List<string>();
 
-            if (rangeAtr <= 0.8)
+            if (rangeAtr > 0)
             {
-                score += 6;
-                reasons.Add("FLAG_TIGHT");
-            }
-            else if (rangeAtr <= 1.1)
-            {
-                score += 3;
-                reasons.Add("FLAG_OK");
+                if (rangeAtr <= 0.8)
+                {
+                    score += 6;
+                    reasons.Add("FLAG_TIGHT");
+                }
+                else if (rangeAtr <= 1.1)
+                {
+                    score += 3;
+                    reasons.Add("FLAG_OK");
+                }
+                else
+                {
+                    score -= 6;
+                    reasons.Add("FLAG_LOOSE");
+                }
             }
             else
             {
-                score -= 6;
-                reasons.Add("FLAG_LOOSE");
+                reasons.Add("FLAG_RANGE_UNKNOWN");
+                score -= 1;
             }
 
             // ===== IMPULSE (2-sided) =====
@@ -194,10 +203,15 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.FlagBreakoutUp
                     : ctx.FlagBreakoutDown;
 
-            double breakDist =
-                dir == TradeDirection.Long
-                    ? Math.Max(0, bar.Close - hi)
-                    : Math.Max(0, lo - bar.Close);
+            double breakDist = 0;
+
+            if (hi > lo && hi > 0 && lo > 0)
+            {
+                breakDist =
+                    dir == TradeDirection.Long
+                        ? Math.Max(0, bar.Close - hi)
+                        : Math.Max(0, lo - bar.Close);
+            }
 
             double breakAtr = ctx.AtrM5 > 0 ? breakDist / ctx.AtrM5 : 0;
 
@@ -212,14 +226,6 @@ namespace GeminiV26.EntryTypes.METAL
                 breakAtr >= 0.03 &&
                 bodyRatio >= 0.45 &&
                 ctx.LastClosedBarInTrendDirection;
-
-            bool breakoutPossible = true; // breakout a source of truth
-
-            if (!breakoutPossible)
-            {
-                reasons.Add("NO_FLAG_CONTEXT");
-                score -= 3;
-            }
 
             if (breakoutInstant && !breakoutConfirmed)
             {
