@@ -134,6 +134,26 @@ namespace GeminiV26.EntryTypes.FX
                 dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
                 ctx.BarsSinceImpulseShort_M5;
 
+            // === STRICT PULLBACK VALIDATION ===
+
+            // minimum depth
+            if (pullbackDepth < 0.5)
+            {
+                return Block(ctx, dir, "PB_TOO_SHALLOW", score);
+            }
+
+            // minimum bars
+            if (ctx.PullbackBars_M5 < 3)
+            {
+                return Block(ctx, dir, "PB_TOO_SHORT", score);
+            }
+
+            // EMA touch KÖTELEZŐ (ez volt a nagy hiba eddig)
+            if (!ctx.PullbackTouchedEma21_M5)
+            {
+                return Block(ctx, dir, "PB_NO_EMA21_TOUCH", score);
+            }
+
             if (!hasPullback)
             {
                 return Block(ctx, dir, "NO_PULLBACK_STRUCTURE", score);
@@ -312,6 +332,16 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfAllowedDirection != dir;
 
+            // === COUNTER-TREND STRICT FILTER ===
+            if (htfMismatch)
+            {
+                // ha trend ellen megyünk, legyen EXTRA szigor
+                if (pullbackDepth < 0.7 || !hasDirectionalM1Trigger)
+                {
+                    return Block(ctx, dir, "HTF_COUNTER_WEAK", score);
+                }
+            }
+
             if (htfMismatch)
             {
                 double conf = ctx.FxHtfConfidence01;
@@ -327,9 +357,8 @@ namespace GeminiV26.EntryTypes.FX
 
             if (penaltyBudget > 0 && penalty > penaltyBudget)
             {
-                int overflow = penalty - penaltyBudget;
-                score -= overflow;
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] SOFT_BUDGET_OVERFLOW -{overflow} | score={score}");
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK PENALTY_BUDGET_EXCEEDED {penalty}/{penaltyBudget}");
+                return Block(ctx, dir, "PB_TOO_WEAK", score);
             }
 
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
