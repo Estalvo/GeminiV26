@@ -47,8 +47,14 @@ namespace GeminiV26.EntryTypes.FX
 
             if (!longValid && !shortValid)
             {
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_INVALID long={longEval.Score} short={shortEval.Score}");
-                return Block(ctx, TradeDirection.None, "PB_BOTH_INVALID", Math.Max(longEval.Score, shortEval.Score));
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_WEAK long={longEval.Score} short={shortEval.Score}");
+
+                var fallback = longEval.Score >= shortEval.Score ? longEval : shortEval;
+
+                fallback.IsValid = true;
+                fallback.Reason = "PB_WEAK_BOTH";
+
+                return fallback;
             }
 
             if (longValid && shortValid)
@@ -348,7 +354,11 @@ namespace GeminiV26.EntryTypes.FX
             // PENALTY BUDGET GUARD
             // =========================
             if (penaltyBudget > 0 && penalty > penaltyBudget)
-                return Block(ctx, dir, $"PENALTY_BUDGET_EXCEEDED_{penalty}/{penaltyBudget}", score);
+            {
+                int overflow = penalty - penaltyBudget;
+                score -= overflow; // extra büntetés, de NEM blokkol
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] SOFT_BUDGET_OVERFLOW -{overflow} | score={score}");
+            }
 
             // =========================
             // FINAL SCORE CHECK
