@@ -56,19 +56,19 @@ namespace GeminiV26.Instruments.GER40
         {
             if (score >= 85)
             {
-                tp1R = 0.9;
+                tp1R = 0.5;
                 tp1Ratio = 0.30; // 70% runner
                 tp2R = 3.0;
             }
             else if (score >= 75)
             {
-                tp1R = 0.8;
+                tp1R = 0.45;
                 tp1Ratio = 0.40;
                 tp2R = 2.6;
             }
             else
             {
-                tp1R = 0.7;
+                tp1R = 0.4;
                 tp1Ratio = 0.50;
                 tp2R = 2.2;
             }

@@ -53,27 +53,27 @@ namespace GeminiV26.Instruments.USDJPY
 
             if (n < 0.40)
             {
-                tp1R = 0.30; tp1Ratio = 0.70;
+                tp1R = 0.40; tp1Ratio = 0.70;
                 tp2R = 0.80; tp2Ratio = 0.30;
                 return;
             }
 
             if (n < 0.65)
             {
-                tp1R = 0.35; tp1Ratio = 0.65;
+                tp1R = 0.45; tp1Ratio = 0.65;
                 tp2R = 1.00; tp2Ratio = 0.35;
                 return;
             }
 
             if (n < 0.85)
             {
-                tp1R = 0.40; tp1Ratio = 0.55;
+                tp1R = 0.45; tp1Ratio = 0.55;
                 tp2R = 1.40; tp2Ratio = 0.45;
                 return;
             }
 
             // prémium trend
-            tp1R = 0.45;
+            tp1R = 0.55;
             tp1Ratio = 0.45;
             tp2R = 1.80;
             tp2Ratio = 0.55;

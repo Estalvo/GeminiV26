@@ -66,7 +66,7 @@ namespace GeminiV26.Instruments.EURJPY
             // gyenge / bizonytalan
             if (n < 0.45)
             {
-                tp1R = 0.30;
+                tp1R = 0.40;
                 tp1Ratio = 0.70;
                 tp2R = 0.9;
                 tp2Ratio = 0.30;
@@ -76,7 +76,7 @@ namespace GeminiV26.Instruments.EURJPY
             // normál
             if (n < 0.70)
             {
-                tp1R = 0.35;
+                tp1R = 0.45;
                 tp1Ratio = 0.55;
                 tp2R = 1.1;
                 tp2Ratio = 0.45;

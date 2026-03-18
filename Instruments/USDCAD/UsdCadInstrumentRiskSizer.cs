@@ -61,8 +61,8 @@ namespace GeminiV26.Instruments.USDCAD
             out double tp2R,
             out double tp2Ratio)
         {
-            // AUDNZD: biztosabb TP1 – marad
-            tp1R = 0.3;
+            // USDCAD: biztosabb TP1 – marad
+            tp1R = 0.4;
 
             // =====================================================
             // TP1 RATIO – DINAMIKUS

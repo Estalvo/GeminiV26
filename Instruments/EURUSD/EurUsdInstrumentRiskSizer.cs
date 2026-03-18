@@ -64,7 +64,7 @@ namespace GeminiV26.Instruments.EURUSD
             double n = NormalizeScore(score);
 
             // FX: gyors biztosítás
-            tp1R = 0.40;
+            tp1R = 0.50;
 
             // FX: több partial zárás, főleg alacsonyabb score-nál
             // n=0  -> 0.72

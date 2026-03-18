@@ -66,7 +66,7 @@ namespace GeminiV26.Instruments.GBPJPY
             // gyenge / zajos
             if (n < 0.50)
             {
-                tp1R = 0.30;
+                tp1R = 0.40;
                 tp1Ratio = 0.70;
                 tp2R = 0.9;
                 tp2Ratio = 0.30;
@@ -76,7 +76,7 @@ namespace GeminiV26.Instruments.GBPJPY
             // normál
             if (n < 0.75)
             {
-                tp1R = 0.38;
+                tp1R = 0.45;
                 tp1Ratio = 0.55;
                 tp2R = 1.3;
                 tp2Ratio = 0.45;

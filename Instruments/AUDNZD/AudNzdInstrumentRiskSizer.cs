@@ -62,7 +62,7 @@ namespace GeminiV26.Instruments.AUDNZD
             out double tp2Ratio)
         {
             // AUDNZD: biztosabb TP1 – marad
-            tp1R = 0.3;
+            tp1R = 0.4;
 
             // =====================================================
             // TP1 RATIO – DINAMIKUS

@@ -60,19 +60,19 @@ namespace GeminiV26.Instruments.NAS100
 
             if (score >= 85)
             {
-                tp1R = 0.80;
+                tp1R = 0.55;
                 tp1Ratio = 0.50;
                 tp2R = 2.2;
             }
             else if (score >= 75)
             {
-                tp1R = 0.60;
+                tp1R = 0.50;
                 tp1Ratio = 0.55;
                 tp2R = 1.8;
             }
             else
             {
-                tp1R = 0.50;
+                tp1R = 0.40;
                 tp1Ratio = 0.60;
                 tp2R = 1.3;
             }
