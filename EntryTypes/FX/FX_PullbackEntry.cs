@@ -328,26 +328,20 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfAllowedDirection != dir;
 
-            // HARD GATE
-            if (htfMismatch)
-            {
-                return Block(ctx, dir, "NO_DIRECTION_ALIGNMENT", score);
-            }
-
             // =========================
             // HTF SOFT
             // =========================
-            if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                ctx.FxHtfAllowedDirection != dir)
+            if (htfMismatch)
             {
                 double conf = ctx.FxHtfConfidence01;
                 int htfPenalty = (int)(conf * 10);
 
                 ApplyPenalty(ref score, ref penalty, htfPenalty, penaltyBudget, ctx, "HTF_MISMATCH");
 
-                // If HTF is strong and local fuel weak -> block (same intent as original)
                 if (conf >= 0.75 && fuel < 3)
-                    return Block(ctx, dir, "HTF_DOMINANT_BLOCK", score);
+                {
+                    ApplyPenalty(ref score, ref penalty, 3, penaltyBudget, ctx, "HTF_STRONG_WEAK_LOCAL");
+                }
             }
 
             // =========================
