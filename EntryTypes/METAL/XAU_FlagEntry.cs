@@ -112,6 +112,7 @@ namespace GeminiV26.EntryTypes.METAL
             int score = (int)tuning.BaseScore;
             int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
+            double triggerScore = 0;
 
             var reasons = new List<string>();
 
@@ -318,6 +319,31 @@ namespace GeminiV26.EntryTypes.METAL
                 return InvalidDir(ctx, dir, "HIGHER_LOW", score);
 
             score += setupScore;
+
+            bool breakoutDetected = breakoutConfirmed || earlyBreakout;
+            bool strongCandle = strongBody;
+            bool followThrough = confirmedBreakout;
+
+            if (breakoutDetected)
+                triggerScore += 1;
+
+            if (strongCandle)
+                triggerScore += 1;
+
+            if (followThrough)
+                triggerScore += 2;
+
+            score += (int)Math.Round(triggerScore * 5);
+
+            if (triggerScore == 0)
+                score -= 15;
+
+            bool minimalTrigger = breakoutDetected || strongCandle;
+            if (!minimalTrigger)
+                score -= 10;
+
+            ctx.Log?.Invoke(
+                $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, minScore - 10);

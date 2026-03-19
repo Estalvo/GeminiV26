@@ -44,6 +44,7 @@ namespace GeminiV26.EntryTypes.FX
         {
             int score = 54;   // base score aligned with FlagEntry universe
             int setupScore = 0;
+            double triggerScore = 0;
 
             ctx.Log?.Invoke(
                 $"[FX_MICRO START] sym={ctx.Symbol} dir={dir} " +
@@ -125,9 +126,6 @@ namespace GeminiV26.EntryTypes.FX
                 breakout = true;
             }
 
-            if (!breakout)
-                return Invalid(ctx, dir, "WAIT_BREAKOUT", score);
-
             bool continuationSignal = breakout;
 
             bool hasStructure =
@@ -158,9 +156,20 @@ namespace GeminiV26.EntryTypes.FX
 
             double body = Math.Abs(last.Close - last.Open);
             double range = last.High - last.Low;
+            bool strongCandle = range > 0 && body / range > 0.55;
+            bool followThrough = continuationSignal;
 
-            if (range > 0 && body / range > 0.55)
+            if (strongCandle)
                 score += 2;
+
+            if (breakout)
+                triggerScore += 1;
+
+            if (strongCandle)
+                triggerScore += 1;
+
+            if (followThrough)
+                triggerScore += 2;
 
             // -----------------------------------------------------
             // STRUCTURE FRESHNESS
@@ -192,6 +201,18 @@ namespace GeminiV26.EntryTypes.FX
             int minScore = EntryDecisionPolicy.MinScoreThreshold;
 
             score += setupScore;
+
+            score += (int)Math.Round(triggerScore * 5);
+
+            if (triggerScore == 0)
+                score -= 15;
+
+            bool minimalTrigger = breakout || strongCandle;
+            if (!minimalTrigger)
+                score -= 10;
+
+            ctx.Log?.Invoke(
+                $"[TRIGGER SCORE] breakout={(breakout ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, minScore - 10);
