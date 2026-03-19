@@ -582,7 +582,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 Console.WriteLine("[BTC FILTER] rejected: no impulse reclaim");
                 ctx.Log?.Invoke("[BTC FILTER] rejected: no impulse reclaim");
-                return Block(ctx, "BTC_FILTER_NO_IMPULSE_RECLAIM", score, dir);
+                score -= 10;
             }
 
             // 3) Pullback timeout (dead pullback filter)
@@ -623,7 +623,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     if (!compressionDetected)
                     {
                         ctx.Log?.Invoke("[PB] rejected: deep pullback without compression");
-                        return Block(ctx, "BTC_FILTER_PULLBACK_TOO_DEEP", score, dir);
+                        score -= 10;
                     }
 
                     TradeDirection impulseDirection =
@@ -636,7 +636,7 @@ namespace GeminiV26.EntryTypes.Crypto
                     if (!breakoutAligned)
                     {
                         ctx.Log?.Invoke("[PB] rejected: breakout against impulse");
-                        return Block(ctx, "BTC_FILTER_PULLBACK_TOO_DEEP", score, dir);
+                        score -= 10;
                     }
 
                     ctx.Log?.Invoke("[PB] DeepPullbackContinuation accepted");
@@ -778,7 +778,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 {
                     Console.WriteLine("[BTC ASIA] rejected: no reclaim confirmation");
                     ctx.Log?.Invoke("[BTC ASIA] rejected: no reclaim confirmation");
-                    return Block(ctx, "BTC_ASIA_NO_RECLAIM_CONFIRMATION", score, dir);
+                    score -= 10;
                 }
 
                 if (score < ASIA_MIN_CONFIDENCE)
@@ -828,6 +828,12 @@ namespace GeminiV26.EntryTypes.Crypto
             if (hasMomentum)
                 setupScore += 20;
 
+            bool breakoutDetected =
+                ctx.M1TriggerInTrendDirection ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = continuationSignal || validPullbackReaction;
+            score = TriggerScoreModel.Apply(ctx, $"BTC_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)

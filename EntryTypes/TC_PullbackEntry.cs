@@ -398,6 +398,12 @@ namespace GeminiV26.EntryTypes
                 return eval;
             }
 
+            bool breakoutDetected =
+                !noM1Trigger ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
+            score = TriggerScoreModel.Apply(ctx, $"TC_PULLBACK_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)

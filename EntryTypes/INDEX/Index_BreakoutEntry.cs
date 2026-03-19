@@ -27,10 +27,10 @@ namespace GeminiV26.EntryTypes.INDEX
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
 
-            if (!ctx.HasBreakout_M1)
-                return Reject(ctx, "NO_BREAKOUT_M1", score, TradeDirection.None);
-
-            TradeDirection dir = ctx.BreakoutDirection;
+            TradeDirection dir =
+                ctx.BreakoutDirection != TradeDirection.None ? ctx.BreakoutDirection :
+                ctx.RangeBreakDirection != TradeDirection.None ? ctx.RangeBreakDirection :
+                ctx.TrendDirection;
             if (dir == TradeDirection.None)
                 return Reject(ctx, "NO_BREAKOUT_DIR", score, TradeDirection.None);
 
@@ -111,7 +111,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
 
             bool breakoutConfirmed =
-                continuationSignal;
+                continuationSignal ||
+                ctx.RangeBreakDirection == dir;
 
             bool hasContinuation =
                 continuationSignal || breakoutConfirmed;
@@ -161,6 +162,15 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 6;
             else
                 score -= 4;
+
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal || (ctx.IsAtrExpanding_M5 && freshImpulse);
+
+            score = TriggerScoreModel.Apply(ctx, $"IDX_BREAKOUT_{dir}", score, breakoutConfirmed, strongCandle, followThrough, "NO_BREAKOUT_M1");
 
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score += setupScore;
