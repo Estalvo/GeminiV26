@@ -40,6 +40,8 @@ namespace GeminiV26.EntryTypes.FX
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
         {
+            int setupScore = 0;
+
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
 
@@ -95,13 +97,35 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.IsAtrExpanding_M5)
                 return Invalid(ctx, "VolExpanding");
 
+            bool continuationSignal =
+                ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
+
+            bool hasStructure =
+                pullbackDepthR >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             int score = 30;
 
-            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
+            if (continuationSignal)
                 score += 15;
 
             if (ctx.IsRange_M5)
                 score -= 10;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MinScore - 10);
 
             // =====================================================
             // SCORE → DIRECTION

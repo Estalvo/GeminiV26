@@ -122,6 +122,7 @@ namespace GeminiV26.EntryTypes.Crypto
             var bar = bars[lastIndex];
 
             int score = 0;
+            int setupScore = 0;
 
             if (!ctx.HasImpulse_M5)
             {
@@ -165,6 +166,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
                 dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
                 ctx.IsValidFlagStructure_M5;
+
+            bool structuredPB =
+                ctx.PullbackBars_M5 >= 2 &&
+                ctx.IsPullbackDecelerating_M5;
 
             string flagState = hasFlag ? "OK" : "FLAG_WEAK_OR_FORMING";
 
@@ -223,6 +228,28 @@ namespace GeminiV26.EntryTypes.Crypto
                     ? (ctx.FlagBreakoutUp || ctx.FlagBreakoutUpConfirmed)
                     : (ctx.FlagBreakoutDown || ctx.FlagBreakoutDownConfirmed));
 
+            bool hasVolatility =
+                ctx.IsAtrExpanding_M5;
+
+            if (!hasVolatility)
+                setupScore -= 30;
+
+            bool hasStructure =
+                hasFlag || structuredPB;
+
+            if (!hasStructure)
+                setupScore -= 30;
+            else
+                setupScore += 15;
+
+            bool continuationSignal = breakoutSignal;
+
+            bool hasMomentum =
+                continuationSignal;
+
+            if (hasMomentum)
+                setupScore += 20;
+
             bool longValid = bullBreak || bullReclaim || (dir == TradeDirection.Long && breakoutSignal);
             bool shortValid = bearBreak || bearReclaim || (dir == TradeDirection.Short && breakoutSignal);
 
@@ -250,6 +277,11 @@ namespace GeminiV26.EntryTypes.Crypto
                     "[FLAG] Missing impulse context" +
                     $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
             }
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE({score})");
