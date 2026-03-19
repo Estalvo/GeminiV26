@@ -178,13 +178,13 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.HasFlagLong_M5
                     : ctx.HasFlagShort_M5;
 
-            bool earlyPB = EntryContextBuilder.GetHasEarlyPullback_M5(ctx);
+            bool earlyPB = ctx.HasEarlyPullback_M5;
 
             bool structuredPB =
                 ctx.PullbackBars_M5 >= 2 &&
                 ctx.IsPullbackDecelerating_M5;
 
-            if (hasFlag)
+            if (ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5)
                 score += 5;
             else
             {
@@ -192,9 +192,10 @@ namespace GeminiV26.EntryTypes.METAL
                 score -= 2;
             }
 
-            if (structuredPB)
+            if (ctx.PullbackBars_M5 > 0)
                 score += 4;
-            else if (earlyPB)
+
+            if (ctx.HasEarlyPullback_M5)
                 score += 1;
 
             bool hasSomeStructure =

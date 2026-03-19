@@ -1,7 +1,6 @@
 ﻿using cAlgo.API;
 using cAlgo.API.Internals;
 using System;
-using System.Runtime.CompilerServices;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
 using GeminiV26.Instruments.METAL;
@@ -13,12 +12,6 @@ namespace GeminiV26.Core.Entry
 {
     public class EntryContextBuilder
     {
-        private sealed class EarlyPullbackState
-        {
-            public bool Value;
-        }
-
-        private static readonly ConditionalWeakTable<EntryContext, EarlyPullbackState> EarlyPullbackStates = new ConditionalWeakTable<EntryContext, EarlyPullbackState>();
         private readonly Robot _bot;
         private readonly CryptoHtfBiasEngine _cryptoHtf;
         private readonly FxHtfBiasEngine _fxHtf;
@@ -36,18 +29,7 @@ namespace GeminiV26.Core.Entry
 
         public static bool GetHasEarlyPullback_M5(EntryContext ctx)
         {
-            return ctx != null &&
-                   EarlyPullbackStates.TryGetValue(ctx, out var state) &&
-                   state.Value;
-        }
-
-        private static void SetHasEarlyPullback_M5(EntryContext ctx, bool value)
-        {
-            if (ctx == null)
-                return;
-
-            EarlyPullbackStates.Remove(ctx);
-            EarlyPullbackStates.Add(ctx, new EarlyPullbackState { Value = value });
+            return ctx != null && ctx.HasEarlyPullback_M5;
         }
 
         // =================================================
@@ -435,22 +417,11 @@ namespace GeminiV26.Core.Entry
                     ctx.AvgBodyLast3_M5 < ctx.AtrM5 * 0.6;
             }
 
-            bool earlyPullbackShort =
-                ctx.TrendDirection == TradeDirection.Short &&
-                ctx.BarsSinceImpulse_M5 <= 3 &&
-                ctx.PullbackBars_M5 >= 1;
+            ctx.HasEarlyPullback_M5 =
+                ctx.PullbackBars_M5 >= 1 &&
+                ctx.PullbackDepthAtr_M5 >= 0.25;
 
-            bool earlyPullbackLong =
-                ctx.TrendDirection == TradeDirection.Long &&
-                ctx.BarsSinceImpulse_M5 <= 3 &&
-                ctx.PullbackBars_M5 >= 1;
-
-            bool hasEarlyPullback = earlyPullbackShort || earlyPullbackLong;
-            SetHasEarlyPullback_M5(ctx, hasEarlyPullback);
-
-            _bot.Print(
-                $"[PB] early={hasEarlyPullback} bars={ctx.PullbackBars_M5} sinceImpulse={ctx.BarsSinceImpulse_M5}"
-            );
+            _bot.Print($"[PB] bars={ctx.PullbackBars_M5} depth={ctx.PullbackDepthAtr_M5:F2} early={ctx.HasEarlyPullback_M5}");
 
             // =================================================
             // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
@@ -515,9 +486,11 @@ namespace GeminiV26.Core.Entry
             // 3) DECELERATION (MÁR KISZÁMOLT)
             // ============================
 
-            bool decelerating = ctx.IsPullbackDecelerating_M5;
+            bool decelerating =
+                ctx.IsPullbackDecelerating_M5 ||
+                (ctx.HasEarlyPullback_M5 && ctx.PullbackBars_M5 <= 2);
             bool allowWithoutDecel =
-                hasEarlyPullback &&
+                ctx.HasEarlyPullback_M5 &&
                 ctx.PullbackBars_M5 <= 2;
 
             // ============================
@@ -561,6 +534,20 @@ namespace GeminiV26.Core.Entry
 
             // ATR-normalizált méret
             ctx.FlagAtr_M5 = flagRange;
+
+            bool weakTrend =
+                ctx.AtrM5 > 0 &&
+                Math.Abs(ctx.Ema21Slope_M5) < ctx.AtrM5 * 0.15;
+
+            bool compressed =
+                ctx.AtrM5 > 0 &&
+                ctx.FlagAtr_M5 > 0 &&
+                ctx.FlagAtr_M5 < ctx.AtrM5 * 1.8;
+
+            ctx.IsTransition_M5 =
+                weakTrend || compressed;
+
+            _bot.Print($"[REGIME] transition={ctx.IsTransition_M5} weakTrend={weakTrend} compressed={compressed}");
 
             // ============================
             // DEBUG (opcionális, de most hasznos)
