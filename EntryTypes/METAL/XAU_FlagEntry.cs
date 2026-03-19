@@ -55,11 +55,8 @@ namespace GeminiV26.EntryTypes.METAL
             bool hasValidRange = hi > lo && hi > 0 && lo > 0;
             ctx.Log?.Invoke($"[FLAG RANGE CHECK] hi={hi} lo={lo} valid={hasValidRange}");
 
-            if (!hasValidRange)
-                return Invalid(ctx, "NO_FLAG_RANGE");
-
-            if (!ctx.HasFlagLong_M5 && !ctx.HasFlagShort_M5)
-                return Invalid(ctx, "NO_FLAG_STRUCTURE");
+            if (double.IsNaN(hi) || double.IsNaN(lo) || double.IsInfinity(hi) || double.IsInfinity(lo))
+                return Invalid(ctx, "DATA_INTEGRITY", 0);
                 
             double rangeAtr = hasValidRange && ctx.AtrM5 > 0
                 ? (hi - lo) / ctx.AtrM5
@@ -68,21 +65,17 @@ namespace GeminiV26.EntryTypes.METAL
             if (hasValidRange && rangeAtr > tuning.MaxFlagAtrMult * 1.3)
                 ctx.Log?.Invoke($"[FLAG WARN] Wide range kept as soft signal rangeAtr={rangeAtr:F2} maxHard={tuning.MaxFlagAtrMult * 1.3:F2}");
 
+            bool ambiguousSpike = false;
             if (hasValidRange)
             {
                 bool wickBoth = bar.High >= hi && bar.Low <= lo;
                 bool closeUp = bar.Close > hi;
                 bool closeDn = bar.Close < lo;
-
-                if (wickBoth && !closeUp && !closeDn)
-                    return Invalid(ctx, "AMBIGUOUS_SPIKE");
+                ambiguousSpike = wickBoth && !closeUp && !closeDn;
             }
 
-            var buy = EvaluateSide(TradeDirection.Long, ctx, tuning, hi, lo, hasValidRange, rangeAtr, bar, last);
-            var sell = EvaluateSide(TradeDirection.Short, ctx, tuning, hi, lo, hasValidRange, rangeAtr, bar, last);
-
-            if (!buy.IsValid && !sell.IsValid)
-                return Reject(ctx, tag, session, tuning, buy, sell);
+            var buy = EvaluateSide(TradeDirection.Long, ctx, tuning, hi, lo, hasValidRange, rangeAtr, ambiguousSpike, bar, last);
+            var sell = EvaluateSide(TradeDirection.Short, ctx, tuning, hi, lo, hasValidRange, rangeAtr, ambiguousSpike, bar, last);
 
             if (buy.IsValid && !sell.IsValid) return buy;
             if (!buy.IsValid && sell.IsValid) return sell;
@@ -109,6 +102,7 @@ namespace GeminiV26.EntryTypes.METAL
             double lo,
             bool hasValidRange,
             double rangeAtr,
+            bool ambiguousSpike,
             Bar bar,
             int index)
         {
@@ -117,6 +111,9 @@ namespace GeminiV26.EntryTypes.METAL
             int setupScore = 0;
 
             var reasons = new List<string>();
+
+            if (XauEntryDecisionPolicy.IsTrendSafetyBlock(ctx, dir, out string hardReason))
+                return InvalidDir(ctx, dir, hardReason, score, minScore);
 
             if (rangeAtr > 0)
             {
@@ -148,7 +145,10 @@ namespace GeminiV26.EntryTypes.METAL
                     : ctx.HasImpulseShort_M5;
 
             if (!hasImpulse)
-                return InvalidDir(ctx, dir, "NO_IMPULSE", score);
+            {
+                score -= 18;
+                reasons.Add("NO_IMPULSE(-18)");
+            }
 
             int barsSinceImpulse =
                 dir == TradeDirection.Long
@@ -189,9 +189,14 @@ namespace GeminiV26.EntryTypes.METAL
                 ctx.IsPullbackDecelerating_M5;
 
             if (!(ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5))
-                return InvalidDir(ctx, dir, "NO_FLAG", score);
-
-            score += 5;
+            {
+                score -= 12;
+                reasons.Add("NO_FLAG_RANGE(-12)");
+            }
+            else
+            {
+                score += 5;
+            }
 
             if (ctx.PullbackBars_M5 > 0)
                 score += 4;
@@ -208,12 +213,30 @@ namespace GeminiV26.EntryTypes.METAL
                 || earlyPB;
 
             if (!hasStructure)
-                setupScore -= 40;
+            {
+                setupScore -= 20;
+                reasons.Add("WEAK_STRUCTURE(-20)");
+            }
             else
+            {
                 setupScore += 20;
+                reasons.Add("STRUCTURE_OK(+20)");
+            }
 
             if (!hasSomeStructure)
-                reasons.Add("NO_STRUCTURE");
+                reasons.Add("IMPERFECT_FLAG(-0)");
+
+            if (!hasValidRange)
+            {
+                score -= 12;
+                reasons.Add("NO_FLAG_RANGE(-12)");
+            }
+
+            if (ambiguousSpike)
+            {
+                score -= 10;
+                reasons.Add("AMBIGUOUS_SPIKE(-10)");
+            }
 
             ctx.Log?.Invoke($"[XAU FLAG] flag={hasFlag} earlyPB={earlyPB} structPB={structuredPB} score={score}");
 
@@ -257,6 +280,11 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (hasConfirmation)
                 setupScore += 20;
+            else
+            {
+                setupScore -= 10;
+                reasons.Add("PARTIAL_CONFIRMATION(-10)");
+            }
 
             if (breakoutInstant && !breakoutConfirmed)
             {
@@ -315,31 +343,30 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             if (dir == TradeDirection.Long && IsLowerHigh(ctx.M5, index))
-                return InvalidDir(ctx, dir, "LOWER_HIGH", score);
+            {
+                score -= 8;
+                reasons.Add("LOWER_HIGH(-8)");
+            }
 
             if (dir == TradeDirection.Short && IsHigherLow(ctx.M5, index))
-                return InvalidDir(ctx, dir, "HIGHER_LOW", score);
+            {
+                score -= 8;
+                reasons.Add("HIGHER_LOW(-8)");
+            }
 
             score += setupScore;
-
-            if (setupScore <= 0)
-                score = Math.Min(score, minScore - 10);
-
-            int effectiveMinScore = earlyBreakout ? minScore - 2 : minScore;
-
-            bool valid = score >= effectiveMinScore;
-
-            if (!valid)
-                return InvalidDir(ctx, dir, "LOW_SCORE", score);
+            XauEntryDecisionPolicy.ApplyLogicBiasScore(ctx, dir, ref score, reasons);
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = EntryType.XAU_Flag,
                 Direction = dir,
-                Score = score,
+                Score = Math.Max(0, score),
+                MinScoreThreshold = earlyBreakout ? minScore - 2 : minScore,
+                LogicConfidence = ctx.LogicBiasConfidence,
                 IsValid = true,
-                Reason = $"ACCEPT {dir} score={score} breakoutConfirmed={breakoutConfirmed} earlyBreakout={earlyBreakout} breakAtr={breakAtr:F2} bodyRatio={bodyRatio:F2} rangeAtr={rangeAtr:F2}"
+                Reason = $"[XAU_FLAG][ENTRY DECISION] score={Math.Max(0, score)} threshold={(earlyBreakout ? minScore - 2 : minScore)} valid=true dir={dir} breakoutConfirmed={breakoutConfirmed} earlyBreakout={earlyBreakout} breakAtr={breakAtr:F2} bodyRatio={bodyRatio:F2} rangeAtr={rangeAtr:F2} :: {string.Join(" | ", reasons)}"
             };
         }
 
@@ -376,18 +403,10 @@ namespace GeminiV26.EntryTypes.METAL
             EntryEvaluation buy,
             EntryEvaluation sell)
         {
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = EntryType.XAU_Flag,
-                Direction = TradeDirection.None,
-                Score = (int)tuning.BaseScore,
-                IsValid = false,
-                Reason = $"REJECT BOTH buy={buy.Score}/{buy.IsValid} sell={sell.Score}/{sell.IsValid}"
-            };
+            return buy.Score >= sell.Score ? buy : sell;
         }
 
-        private static EntryEvaluation InvalidDir(EntryContext ctx, TradeDirection dir, string reason, int score)
+        private static EntryEvaluation InvalidDir(EntryContext ctx, TradeDirection dir, string reason, int score, int minScore)
         {
             return new EntryEvaluation
             {
@@ -395,20 +414,23 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = EntryType.XAU_Flag,
                 Direction = dir,
                 Score = Math.Max(0, score),
+                MinScoreThreshold = minScore,
                 IsValid = false,
-                Reason = reason
+                Reason = $"[XAU_FLAG][ENTRY DECISION] score={Math.Max(0, score)} threshold={minScore} valid=false dir={dir} state={reason}"
             };
         }
 
-        private static EntryEvaluation Invalid(EntryContext ctx, string reason)
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason, int score = 0)
         {
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.XAU_Flag,
                 Direction = TradeDirection.None,
+                Score = Math.Max(0, score),
+                MinScoreThreshold = 0,
                 IsValid = false,
-                Reason = reason
+                Reason = $"[XAU_FLAG][ENTRY DECISION] score={Math.Max(0, score)} threshold=0 valid=false state={reason}"
             };
         }
     }

@@ -5,12 +5,12 @@
 //    Korábban létezett olyan logika, ami MINDEN nem-null evalt
 //    beengedett (IsValid || IsValid == false). EZ MEGSZŰNT.
 //
-// ✅ Nincs több instrument-specifikus threshold / score gate:
-//    A TradeRouter SOHA nem tilt score alapján.
+// ✅ Score-alapú döntés:
+//    A TradeRouter csak akkor enged jelöltet tovább, ha
+//    IsValid == true ÉS Score >= MinScoreThreshold.
 //
-// ✅ A router CSAK rangsorol:
-//    Kizárólag IsValid == true setupok között választ,
-//    a Score kizárólag prioritás, nem belépési engedély.
+// ✅ A router ezután rangsorol:
+//    A Score egyszerre gate és prioritás a megmaradt setupok között.
 //
 // ✅ Logolás átlátható:
 //    jelöltek → valid setupok → nyertes kiválasztás
@@ -26,8 +26,8 @@ namespace GeminiV26.Core
 {
     /// <summary>
     /// TradeRouter (Szabálykönyv 1.0)
-    /// - CSAK IsValid == true setupokkal dolgozik
-    /// - Score csak rangsorol (nem gate)
+    /// - CSAK hard-safe (IsValid == true) setupokkal dolgozik
+    /// - Score gate = Score >= MinScoreThreshold
     /// - Winner = max Score (tie-break: determinisztikus priority)
     /// </summary>
     public class TradeRouter
@@ -61,36 +61,29 @@ namespace GeminiV26.Core
             _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount}");
             LogCandidates("CAND", signals);
 
-            // RULEBOOK: only IsValid == true is eligible
             var valid = signals
-                .Where(e => e != null && e.IsValid)
-                // ENTRY QUALITY GATE (Rulebook-safe)
-                .Where(e => e.Score >= MIN_ENTRY_SCORE_GLOBAL)
+                .Where(e => e != null && e.IsValid && e.Score >= ResolveMinScoreThreshold(e))
                 .ToList();
 
-            var rejectedByScore = signals
-                .Where(e => e != null && e.IsValid && e.Score < MIN_ENTRY_SCORE_GLOBAL)
-                .ToList();
-
-            foreach (var r in rejectedByScore)
+            foreach (var candidate in signals.Where(e => e != null))
             {
-                _bot.Print($"[TR] REJECTED_LOW_SCORE {r.Type} score={r.Score} reason={r.Reason}");
+                int threshold = ResolveMinScoreThreshold(candidate);
+                bool accepted = candidate.IsValid && candidate.Score >= threshold;
+                _bot.Print($"[ENTRY DECISION] type={candidate.Type} dir={candidate.Direction} score={candidate.Score} threshold={threshold} valid={candidate.IsValid} => {(accepted ? "ACCEPT" : "REJECT")}");
             }
 
             if (valid.Count == 0)
             {
-                _bot.Print("[TR] NO VALID SETUP AFTER QUALITY GATE");
-                return null; // ⛔ NINCS ENTRY, PONT
+                _bot.Print("[TR] NO VALID SETUP AFTER SCORE GATE");
+                return null;
             }
 
-            // RULEBOOK: Score ranks, doesn't gate.
-            // Winner = max score. Tie-breaker keeps deterministic behavior.
             var winner = valid
                 .OrderByDescending(e => e.Score)
                 .ThenBy(e => GetTypePriority(_bot.SymbolName, e.Type))
                 .First();
 
-            _bot.Print($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}");
+            _bot.Print($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} threshold={ResolveMinScoreThreshold(winner)} valid={winner.IsValid} reason={winner.Reason}");
             return winner;
         }
 
@@ -104,8 +97,19 @@ namespace GeminiV26.Core
             foreach (var e in list)
             {
                 if (e == null) continue;
-                _bot.Print($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} score={e.Score} reason={e.Reason}");
+                _bot.Print($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} score={e.Score} threshold={ResolveMinScoreThreshold(e)} reason={e.Reason}");
             }
+        }
+
+
+        private static int ResolveMinScoreThreshold(EntryEvaluation evaluation)
+        {
+            if (evaluation == null)
+                return MIN_ENTRY_SCORE_GLOBAL;
+
+            return evaluation.MinScoreThreshold > 0
+                ? evaluation.MinScoreThreshold
+                : MIN_ENTRY_SCORE_GLOBAL;
         }
 
         // Deterministic tie-break (only used when scores are equal)
