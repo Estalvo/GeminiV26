@@ -1,4 +1,4 @@
-// =========================================================
+﻿// =========================================================
 // FX_FlagEntry – Phase 3.9 PATCH (Two-direction true search)
 // Goal: KEEP EVERYTHING (score system, ATR/ADX gates, penalties, boosts, etc.)
 // Change ONLY:
@@ -60,7 +60,7 @@ namespace GeminiV26.EntryTypes.FX
 
             // Prefer VALID; if both valid -> higher score wins
             if (buyValid && sellValid)
-                return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
 
             if (buyValid)
             {

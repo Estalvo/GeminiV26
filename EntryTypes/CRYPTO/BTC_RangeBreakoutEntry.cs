@@ -24,7 +24,7 @@ namespace GeminiV26.EntryTypes.Crypto
             var longEval = EvaluateSide(ctx, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, TradeDirection.Short);
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)

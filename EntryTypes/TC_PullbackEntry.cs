@@ -44,7 +44,7 @@ namespace GeminiV26.EntryTypes
             var longEval = EvaluateDirectional(ctx, TradeDirection.Long);
             var shortEval = EvaluateDirectional(ctx, TradeDirection.Short);
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateDirectional(EntryContext ctx, TradeDirection forcedDirection)

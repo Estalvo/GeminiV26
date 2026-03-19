@@ -26,7 +26,7 @@ namespace GeminiV26.EntryTypes.INDEX
             var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(

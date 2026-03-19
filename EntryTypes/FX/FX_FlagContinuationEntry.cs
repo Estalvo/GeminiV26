@@ -22,7 +22,7 @@ namespace GeminiV26.EntryTypes.FX
             if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
                 return Invalid(ctx, "NO_VALID_SIDE");
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)

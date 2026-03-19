@@ -35,7 +35,7 @@ namespace GeminiV26.EntryTypes.METAL
             var longEval = EvaluateSide(ctx, matrix, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, matrix, TradeDirection.Short);
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
@@ -29,12 +29,12 @@ namespace GeminiV26.EntryTypes.FX
             var shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
 
             if (longEval.IsValid && shortEval.IsValid)
-                return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
 
             if (longEval.IsValid) return longEval;
             if (shortEval.IsValid) return shortEval;
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private static EntryEvaluation EvalForDir(
