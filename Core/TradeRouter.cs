@@ -50,7 +50,7 @@ namespace GeminiV26.Core
                 return null;
 
             int nonNullCount = signals.Count(e => e != null);
-            int validCount = signals.Count(e => e != null && e.IsValid);
+            int validCount = signals.Count(e => e != null && e.State == EntryState.TRIGGERED && e.TriggerConfirmed);
 
             _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
             LogCandidates("CAND", signals);
@@ -61,7 +61,11 @@ namespace GeminiV26.Core
             {
                 string decision;
 
-                if (!candidate.IsValid)
+                if (candidate.State == EntryState.ARMED && !candidate.TriggerConfirmed)
+                {
+                    decision = "ARMED";
+                }
+                else if (candidate.State != EntryState.TRIGGERED || !candidate.TriggerConfirmed)
                 {
                     decision = "REJECT";
                 }
@@ -82,7 +86,7 @@ namespace GeminiV26.Core
                     }
                 }
 
-                _bot.Print($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} → {decision}");
+                _bot.Print($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}");
             }
 
             if (winner == null)
@@ -105,7 +109,7 @@ namespace GeminiV26.Core
             foreach (var e in list)
             {
                 if (e == null) continue;
-                _bot.Print($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} score={e.Score} reason={e.Reason}");
+                _bot.Print($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}");
             }
         }
 

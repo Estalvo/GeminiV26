@@ -87,6 +87,12 @@ namespace GeminiV26.Core.Entry
 
             eval.Score = Math.Max(0, Math.Min(100, eval.Score));
 
+            if (!string.IsNullOrWhiteSpace(eval.Reason) &&
+                eval.Reason.IndexOf("WAIT_BREAKOUT", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                eval.TriggerConfirmed = false;
+            }
+
             bool hardInvalid = IsHardInvalid(eval);
             if (!hardInvalid && eval.Direction != TradeDirection.None)
             {
@@ -100,6 +106,8 @@ namespace GeminiV26.Core.Entry
             {
                 eval.IsValid = false;
             }
+
+            eval.State = ResolveState(eval);
 
             return eval;
         }
@@ -146,6 +154,23 @@ namespace GeminiV26.Core.Entry
             }
 
             return MinScoreThreshold - 5;
+        }
+
+        private static EntryState ResolveState(EntryEvaluation eval)
+        {
+            if (eval == null)
+                return EntryState.NONE;
+
+            if (eval.TriggerConfirmed && eval.Score >= MinScoreThreshold && eval.Direction != TradeDirection.None)
+                return EntryState.TRIGGERED;
+
+            if (eval.Score >= MinScoreThreshold && eval.Direction != TradeDirection.None && !IsHardInvalid(eval))
+                return EntryState.ARMED;
+
+            if (eval.Score > 0 && eval.Direction != TradeDirection.None && !IsHardInvalid(eval))
+                return EntryState.SETUP_DETECTED;
+
+            return EntryState.NONE;
         }
     }
 }

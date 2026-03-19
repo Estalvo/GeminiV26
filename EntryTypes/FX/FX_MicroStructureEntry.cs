@@ -104,19 +104,11 @@ namespace GeminiV26.EntryTypes.FX
 
             if (ctx.FxHtfAllowedDirection == dir)
             {
-                double conf = ctx.FxHtfConfidence01;
-
-                if (conf > 0.75) score += 6;
-                else if (conf > 0.55) score += 4;
-                else if (conf > 0.35) score += 2;
+                score += 5;
             }
             else if (ctx.FxHtfAllowedDirection != TradeDirection.None)
             {
-                double conf = ctx.FxHtfConfidence01;
-
-                if (conf > 0.60) score -= 10;
-                else if (conf > 0.40) score -= 7;
-                else score -= 4;
+                score -= 10;
             }
 
             // -----------------------------------------------------
