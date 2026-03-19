@@ -1674,14 +1674,14 @@ namespace GeminiV26.Core
                     continue;
                 }
 
-                candidate.TriggerConfirmed = trigger.TriggerConfirmed;
-                candidate.State = candidate.TriggerConfirmed ? EntryState.TRIGGERED : EntryState.ARMED;
+                candidate.TriggerConfirmed = true;
+                candidate.State = EntryState.TRIGGERED;
 
-                if (candidate.State == EntryState.ARMED)
+                if (!trigger.TriggerConfirmed)
                 {
                     UpsertArmedSetup(candidate, barsSinceBreak);
-                    _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state={candidate.State} type={candidate.Type} dir={candidate.Direction}");
-                    _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction}");
+                    _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
+                    _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
                 }
                 else
                 {

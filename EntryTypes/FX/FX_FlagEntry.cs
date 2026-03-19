@@ -78,6 +78,7 @@ namespace GeminiV26.EntryTypes.FX
             int score = 0;
             int setupScore = 0;
             int penaltyBudget = 0;
+            double triggerScore = 0;
 
             const int maxPenalty = 15;   // FX-en ennyi össz negatív korrekció lehet max
             int minBoost = 0;
@@ -411,7 +412,7 @@ namespace GeminiV26.EntryTypes.FX
             );
 
             if (!breakoutConfirmed)
-                return Invalid(ctx, flagDir, "WAIT_BREAKOUT", score);
+                ctx.Log?.Invoke($"[TRIGGER WAIT] candDir={flagDir} reason=WAIT_BREAKOUT score={score}");
 
             string flagDirReason = breakoutReason;
 
@@ -554,10 +555,17 @@ namespace GeminiV26.EntryTypes.FX
                     !ctx.IsRange_M5;
 
                 if (!strongContext)
-                    return Invalid(ctx, flagDir, "M1_TRIGGER_REQUIRED", score);
+                {
+                    ApplyPenalty(5);
+                    minBoost += 1;
+                    ctx.Log?.Invoke($"[{ctx.Symbol}][B_M1_SOFT] candDir={flagDir} reason=M1_TRIGGER_REQUIRED impact=penalty5 score={score}");
+                }
 
-                ApplyPenalty(2);
-                ctx.Log?.Invoke($"[{ctx.Symbol}][B_M1_SOFT] candDir={flagDir} no M1 trigger, strongContext => penalty=2 score={score}");
+                if (strongContext)
+                {
+                    ApplyPenalty(2);
+                    ctx.Log?.Invoke($"[{ctx.Symbol}][B_M1_SOFT] candDir={flagDir} no M1 trigger, strongContext => penalty=2 score={score}");
+                }
             }
 
             int barsSinceBreak =
@@ -940,6 +948,31 @@ namespace GeminiV26.EntryTypes.FX
             if (min < 0) min = 0;
 
             score += setupScore;
+
+            bool breakoutDetected = breakoutConfirmed || breakout;
+            bool strongCandle = strongBody || lastStrongBody;
+            bool followThrough = hasM1Confirmation || continuationSignal;
+
+            if (breakoutDetected)
+                triggerScore += 1;
+
+            if (strongCandle)
+                triggerScore += 1;
+
+            if (followThrough)
+                triggerScore += 2;
+
+            score += (int)Math.Round(triggerScore * 5);
+
+            if (triggerScore == 0)
+                score -= 15;
+
+            bool minimalTrigger = breakoutDetected || strongCandle;
+            if (!minimalTrigger)
+                score -= 10;
+
+            ctx.Log?.Invoke(
+                $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, min - 10);
