@@ -431,14 +431,12 @@ namespace GeminiV26.EntryTypes.FX
         private EntryEvaluation Block(EntryContext ctx, TradeDirection dir, string reason, int score)
         {
             ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK {reason} dir={dir} | score={score}");
-
-            // FIX #2:
-            // invalid eval soha ne hordozzon végrehajtható irányt
+            bool hardInvalid = EntryDecisionPolicy.IsHardInvalidReason(reason) || dir == TradeDirection.None;
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.FX_Pullback,
-                Direction = TradeDirection.None,
+                Direction = hardInvalid ? TradeDirection.None : dir,
                 Score = score,
                 IsValid = false,
                 Reason = reason
