@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Matrix;
@@ -139,7 +139,7 @@ namespace GeminiV26.EntryTypes.FX
             double dynamicMinAdx = (ctx.Session == FxSession.Asia) ? 18.0 : 20.0;
             dynamicMinAdx = System.Math.Max(dynamicMinAdx, matrix.MinAdx);
 
-            if (ctx.Adx_M5 < dynamicMinAdx)
+            if (ctx.Adx_M5 >= 15 && ctx.Adx_M5 < dynamicMinAdx)
                 return Block(ctx, dir, $"ADX_TOO_LOW_{ctx.Adx_M5:0.0}", score);
 
             if (ctx.Adx_M5 < 23.0)
@@ -328,6 +328,7 @@ namespace GeminiV26.EntryTypes.FX
                 score -= overflow;
                 ctx?.Log?.Invoke($"[FX_PullbackEntry] SOFT_BUDGET_OVERFLOW -{overflow} | score={score}");
             }
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
 
             if (score < MIN_SCORE)
@@ -415,5 +416,58 @@ namespace GeminiV26.EntryTypes.FX
 
             return trSum / lookback;
         }
+
+        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
+        {
+            const int htfPenalty = 30;
+            const int logicPenalty = 12;
+            const int rangePenalty = 25;
+
+            TradeDirection htfDirection = TradeDirection.None;
+            double htfConfidence = 0.0;
+
+            switch (SymbolRouting.ResolveInstrumentClass(ctx.Symbol))
+            {
+                case InstrumentClass.FX:
+                    htfDirection = ctx.FxHtfAllowedDirection;
+                    htfConfidence = ctx.FxHtfConfidence01;
+                    break;
+                case InstrumentClass.CRYPTO:
+                    htfDirection = ctx.CryptoHtfAllowedDirection;
+                    htfConfidence = ctx.CryptoHtfConfidence01;
+                    break;
+                case InstrumentClass.INDEX:
+                    htfDirection = ctx.IndexHtfAllowedDirection;
+                    htfConfidence = ctx.IndexHtfConfidence01;
+                    break;
+                case InstrumentClass.METAL:
+                    htfDirection = ctx.MetalHtfAllowedDirection;
+                    htfConfidence = ctx.MetalHtfConfidence01;
+                    break;
+            }
+
+            if (htfDirection != TradeDirection.None && htfConfidence >= 0.70 && direction != htfDirection)
+            {
+                score -= htfPenalty;
+                ctx.Log?.Invoke($"[ENTRY HTF ALIGN] dir={direction} htf={htfDirection} conf={htfConfidence:0.00} penalty={htfPenalty}");
+            }
+
+            var logicBias = ctx.LogicBiasDirection;
+            var logicConfidence = ctx.LogicBiasConfidence;
+            if (logicBias != TradeDirection.None && logicConfidence >= 60 && direction != logicBias)
+            {
+                score -= logicPenalty;
+                ctx.Log?.Invoke($"[ENTRY LOGIC ALIGN] dir={direction} logic={logicBias} conf={logicConfidence} penalty={logicPenalty}");
+            }
+
+            if (applyTrendRegimePenalty && ctx.Adx_M5 < 15.0)
+            {
+                score -= rangePenalty;
+                ctx.Log?.Invoke($"[ENTRY REGIME] adx={ctx.Adx_M5:0.0} penalty={rangePenalty}");
+            }
+
+            return score;
+        }
+
     }
 }
