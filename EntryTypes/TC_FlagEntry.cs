@@ -87,7 +87,7 @@ namespace GeminiV26.EntryTypes
             var longEval = EvaluateSide(ctx, impulseMove, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, impulseMove, TradeDirection.Short);
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(EntryContext ctx, double impulseMove, TradeDirection dir)

@@ -99,7 +99,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "FLAG_DIRECTION_INVALID");
             }
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
         }
 
         private EntryEvaluation EvaluateSide(

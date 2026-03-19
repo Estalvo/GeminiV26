@@ -49,7 +49,7 @@ namespace GeminiV26.EntryTypes.FX
                 int bestScore = Math.Max(longEval.Score, shortEval.Score);
                 ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_INVALID long={longEval.Score} short={shortEval.Score}");
 
-                return new EntryEvaluation
+                return EntryDecisionPolicy.Normalize(new EntryEvaluation
                 {
                     Symbol = ctx?.Symbol,
                     Type = EntryType.FX_Pullback,
@@ -57,7 +57,7 @@ namespace GeminiV26.EntryTypes.FX
                     Score = bestScore,
                     IsValid = false,
                     Reason = "PB_BOTH_INVALID"
-                };
+                });
             }
 
             if (longValid && shortValid)
@@ -69,10 +69,10 @@ namespace GeminiV26.EntryTypes.FX
                     shortEval.Score += 3;
 
                 var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
-                return winner;
+                return EntryDecisionPolicy.Normalize(winner);
             }
 
-            return longValid ? longEval : shortEval;
+            return EntryDecisionPolicy.Normalize(longValid ? longEval : shortEval);
         }
 
         private EntryEvaluation EvaluateSide(

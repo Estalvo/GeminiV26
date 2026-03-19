@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace GeminiV26.Core.Entry
@@ -85,6 +85,8 @@ namespace GeminiV26.Core.Entry
             if (eval == null)
                 return null;
 
+            eval.Score = Math.Max(0, Math.Min(100, eval.Score));
+            eval.LogicConfidence = PositionContext.ClampRiskConfidence(eval.LogicConfidence);
             eval.State = ResolveState(eval);
             return eval;
         }
@@ -179,7 +181,7 @@ namespace GeminiV26.Core.Entry
             ctx?.Log?.Invoke(balanceLog);
             Console.WriteLine(balanceLog);
 
-            return selectedEval;
+            return Normalize(selectedEval);
         }
 
         private static EntryState ResolveState(EntryEvaluation eval)
