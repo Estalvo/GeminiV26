@@ -1133,7 +1133,7 @@ namespace GeminiV26.Core
                 // =====================================================
                 // ROUTER
                 // =====================================================
-                var selected = _router.SelectEntry(symbolSignals);
+                var selected = _router.SelectEntry(symbolSignals, _ctx);
 
                 _bot.Print($"[TRACE] selected is null = {selected == null}");
 
