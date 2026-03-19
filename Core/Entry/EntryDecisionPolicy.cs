@@ -156,6 +156,57 @@ namespace GeminiV26.Core.Entry
             return MinScoreThreshold - 5;
         }
 
+
+
+        public static EntryEvaluation SelectBalancedEvaluation(
+            EntryContext ctx,
+            EntryType type,
+            EntryEvaluation longEval,
+            EntryEvaluation shortEval)
+        {
+            double longScore = Math.Max(0, longEval?.Score ?? 0);
+            double shortScore = Math.Max(0, shortEval?.Score ?? 0);
+            bool longHardInvalid = IsHardInvalid(longEval);
+            bool shortHardInvalid = IsHardInvalid(shortEval);
+
+            EntryEvaluation selectedEval;
+            if (!longHardInvalid && !shortHardInvalid && Math.Abs(longScore - shortScore) < 1.0)
+            {
+                selectedEval = new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = type,
+                    Direction = TradeDirection.None,
+                    Score = (int)Math.Round(Math.Max(longScore, shortScore)),
+                    IsValid = false,
+                    Reason = "SCORE_BALANCE_TIE"
+                };
+            }
+            else if (longHardInvalid && shortHardInvalid)
+            {
+                selectedEval = longScore > shortScore ? longEval : shortEval;
+            }
+            else if (longHardInvalid)
+            {
+                selectedEval = shortEval;
+            }
+            else if (shortHardInvalid)
+            {
+                selectedEval = longEval;
+            }
+            else
+            {
+                selectedEval = longScore > shortScore ? longEval : shortEval;
+            }
+
+            var selectedDirection = selectedEval?.Direction ?? TradeDirection.None;
+            string balanceLog = $"[SCORE BALANCE] type={type} longScore={longScore:0.##} shortScore={shortScore:0.##} selected={selectedDirection}";
+            ctx?.Log?.Invoke(balanceLog);
+            Console.WriteLine(balanceLog);
+
+            return selectedEval;
+        }
+
         private static EntryState ResolveState(EntryEvaluation eval)
         {
             if (eval == null)

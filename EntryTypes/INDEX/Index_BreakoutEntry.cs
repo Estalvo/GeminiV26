@@ -15,25 +15,28 @@ namespace GeminiV26.EntryTypes.INDEX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            int score = 0;
-            int setupScore = 0;
-
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowBreakout)
                 return Reject(ctx, "SESSION_MATRIX_ALLOWBREAKOUT_DISABLED", 0, TradeDirection.None);
 
             if (ctx == null || !ctx.IsReady)
-                return Reject(ctx, "CTX_NOT_READY", score, TradeDirection.None);
+                return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
+            var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
 
-            TradeDirection dir =
-                ctx.BreakoutDirection != TradeDirection.None ? ctx.BreakoutDirection :
-                ctx.RangeBreakDirection != TradeDirection.None ? ctx.RangeBreakDirection :
-                ctx.TrendDirection;
-            if (dir == TradeDirection.None)
-                return Reject(ctx, "NO_BREAKOUT_DIR", score, TradeDirection.None);
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
 
+        private EntryEvaluation EvaluateSide(
+            EntryContext ctx,
+            dynamic p,
+            SessionMatrixConfig matrix,
+            TradeDirection dir)
+        {
+            int score = 0;
+            int setupScore = 0;
             score = BaseScore;
 
             // =============================
@@ -119,6 +122,16 @@ namespace GeminiV26.EntryTypes.INDEX
 
             if (hasContinuation)
                 setupScore += 20;
+
+            if (ctx.BreakoutDirection == dir)
+                score += 8;
+            else if (ctx.BreakoutDirection != TradeDirection.None)
+                score -= 8;
+
+            if (ctx.RangeBreakDirection == dir)
+                score += 6;
+            else if (ctx.RangeBreakDirection != TradeDirection.None)
+                score -= 6;
 
             // =====================================================
             // Core breakout scoring

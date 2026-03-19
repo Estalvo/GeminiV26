@@ -34,7 +34,7 @@ namespace GeminiV26.EntryTypes.INDEX
             if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
                 return Reject(ctx, TradeDirection.None, Math.Max(longEval?.Score ?? 0, shortEval?.Score ?? 0), "IDX_PULLBACK_NO_SIDE");
 
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
         }
 
         private EntryEvaluation EvaluateSide(

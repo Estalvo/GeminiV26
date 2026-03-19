@@ -108,7 +108,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score), TradeDirection.None);
             }
 
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
         }
 
         private EntryEvaluation EvaluateDir(

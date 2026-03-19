@@ -28,6 +28,27 @@ namespace GeminiV26.EntryTypes
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            if (ctx == null || !ctx.IsReady)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "CTX_NOT_READY;"
+                };
+            }
+
+            var longEval = EvaluateDirectional(ctx, TradeDirection.Long);
+            var shortEval = EvaluateDirectional(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateDirectional(EntryContext ctx, TradeDirection forcedDirection)
+        {
             var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
@@ -80,17 +101,24 @@ namespace GeminiV26.EntryTypes
                 Math.Abs(ctx.Ema21Slope_M15) > MinSlope * 1.5 &&
                 Math.Abs(ctx.Ema21Slope_M5) > MinSlope;
 
-            if (ctx.Ema21Slope_M15 > 0 && ctx.Ema21Slope_M5 > 0)
+            bool longTrend = ctx.Ema21Slope_M15 > 0 && ctx.Ema21Slope_M5 > 0;
+            bool shortTrend = ctx.Ema21Slope_M15 < 0 && ctx.Ema21Slope_M5 < 0;
+            bool dirTrendOk =
+                forcedDirection == TradeDirection.Long ? longTrend :
+                forcedDirection == TradeDirection.Short ? shortTrend :
+                false;
+
+            eval.Direction = forcedDirection;
+
+            if (dirTrendOk)
             {
-                eval.Direction = TradeDirection.Long;
                 score += strongTrend ? 30 : 20;
             }
-            else if (ctx.Ema21Slope_M15 < 0 && ctx.Ema21Slope_M5 < 0)
+            else
             {
-                eval.Direction = TradeDirection.Short;
-                score += strongTrend ? 30 : 20;
+                score -= 20;
+                eval.Reason += "WeakTrend;";
             }
-            else eval.Reason += "WeakTrend;";
 
             // =========================================================
             // 3️⃣ PULLBACK
@@ -392,12 +420,6 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // FINAL RULES
             // =========================================================
-            if (eval.Direction == TradeDirection.None)
-            {
-                eval.Reason += "NoDirection;";
-                return eval;
-            }
-
             bool breakoutDetected =
                 !noM1Trigger ||
                 (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
@@ -410,7 +432,7 @@ namespace GeminiV26.EntryTypes
                 score = Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";
