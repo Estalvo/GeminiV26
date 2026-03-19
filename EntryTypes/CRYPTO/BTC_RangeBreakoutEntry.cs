@@ -5,7 +5,7 @@ namespace GeminiV26.EntryTypes.Crypto
     public class BTC_RangeBreakoutEntry : IEntryType
     {
         public EntryType Type => EntryType.Crypto_RangeBreakout;
-        private const int MIN_SCORE = 35;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
         private const int MIN_RANGE_BARS = 15;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -107,7 +107,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score = System.Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = true;
 
             if (!eval.IsValid)
                 eval.Reason += $"LowScore({score});";

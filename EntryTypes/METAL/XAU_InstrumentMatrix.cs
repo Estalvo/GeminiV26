@@ -13,7 +13,7 @@ namespace GeminiV26.EntryTypes.METAL
             {
                 ["XAUUSD"] = Build(
                     symbol: "XAUUSD",
-                    
+
                     // ===== instrument karakter =====
                     pullbackStyle: FxPullbackStyle.EMA50,
                     minAtrPips: 10.0,
@@ -51,7 +51,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 0,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 66              // marad magas
+                        MinScore = 55              // marad magas
                     },
                     london: new FxFlagSessionTuning
                     {
@@ -65,7 +65,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 4,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 62             
+                        MinScore = 55
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -79,7 +79,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 6,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true,
-                        MinScore = 60              // marad
+                        MinScore = 55              // marad
                     }
                 ),
 
@@ -133,7 +133,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 3,
                         RequireM1Trigger = false,
                         AtrExpansionHardBlock = false,
-                        MinScore = 65
+                        MinScore = 55
                     },
                     ny: new FxFlagSessionTuning
                     {
@@ -147,7 +147,7 @@ namespace GeminiV26.EntryTypes.METAL
                         FlagQualityBonus = 3,
                         RequireM1Trigger = true,
                         AtrExpansionHardBlock = true,
-                        MinScore = 58
+                        MinScore = 55
                     }
                 )
             };

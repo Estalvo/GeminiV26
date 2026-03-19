@@ -13,7 +13,7 @@ namespace GeminiV26.EntryTypes.FX
         private const double MinBreakATR = 0.3;
         private const int MaxFakeoutBars = 1;
         private const double MaxSlopeForRange = 0.0005;
-        private const int MIN_SCORE = 50;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {

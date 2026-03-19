@@ -10,7 +10,7 @@ namespace GeminiV26.EntryTypes.FX
 
         // FX RESET: egységesített küszöbök – nem session-tiltás, hanem score
         private const int MIN_EVIDENCE = 2;
-        private const int MIN_SCORE = 38;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -112,7 +112,7 @@ namespace GeminiV26.EntryTypes.FX
             var eval = BaseEval(ctx);
             eval.Direction = ctx.ReversalDirection;
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = true;
 
             eval.Reason =
                 $"FX_REV dir={eval.Direction} score={score} " +

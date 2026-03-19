@@ -25,7 +25,7 @@ namespace GeminiV26.EntryTypes.INDEX
         private const double MaxSameDirSlopeAtr = 0.20;
 
         private const int BaseScore = 84;
-        private const int MinScore = 72;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
 
         private static readonly Dictionary<string, int> _traceInvocationCountByBarDir = new Dictionary<string, int>();
 
@@ -102,20 +102,13 @@ namespace GeminiV26.EntryTypes.INDEX
             longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
             shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
 
-            bool buyValid = longEval.IsValid;
-            bool sellValid = shortEval.IsValid;
-
-            if (!buyValid && !sellValid)
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {
-                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
+                ctx.Log?.Invoke($"[FLAG][REJECT] No hard-tradable direction long={longEval.Score}/{longEval.IsValid} short={shortEval.Score}/{shortEval.IsValid}");
                 return Reject(ctx, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score), TradeDirection.None);
             }
 
-            if (buyValid && sellValid)
-                return longEval.Score >= shortEval.Score ? longEval : shortEval;
-
-            if (buyValid) return longEval;
-            return shortEval;
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateDir(

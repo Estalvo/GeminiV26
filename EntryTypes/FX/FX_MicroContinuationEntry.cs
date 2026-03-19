@@ -30,16 +30,10 @@ namespace GeminiV26.EntryTypes.FX
             var longEval = EvaluateSide(TradeDirection.Long, ctx, tuning);
             var shortEval = EvaluateSide(TradeDirection.Short, ctx, tuning);
 
-            if (longEval.IsValid && !shortEval.IsValid)
-                return longEval;
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
+                return Invalid(ctx, "NO_VALID_SIDE");
 
-            if (!longEval.IsValid && shortEval.IsValid)
-                return shortEval;
-
-            if (longEval.IsValid && shortEval.IsValid)
-                return longEval.Score >= shortEval.Score ? longEval : shortEval;
-
-            return Invalid(ctx, "NO_VALID_SIDE");
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(
@@ -47,7 +41,7 @@ namespace GeminiV26.EntryTypes.FX
             EntryContext ctx,
             FxTuning tuning)
         {
-            int minScore = Math.Max(40, tuning.MinScore - 5);
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
 
             double pullbackDepthR =
@@ -59,19 +53,19 @@ namespace GeminiV26.EntryTypes.FX
                     : (ctx.Ema21Slope_M5 < -MinSlope && ctx.Ema21Slope_M15 < 0);
 
             if (!trendOk)
-                return Invalid(ctx, "NO_TREND_SLOPE");
+                return Invalid(ctx, dir, "NO_TREND_SLOPE", 0);
 
             if (ctx.IsRange_M5)
-                return Invalid(ctx, "IN_RANGE");
+                return Invalid(ctx, dir, "IN_RANGE", 0);
 
             if (pullbackDepthR < MinPullbackAtr)
-                return Invalid(ctx, "PB_TOO_SHALLOW");
+                return Invalid(ctx, dir, "PB_TOO_SHALLOW", 50);
 
             if (pullbackDepthR > tuning.MaxPullbackAtr * 0.45)
-                return Invalid(ctx, "PB_TOO_DEEP");
+                return Invalid(ctx, dir, "PB_TOO_DEEP", 49);
 
             if (pullbackDepthR < 0.35)
-                return Invalid(ctx, "PB_NOT_MATURE");
+                return Invalid(ctx, dir, "PB_NOT_MATURE", 51);
 
             // ✅ FIX: side-aware M1
             bool m1Aligned = ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
@@ -81,7 +75,7 @@ namespace GeminiV26.EntryTypes.FX
                 m1Aligned;
 
             if (!continuationSignal)
-                return Invalid(ctx, "NO_CONTINUATION_SIGNAL");
+                return Invalid(ctx, dir, "NO_CONTINUATION_SIGNAL", 50);
 
             bool hasStructure =
                 pullbackDepthR >= MinPullbackAtr;
@@ -126,16 +120,13 @@ namespace GeminiV26.EntryTypes.FX
             if (setupScore <= 0)
                 score = Math.Min(score, minScore - 10);
 
-            TradeDirection finalDir =
-                score >= minScore ? dir : TradeDirection.None;
-
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = finalDir,
+                Direction = dir,
                 Score = score,
-                IsValid = finalDir != TradeDirection.None,
+                IsValid = true,
                 Reason =
                     $"FX_MICRO_CONT score={score} " +
                     $"pbR={pullbackDepthR:F2} " +
@@ -148,6 +139,17 @@ namespace GeminiV26.EntryTypes.FX
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
+                IsValid = false,
+                Reason = reason
+            };
+
+        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
+            => new()
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = dir,
+                Score = score,
                 IsValid = false,
                 Reason = reason
             };

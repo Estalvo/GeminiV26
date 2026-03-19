@@ -41,7 +41,10 @@ namespace GeminiV26.Core.Entry
                     var eval = entryType.Evaluate(ctx);
 
                     if (eval != null)
+                    {
+                        eval = EntryDecisionPolicy.Normalize(eval);
                         eval.Reason = "[ROUTER] " + (eval.Reason ?? "");
+                    }
 
                     // DEBUG – marad
                     System.Diagnostics.Debug.WriteLine(

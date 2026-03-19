@@ -10,7 +10,7 @@ namespace GeminiV26.EntryTypes.INDEX
         public EntryType Type => EntryType.Index_Pullback;
 
         private const int BaseScore = 60;
-        private const int MinScore = 55;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
 
         private const double MaxPullbackDepthAtr = 0.9;
         private const int MaxPullbackBars = 5;
@@ -19,28 +19,22 @@ namespace GeminiV26.EntryTypes.INDEX
         {
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowPullback)
-                return null;
+                return Reject(ctx, TradeDirection.None, 0, "SESSION_MATRIX_ALLOWPULLBACK_DISABLED");
 
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 10)
-                return null;
+                return Reject(ctx, TradeDirection.None, 0, "CTX_NOT_READY");
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
             if (p == null)
-                return null;
+                return Reject(ctx, TradeDirection.None, 0, "NO_INDEX_PROFILE");
 
             var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
 
-            bool longValid = longEval != null && longEval.IsValid;
-            bool shortValid = shortEval != null && shortEval.IsValid;
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
+                return Reject(ctx, TradeDirection.None, Math.Max(longEval?.Score ?? 0, shortEval?.Score ?? 0), "IDX_PULLBACK_NO_SIDE");
 
-            if (!longValid && !shortValid)
-                return null;
-
-            if (longValid && shortValid)
-                return longEval.Score >= shortEval.Score ? longEval : shortEval;
-
-            return longValid ? longEval : shortEval;
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(
@@ -193,7 +187,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 if (!compressionDetected)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: deep pullback without compression");
-                    return null;
+                    return Reject(ctx, dir, score, "DEEP_PULLBACK_NO_COMPRESSION");
                 }
 
                 TradeDirection impulseDirection =
@@ -206,7 +200,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 if (!breakoutAligned)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: breakout against impulse");
-                    return null;
+                    return Reject(ctx, dir, score, "BREAKOUT_AGAINST_IMPULSE");
                 }
 
                 ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
@@ -214,13 +208,13 @@ namespace GeminiV26.EntryTypes.INDEX
 
             if (pullbackDepthAtr <= 0 ||
                 pullbackDepthAtr > maxPullbackDepthAtr)
-                return null;
+                return Reject(ctx, dir, score, "PULLBACK_DEPTH_INVALID");
 
             if (ctx.PullbackBars_M5 > maxPullbackBars)
-                return null;
+                return Reject(ctx, dir, score, "PULLBACK_BARS_TOO_LONG");
 
             if (!ctx.HasReactionCandle_M5)
-                return null;
+                return Reject(ctx, dir, score, "NO_REACTION");
 
             if (!lastBarInDir)
                 score -= 10;
@@ -282,7 +276,7 @@ namespace GeminiV26.EntryTypes.INDEX
                     $"pbBars={ctx.PullbackBars_M5} | fatigue={trendFatigue} | " +
                     $"ADX={ctx.Adx_M5:F1}"
                 );
-                return null;
+                return Reject(ctx, dir, score, "LOW_SCORE");
             }
 
             Console.WriteLine(
@@ -301,6 +295,20 @@ namespace GeminiV26.EntryTypes.INDEX
                 Reason =
                     $"IDX_PULLBACK_4.1 dir={dir} score={score} " +
                     $"pbATR={pullbackDepthAtr:F2} pbBars={ctx.PullbackBars_M5} fatigue={trendFatigue}"
+            };
+        }
+
+
+        private static EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, int score, string reason)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.Index_Pullback,
+                Direction = dir,
+                Score = Math.Max(0, score),
+                IsValid = false,
+                Reason = reason
             };
         }
 

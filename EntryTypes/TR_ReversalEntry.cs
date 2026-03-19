@@ -25,7 +25,7 @@ namespace GeminiV26.EntryTypes
         public EntryType Type => EntryType.TR_Reversal;
 
         // --- Rulebook 1.0 ---
-        private const int MIN_SCORE = 50;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
 
         // --- Quality gates ---
         private const int MIN_EVIDENCE = 2;
@@ -200,7 +200,7 @@ namespace GeminiV26.EntryTypes
             // 5️⃣ MIN SCORE (EntryType szinten)
             // =========================================================
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = true;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

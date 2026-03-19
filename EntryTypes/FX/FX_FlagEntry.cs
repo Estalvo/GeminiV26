@@ -145,7 +145,7 @@ namespace GeminiV26.EntryTypes.FX
                 double hardFloor = dynamicMinAdx - 6.0;
 
                 bool strongContextForAdx =
-                    score >= (tuning.MinScore + 6) &&
+                    score >= (EntryDecisionPolicy.MinScoreThreshold + 6) &&
                     !ctx.IsRange_M5;
 
                 if (adxNow < hardFloor - 2)
@@ -550,7 +550,7 @@ namespace GeminiV26.EntryTypes.FX
             if (tuning.RequireM1Trigger && !breakout && !hasM1Confirmation)
             {
                 bool strongContext =
-                    score >= tuning.MinScore + 2 &&
+                    score >= EntryDecisionPolicy.MinScoreThreshold + 2 &&
                     !ctx.IsRange_M5;
 
                 if (!strongContext)
@@ -656,7 +656,7 @@ namespace GeminiV26.EntryTypes.FX
 
             bool softM1 =
                 ctx.Session == FxSession.London &&
-                score >= tuning.MinScore + 2 &&
+                score >= EntryDecisionPolicy.MinScoreThreshold + 2 &&
                 !ctx.IsRange_M5;
 
             // EARLY ENTRY RETEST GUARD (use flagDir + hi/lo)
@@ -883,7 +883,7 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // A+ gate: keep
-            if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < tuning.MinScore + 2)
+            if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < EntryDecisionPolicy.MinScoreThreshold + 2)
                 ApplyPenalty(3);
 
             bool continuationSignal = breakoutConfirmed;
@@ -915,7 +915,7 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             // FINAL MIN SCORE
-            int min = tuning.MinScore;
+            int min = EntryDecisionPolicy.MinScoreThreshold;
 
             int sessionStrictness =
                 ctx.Session == FxSession.NewYork ? 2 :

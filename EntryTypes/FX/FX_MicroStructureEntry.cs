@@ -197,7 +197,7 @@ namespace GeminiV26.EntryTypes.FX
             // FINAL SCORE GATE
             // -----------------------------------------------------
 
-            int minScore = 68;
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
 
             score += setupScore;
 

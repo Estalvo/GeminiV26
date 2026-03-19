@@ -15,7 +15,7 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_Pullback;
 
-        private const int MIN_SCORE = 35;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
         private const int ATR_REL_LOOKBACK = 20;
         private const double ATR_REL_EXPANSION_FACTOR = 0.85;
 
@@ -41,16 +41,16 @@ namespace GeminiV26.EntryTypes.FX
             var longEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
 
-            bool longValid = longEval.IsValid;
-            bool shortValid = shortEval.IsValid;
+            if (ctx.FxHtfAllowedDirection == TradeDirection.Long)
+                longEval.Score += 3;
 
-            // FIX #1:
-            // Ha mindkét oldal invalid, NEM gyártunk fallbackből tradelhető setupot.
-            // Diagnosztikai score marad, de no direction + invalid.
-            if (!longValid && !shortValid)
+            if (ctx.FxHtfAllowedDirection == TradeDirection.Short)
+                shortEval.Score += 3;
+
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {
                 int bestScore = Math.Max(longEval.Score, shortEval.Score);
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_INVALID long={longEval.Score} short={shortEval.Score}");
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_HARD_INVALID long={longEval.Score} short={shortEval.Score}");
 
                 return new EntryEvaluation
                 {
@@ -63,19 +63,7 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            if (longValid && shortValid)
-            {
-                if (ctx.FxHtfAllowedDirection == TradeDirection.Long)
-                    longEval.Score += 3;
-
-                if (ctx.FxHtfAllowedDirection == TradeDirection.Short)
-                    shortEval.Score += 3;
-
-                var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
-                return winner;
-            }
-
-            return longValid ? longEval : shortEval;
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(

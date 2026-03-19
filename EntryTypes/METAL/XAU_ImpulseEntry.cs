@@ -20,7 +20,7 @@ namespace GeminiV26.EntryTypes.METAL
         public EntryType Type => EntryType.XAU_Impulse;
 
         private const double SlopeEps = 0.0;
-        private const int MinScore = 65;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
         private const double MinAdx = 18.0;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -94,7 +94,7 @@ namespace GeminiV26.EntryTypes.METAL
             // 6️⃣ M1 TRIGGER (Continuation confirmation)
             // =====================================================
             if (!ctx.M1TriggerInTrendDirection)
-                return Reject(ctx, "NO_M1_TRIGGER");
+                score -= 8;
 
             score += 5;
 
@@ -143,8 +143,6 @@ namespace GeminiV26.EntryTypes.METAL
             if (setupScore <= 0)
                 score = System.Math.Min(score, MinScore - 10);
 
-            if (score < MinScore)
-                return Reject(ctx, $"LOW_SCORE({score})");
 
             string note =
                 $"[XAU_IMPULSE_CONT] {ctx.Symbol} dir={dir} " +
