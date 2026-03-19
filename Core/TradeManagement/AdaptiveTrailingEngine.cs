@@ -8,6 +8,7 @@ namespace GeminiV26.Core.TradeManagement
 {
     public sealed class AdaptiveTrailingEngine
     {
+        private const double LogEpsilon = 0.0001;
         private readonly Robot _bot;
         private readonly AverageTrueRange _atr;
 
@@ -39,6 +40,9 @@ namespace GeminiV26.Core.TradeManagement
             string trailMode = "FALLBACK";
             string reason = string.Empty;
             bool valid = false;
+            string structureLog = null;
+            string fallbackVolatilityLog = null;
+            string fallbackLog = null;
             bool forceFallback = ctx.Tp1Hit
                 && !ctx.LastTrailingStopTarget.HasValue
                 && ctx.BarsSinceEntryM5 >= profile.ForceVolatilityTrailAfterBars;
@@ -50,7 +54,7 @@ namespace GeminiV26.Core.TradeManagement
                 {
                     trailMode = "STRUCTURE";
                     reason = $"structure_anchor barsAgo={anchorBarsAgo}";
-                    _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=STRUCTURE slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason}");
+                    structureLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=STRUCTURE slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason}";
                 }
                 else
                 {
@@ -67,8 +71,8 @@ namespace GeminiV26.Core.TradeManagement
                 BuildVolatilityStop(isLong, profile, atr, decision.SlAtrMultiplier, out newSl, out string regime, out double multiplier);
                 trailMode = "VOLATILITY_FALLBACK";
                 reason = string.IsNullOrWhiteSpace(reason) ? $"fallback regime={regime}" : $"{reason} regime={regime}";
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=VOLATILITY_FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason} multiplier={multiplier:0.00}");
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason}");
+                fallbackVolatilityLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=VOLATILITY_FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason} multiplier={multiplier:0.00}";
+                fallbackLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason}";
             }
 
             if (trailMode == "VOLATILITY_FALLBACK")
@@ -105,19 +109,24 @@ namespace GeminiV26.Core.TradeManagement
                 }
 
                 fallbackSl = Normalize(fallbackSl);
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=VOLATILITY_FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(fallbackSl)} tp={FormatPrice(pos.TakeProfit)} reason=structure_static regime={fallbackRegime} multiplier={fallbackMultiplier:0.00}");
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(fallbackSl)} tp={FormatPrice(pos.TakeProfit)} reason=structure_static");
+                fallbackVolatilityLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=VOLATILITY_FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(fallbackSl)} tp={FormatPrice(pos.TakeProfit)} reason=structure_static regime={fallbackRegime} multiplier={fallbackMultiplier:0.00}";
+                fallbackLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(fallbackSl)} tp={FormatPrice(pos.TakeProfit)} reason=structure_static";
 
                 if (ImprovesStop(isLong, fallbackSl, oldSl))
                 {
                     newSl = fallbackSl;
                     trailMode = "VOLATILITY_FALLBACK";
+                    structureLog = null;
                 }
             }
 
             if (!ImprovesStop(isLong, newSl, oldSl))
             {
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=no_improvement");
+                if (!ctx.LoggedNoImprovement)
+                {
+                    ctx.LoggedNoImprovement = true;
+                    _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=no_improvement");
+                }
                 return;
             }
 
@@ -133,6 +142,10 @@ namespace GeminiV26.Core.TradeManagement
                 _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=duplicate_target");
                 return;
             }
+
+            TryLogTrailCandidate(ctx, reason, structureLog, oldSl, newSl, isLong);
+            TryLogTrailCandidate(ctx, reason, fallbackVolatilityLog, oldSl, newSl, isLong);
+            TryLogTrailCandidate(ctx, reason, fallbackLog, oldSl, newSl, isLong);
 
             var result = _bot.ModifyPosition(pos, newSl, pos.TakeProfit);
 
@@ -240,6 +253,28 @@ namespace GeminiV26.Core.TradeManagement
             return isLong
                 ? candidate > current
                 : candidate < current;
+        }
+
+        private bool CanLogTrailChange(bool isLong, double oldSl, double candidateSl)
+        {
+            return ImprovesStop(isLong, candidateSl, oldSl) &&
+                   Math.Abs(candidateSl - oldSl) >= Math.Max(LogEpsilon, _bot.Symbol.TickSize);
+        }
+
+        private void TryLogTrailCandidate(PositionContext ctx, string reason, string message, double oldSl, double candidateSl, bool isLong)
+        {
+            if (string.IsNullOrWhiteSpace(message) || !CanLogTrailChange(isLong, oldSl, candidateSl))
+                return;
+
+            if (reason.Contains("no_structure_anchor", StringComparison.Ordinal))
+            {
+                if (ctx.LoggedNoStructure)
+                    return;
+
+                ctx.LoggedNoStructure = true;
+            }
+
+            _bot.Print(message);
         }
 
         private double Normalize(double price)

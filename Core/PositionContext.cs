@@ -362,6 +362,26 @@ namespace GeminiV26.Core
 
         public double? LastTrailingStopTarget { get; set; }
 
+        public string LastTp2LogState { get; set; } = string.Empty;
+
+        public double? LastTp2LogValue { get; set; }
+
+        public string LastTp2ExtensionLogState { get; set; } = string.Empty;
+
+        public double? LastTp2ExtensionLogValue { get; set; }
+
+        public bool RunnerActivationLogged { get; set; }
+
+        public string LastProfileLogBucket { get; set; } = string.Empty;
+
+        public bool? LastTtmAllowTp2Extension { get; set; }
+
+        public double? LastTtmTp2Multiplier { get; set; }
+
+        public bool LoggedNoImprovement { get; set; }
+
+        public bool LoggedNoStructure { get; set; }
+
         public bool MarketTrend { get; set; }
 
         public double Adx_M5 { get; set; }
