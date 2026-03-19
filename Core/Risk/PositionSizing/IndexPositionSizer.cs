@@ -16,11 +16,11 @@ namespace GeminiV26.Core.Risk.PositionSizing
 
             double balance = bot.Account.Balance;
             double riskAmount = balance * (riskPercent / 100.0);
-            double slPoints = slPriceDistance / bot.Symbol.TickSize;
+            double slPoints = Math.Abs(slPriceDistance) / bot.Symbol.TickSize;
             if (slPoints <= 0)
                 return 0;
 
-            double valuePerPoint = bot.Symbol.PipValue * bot.Symbol.LotSize;
+            double valuePerPoint = bot.Symbol.TickValue;
             if (valuePerPoint <= 0)
                 return 0;
 
