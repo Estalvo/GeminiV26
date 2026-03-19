@@ -53,12 +53,12 @@ namespace GeminiV26.EntryTypes.METAL
                 score -= 8;
 
             if (!ctx.IsAtrExpanding_M5)
-                return Reject(ctx, $"ATR_NOT_EXPANDING_{dir}");
+                return Reject(ctx, $"ATR_NOT_EXPANDING_{dir}", dir, score);
 
             score += 5;
 
             if (!ctx.HasImpulse_M5)
-                return Reject(ctx, $"NO_M5_IMPULSE_{dir}");
+                return Reject(ctx, $"NO_M5_IMPULSE_{dir}", dir, score);
 
             score += 5;
 
@@ -71,7 +71,7 @@ namespace GeminiV26.EntryTypes.METAL
             minAdxRequired = System.Math.Max(minAdxRequired, matrix.MinAdx);
 
             if (ctx.Adx_M5 < minAdxRequired)
-                return Reject(ctx, $"ADX_TOO_LOW_{dir}({ctx.Adx_M5:F1})");
+                return Reject(ctx, $"ADX_TOO_LOW_{dir}({ctx.Adx_M5:F1})", dir, score);
 
             if (ctx.Adx_M5 >= 30)
                 score += 5;
@@ -201,11 +201,17 @@ namespace GeminiV26.EntryTypes.METAL
         }
 
         private EntryEvaluation Reject(EntryContext ctx, string reason)
+            => Reject(ctx, reason, TradeDirection.None, 0);
+
+        private EntryEvaluation Reject(EntryContext ctx, string reason, TradeDirection dir, int score)
         {
+            bool hardInvalid = EntryDecisionPolicy.IsHardInvalidReason(reason) || dir == TradeDirection.None;
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
+                Direction = hardInvalid ? TradeDirection.None : dir,
+                Score = score,
                 IsValid = false,
                 Reason = $"[XAU_IMPULSE_REJECT] {reason}"
             };
