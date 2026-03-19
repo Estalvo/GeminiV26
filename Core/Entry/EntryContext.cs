@@ -132,6 +132,8 @@ namespace GeminiV26.Core.Entry
         public bool PullbackTouchedEma21_M5;
 
         public bool IsPullbackDecelerating_M5 { get; set; }
+        public bool IsTransition_M5 { get; set; }
+        public bool HasEarlyPullback_M5 { get; set; }
         public bool HasRejectionWick_M5 { get; set; }
         public bool HasReactionCandle_M5 { get; set; }
 

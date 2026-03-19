@@ -174,6 +174,18 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add("NO_REACTION");
             }
 
+            if (ctx.HasEarlyPullback_M5)
+            {
+                score += 1;
+                reasons.Add("EARLY_PULLBACK");
+            }
+
+            if (ctx.IsTransition_M5)
+            {
+                score -= 6;
+                reasons.Add("TRANSITION_PENALTY");
+            }
+
             // =========================
             // M1 trigger
             // =========================
