@@ -56,8 +56,11 @@ namespace GeminiV26.EntryTypes.METAL
             ctx.Log?.Invoke($"[FLAG RANGE CHECK] hi={hi} lo={lo} valid={hasValidRange}");
 
             if (!hasValidRange)
-                ctx.Log?.Invoke("[FLAG WARN] No valid range → fallback mode");
+                return Invalid(ctx, "NO_FLAG_RANGE");
 
+            if (!ctx.HasFlagLong_M5 && !ctx.HasFlagShort_M5)
+                return Invalid(ctx, "NO_FLAG_STRUCTURE");
+                
             double rangeAtr = hasValidRange && ctx.AtrM5 > 0
                 ? (hi - lo) / ctx.AtrM5
                 : 0;
@@ -184,13 +187,10 @@ namespace GeminiV26.EntryTypes.METAL
                 ctx.PullbackBars_M5 >= 2 &&
                 ctx.IsPullbackDecelerating_M5;
 
-            if (ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5)
-                score += 5;
-            else
-            {
-                reasons.Add("FLAG_WEAK_OR_FORMING");
-                score -= 2;
-            }
+            if (!(ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5))
+                return InvalidDir(ctx, dir, "NO_FLAG", score);
+
+            score += 5;
 
             if (ctx.PullbackBars_M5 > 0)
                 score += 4;
