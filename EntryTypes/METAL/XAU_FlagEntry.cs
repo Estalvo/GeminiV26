@@ -178,11 +178,32 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.HasFlagLong_M5
                     : ctx.HasFlagShort_M5;
 
-            if (!hasFlag)
+            bool earlyPB = EntryContextBuilder.GetHasEarlyPullback_M5(ctx);
+
+            bool structuredPB =
+                ctx.PullbackBars_M5 >= 2 &&
+                ctx.IsPullbackDecelerating_M5;
+
+            if (hasFlag)
+                score += 5;
+            else
             {
                 reasons.Add("FLAG_WEAK_OR_FORMING");
                 score -= 2;
             }
+
+            if (structuredPB)
+                score += 4;
+            else if (earlyPB)
+                score += 1;
+
+            bool hasSomeStructure =
+                hasFlag || structuredPB || earlyPB;
+
+            if (!hasSomeStructure)
+                reasons.Add("NO_STRUCTURE");
+
+            ctx.Log?.Invoke($"[XAU FLAG] flag={hasFlag} earlyPB={earlyPB} structPB={structuredPB} score={score}");
 
             bool breakoutConfirmed =
                 dir == TradeDirection.Long

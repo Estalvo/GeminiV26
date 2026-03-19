@@ -1,6 +1,7 @@
 ﻿using cAlgo.API;
 using cAlgo.API.Internals;
 using System;
+using System.Runtime.CompilerServices;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
 using GeminiV26.Instruments.METAL;
@@ -12,6 +13,12 @@ namespace GeminiV26.Core.Entry
 {
     public class EntryContextBuilder
     {
+        private sealed class EarlyPullbackState
+        {
+            public bool Value;
+        }
+
+        private static readonly ConditionalWeakTable<EntryContext, EarlyPullbackState> EarlyPullbackStates = new ConditionalWeakTable<EntryContext, EarlyPullbackState>();
         private readonly Robot _bot;
         private readonly CryptoHtfBiasEngine _cryptoHtf;
         private readonly FxHtfBiasEngine _fxHtf;
@@ -25,6 +32,22 @@ namespace GeminiV26.Core.Entry
             _fxHtf = new FxHtfBiasEngine(_bot);
             _indexHtf = new IndexHtfBiasEngine(_bot);
             _metalHtf = new MetalHtfBiasEngine(_bot);
+        }
+
+        public static bool GetHasEarlyPullback_M5(EntryContext ctx)
+        {
+            return ctx != null &&
+                   EarlyPullbackStates.TryGetValue(ctx, out var state) &&
+                   state.Value;
+        }
+
+        private static void SetHasEarlyPullback_M5(EntryContext ctx, bool value)
+        {
+            if (ctx == null)
+                return;
+
+            EarlyPullbackStates.Remove(ctx);
+            EarlyPullbackStates.Add(ctx, new EarlyPullbackState { Value = value });
         }
 
         // =================================================
@@ -331,116 +354,6 @@ namespace GeminiV26.Core.Entry
                 range5 < ctx.AtrM5 * 3.0;
 
             // =================================================
-            // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
-            // =================================================
-
-            // reset
-            ctx.HasFlagLong_M5 = false;
-            ctx.HasFlagShort_M5 = false;
-            ctx.FlagHigh = 0;
-            ctx.FlagLow = 0;
-            ctx.FlagAtr_M5 = 0;
-
-            // ---- lookback (adaptive alap később lehet instrument szerint)
-            int lookback = 6;
-
-            double flagHi = double.MinValue;
-            double flagLo = double.MaxValue;
-
-            // safety (index ne menjen ki)
-            int start = Math.Max(0, m5Idx - lookback + 1);
-
-            for (int i = start; i <= m5Idx; i++)
-            {
-                flagHi = Math.Max(flagHi, ctx.M5.HighPrices[i]);
-                flagLo = Math.Min(flagLo, ctx.M5.LowPrices[i]);
-            }
-
-            double flagRange = flagHi - flagLo;
-
-            // ============================
-            // 1) COMPRESSION
-            // ============================
-
-            bool isTight =
-                ctx.AtrM5 > 0 &&
-                flagRange > 0 &&
-                flagRange < ctx.AtrM5 * 1.2;
-
-            // ============================
-            // 2) MICRO STRUCTURE
-            // ============================
-
-            // LOWER HIGHS → SHORT flag
-            bool hasLowerHighs =
-                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 2] &&
-                ctx.M5.HighPrices[m5Idx - 2] < ctx.M5.HighPrices[m5Idx - 4];
-
-            // HIGHER LOWS → LONG flag
-            bool hasHigherLows =
-                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 2] &&
-                ctx.M5.LowPrices[m5Idx - 2] > ctx.M5.LowPrices[m5Idx - 4];
-
-            // ============================
-            // 3) DECELERATION (MÁR KISZÁMOLT)
-            // ============================
-
-            bool decelerating = ctx.IsPullbackDecelerating_M5;
-
-            // ============================
-            // 4) FINAL FLAG DECISION
-            // ============================
-
-            bool shortFlag =
-                isTight &&
-                decelerating &&
-                hasLowerHighs;
-
-            bool longFlag =
-                isTight &&
-                decelerating &&
-                hasHigherLows;
-
-            // ============================
-            // 5) ASSIGN
-            // ============================
-
-            ctx.HasFlagShort_M5 = shortFlag;
-            ctx.HasFlagLong_M5 = longFlag;
-
-            // csak akkor mentjük a range-et ha EGYÉRTELMŰ
-            if (shortFlag && !longFlag)
-            {
-                ctx.FlagHigh = flagHi;
-                ctx.FlagLow = flagLo;
-            }
-            else if (longFlag && !shortFlag)
-            {
-                ctx.FlagHigh = flagHi;
-                ctx.FlagLow = flagLo;
-            }
-            else
-            {
-                // konfliktus / nincs flag
-                ctx.HasFlagShort_M5 = false;
-                ctx.HasFlagLong_M5 = false;
-            }
-
-            // ATR-normalizált méret
-            ctx.FlagAtr_M5 = flagRange;
-
-            // ============================
-            // DEBUG (opcionális, de most hasznos)
-            // ============================
-
-            _bot.Print(
-                $"[FLAG V2.22] tight={isTight} decel={decelerating} " +
-                $"LH={hasLowerHighs} HL={hasHigherLows} " +
-                $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
-                $"range={flagRange} atr={ctx.AtrM5}"
-            );
-
-            // =================================================
             // ATR EXPANSION
             // =================================================
             ctx.IsAtrExpanding_M5 =
@@ -521,6 +434,144 @@ namespace GeminiV26.Core.Entry
                     ctx.AvgBodyLast3_M5 < ctx.AvgBodyPrev3_M5 &&
                     ctx.AvgBodyLast3_M5 < ctx.AtrM5 * 0.6;
             }
+
+            bool earlyPullbackShort =
+                ctx.TrendDirection == TradeDirection.Short &&
+                ctx.BarsSinceImpulse_M5 <= 3 &&
+                ctx.PullbackBars_M5 >= 1;
+
+            bool earlyPullbackLong =
+                ctx.TrendDirection == TradeDirection.Long &&
+                ctx.BarsSinceImpulse_M5 <= 3 &&
+                ctx.PullbackBars_M5 >= 1;
+
+            bool hasEarlyPullback = earlyPullbackShort || earlyPullbackLong;
+            SetHasEarlyPullback_M5(ctx, hasEarlyPullback);
+
+            _bot.Print(
+                $"[PB] early={hasEarlyPullback} bars={ctx.PullbackBars_M5} sinceImpulse={ctx.BarsSinceImpulse_M5}"
+            );
+
+            // =================================================
+            // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
+            // =================================================
+
+            // reset
+            ctx.HasFlagLong_M5 = false;
+            ctx.HasFlagShort_M5 = false;
+            ctx.FlagHigh = 0;
+            ctx.FlagLow = 0;
+            ctx.FlagAtr_M5 = 0;
+
+            // ---- lookback (adaptive alap később lehet instrument szerint)
+            int lookback = 6;
+
+            double flagHi = double.MinValue;
+            double flagLo = double.MaxValue;
+
+            // safety (index ne menjen ki)
+            int start = Math.Max(0, m5Idx - lookback + 1);
+
+            for (int i = start; i <= m5Idx; i++)
+            {
+                flagHi = Math.Max(flagHi, ctx.M5.HighPrices[i]);
+                flagLo = Math.Min(flagLo, ctx.M5.LowPrices[i]);
+            }
+
+            double flagRange = flagHi - flagLo;
+
+            // ============================
+            // 1) COMPRESSION
+            // ============================
+
+            bool isTight =
+                ctx.AtrM5 > 0 &&
+                flagRange > 0 &&
+                flagRange < ctx.AtrM5 * 1.5;
+
+            // ============================
+            // 2) MICRO STRUCTURE
+            // ============================
+
+            bool strongLowerHighs =
+                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 2] &&
+                ctx.M5.HighPrices[m5Idx - 2] < ctx.M5.HighPrices[m5Idx - 4];
+
+            bool weakLowerHighs =
+                ctx.M5.HighPrices[m5Idx] < ctx.M5.HighPrices[m5Idx - 1];
+
+            bool hasLowerHighs = strongLowerHighs || weakLowerHighs;
+
+            bool strongHigherLows =
+                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 2] &&
+                ctx.M5.LowPrices[m5Idx - 2] > ctx.M5.LowPrices[m5Idx - 4];
+
+            bool weakHigherLows =
+                ctx.M5.LowPrices[m5Idx] > ctx.M5.LowPrices[m5Idx - 1];
+
+            bool hasHigherLows = strongHigherLows || weakHigherLows;
+
+            // ============================
+            // 3) DECELERATION (MÁR KISZÁMOLT)
+            // ============================
+
+            bool decelerating = ctx.IsPullbackDecelerating_M5;
+            bool allowWithoutDecel =
+                hasEarlyPullback &&
+                ctx.PullbackBars_M5 <= 2;
+
+            // ============================
+            // 4) FINAL FLAG DECISION
+            // ============================
+
+            bool shortFlag =
+                isTight &&
+                hasLowerHighs &&
+                (decelerating || allowWithoutDecel);
+
+            bool longFlag =
+                isTight &&
+                hasHigherLows &&
+                (decelerating || allowWithoutDecel);
+
+            // ============================
+            // 5) ASSIGN
+            // ============================
+
+            ctx.HasFlagShort_M5 = shortFlag;
+            ctx.HasFlagLong_M5 = longFlag;
+
+            // csak akkor mentjük a range-et ha EGYÉRTELMŰ
+            if (shortFlag && !longFlag)
+            {
+                ctx.FlagHigh = flagHi;
+                ctx.FlagLow = flagLo;
+            }
+            else if (longFlag && !shortFlag)
+            {
+                ctx.FlagHigh = flagHi;
+                ctx.FlagLow = flagLo;
+            }
+            else
+            {
+                // konfliktus / nincs flag
+                ctx.HasFlagShort_M5 = false;
+                ctx.HasFlagLong_M5 = false;
+            }
+
+            // ATR-normalizált méret
+            ctx.FlagAtr_M5 = flagRange;
+
+            // ============================
+            // DEBUG (opcionális, de most hasznos)
+            // ============================
+
+            _bot.Print(
+                $"[FLAG V2.22] tight={isTight} decel={decelerating} allowNoDecel={allowWithoutDecel} " +
+                $"LH={hasLowerHighs} HL={hasHigherLows} " +
+                $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
+                $"range={flagRange} atr={ctx.AtrM5}"
+            );
 
             // =================================================
             // REJECTION WICK (M5)  -> confirms actual rejection, not just a small candle
