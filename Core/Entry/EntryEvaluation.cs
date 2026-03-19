@@ -19,5 +19,15 @@
         public EntryState State = EntryState.NONE;
 
         public bool TriggerConfirmed;
+
+        public bool HasTrigger
+        {
+            get => TriggerConfirmed;
+            set => TriggerConfirmed = value;
+        }
+
+        public bool IsHTFMisaligned;
+        public bool IgnoreHTFForDecision;
+        public double HtfConfidence01;
     }
 }

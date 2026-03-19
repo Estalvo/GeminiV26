@@ -19,6 +19,7 @@
 // =========================================================
 using cAlgo.API;
 using GeminiV26.Core.Entry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,7 +43,7 @@ namespace GeminiV26.Core
         // =========================================================
         // ENTRY PRIORITY SELECTION (RULEBOOK 1.0)
         // =========================================================
-        public EntryEvaluation SelectEntry(List<EntryEvaluation> signals)
+        public EntryEvaluation SelectEntry(List<EntryEvaluation> signals, EntryContext entryContext = null)
         {
             _bot.Print("[TR] SelectEntry CALLED");
 
@@ -63,6 +64,10 @@ namespace GeminiV26.Core
                 _bot.Print($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.IsValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
 
                 if (!candidate.IsValid)
+                {
+                    decision = "REJECT";
+                }
+                else if (!ApplyFxAcceptanceFilters(candidate, entryContext))
                 {
                     decision = "REJECT";
                 }
@@ -90,6 +95,61 @@ namespace GeminiV26.Core
 
             _bot.Print($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}");
             return winner;
+        }
+
+
+        private bool ApplyFxAcceptanceFilters(EntryEvaluation eval, EntryContext entryContext)
+        {
+            if (eval == null || !eval.IsValid)
+                return false;
+
+            string symbol = eval.Symbol ?? entryContext?.Symbol ?? _bot.SymbolName;
+            var assetClass = SymbolRouting.ResolveInstrumentClass(symbol);
+            if (assetClass != InstrumentClass.FX)
+                return true;
+
+            eval.IgnoreHTFForDecision = false;
+            eval.HtfConfidence01 = entryContext?.FxHtfConfidence01 ?? 0.0;
+            eval.IsHTFMisaligned = entryContext != null
+                && entryContext.FxHtfAllowedDirection != TradeDirection.None
+                && eval.Direction != TradeDirection.None
+                && eval.Direction != entryContext.FxHtfAllowedDirection;
+
+            int decisionScore = eval.Score;
+            if (eval.HtfConfidence01 < 0.5 && eval.IsHTFMisaligned)
+            {
+                eval.IgnoreHTFForDecision = true;
+                decisionScore = Math.Max(0, Math.Min(100, decisionScore + 10));
+            }
+
+            if (decisionScore < EntryDecisionPolicy.MinScoreThreshold)
+                return RejectFxCandidate(eval, decisionScore, "FX_SCORE_BELOW_THRESHOLD");
+
+            if (!eval.HasTrigger)
+            {
+                if (eval.State == EntryState.SETUP_DETECTED)
+                    return RejectFxCandidate(eval, decisionScore, "FX_EARLY_BLOCK");
+
+                return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED");
+            }
+
+            if (decisionScore < 45)
+                return RejectFxCandidate(eval, decisionScore, "FX_MIN_QUALITY_BLOCK");
+
+            return true;
+        }
+
+        private bool RejectFxCandidate(EntryEvaluation eval, int decisionScore, string reasonToken)
+        {
+            eval.IsValid = false;
+            eval.Reason = string.IsNullOrWhiteSpace(eval.Reason)
+                ? $"[{reasonToken}]"
+                : $"{eval.Reason} [{reasonToken}]";
+
+            _bot.Print(
+                $"[FX FILTER] type={eval.Type} dir={eval.Direction} score={eval.Score} decisionScore={decisionScore} reason={reasonToken}");
+
+            return false;
         }
 
         // =========================================================
