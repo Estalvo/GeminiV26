@@ -242,6 +242,11 @@ namespace GeminiV26.EntryTypes
                 return eval;
             }
 
+            bool breakoutDetected = ctx.RangeBreakDirection == eval.Direction;
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+            score = TriggerScoreModel.Apply(ctx, $"BR_RANGE_BREAKOUT_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
+
             // =========================================================
             // MIN SCORE – ENTRYTYPE SZINTEN
             // =========================================================

@@ -75,9 +75,6 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.M1FlagBreakTrigger ||
                 (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
-            if (!m1Confirm)
-                return Invalid(ctx, dir, "NO_M1_CONFIRM", 51);
-
             bool continuationSignal = m1Confirm;
 
             bool hasStructure =
@@ -98,9 +95,18 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
                 score += 10;
 
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = m1Confirm || ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal || ctx.LastClosedBarInTrendDirection;
+
             if (ctx.IsRange_M5)
                 score -= 10;
 
+            score = TriggerScoreModel.Apply(ctx, $"FX_FLAG_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_M1_CONFIRM");
             score += setupScore;
 
             if (setupScore <= 0)

@@ -101,6 +101,10 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.IsAtrExpanding_M5)
                 score += 10;
 
+            bool breakoutDetected = ctx.RangeBreakDirection == dir;
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            score = TriggerScoreModel.Apply(ctx, $"BTC_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)

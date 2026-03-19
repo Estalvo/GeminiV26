@@ -202,7 +202,7 @@ namespace GeminiV26.EntryTypes.FX
             if (weakCount >= 3 && !hasDirectionalM1Trigger)
             {
                 ctx?.Log?.Invoke($"[PB FILTER] dir={dir} weak structure blocked | weakCount={weakCount}");
-                return Block(ctx, dir, "PB_WEAK_STRUCTURE", score);
+                ApplyPenalty(ref score, ref penalty, 12, penaltyBudget, ctx, "PB_WEAK_STRUCTURE");
             }
 
             if (!ctx.PullbackTouchedEma21_M5)
@@ -245,7 +245,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (!compressionDetected)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: deep pullback without compression");
-                    return Block(ctx, dir, "PB_TOO_DEEP", score);
+                    ApplyPenalty(ref score, ref penalty, 10, penaltyBudget, ctx, "PB_TOO_DEEP_NO_COMPRESSION");
                 }
 
                 TradeDirection impulseDirection =
@@ -258,7 +258,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (!breakoutAligned)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: breakout against impulse");
-                    return Block(ctx, dir, "PB_TOO_DEEP", score);
+                    ApplyPenalty(ref score, ref penalty, 10, penaltyBudget, ctx, "PB_BREAKOUT_AGAINST_IMPULSE");
                 }
 
                 ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
@@ -366,6 +366,12 @@ namespace GeminiV26.EntryTypes.FX
             if (hasContinuation)
                 setupScore += 20;
 
+            bool breakoutDetected =
+                hasDirectionalM1Trigger ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            bool strongCandle = lastBarInDir;
+            bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
+            score = TriggerScoreModel.Apply(ctx, $"FX_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
             score += setupScore;
 
