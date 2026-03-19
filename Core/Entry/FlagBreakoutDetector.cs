@@ -58,8 +58,6 @@ namespace GeminiV26.Core.Entry
             ExpireState(ctx, state);
 
             // defaults
-            ctx.FlagHigh = 0.0;
-            ctx.FlagLow = 0.0;
             ctx.FlagBreakoutUp = false;
             ctx.FlagBreakoutDown = false;
 
@@ -86,45 +84,36 @@ namespace GeminiV26.Core.Entry
                 return;
             }
 
-            int flagBars = Math.Max(
-                ctx.FlagBarsLong_M5,
-                ctx.FlagBarsShort_M5);
+            int longFlagBars = ctx.FlagBarsLong_M5;
+            int shortFlagBars = ctx.FlagBarsShort_M5;
+            bool hasLongFlag = ctx.HasFlagLong_M5;
+            bool hasShortFlag = ctx.HasFlagShort_M5;
             int lastClosed = ctx.M5.Count - 2;
-            if (flagBars <= 0)
+
+            if (!hasLongFlag && !hasShortFlag)
             {
-                _log?.Invoke("[FLAG_BREAKOUT][WAIT] no flag yet");
+                _log?.Invoke(
+                    $"[FLAG_BREAKOUT][WAIT] builder flag missing long={hasLongFlag} short={hasShortFlag} longFlagBars={longFlagBars} shortFlagBars={shortFlagBars}");
+                SyncStateBack(ctx, state);
+                return;
+            }
+
+            double flagHigh = ctx.FlagHigh;
+            double flagLow = ctx.FlagLow;
+            double flagAtr = ctx.FlagAtr_M5;
+
+            if (flagHigh <= flagLow || flagAtr <= 0)
+            {
+                _log?.Invoke(
+                    $"[FLAG_BREAKOUT][WAIT] builder flag range not ready high={flagHigh:0.#####} low={flagLow:0.#####} flagAtr={flagAtr:0.#####} long={hasLongFlag} short={hasShortFlag}");
                 SyncStateBack(ctx, state);
                 return;
             }
 
             // =========================
-            // Compute flag range
+            // Direction-agnostic breakout checks using builder SSOT
             // =========================
-            int flagEnd = lastClosed - 1;
-            int start = Math.Max(0, flagEnd - flagBars + 1);
-            if (start > flagEnd)
-            {
-                _log?.Invoke("[FLAG_BREAKOUT][WAIT] range not ready");
-                SyncStateBack(ctx, state);
-                return;
-            }
-
-            double flagHigh = double.MinValue;
-            double flagLow = double.MaxValue;
-
-            for (int i = start; i <= flagEnd; i++)
-            {
-                flagHigh = Math.Max(flagHigh, ctx.M5.HighPrices[i]);
-                flagLow = Math.Min(flagLow, ctx.M5.LowPrices[i]);
-            }
-
-            ctx.FlagHigh = flagHigh;
-            ctx.FlagLow = flagLow;
-
-            // =========================
-            // Direction-agnostic breakout checks
-            // =========================
-            double breakoutBuffer = ctx.AtrM5 * 0.10;
+            double breakoutBuffer = flagAtr * 0.10;
 
             double lastHigh = ctx.M5.HighPrices[lastClosed];
             double lastLow = ctx.M5.LowPrices[lastClosed];
@@ -136,8 +125,8 @@ namespace GeminiV26.Core.Entry
             bool closeUp = lastClose > flagHigh;
             bool closeDown = lastClose < flagLow;
 
-            bool breakoutUp = highBreak && closeUp;
-            bool breakoutDown = lowBreak && closeDown;
+            bool breakoutUp = hasLongFlag && highBreak && closeUp;
+            bool breakoutDown = hasShortFlag && lowBreak && closeDown;
 
             ctx.FlagBreakoutUp = breakoutUp;
             ctx.FlagBreakoutDown = breakoutDown;
@@ -167,10 +156,11 @@ namespace GeminiV26.Core.Entry
             // Logs
             // =========================
             _log?.Invoke(
-                $"[FLAG_BREAKOUT][RANGE] high={flagHigh:0.#####} low={flagLow:0.#####} bars={flagBars} lastClosedIndex={lastClosed}");
+                $"[FLAG_BREAKOUT][RANGE] high={flagHigh:0.#####} low={flagLow:0.#####} flagAtr={flagAtr:0.#####} builderLong={hasLongFlag} builderShort={hasShortFlag} longFlagBars={longFlagBars} shortFlagBars={shortFlagBars} lastClosedIndex={lastClosed}");
 
             _log?.Invoke(
                 $"[FLAG_BREAKOUT][CHECK] " +
+                $"builderLong={hasLongFlag} builderShort={hasShortFlag} " +
                 $"highBreak={highBreak} lowBreak={lowBreak} " +
                 $"closeUp={closeUp} closeDown={closeDown} " +
                 $"breakoutUp={breakoutUp} breakoutDown={breakoutDown} " +

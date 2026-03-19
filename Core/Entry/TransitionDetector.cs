@@ -59,10 +59,6 @@ namespace GeminiV26.Core.Entry
 
             ctx.PullbackDepthRLong_M5 = longSide.PullbackDepthR;
             ctx.PullbackDepthRShort_M5 = shortSide.PullbackDepthR;
-
-            ctx.HasFlagLong_M5 = longSide.HasFlag;
-            ctx.HasFlagShort_M5 = shortSide.HasFlag;
-
             ctx.FlagBarsLong_M5 = longSide.FlagBars;
             ctx.FlagBarsShort_M5 = shortSide.FlagBars;
 
@@ -127,14 +123,14 @@ namespace GeminiV26.Core.Entry
                 $"[TRANSITION][LONG] phase={longSide.Phase} " +
                 $"impulse={longSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={longSide.BarsSinceImpulse} " +
                 $"pullback={longSide.HasPullback.ToString().ToLowerInvariant()} pbBars={longSide.PullbackBars} pbDepthR={longSide.PullbackDepthR:0.00} " +
-                $"flag={longSide.HasFlag.ToString().ToLowerInvariant()} flagBars={longSide.FlagBars} comp={longSide.CompressionScore:0.00} " +
+                $"flagState={longSide.HasFlag.ToString().ToLowerInvariant()} flagBars={longSide.FlagBars} comp={longSide.CompressionScore:0.00} " +
                 $"tradable={longSide.IsTradable.ToString().ToLowerInvariant()} score={longSide.QualityScore:0.00} bonus={longSide.BonusScore} reason={longSide.Reason}");
 
             ctx.Log?.Invoke(
                 $"[TRANSITION][SHORT] phase={shortSide.Phase} " +
                 $"impulse={shortSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={shortSide.BarsSinceImpulse} " +
                 $"pullback={shortSide.HasPullback.ToString().ToLowerInvariant()} pbBars={shortSide.PullbackBars} pbDepthR={shortSide.PullbackDepthR:0.00} " +
-                $"flag={shortSide.HasFlag.ToString().ToLowerInvariant()} flagBars={shortSide.FlagBars} comp={shortSide.CompressionScore:0.00} " +
+                $"flagState={shortSide.HasFlag.ToString().ToLowerInvariant()} flagBars={shortSide.FlagBars} comp={shortSide.CompressionScore:0.00} " +
                 $"tradable={shortSide.IsTradable.ToString().ToLowerInvariant()} score={shortSide.QualityScore:0.00} bonus={shortSide.BonusScore} reason={shortSide.Reason}");
 
             ctx.Log?.Invoke(
@@ -561,10 +557,6 @@ namespace GeminiV26.Core.Entry
 
             ctx.PullbackDepthRLong_M5 = 0.0;
             ctx.PullbackDepthRShort_M5 = 0.0;
-
-            ctx.HasFlagLong_M5 = false;
-            ctx.HasFlagShort_M5 = false;
-
             ctx.FlagBarsLong_M5 = 0;
             ctx.FlagBarsShort_M5 = 0;
 
