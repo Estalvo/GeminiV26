@@ -130,6 +130,7 @@ namespace GeminiV26.EntryTypes.INDEX
             int score = BaseScore;
             int setupScore = 0;
             int penaltyBudget = 0;
+            double triggerScore = 0;
             const int maxPenalty = 22;
 
             void ApplyPenalty(int p)
@@ -396,9 +397,6 @@ namespace GeminiV26.EntryTypes.INDEX
             if (hasContinuation)
                 setupScore += 20;
 
-            if (!breakoutConfirmed)
-                return Reject(ctx, "NO_FLAG_BREAKOUT", score, dir);
-
             double breakDist = 0;
 
             if (hasValidRange)
@@ -410,15 +408,22 @@ namespace GeminiV26.EntryTypes.INDEX
             }
 
             double follow = ctx.AtrM5 * 0.12;
+            bool followThrough = true;
 
             if (hasValidRange)
             {
                 if (dir == TradeDirection.Long && close < hi + follow)
-                    return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+                    followThrough = false;
 
                 if (dir == TradeDirection.Short && close > lo - follow)
-                    return Reject(ctx, "WEAK_BREAKOUT_NO_FOLLOW", score, dir);
+                    followThrough = false;
             }
+
+            if (!breakoutConfirmed)
+                ApplyPenalty(8);
+
+            if (!followThrough)
+                ApplyPenalty(6);
 
             // =====================================================
             // BREAKOUT BAR QUALITY
@@ -432,16 +437,16 @@ namespace GeminiV26.EntryTypes.INDEX
             double breakoutBarAtr = barRange / ctx.AtrM5;
 
             if (bodyRatio < MinBreakoutBodyRatio)
-                return Reject(ctx, $"WEAK_BODY({bodyRatio:F2})", score, dir);
+                ApplyPenalty(6);
 
             if (breakoutBarAtr < MinBreakoutBarAtr)
-                return Reject(ctx, $"BREAKOUT_TOO_SMALL({breakoutBarAtr:F2})", score, dir);
+                ApplyPenalty(6);
 
             if (dir == TradeDirection.Long && close <= open)
-                return Reject(ctx, "BREAKOUT_BAR_NOT_BULLISH", score, dir);
+                ApplyPenalty(8);
 
             if (dir == TradeDirection.Short && close >= open)
-                return Reject(ctx, "BREAKOUT_BAR_NOT_BEARISH", score, dir);
+                ApplyPenalty(8);
 
             // =====================================================
             // M1 CONFIRMATION
@@ -451,9 +456,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 HasDirectionalM1FollowThrough(ctx, dir);
 
             if (!m1Ok)
-                return Reject(ctx, "NO_M1_CONFIRMATION", score, dir);
-
-            ApplyReward(5);
+                ApplyPenalty(6);
+            else
+                ApplyReward(5);
 
             // =====================================================
             // EXTRA QUALITY
@@ -503,6 +508,33 @@ namespace GeminiV26.EntryTypes.INDEX
             }
 
             score += setupScore;
+
+            bool breakoutDetected = breakoutConfirmed;
+            bool strongCandle =
+                bodyRatio >= MinBreakoutBodyRatio &&
+                ((dir == TradeDirection.Long && close > open) || (dir == TradeDirection.Short && close < open));
+            followThrough = followThrough && m1Ok;
+
+            if (breakoutDetected)
+                triggerScore += 1;
+
+            if (strongCandle)
+                triggerScore += 1;
+
+            if (followThrough)
+                triggerScore += 2;
+
+            score += (int)Math.Round(triggerScore * 5);
+
+            if (triggerScore == 0)
+                score -= 15;
+
+            bool minimalTrigger = breakoutDetected || strongCandle;
+            if (!minimalTrigger)
+                score -= 10;
+
+            ctx.Log?.Invoke(
+                $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, MinScore - 10);
