@@ -50,7 +50,7 @@ namespace GeminiV26.Core
                 return null;
 
             int nonNullCount = signals.Count(e => e != null);
-            int validCount = signals.Count(e => e != null && e.IsValid && e.Score >= EntryDecisionPolicy.MinScoreThreshold);
+            int validCount = signals.Count(e => e != null && e.IsValid);
 
             _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
             LogCandidates("CAND", signals);
@@ -60,12 +60,9 @@ namespace GeminiV26.Core
             foreach (var candidate in signals.Where(e => e != null))
             {
                 string decision;
+                _bot.Print($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.IsValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
 
                 if (!candidate.IsValid)
-                {
-                    decision = "REJECT";
-                }
-                else if (candidate.Score < EntryDecisionPolicy.MinScoreThreshold)
                 {
                     decision = "REJECT";
                 }

@@ -15,7 +15,7 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_Pullback;
 
-        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
+        private const int MIN_SCORE = 35;
         private const int ATR_REL_LOOKBACK = 20;
         private const double ATR_REL_EXPANSION_FACTOR = 0.85;
 
@@ -41,16 +41,13 @@ namespace GeminiV26.EntryTypes.FX
             var longEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
             var shortEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
 
-            if (ctx.FxHtfAllowedDirection == TradeDirection.Long)
-                longEval.Score += 3;
+            bool longValid = longEval.IsValid;
+            bool shortValid = shortEval.IsValid;
 
-            if (ctx.FxHtfAllowedDirection == TradeDirection.Short)
-                shortEval.Score += 3;
-
-            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
+            if (!longValid && !shortValid)
             {
                 int bestScore = Math.Max(longEval.Score, shortEval.Score);
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_HARD_INVALID long={longEval.Score} short={shortEval.Score}");
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] BOTH_INVALID long={longEval.Score} short={shortEval.Score}");
 
                 return new EntryEvaluation
                 {
@@ -63,7 +60,19 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            if (longValid && shortValid)
+            {
+                if (ctx.FxHtfAllowedDirection == TradeDirection.Long)
+                    longEval.Score += 3;
+
+                if (ctx.FxHtfAllowedDirection == TradeDirection.Short)
+                    shortEval.Score += 3;
+
+                var winner = longEval.Score >= shortEval.Score ? longEval : shortEval;
+                return winner;
+            }
+
+            return longValid ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(
@@ -73,7 +82,6 @@ namespace GeminiV26.EntryTypes.FX
             TradeDirection dir)
         {
             int score = 60;
-            int setupScore = 0;
             int penalty = 0;
             int penaltyBudget = 14;
 
@@ -122,26 +130,6 @@ namespace GeminiV26.EntryTypes.FX
             int barsSinceImpulse =
                 dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong_M5 :
                 ctx.BarsSinceImpulseShort_M5;
-
-            // === STRICT PULLBACK VALIDATION ===
-
-            // minimum depth
-            if (pullbackDepth < 0.5)
-            {
-                return Block(ctx, dir, "PB_TOO_SHALLOW", score);
-            }
-
-            // minimum bars
-            if (ctx.PullbackBars_M5 < 3)
-            {
-                return Block(ctx, dir, "PB_TOO_SHORT", score);
-            }
-
-            // EMA touch KÖTELEZŐ (ez volt a nagy hiba eddig)
-            if (!ctx.PullbackTouchedEma21_M5)
-            {
-                return Block(ctx, dir, "PB_NO_EMA21_TOUCH", score);
-            }
 
             if (!hasPullback)
             {
@@ -202,7 +190,7 @@ namespace GeminiV26.EntryTypes.FX
             if (weakCount >= 3 && !hasDirectionalM1Trigger)
             {
                 ctx?.Log?.Invoke($"[PB FILTER] dir={dir} weak structure blocked | weakCount={weakCount}");
-                ApplyPenalty(ref score, ref penalty, 12, penaltyBudget, ctx, "PB_WEAK_STRUCTURE");
+                return Block(ctx, dir, "PB_WEAK_STRUCTURE", score);
             }
 
             if (!ctx.PullbackTouchedEma21_M5)
@@ -245,7 +233,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (!compressionDetected)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: deep pullback without compression");
-                    ApplyPenalty(ref score, ref penalty, 10, penaltyBudget, ctx, "PB_TOO_DEEP_NO_COMPRESSION");
+                    return Block(ctx, dir, "PB_TOO_DEEP", score);
                 }
 
                 TradeDirection impulseDirection =
@@ -258,7 +246,7 @@ namespace GeminiV26.EntryTypes.FX
                 if (!breakoutAligned)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: breakout against impulse");
-                    ApplyPenalty(ref score, ref penalty, 10, penaltyBudget, ctx, "PB_BREAKOUT_AGAINST_IMPULSE");
+                    return Block(ctx, dir, "PB_TOO_DEEP", score);
                 }
 
                 ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
@@ -321,16 +309,6 @@ namespace GeminiV26.EntryTypes.FX
                 ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfAllowedDirection != dir;
 
-            // === COUNTER-TREND STRICT FILTER ===
-            if (htfMismatch)
-            {
-                // ha trend ellen megyünk, legyen EXTRA szigor
-                if (pullbackDepth < 0.7 || !hasDirectionalM1Trigger)
-                {
-                    return Block(ctx, dir, "HTF_COUNTER_WEAK", score);
-                }
-            }
-
             if (htfMismatch)
             {
                 double conf = ctx.FxHtfConfidence01;
@@ -346,37 +324,11 @@ namespace GeminiV26.EntryTypes.FX
 
             if (penaltyBudget > 0 && penalty > penaltyBudget)
             {
-                ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK PENALTY_BUDGET_EXCEEDED {penalty}/{penaltyBudget}");
-                return Block(ctx, dir, "PB_TOO_WEAK", score);
+                int overflow = penalty - penaltyBudget;
+                score -= overflow;
+                ctx?.Log?.Invoke($"[FX_PullbackEntry] SOFT_BUDGET_OVERFLOW -{overflow} | score={score}");
             }
-
-            bool continuationSignal = hasDirectionalM1Trigger;
-
-            bool hasStructure =
-                pullbackDepth >= 0.5;
-
-            if (!hasStructure)
-                setupScore -= 35;
-            else
-                setupScore += 15;
-
-            bool hasContinuation =
-                continuationSignal;
-
-            if (hasContinuation)
-                setupScore += 20;
-
-            bool breakoutDetected =
-                hasDirectionalM1Trigger ||
-                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
-            bool strongCandle = lastBarInDir;
-            bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
-            score = TriggerScoreModel.Apply(ctx, $"FX_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
-            score += setupScore;
-
-            if (setupScore <= 0)
-                score = System.Math.Min(score, MIN_SCORE - 10);
 
             if (score < MIN_SCORE)
                 return Block(ctx, dir, $"LOW_SCORE_{score}", score);
@@ -431,12 +383,11 @@ namespace GeminiV26.EntryTypes.FX
         private EntryEvaluation Block(EntryContext ctx, TradeDirection dir, string reason, int score)
         {
             ctx?.Log?.Invoke($"[FX_PullbackEntry] BLOCK {reason} dir={dir} | score={score}");
-            bool hardInvalid = EntryDecisionPolicy.IsHardInvalidReason(reason) || dir == TradeDirection.None;
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.FX_Pullback,
-                Direction = hardInvalid ? TradeDirection.None : dir,
+                Direction = TradeDirection.None,
                 Score = score,
                 IsValid = false,
                 Reason = reason
