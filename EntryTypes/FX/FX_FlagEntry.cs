@@ -12,6 +12,7 @@ using System;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.EntryTypes;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 
@@ -54,21 +55,26 @@ namespace GeminiV26.EntryTypes.FX
 
             if (!buyValid && !sellValid)
             {
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, TradeDirection.None);
                 ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
                 return Invalid(ctx, TradeDirection.None, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score));
             }
 
             // Prefer VALID; if both valid -> higher score wins
             if (buyValid && sellValid)
-                return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
+            {
+                var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
+                return EntryDecisionPolicy.Normalize(selected);
+            }
 
             if (buyValid)
             {
-                EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, longEval.Direction);
                 return longEval;
             }
 
-            EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, shortEval.Direction);
             return shortEval;
         }
 
@@ -1186,54 +1192,15 @@ namespace GeminiV26.EntryTypes.FX
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
         {
-            const int htfPenalty = 30;
-            const int logicPenalty = 12;
-            const int rangePenalty = 25;
-
-            TradeDirection htfDirection = TradeDirection.None;
-            double htfConfidence = 0.0;
-
-            switch (SymbolRouting.ResolveInstrumentClass(ctx.Symbol))
-            {
-                case InstrumentClass.FX:
-                    htfDirection = ctx.FxHtfAllowedDirection;
-                    htfConfidence = ctx.FxHtfConfidence01;
-                    break;
-                case InstrumentClass.CRYPTO:
-                    htfDirection = ctx.CryptoHtfAllowedDirection;
-                    htfConfidence = ctx.CryptoHtfConfidence01;
-                    break;
-                case InstrumentClass.INDEX:
-                    htfDirection = ctx.IndexHtfAllowedDirection;
-                    htfConfidence = ctx.IndexHtfConfidence01;
-                    break;
-                case InstrumentClass.METAL:
-                    htfDirection = ctx.MetalHtfAllowedDirection;
-                    htfConfidence = ctx.MetalHtfConfidence01;
-                    break;
-            }
-
-            if (htfDirection != TradeDirection.None && htfConfidence >= 0.70 && direction != htfDirection)
-            {
-                score -= htfPenalty;
-                ctx.Log?.Invoke($"[ENTRY HTF ALIGN] dir={direction} htf={htfDirection} conf={htfConfidence:0.00} penalty={htfPenalty}");
-            }
-
-            var logicBias = ctx.LogicBiasDirection;
-            var logicConfidence = ctx.LogicBiasConfidence;
-            if (logicBias != TradeDirection.None && logicConfidence >= 60 && direction != logicBias)
-            {
-                score -= logicPenalty;
-                ctx.Log?.Invoke($"[ENTRY LOGIC ALIGN] dir={direction} logic={logicBias} conf={logicConfidence} penalty={logicPenalty}");
-            }
-
-            if (applyTrendRegimePenalty && ctx.Adx_M5 < 15.0)
-            {
-                score -= rangePenalty;
-                ctx.Log?.Invoke($"[ENTRY REGIME] adx={ctx.Adx_M5:0.0} penalty={rangePenalty}");
-            }
-
-            return score;
+            return EntryDirectionQuality.Apply(
+                ctx,
+                direction,
+                score,
+                new DirectionQualityRequest
+                {
+                    TypeTag = "FX_FlagEntry",
+                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
+                });
         }
 
     }
