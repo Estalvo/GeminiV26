@@ -117,6 +117,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             int score = 0;
             int setupScore = 0;
+            double triggerScore = 0;
 
             if (!ctx.HasImpulse_M5)
             {
@@ -246,15 +247,12 @@ namespace GeminiV26.EntryTypes.Crypto
 
             bool longValid = bullBreak || bullReclaim || (dir == TradeDirection.Long && breakoutSignal);
             bool shortValid = bearBreak || bearReclaim || (dir == TradeDirection.Short && breakoutSignal);
+            bool breakoutDetected = dir == TradeDirection.Long ? longValid : shortValid;
+            bool strongCandle =
+                (dir == TradeDirection.Long && close > open) ||
+                (dir == TradeDirection.Short && close < open);
 
-            if (dir == TradeDirection.Long && !longValid)
-                return Invalid(ctx, dir, "NO_BREAK_LONG", 51);
-
-            if (dir == TradeDirection.Short && !shortValid)
-                return Invalid(ctx, dir, "NO_BREAK_SHORT", 51);
-
-            if (dir == TradeDirection.Long && close > open) score += 6;
-            if (dir == TradeDirection.Short && close < open) score += 6;
+            if (strongCandle) score += 6;
 
             if (ctx.TrendDirection != TradeDirection.None &&
                 dir != ctx.TrendDirection)
@@ -273,6 +271,32 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             score += setupScore;
+
+            bool followThrough = continuationSignal;
+
+            if (breakoutDetected)
+                triggerScore += 1;
+
+            if (strongCandle)
+                triggerScore += 1;
+
+            if (followThrough)
+                triggerScore += 2;
+
+            score += (int)Math.Round(triggerScore * 5);
+
+            if (triggerScore == 0)
+                score -= 15;
+
+            bool minimalTrigger = breakoutDetected || strongCandle;
+            if (!minimalTrigger)
+                score -= 10;
+
+            if (!breakoutDetected)
+                score -= 8;
+
+            ctx.Log?.Invoke(
+                $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, MinScore - 10);
