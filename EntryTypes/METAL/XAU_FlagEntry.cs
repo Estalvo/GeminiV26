@@ -114,6 +114,7 @@ namespace GeminiV26.EntryTypes.METAL
         {
             int score = (int)tuning.BaseScore;
             int minScore = (int)tuning.MinScore;
+            int setupScore = 0;
 
             var reasons = new List<string>();
 
@@ -201,6 +202,16 @@ namespace GeminiV26.EntryTypes.METAL
             bool hasSomeStructure =
                 hasFlag || structuredPB || earlyPB;
 
+            bool hasStructure =
+                hasFlag
+                || structuredPB
+                || earlyPB;
+
+            if (!hasStructure)
+                setupScore -= 40;
+            else
+                setupScore += 20;
+
             if (!hasSomeStructure)
                 reasons.Add("NO_STRUCTURE");
 
@@ -239,6 +250,13 @@ namespace GeminiV26.EntryTypes.METAL
                 (!hasValidRange || breakAtr >= 0.03) &&
                 bodyRatio >= 0.45 &&
                 ctx.LastClosedBarInTrendDirection;
+
+            bool hasConfirmation =
+                breakoutConfirmed
+                || earlyBreakout;
+
+            if (hasConfirmation)
+                setupScore += 20;
 
             if (breakoutInstant && !breakoutConfirmed)
             {
@@ -301,6 +319,11 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (dir == TradeDirection.Short && IsHigherLow(ctx.M5, index))
                 return InvalidDir(ctx, dir, "HIGHER_LOW", score);
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, minScore - 10);
 
             int effectiveMinScore = earlyBreakout ? minScore - 2 : minScore;
 

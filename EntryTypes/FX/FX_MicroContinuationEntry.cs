@@ -48,6 +48,7 @@ namespace GeminiV26.EntryTypes.FX
             FxTuning tuning)
         {
             int minScore = Math.Max(40, tuning.MinScore - 5);
+            int setupScore = 0;
 
             double pullbackDepthR =
                 dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
@@ -82,6 +83,20 @@ namespace GeminiV26.EntryTypes.FX
             if (!continuationSignal)
                 return Invalid(ctx, "NO_CONTINUATION_SIGNAL");
 
+            bool hasStructure =
+                pullbackDepthR >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             int score = 50;
 
             if (!ctx.PullbackTouchedEma21_M5)
@@ -105,6 +120,11 @@ namespace GeminiV26.EntryTypes.FX
 
             if (ctx.Session == FxSession.NewYork)
                 score += 2;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, minScore - 10);
 
             TradeDirection finalDir =
                 score >= minScore ? dir : TradeDirection.None;

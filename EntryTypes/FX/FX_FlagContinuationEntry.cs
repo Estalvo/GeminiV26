@@ -33,6 +33,8 @@ namespace GeminiV26.EntryTypes.FX
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
         {
+            int setupScore = 0;
+
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
 
@@ -82,12 +84,33 @@ namespace GeminiV26.EntryTypes.FX
             if (!m1Confirm)
                 return Invalid(ctx, "NO_M1_CONFIRM");
 
+            bool continuationSignal = m1Confirm;
+
+            bool hasStructure =
+                pullbackDepthAtr >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             // ✅ FIX: side-aware score boost
             if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
                 score += 10;
 
             if (ctx.IsRange_M5)
                 score -= 10;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
                 return Invalid(ctx, "LOW_SCORE");

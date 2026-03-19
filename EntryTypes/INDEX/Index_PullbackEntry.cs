@@ -52,6 +52,7 @@ namespace GeminiV26.EntryTypes.INDEX
             // =============================
             // MATRIX DRIVEN THRESHOLDS
             // =============================
+            int setupScore = 0;
             double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
             minAdxTrend = Math.Max(minAdxTrend, matrix.MinAdx);
             int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : 4;
@@ -92,6 +93,28 @@ namespace GeminiV26.EntryTypes.INDEX
                 (dir == TradeDirection.Short && bars[lastClosed].Close < bars[lastClosed].Open);
 
             bool m1TriggerInDir = HasDirectionalM1Trigger(ctx, dir);
+            bool continuationSignal = m1TriggerInDir;
+            bool breakoutConfirmed = m1TriggerInDir;
+
+            bool hasImpulseSetup = ctx.HasImpulse_M5;
+
+            if (!hasImpulseSetup)
+                setupScore -= 40;
+            else
+                setupScore += 15;
+
+            bool hasStructure =
+                (dir == TradeDirection.Long ? ctx.HasPullbackLong_M5 : ctx.HasPullbackShort_M5) ||
+                hasFlag;
+
+            if (hasStructure)
+                setupScore += 10;
+
+            bool hasContinuation =
+                continuationSignal || breakoutConfirmed;
+
+            if (hasContinuation)
+                setupScore += 20;
 
             // =====================================================
             // CHOP SOFT (matrix ADX)
@@ -244,6 +267,11 @@ namespace GeminiV26.EntryTypes.INDEX
             // =====================================================
             // FINAL SCORE GATE
             // =====================================================
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MinScore - 10);
+
             score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (score < MinScore)
