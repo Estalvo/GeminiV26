@@ -81,11 +81,8 @@ namespace GeminiV26.EntryTypes.METAL
             var buy = EvaluateSide(TradeDirection.Long, ctx, tuning, hi, lo, hasValidRange, rangeAtr, bar, last);
             var sell = EvaluateSide(TradeDirection.Short, ctx, tuning, hi, lo, hasValidRange, rangeAtr, bar, last);
 
-            if (!buy.IsValid && !sell.IsValid)
+            if (EntryDecisionPolicy.IsHardInvalid(buy) && EntryDecisionPolicy.IsHardInvalid(sell))
                 return Reject(ctx, tag, session, tuning, buy, sell);
-
-            if (buy.IsValid && !sell.IsValid) return buy;
-            if (!buy.IsValid && sell.IsValid) return sell;
 
             int diff = buy.Score - sell.Score;
 
@@ -113,7 +110,7 @@ namespace GeminiV26.EntryTypes.METAL
             int index)
         {
             int score = (int)tuning.BaseScore;
-            int minScore = (int)tuning.MinScore;
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
 
             var reasons = new List<string>();

@@ -9,7 +9,7 @@ namespace GeminiV26.EntryTypes.METAL
         public EntryType Type => EntryType.XAU_Reversal;
 
         private const int MinEvidence = 4;
-        private const int MinScore = 50;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
         private const double SlopeEps = 0.0;
 
         private const int NoM1Penalty = 12;
@@ -52,10 +52,12 @@ namespace GeminiV26.EntryTypes.METAL
             // 3️⃣ REVERSAL EVIDENCE
             // =====================================================
             int evidence = ctx.ReversalEvidenceScore;
-            if (evidence < MinEvidence)
-                return RejectDecision(ctx, dir, 0, $"WEAK_EVIDENCE({evidence})", reasons);
-
             int score = evidence * 12 + 20;
+            if (evidence < MinEvidence)
+            {
+                score -= 12;
+                reasons.Add($"WEAK_EVIDENCE({evidence})");
+            }
             reasons.Add($"Evidence={evidence}");
 
             // =====================================================
@@ -63,10 +65,15 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             // XAU reversalhez kötelező az M1 trigger
             if (!ctx.M1ReversalTrigger)
-                return RejectDecision(ctx, dir, score, "NO_M1_REV", reasons);
-
-            score += 15;
-            reasons.Add("+M1_REV(15)");
+            {
+                score -= NoM1Penalty;
+                reasons.Add("NO_M1_REV");
+            }
+            else
+            {
+                score += 15;
+                reasons.Add("+M1_REV(15)");
+            }
 
             bool hasFlag =
                 dir == TradeDirection.Long
@@ -111,9 +118,6 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             // 5️⃣ MIN SCORE GATE
             // =====================================================
-            if (score < MinScore)
-                return RejectDecision(ctx, dir, score, $"LOW_SCORE({score})", reasons);
-
             // =====================================================
             // ACCEPT
             // =====================================================

@@ -11,7 +11,7 @@ namespace GeminiV26.EntryTypes.INDEX
         public EntryType Type => EntryType.Index_Breakout;
 
         private const int BaseScore = 50;
-        private const int MinScore = 60;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {

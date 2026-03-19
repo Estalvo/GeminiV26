@@ -1538,7 +1538,7 @@ namespace GeminiV26.Core
 
             foreach (var entry in symbolSignals)
             {
-                if (entry == null || !entry.IsValid)
+                if (entry == null || entry.Direction == TradeDirection.None || EntryDecisionPolicy.IsHardInvalid(entry))
                     continue;
 
                 int boost = 0;
@@ -1987,7 +1987,7 @@ namespace GeminiV26.Core
 
             foreach (var candidate in symbolSignals)
             {
-                if (candidate == null || !candidate.IsValid || candidate.Direction == TradeDirection.None)
+                if (candidate == null || candidate.Direction == TradeDirection.None || EntryDecisionPolicy.IsHardInvalid(candidate))
                     continue;
 
                 bool hasDirectionalBias = bias.AllowedDirection != TradeDirection.None;

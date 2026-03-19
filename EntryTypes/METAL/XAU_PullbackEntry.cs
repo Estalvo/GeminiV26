@@ -30,11 +30,8 @@ namespace GeminiV26.EntryTypes.METAL
             var buy = EvaluateSide(TradeDirection.Long, ctx, matrix);
             var sell = EvaluateSide(TradeDirection.Short, ctx, matrix);
 
-            if (!buy.IsValid && !sell.IsValid)
+            if (EntryDecisionPolicy.IsHardInvalid(buy) && EntryDecisionPolicy.IsHardInvalid(sell))
                 return RejectBoth(ctx, buy, sell);
-
-            if (buy.IsValid && !sell.IsValid) return buy;
-            if (!buy.IsValid && sell.IsValid) return sell;
 
             int diff = buy.Score - sell.Score;
 
@@ -57,7 +54,7 @@ namespace GeminiV26.EntryTypes.METAL
             SessionMatrixConfig matrix)
         {
             int score = 60;
-            int minScore = 64;
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
 
             var reasons = new List<string>();

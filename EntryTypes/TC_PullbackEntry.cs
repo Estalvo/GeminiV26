@@ -18,7 +18,7 @@ namespace GeminiV26.EntryTypes
 
         private const double MinSlope = 0.0005;
         private const double MaxPullbackATR = 1.2;
-        private const int MIN_SCORE = 50;
+        private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
         public double Atr_M5 { get; set; }
 
         // =========================================================
@@ -404,7 +404,7 @@ namespace GeminiV26.EntryTypes
                 score = Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = true;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

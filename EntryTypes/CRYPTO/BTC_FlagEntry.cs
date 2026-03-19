@@ -15,7 +15,7 @@ namespace GeminiV26.EntryTypes.Crypto
         private const double BreakBufferAtr = 0.03;
         private const double MaxDistFromEmaAtr = 1.2;
 
-        private const int MinScore = 16;
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
         private const int HtfAgainstPenalty = 8;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -93,17 +93,11 @@ namespace GeminiV26.EntryTypes.Crypto
             var longEval = EvaluateSide(ctx, TradeDirection.Long, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
             var shortEval = EvaluateSide(ctx, TradeDirection.Short, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
 
-            bool buyValid = longEval.IsValid;
-            bool sellValid = shortEval.IsValid;
-
-            if (!buyValid && !sellValid)
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {
-                ctx.Log?.Invoke($"[FLAG][REJECT] No valid direction buyValid={buyValid} sellValid={sellValid}");
+                ctx.Log?.Invoke($"[FLAG][REJECT] No hard-tradable direction long={longEval.Score}/{longEval.IsValid} short={shortEval.Score}/{shortEval.IsValid}");
                 return Invalid(ctx, "FLAG_DIRECTION_INVALID");
             }
-
-            if (buyValid && !sellValid) return longEval;
-            if (!buyValid && sellValid) return shortEval;
 
             return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
@@ -254,10 +248,10 @@ namespace GeminiV26.EntryTypes.Crypto
             bool shortValid = bearBreak || bearReclaim || (dir == TradeDirection.Short && breakoutSignal);
 
             if (dir == TradeDirection.Long && !longValid)
-                return Invalid(ctx, "NO_BREAK_LONG");
+                return Invalid(ctx, dir, "NO_BREAK_LONG", 51);
 
             if (dir == TradeDirection.Short && !shortValid)
-                return Invalid(ctx, "NO_BREAK_SHORT");
+                return Invalid(ctx, dir, "NO_BREAK_SHORT", 51);
 
             if (dir == TradeDirection.Long && close > open) score += 6;
             if (dir == TradeDirection.Short && close < open) score += 6;
@@ -284,7 +278,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score = Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
-                return Invalid(ctx, $"LOW_SCORE({score})");
+                return Invalid(ctx, dir, $"LOW_SCORE({score})", score);
 
             return new EntryEvaluation
             {
@@ -303,6 +297,17 @@ namespace GeminiV26.EntryTypes.Crypto
                 Symbol = ctx?.Symbol,
                 Type = EntryType.Crypto_Flag,
                 Direction = TradeDirection.None,
+                IsValid = false,
+                Reason = reason
+            };
+
+        private static EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score) =>
+            new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.Crypto_Flag,
+                Direction = dir,
+                Score = score,
                 IsValid = false,
                 Reason = reason
             };

@@ -14,7 +14,7 @@ namespace GeminiV26.EntryTypes.FX
         private const double MinSlope = 0.00015;
 
         // ===== Patch knobs (FX-safe) =====
-        private const int MinScore = 55;                 // was 45
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;                 // was 45
         private const double MinPullbackAtr = 0.15;      // avoid top-tick entries
         private const double MaxPullbackAtr = 1.0;       // already present logic
 
@@ -26,16 +26,10 @@ namespace GeminiV26.EntryTypes.FX
             var longEval = EvaluateSide(TradeDirection.Long, ctx);
             var shortEval = EvaluateSide(TradeDirection.Short, ctx);
 
-            if (longEval.IsValid && !shortEval.IsValid)
-                return longEval;
+            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
+                return Invalid(ctx, "NO_VALID_SIDE");
 
-            if (!longEval.IsValid && shortEval.IsValid)
-                return shortEval;
-
-            if (longEval.IsValid && shortEval.IsValid)
-                return longEval.Score >= shortEval.Score ? longEval : shortEval;
-
-            return Invalid(ctx, "NO_VALID_SIDE");
+            return longEval.Score >= shortEval.Score ? longEval : shortEval;
         }
 
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
@@ -73,29 +67,29 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             if (dir == TradeDirection.Long && !up)
-                return Invalid(ctx, "NoTrend");
+                return Invalid(ctx, dir, "NoTrend", 0);
 
             if (dir == TradeDirection.Short && !down)
-                return Invalid(ctx, "NoTrend");
+                return Invalid(ctx, dir, "NoTrend", 0);
 
             // =====================================================
             // IMPULSE CONDITIONS (REAL CONTEXT FIELDS)
             // =====================================================
             if (ctx.Adx_M5 < 22)
-                return Invalid(ctx, "WeakTrend");
+                return Invalid(ctx, dir, "WeakTrend", 50);
 
             if (!hasImpulse)
-                return Invalid(ctx, "NoImpulse");
+                return Invalid(ctx, dir, "NoImpulse", 50);
 
             if (pullbackDepthR > MaxPullbackAtr)
-                return Invalid(ctx, "TooDeepPullback");
+                return Invalid(ctx, dir, "TooDeepPullback", 49);
 
             if (pullbackDepthR < MinPullbackAtr)
-                return Invalid(ctx, "NoMeaningfulPullback");
+                return Invalid(ctx, dir, "NoMeaningfulPullback", 50);
 
             // ATR expanding = kifulladó impulse chase FX-en
             if (ctx.IsAtrExpanding_M5)
-                return Invalid(ctx, "VolExpanding");
+                return Invalid(ctx, dir, "VolExpanding", 51);
 
             bool continuationSignal =
                 ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
@@ -130,18 +124,13 @@ namespace GeminiV26.EntryTypes.FX
             // =====================================================
             // SCORE → DIRECTION
             // =====================================================
-            TradeDirection finalDir = TradeDirection.None;
-
-            if (score >= MinScore)
-                finalDir = dir;
-
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = finalDir,
+                Direction = dir,
                 Score = score,
-                IsValid = finalDir != TradeDirection.None,
+                IsValid = true,
                 Reason =
                     $"FX_CONT score={score} " +
                     $"pbR={pullbackDepthR:F2} " +
@@ -154,6 +143,17 @@ namespace GeminiV26.EntryTypes.FX
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
+                IsValid = false,
+                Reason = reason
+            };
+
+        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
+            => new()
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = dir,
+                Score = score,
                 IsValid = false,
                 Reason = reason
             };

@@ -34,11 +34,6 @@ namespace GeminiV26.Core
     {
         private readonly Robot _bot;
 
-        // =========================================================
-        // ENTRY QUALITY GATES (NOT SCORE GATES)
-        // =========================================================
-        private const int MIN_ENTRY_SCORE_GLOBAL = 20;
-
         public TradeRouter(Robot bot)
         {
             _bot = bot;
@@ -54,41 +49,47 @@ namespace GeminiV26.Core
             if (signals == null || signals.Count == 0)
                 return null;
 
-            // Candidate logging (raw)
             int nonNullCount = signals.Count(e => e != null);
             int validCount = signals.Count(e => e != null && e.IsValid);
 
-            _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount}");
+            _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
             LogCandidates("CAND", signals);
 
-            // RULEBOOK: only IsValid == true is eligible
-            var valid = signals
-                .Where(e => e != null && e.IsValid)
-                // ENTRY QUALITY GATE (Rulebook-safe)
-                .Where(e => e.Score >= MIN_ENTRY_SCORE_GLOBAL)
-                .ToList();
+            EntryEvaluation winner = null;
 
-            var rejectedByScore = signals
-                .Where(e => e != null && e.IsValid && e.Score < MIN_ENTRY_SCORE_GLOBAL)
-                .ToList();
-
-            foreach (var r in rejectedByScore)
+            foreach (var candidate in signals.Where(e => e != null))
             {
-                _bot.Print($"[TR] REJECTED_LOW_SCORE {r.Type} score={r.Score} reason={r.Reason}");
+                string decision;
+
+                if (!candidate.IsValid)
+                {
+                    decision = "REJECT";
+                }
+                else if (candidate.Score < EntryDecisionPolicy.MinScoreThreshold)
+                {
+                    decision = "REJECT";
+                }
+                else
+                {
+                    decision = "ACCEPT";
+
+                    if (winner == null
+                        || candidate.Score > winner.Score
+                        || (candidate.Score == winner.Score
+                            && GetTypePriority(_bot.SymbolName, candidate.Type) < GetTypePriority(_bot.SymbolName, winner.Type)))
+                    {
+                        winner = candidate;
+                    }
+                }
+
+                _bot.Print($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} → {decision}");
             }
 
-            if (valid.Count == 0)
+            if (winner == null)
             {
-                _bot.Print("[TR] NO VALID SETUP AFTER QUALITY GATE");
-                return null; // ⛔ NINCS ENTRY, PONT
+                _bot.Print("[TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION");
+                return null;
             }
-
-            // RULEBOOK: Score ranks, doesn't gate.
-            // Winner = max score. Tie-breaker keeps deterministic behavior.
-            var winner = valid
-                .OrderByDescending(e => e.Score)
-                .ThenBy(e => GetTypePriority(_bot.SymbolName, e.Type))
-                .First();
 
             _bot.Print($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}");
             return winner;
