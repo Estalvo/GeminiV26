@@ -29,9 +29,11 @@ namespace GeminiV26.EntryTypes.FX
             var longEval = EvalForDir(ctx, fx, TradeDirection.Long);
             var shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
 
+            EntryEvaluation selected; // ✅ egyszer deklarálva
+
             if (longEval.IsValid && shortEval.IsValid)
             {
-                var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
                 return EntryDecisionPolicy.Normalize(selected);
             }
@@ -39,7 +41,7 @@ namespace GeminiV26.EntryTypes.FX
             if (longEval.IsValid) return longEval;
             if (shortEval.IsValid) return shortEval;
 
-            var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
             EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
             return EntryDecisionPolicy.Normalize(selected);
         }
