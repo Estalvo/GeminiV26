@@ -69,8 +69,8 @@ namespace GeminiV26.EntryTypes.FX
             if (pullbackDepthR > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
-            if (ctx.IsFlagBuilding_M5)
-                return Invalid(ctx, "FLAG_BUILDING");
+            if (ctx.IsPullbackForming_M5 && ctx.HasHigherLow_M5)
+                return Invalid(ctx, "FLAG_LIKE_STRUCTURE");
 
             // ✅ FIX: side-aware M1
             bool m1Aligned = ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
