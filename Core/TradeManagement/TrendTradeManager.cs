@@ -34,7 +34,6 @@ namespace GeminiV26.Core.TradeManagement
 
     public sealed class TrendTradeManager
     {
-        private const double LogEpsilon = 0.0001;
         private readonly Robot _bot;
         private readonly AverageTrueRange _atr;
         private readonly ExponentialMovingAverage _ema21;
@@ -72,14 +71,11 @@ namespace GeminiV26.Core.TradeManagement
             }
 
             bool isRunner = ctx.Tp1Hit;
-            if (isRunner)
+            if (isRunner && !ctx.RunnerActivated)
             {
-                if (!ctx.RunnerActivationLogged)
-                {
-                    ctx.RunnerActivationLogged = true;
-                    _bot.Print($"[TTM] Runner mode activated.");
-                    _bot.Print($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit");
-                }
+                ctx.RunnerActivated = true;
+                _bot.Print($"[TTM] Runner mode activated.");
+                _bot.Print($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit");
             }
 
             double priceNow = isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask;
@@ -144,14 +140,14 @@ namespace GeminiV26.Core.TradeManagement
             };
 
             string confidenceBucket = GetConfidenceBucket(score);
-            bool shouldLogProfile =
-                ctx.PostTp1TrendState != state.ToString() ||
-                ctx.LastProfileLogBucket != confidenceBucket;
+            bool profileStateChanged = !string.Equals(ctx.LastProfileState, state.ToString(), StringComparison.Ordinal);
+            bool profileBucketChanged = !string.Equals(ctx.LastProfileBucket, confidenceBucket, StringComparison.Ordinal);
 
-            if (shouldLogProfile)
+            if (profileStateChanged || profileBucketChanged)
             {
                 _bot.Print($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile");
-                ctx.LastProfileLogBucket = confidenceBucket;
+                ctx.LastProfileState = state.ToString();
+                ctx.LastProfileBucket = confidenceBucket;
             }
 
             bool allowTp2Extension = isRunner && profile.AllowTp2Extension;
@@ -161,10 +157,16 @@ namespace GeminiV26.Core.TradeManagement
                 ctx.PostTp1TrendState != state.ToString() ||
                 ctx.PostTp1TrendScore != score ||
                 ctx.PostTp1TrailingMode != mode.ToString();
+            bool valueChanged =
+                ctx.LastTtmAllowTp2Extension != allowTp2Extension ||
+                !ctx.LastTtmTp2Multiplier.HasValue ||
+                Math.Abs(ctx.LastTtmTp2Multiplier.Value - tpAtrMultiplier) >= 0.000001;
 
-            if (stateChanged)
+            if (stateChanged || valueChanged)
             {
-                _bot.Print($"[TTM] state={state} score={score} mode={mode}");
+                _bot.Print($"[TTM] state={state} score={score} mode={mode} allowTp2Ext={allowTp2Extension} mult={tpAtrMultiplier:0.00}");
+                ctx.LastTtmAllowTp2Extension = allowTp2Extension;
+                ctx.LastTtmTp2Multiplier = tpAtrMultiplier;
             }
 
             return new TrendDecision
@@ -249,20 +251,21 @@ namespace GeminiV26.Core.TradeManagement
             if (ctx == null)
                 return;
 
-            bool stateChanged = !string.Equals(ctx.LastTp2LogState, state, StringComparison.Ordinal);
+            double epsilon = GetLogEpsilon();
+            bool stateChanged = !string.Equals(ctx.LastTp2State, state, StringComparison.Ordinal);
             bool valueChanged =
-                (ctx.LastTp2LogValue.HasValue != value.HasValue) ||
-                (ctx.LastTp2LogValue.HasValue && value.HasValue && Math.Abs(ctx.LastTp2LogValue.Value - value.Value) >= Math.Max(LogEpsilon, _bot.Symbol.TickSize));
+                (ctx.LastTp2Value.HasValue != value.HasValue) ||
+                (ctx.LastTp2Value.HasValue && value.HasValue && Math.Abs(ctx.LastTp2Value.Value - value.Value) >= epsilon);
 
             if (!stateChanged && !valueChanged)
                 return;
 
-            ctx.LastTp2LogState = state;
-            ctx.LastTp2LogValue = value;
+            ctx.LastTp2State = state;
+            ctx.LastTp2Value = value;
             _bot.Print(message);
         }
 
-        private static string GetConfidenceBucket(int score)
+        private string GetConfidenceBucket(int score)
         {
             return score switch
             {
@@ -270,6 +273,17 @@ namespace GeminiV26.Core.TradeManagement
                 <= 3 => "MEDIUM",
                 _ => "HIGH"
             };
+        }
+
+        private double GetLogEpsilon()
+        {
+            if (_bot.Symbol.TickSize > 0)
+                return _bot.Symbol.TickSize;
+
+            if (_bot.Symbol.PipSize > 0)
+                return _bot.Symbol.PipSize;
+
+            return double.Epsilon;
         }
 
         private static double EstimatePullbackDepth(bool isLong, StructureSnapshot structure, double priceNow)
