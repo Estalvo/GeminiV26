@@ -11,7 +11,7 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_MicroContinuation;
 
-        private const double MinPullbackAtr = 0.05;
+        private const double MinPullbackAtr = 0.30;
         private const double MinSlope = 0.00010;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
@@ -69,12 +69,14 @@ namespace GeminiV26.EntryTypes.FX
             if (pullbackDepthR > tuning.MaxPullbackAtr * 0.45)
                 return Invalid(ctx, "PB_TOO_DEEP");
 
+            if (ctx.IsFlagBuilding_M5)
+                return Invalid(ctx, "FLAG_BUILDING");
+
             // ✅ FIX: side-aware M1
             bool m1Aligned = ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
 
             bool continuationSignal =
-                ctx.LastClosedBarInTrendDirection ||
-                ctx.HasReactionCandle_M5 ||
+                (ctx.LastClosedBarInTrendDirection && ctx.HasReactionCandle_M5) ||
                 m1Aligned;
 
             if (!continuationSignal)
