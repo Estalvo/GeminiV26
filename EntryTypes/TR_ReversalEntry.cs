@@ -16,6 +16,7 @@
 
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using System;
 
 namespace GeminiV26.EntryTypes
 {
