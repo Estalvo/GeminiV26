@@ -8,7 +8,6 @@ namespace GeminiV26.Core.TradeManagement
 {
     public sealed class AdaptiveTrailingEngine
     {
-        private const double LogEpsilon = 0.0001;
         private readonly Robot _bot;
         private readonly AverageTrueRange _atr;
 
@@ -122,13 +121,17 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!ImprovesStop(isLong, newSl, oldSl))
             {
-                if (!ctx.LoggedNoImprovement)
+                if (!ctx.TrailNoImprovementLogged)
                 {
-                    ctx.LoggedNoImprovement = true;
+                    ctx.TrailNoImprovementLogged = true;
                     _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=no_improvement");
                 }
                 return;
             }
+
+            double epsilon = GetPriceEpsilon();
+            if (Math.Abs(newSl - oldSl) < epsilon)
+                return;
 
             double minDelta = Math.Max(profile.MinSlUpdateDeltaPips * _bot.Symbol.PipSize, atr * 0.05);
             if (Math.Abs(newSl - oldSl) < minDelta)
@@ -137,7 +140,7 @@ namespace GeminiV26.Core.TradeManagement
                 return;
             }
 
-            if (ctx.LastTrailingStopTarget.HasValue && Math.Abs(ctx.LastTrailingStopTarget.Value - newSl) < (_bot.Symbol.PipSize * 0.1))
+            if (ctx.LastTrailingStopTarget.HasValue && Math.Abs(ctx.LastTrailingStopTarget.Value - newSl) < epsilon)
             {
                 _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=duplicate_target");
                 return;
@@ -161,6 +164,7 @@ namespace GeminiV26.Core.TradeManagement
             ctx.TrailingActivated = true;
             _bot.Print($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}");
             _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slNew={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=updated");
+            _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask)} sl={newSl} tp={pos.TakeProfit}");
         }
 
         private bool TryBuildStructureStop(bool isLong, StructureSnapshot structure, TrailingProfile profile, double atr, double slAtrMultiplier, out double newSl, out string reason, out int anchorBarsAgo)
@@ -258,7 +262,7 @@ namespace GeminiV26.Core.TradeManagement
         private bool CanLogTrailChange(bool isLong, double oldSl, double candidateSl)
         {
             return ImprovesStop(isLong, candidateSl, oldSl) &&
-                   Math.Abs(candidateSl - oldSl) >= Math.Max(LogEpsilon, _bot.Symbol.TickSize);
+                   Math.Abs(candidateSl - oldSl) >= GetPriceEpsilon();
         }
 
         private void TryLogTrailCandidate(PositionContext ctx, string reason, string message, double oldSl, double candidateSl, bool isLong)
@@ -268,13 +272,25 @@ namespace GeminiV26.Core.TradeManagement
 
             if (reason.Contains("no_structure_anchor", StringComparison.Ordinal))
             {
-                if (ctx.LoggedNoStructure)
+                if (ctx.TrailNoStructureLogged)
                     return;
 
-                ctx.LoggedNoStructure = true;
+                ctx.TrailNoStructureLogged = true;
             }
 
             _bot.Print(message);
+        }
+
+
+        private double GetPriceEpsilon()
+        {
+            if (_bot.Symbol.TickSize > 0)
+                return _bot.Symbol.TickSize;
+
+            if (_bot.Symbol.PipSize > 0)
+                return _bot.Symbol.PipSize;
+
+            return double.Epsilon;
         }
 
         private double Normalize(double price)

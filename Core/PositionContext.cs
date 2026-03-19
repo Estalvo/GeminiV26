@@ -362,25 +362,23 @@ namespace GeminiV26.Core
 
         public double? LastTrailingStopTarget { get; set; }
 
-        public string LastTp2LogState { get; set; } = string.Empty;
+        public string LastTp2State { get; set; } = string.Empty;
 
-        public double? LastTp2LogValue { get; set; }
+        public double? LastTp2Value { get; set; }
 
-        public string LastTp2ExtensionLogState { get; set; } = string.Empty;
+        public bool RunnerActivated { get; set; }
 
-        public double? LastTp2ExtensionLogValue { get; set; }
+        public string LastProfileState { get; set; } = string.Empty;
 
-        public bool RunnerActivationLogged { get; set; }
-
-        public string LastProfileLogBucket { get; set; } = string.Empty;
+        public string LastProfileBucket { get; set; } = string.Empty;
 
         public bool? LastTtmAllowTp2Extension { get; set; }
 
         public double? LastTtmTp2Multiplier { get; set; }
 
-        public bool LoggedNoImprovement { get; set; }
+        public bool TrailNoImprovementLogged { get; set; }
 
-        public bool LoggedNoStructure { get; set; }
+        public bool TrailNoStructureLogged { get; set; }
 
         public bool MarketTrend { get; set; }
 
