@@ -21,6 +21,8 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_Flag;
 
+        private const double MinPullbackAtr = 0.15;
+
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
@@ -74,6 +76,7 @@ namespace GeminiV26.EntryTypes.FX
             TradeDirection flagDir)
         {
             int score = 0;
+            int setupScore = 0;
             int penaltyBudget = 0;
 
             const int maxPenalty = 15;   // FX-en ennyi össz negatív korrekció lehet max
@@ -338,6 +341,11 @@ namespace GeminiV26.EntryTypes.FX
                 if (!hasReaction)
                     ApplyPenalty(1);
             }
+
+            double pullbackDepthR =
+                flagDir == TradeDirection.Long
+                    ? ctx.PullbackDepthRLong_M5
+                    : ctx.PullbackDepthRShort_M5;
 
             // =====================================================
             // FLAG RANGE (SIMPLE)
@@ -878,6 +886,22 @@ namespace GeminiV26.EntryTypes.FX
             if (!hasTrigger && !ctx.IsAtrExpanding_M5 && score < tuning.MinScore + 2)
                 ApplyPenalty(3);
 
+            bool continuationSignal = breakoutConfirmed;
+
+            bool hasStructure =
+                pullbackDepthR >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             bool missingImpulse =
                 string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
 
@@ -914,6 +938,11 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             if (min < 0) min = 0;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, min - 10);
 
             ctx.Log?.Invoke($"[FX_FLAG FINAL] candDir={flagDir} score={score} min={min}");
 

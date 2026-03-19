@@ -38,6 +38,7 @@ namespace GeminiV26.EntryTypes.FX
                 return Invalid(ctx, "WEAK_EVIDENCE");
 
             int score = 0;
+            int setupScore = 0;
 
             // evidence a mag
             score += ctx.ReversalEvidenceScore * 12;   // 2->24, 3->36, 4->48
@@ -81,6 +82,32 @@ namespace GeminiV26.EntryTypes.FX
                     score += htfBonus;
                 }
             }
+
+            double pullbackDepthR =
+                ctx.ReversalDirection == TradeDirection.Long
+                    ? ctx.PullbackDepthRLong_M5
+                    : ctx.PullbackDepthRShort_M5;
+
+            bool continuationSignal = ctx.M1ReversalTrigger;
+
+            bool hasStructure =
+                pullbackDepthR >= 0.15;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MIN_SCORE - 10);
 
             var eval = BaseEval(ctx);
             eval.Direction = ctx.ReversalDirection;

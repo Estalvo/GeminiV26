@@ -58,6 +58,7 @@ namespace GeminiV26.EntryTypes.METAL
         {
             int score = 60;
             int minScore = 64;
+            int setupScore = 0;
 
             var reasons = new List<string>();
 
@@ -217,10 +218,49 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add("HTF_AGAINST");
             }
 
+            bool hasFlag =
+                dir == TradeDirection.Long
+                    ? ctx.HasFlagLong_M5
+                    : ctx.HasFlagShort_M5;
+
+            bool structuredPB =
+                ctx.IsPullbackDecelerating_M5 &&
+                pbBars >= 2;
+
+            bool earlyPB =
+                ctx.HasEarlyPullback_M5;
+
+            bool hasStructure =
+                hasFlag
+                || structuredPB
+                || earlyPB;
+
+            if (!hasStructure)
+                setupScore -= 40;
+            else
+                setupScore += 20;
+
+            bool breakoutConfirmed =
+                m1;
+
+            bool earlyBreakout =
+                earlyContinuation;
+
+            bool hasConfirmation =
+                breakoutConfirmed
+                || earlyBreakout;
+
+            if (hasConfirmation)
+                setupScore += 20;
+
             // =========================
             // FINAL
             // =========================
             score += (int)Math.Round(matrix.EntryScoreModifier);
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, minScore - 10);
 
             bool valid = score >= minScore;
 

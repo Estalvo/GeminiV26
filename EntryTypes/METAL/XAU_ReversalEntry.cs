@@ -20,6 +20,7 @@ namespace GeminiV26.EntryTypes.METAL
                 return Reject(ctx, "CTX_NOT_READY");
 
             var reasons = new List<string>(8);
+            int setupScore = 0;
 
             // =====================================================
             // 1️⃣ TREND IRÁNY (XAU saját)
@@ -66,6 +67,46 @@ namespace GeminiV26.EntryTypes.METAL
 
             score += 15;
             reasons.Add("+M1_REV(15)");
+
+            bool hasFlag =
+                dir == TradeDirection.Long
+                    ? ctx.HasFlagLong_M5
+                    : ctx.HasFlagShort_M5;
+
+            bool structuredPB =
+                ctx.IsPullbackDecelerating_M5 &&
+                ctx.PullbackBars_M5 >= 2;
+
+            bool earlyPB =
+                ctx.HasEarlyPullback_M5;
+
+            bool hasStructure =
+                hasFlag
+                || structuredPB
+                || earlyPB;
+
+            if (!hasStructure)
+                setupScore -= 40;
+            else
+                setupScore += 20;
+
+            bool breakoutConfirmed =
+                ctx.M1ReversalTrigger;
+
+            bool earlyBreakout =
+                ctx.LastClosedBarInTrendDirection;
+
+            bool hasConfirmation =
+                breakoutConfirmed
+                || earlyBreakout;
+
+            if (hasConfirmation)
+                setupScore += 20;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MinScore - 10);
 
             // =====================================================
             // 5️⃣ MIN SCORE GATE

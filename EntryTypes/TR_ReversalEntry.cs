@@ -14,6 +14,7 @@
 //   IsRange_M5, IsAtrExpanding_M5
 // =========================================================
 
+using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 
 namespace GeminiV26.EntryTypes
@@ -41,6 +42,7 @@ namespace GeminiV26.EntryTypes
             };
 
             int score = 0;
+            int setupScore = 0;
 
             // =========================================================
             // 1️⃣ REVERSAL EVIDENCE (HARD QUALITY GATE)
@@ -107,6 +109,91 @@ namespace GeminiV26.EntryTypes
             {
                 score += 5;
             }
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
+
+            if (instrumentClass == InstrumentClass.METAL)
+            {
+                bool hasStructure =
+                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
+                    || ctx.HasEarlyPullback_M5;
+
+                if (!hasStructure)
+                    setupScore -= 40;
+                else
+                    setupScore += 20;
+
+                bool hasConfirmation =
+                    ctx.M1ReversalTrigger || ctx.LastClosedBarInTrendDirection;
+
+                if (hasConfirmation)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.INDEX)
+            {
+                bool hasImpulse = ctx.HasImpulse_M5;
+                if (!hasImpulse)
+                    setupScore -= 40;
+                else
+                    setupScore += 15;
+
+                bool hasStructure =
+                    ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5;
+
+                if (hasStructure)
+                    setupScore += 10;
+
+                bool continuationSignal = ctx.M1ReversalTrigger;
+                bool breakoutConfirmed = continuationSignal;
+
+                if (continuationSignal || breakoutConfirmed)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.CRYPTO)
+            {
+                if (!ctx.IsAtrExpanding_M5)
+                    setupScore -= 30;
+
+                bool hasStructure =
+                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
+
+                if (!hasStructure)
+                    setupScore -= 30;
+                else
+                    setupScore += 15;
+
+                bool continuationSignal = ctx.M1ReversalTrigger;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+            else
+            {
+                double pullbackDepthR =
+                    eval.Direction == TradeDirection.Short
+                        ? ctx.PullbackDepthRShort_M5
+                        : ctx.PullbackDepthRLong_M5;
+
+                bool hasStructure =
+                    pullbackDepthR >= 0.15;
+
+                if (!hasStructure)
+                    setupScore -= 35;
+                else
+                    setupScore += 15;
+
+                bool continuationSignal = ctx.M1ReversalTrigger;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MIN_SCORE - 10);
 
             // =========================================================
             // 5️⃣ MIN SCORE (EntryType szinten)

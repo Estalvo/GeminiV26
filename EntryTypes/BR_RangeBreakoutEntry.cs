@@ -11,6 +11,7 @@
 // A score RELATÍV MINŐSÉG, nem belépési engedély.
 // =========================================================
 
+using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using System;
 
@@ -42,6 +43,7 @@ namespace GeminiV26.EntryTypes
             };
 
             int score = 0;
+            int setupScore = 0;
 
             // =========================================================
             // 1️⃣ RANGE KÖRNYEZET (HARD + SOFT MINŐSÉG)
@@ -78,6 +80,64 @@ namespace GeminiV26.EntryTypes
             {
                 eval.Reason += "WeakRangeQuality;";
                 return eval;
+            }
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
+
+            if (instrumentClass == InstrumentClass.METAL)
+            {
+                bool hasStructure =
+                    ctx.IsValidFlagStructure_M5
+                    || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
+                    || ctx.HasEarlyPullback_M5;
+
+                if (!hasStructure)
+                    setupScore -= 40;
+                else
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.INDEX)
+            {
+                bool hasImpulse = ctx.HasImpulse_M5;
+                if (!hasImpulse)
+                    setupScore -= 40;
+                else
+                    setupScore += 15;
+
+                bool hasStructure =
+                    ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5;
+
+                if (hasStructure)
+                    setupScore += 10;
+            }
+            else if (instrumentClass == InstrumentClass.CRYPTO)
+            {
+                if (!ctx.IsAtrExpanding_M5)
+                    setupScore -= 30;
+
+                bool hasStructure =
+                    ctx.IsValidFlagStructure_M5 ||
+                    (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
+
+                if (!hasStructure)
+                    setupScore -= 30;
+                else
+                    setupScore += 15;
+            }
+            else
+            {
+                double pullbackDepthR =
+                    ctx.RangeBreakDirection == TradeDirection.Short
+                        ? ctx.PullbackDepthRShort_M5
+                        : ctx.PullbackDepthRLong_M5;
+
+                bool hasStructure =
+                    pullbackDepthR >= 0.15;
+
+                if (!hasStructure)
+                    setupScore -= 35;
+                else
+                    setupScore += 15;
             }
 
             // =========================================================
@@ -138,6 +198,41 @@ namespace GeminiV26.EntryTypes
             if (ctx.IsVolumeIncreasing_M5)
                 score += 5;
 
+            if (instrumentClass == InstrumentClass.METAL)
+            {
+                bool hasConfirmation =
+                    ctx.RangeBreakDirection != TradeDirection.None
+                    || ctx.M1TriggerInTrendDirection;
+
+                if (hasConfirmation)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.INDEX)
+            {
+                bool continuationSignal =
+                    ctx.RangeBreakDirection != TradeDirection.None;
+                bool breakoutConfirmed = continuationSignal;
+
+                if (continuationSignal || breakoutConfirmed)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.CRYPTO)
+            {
+                bool continuationSignal =
+                    ctx.RangeBreakDirection != TradeDirection.None;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+            else
+            {
+                bool continuationSignal =
+                    ctx.RangeBreakDirection != TradeDirection.None;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+
             // =========================================================
             // HARD RULE – irány nélkül nincs setup
             // =========================================================
@@ -150,6 +245,11 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // MIN SCORE – ENTRYTYPE SZINTEN
             // =========================================================
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MIN_SCORE - 10);
+
             eval.Score = score;
             eval.IsValid = score >= MIN_SCORE;
 
