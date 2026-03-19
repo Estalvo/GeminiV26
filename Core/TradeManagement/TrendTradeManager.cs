@@ -34,6 +34,7 @@ namespace GeminiV26.Core.TradeManagement
 
     public sealed class TrendTradeManager
     {
+        private const double LogEpsilon = 0.0001;
         private readonly Robot _bot;
         private readonly AverageTrueRange _atr;
         private readonly ExponentialMovingAverage _ema21;
@@ -73,8 +74,12 @@ namespace GeminiV26.Core.TradeManagement
             bool isRunner = ctx.Tp1Hit;
             if (isRunner)
             {
-                _bot.Print($"[TTM] Runner mode activated.");
-                _bot.Print($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit");
+                if (!ctx.RunnerActivationLogged)
+                {
+                    ctx.RunnerActivationLogged = true;
+                    _bot.Print($"[TTM] Runner mode activated.");
+                    _bot.Print($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit");
+                }
             }
 
             double priceNow = isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask;
@@ -138,7 +143,16 @@ namespace GeminiV26.Core.TradeManagement
                 _ => profile.LowConfidenceTpAtrMultiplier
             };
 
-            _bot.Print($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile");
+            string confidenceBucket = GetConfidenceBucket(score);
+            bool shouldLogProfile =
+                ctx.PostTp1TrendState != state.ToString() ||
+                ctx.LastProfileLogBucket != confidenceBucket;
+
+            if (shouldLogProfile)
+            {
+                _bot.Print($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile");
+                ctx.LastProfileLogBucket = confidenceBucket;
+            }
 
             bool allowTp2Extension = isRunner && profile.AllowTp2Extension;
             TryExtendTp2(position, ctx, isLong, atr, tpAtrMultiplier, profile, allowTp2Extension);
@@ -173,19 +187,19 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!ctx.Tp1Hit)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=tp1_not_hit");
+                TryLogTp2(ctx, "tp1_not_hit", null, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=tp1_not_hit");
                 return;
             }
 
             if (!allowTp2Extension)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=extension_disabled");
+                TryLogTp2(ctx, "extension_disabled", null, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=extension_disabled");
                 return;
             }
 
             if (currentTp <= 0 || atr <= 0)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=missing_tp_or_atr");
+                TryLogTp2(ctx, "missing_tp_or_atr", null, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp=NA delta=0.00000 result=SKIPPED reason=missing_tp_or_atr");
                 return;
             }
 
@@ -202,21 +216,21 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!outward)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(candidateTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=not_outward_enough minDelta={minDelta:0.00000}");
+                TryLogTp2(ctx, "not_outward_enough", candidateTp, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(candidateTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=not_outward_enough minDelta={minDelta:0.00000}");
                 return;
             }
 
             double normalizedTp = Normalize(candidateTp);
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - normalizedTp) < _bot.Symbol.PipSize)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=already_extended minDelta={minDelta:0.00000}");
+                TryLogTp2(ctx, "already_extended", normalizedTp, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=already_extended minDelta={minDelta:0.00000}");
                 return;
             }
 
             var result = _bot.ModifyPosition(pos, pos.StopLoss, normalizedTp);
             if (!result.IsSuccessful)
             {
-                _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=modify_failed error={result.Error}");
+                TryLogTp2(ctx, "modify_failed", normalizedTp, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=SKIPPED reason=modify_failed error={result.Error}");
                 return;
             }
 
@@ -227,7 +241,35 @@ namespace GeminiV26.Core.TradeManagement
                 ctx.Tp2ExtensionMultiplierApplied = desiredR / ctx.Tp2R;
             }
 
-            _bot.Print($"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=EXTENDED minDelta={minDelta:0.00000}");
+            TryLogTp2(ctx, "extended", normalizedTp, $"[TTM][TP2] symbol={pos.SymbolName} direction={direction} currentTp={FormatPrice(currentTp)} candidateTp={FormatPrice(normalizedTp)} livePrice={FormatPrice(livePrice)} sl={FormatPrice(pos.StopLoss)} delta={delta:0.00000} result=EXTENDED minDelta={minDelta:0.00000}");
+        }
+
+        private void TryLogTp2(PositionContext ctx, string state, double? value, string message)
+        {
+            if (ctx == null)
+                return;
+
+            bool stateChanged = !string.Equals(ctx.LastTp2LogState, state, StringComparison.Ordinal);
+            bool valueChanged =
+                (ctx.LastTp2LogValue.HasValue != value.HasValue) ||
+                (ctx.LastTp2LogValue.HasValue && value.HasValue && Math.Abs(ctx.LastTp2LogValue.Value - value.Value) >= Math.Max(LogEpsilon, _bot.Symbol.TickSize));
+
+            if (!stateChanged && !valueChanged)
+                return;
+
+            ctx.LastTp2LogState = state;
+            ctx.LastTp2LogValue = value;
+            _bot.Print(message);
+        }
+
+        private static string GetConfidenceBucket(int score)
+        {
+            return score switch
+            {
+                <= 1 => "LOW",
+                <= 3 => "MEDIUM",
+                _ => "HIGH"
+            };
         }
 
         private static double EstimatePullbackDepth(bool isLong, StructureSnapshot structure, double priceNow)

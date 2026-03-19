@@ -244,27 +244,50 @@ namespace GeminiV26.Instruments.BTCUSD
                 var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
                 var structure = _structureTracker.GetSnapshot();
                 var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
+                bool trailingWasActive = ctx.TrailingActivated;
+                double? stopLossBeforeTrail = ctx.LastStopLossPrice ?? pos.StopLoss;
+                bool ttmStateChanged =
+                    ctx.PostTp1TrendScore != decision.Score ||
+                    ctx.PostTp1TrendState != decision.State.ToString() ||
+                    ctx.PostTp1TrailingMode != decision.TrailingMode.ToString() ||
+                    ctx.LastTtmAllowTp2Extension != decision.AllowTp2Extension ||
+                    !ctx.LastTtmTp2Multiplier.HasValue ||
+                    Math.Abs(ctx.LastTtmTp2Multiplier.Value - decision.Tp2ExtensionMultiplier) >= 0.0001;
 
                 ctx.PostTp1TrendScore = decision.Score;
                 ctx.PostTp1TrendState = decision.State.ToString();
                 ctx.PostTp1TrailingMode = decision.TrailingMode.ToString();
+                ctx.LastTtmAllowTp2Extension = decision.AllowTp2Extension;
+                ctx.LastTtmTp2Multiplier = decision.Tp2ExtensionMultiplier;
 
-                _bot.Print(
-                    $"[BTCUSD][TTM] pos={pos.Id} " +
-                    $"score={decision.Score:0.00} state={decision.State} " +
-                    $"mode={decision.TrailingMode} allowTp2Ext={decision.AllowTp2Extension} " +
-                    $"mult={decision.Tp2ExtensionMultiplier:0.00}"
-                );
+                if (ttmStateChanged)
+                {
+                    _bot.Print(
+                        $"[BTCUSD][TTM] pos={pos.Id} " +
+                        $"score={decision.Score:0.00} state={decision.State} " +
+                        $"mode={decision.TrailingMode} allowTp2Ext={decision.AllowTp2Extension} " +
+                        $"mult={decision.Tp2ExtensionMultiplier:0.00}"
+                    );
+                }
 
                 TryExtendTp2(pos, ctx, decision);
 
-                _bot.Print(
-                    $"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} " +
-                    $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
-                    $"sl={pos.StopLoss} tp={pos.TakeProfit}"
-                );
-
                 _adaptiveTrailingEngine.Apply(pos, ctx, decision, structure, profile);
+
+                double? stopLossAfterTrail = ctx.LastStopLossPrice ?? pos.StopLoss;
+                bool stopLossUpdated =
+                    stopLossBeforeTrail.HasValue &&
+                    stopLossAfterTrail.HasValue &&
+                    Math.Abs(stopLossAfterTrail.Value - stopLossBeforeTrail.Value) >= Math.Max(0.0001, _bot.Symbol.TickSize);
+
+                if ((!trailingWasActive && ctx.TrailingActivated) || stopLossUpdated)
+                {
+                    _bot.Print(
+                        $"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} " +
+                        $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
+                        $"sl={stopLossAfterTrail} tp={pos.TakeProfit}"
+                    );
+                }
             }
         }
 
@@ -452,7 +475,7 @@ namespace GeminiV26.Instruments.BTCUSD
             if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
             {
                 if (!decision.AllowTp2Extension)
-                    _bot.Print("[TTM] TP2 extension skipped=notAllowed");
+                    TryLogTp2Extension(ctx, "notAllowed", null, "[TTM] TP2 extension skipped=notAllowed");
                 return;
             }
 
@@ -464,7 +487,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (desiredR <= currentR + 0.0001)
             {
-                _bot.Print("[TTM] TP2 extension skipped=no progression");
+                TryLogTp2Extension(ctx, "no progression", null, "[TTM] TP2 extension skipped=no progression");
                 return;
             }
 
@@ -477,13 +500,13 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (!outward)
             {
-                _bot.Print("[TTM] TP2 extension skipped=not outward");
+                TryLogTp2Extension(ctx, "not outward", newTp, "[TTM] TP2 extension skipped=not outward");
                 return;
             }
 
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
             {
-                _bot.Print("[TTM] TP2 extension skipped=same target");
+                TryLogTp2Extension(ctx, "same target", newTp, "[TTM] TP2 extension skipped=same target");
                 return;
             }
 
@@ -499,7 +522,22 @@ namespace GeminiV26.Instruments.BTCUSD
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
 
-            _bot.Print($"[TTM] TP2 extended from {currentTp} to {newTp}");
+            TryLogTp2Extension(ctx, "extended", newTp, $"[TTM] TP2 extended from {currentTp} to {newTp}");
+        }
+
+        private void TryLogTp2Extension(PositionContext ctx, string state, double? value, string message)
+        {
+            bool stateChanged = !string.Equals(ctx.LastTp2ExtensionLogState, state, StringComparison.Ordinal);
+            bool valueChanged =
+                (ctx.LastTp2ExtensionLogValue.HasValue != value.HasValue) ||
+                (ctx.LastTp2ExtensionLogValue.HasValue && value.HasValue && Math.Abs(ctx.LastTp2ExtensionLogValue.Value - value.Value) >= Math.Max(0.0001, _bot.Symbol.TickSize));
+
+            if (!stateChanged && !valueChanged)
+                return;
+
+            ctx.LastTp2ExtensionLogState = state;
+            ctx.LastTp2ExtensionLogValue = value;
+            _bot.Print(message);
         }
         private static bool IsLong(PositionContext ctx)
         {
