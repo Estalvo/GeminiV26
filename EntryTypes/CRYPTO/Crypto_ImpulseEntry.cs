@@ -8,35 +8,44 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            return null; // WEEKEND: disable crypto impulse entry
-        }
+            if (ctx == null || !ctx.IsReady)
+                return Invalid(ctx, "CTX_NOT_READY");
 
-        /*
-        public EntryEvaluation Evaluate(EntryContext ctx)
-        {
-            // =========================
-            // HARD GUARDS
-            // =========================
             if (!ctx.IsVolatilityAcceptable_Crypto)
-                return null;
+                return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            if (!ctx.HasImpulse_M1)
-                return null;
+            if (ctx.ImpulseDirection == TradeDirection.None && ctx.TrendDirection == TradeDirection.None)
+                return Invalid(ctx, "NO_DIRECTION");
 
-            if (ctx.ImpulseDirection == TradeDirection.None)
-                return null;
+            TradeDirection dir =
+                ctx.ImpulseDirection != TradeDirection.None ? ctx.ImpulseDirection : ctx.TrendDirection;
 
-            if (ctx.TrendDirection == TradeDirection.None)
-                return null;
+            int score = 60;
+            bool breakoutDetected = ctx.HasImpulse_M1 || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = breakoutDetected || ctx.IsAtrExpanding_M5;
+
+            score = TriggerScoreModel.Apply(ctx, $"CRYPTO_IMPULSE_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_IMPULSE_TRIGGER");
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = ctx.ImpulseDirection,
-                Score = 60,
-                Reason = "CRYPTO_IMPULSE_FILTERED"
+                Direction = dir,
+                Score = score,
+                IsValid = true,
+                Reason = $"CRYPTO_IMPULSE dir={dir} score={score}"
             };
-        }*/
+        }
+
+        private EntryEvaluation Invalid(EntryContext ctx, string reason)
+            => new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                IsValid = false,
+                Reason = reason
+            };
     }
 }

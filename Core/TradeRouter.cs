@@ -50,7 +50,7 @@ namespace GeminiV26.Core
                 return null;
 
             int nonNullCount = signals.Count(e => e != null);
-            int validCount = signals.Count(e => e != null && e.State == EntryState.TRIGGERED && e.TriggerConfirmed);
+            int validCount = signals.Count(e => e != null && e.IsValid && e.Score >= EntryDecisionPolicy.MinScoreThreshold);
 
             _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
             LogCandidates("CAND", signals);
@@ -61,11 +61,7 @@ namespace GeminiV26.Core
             {
                 string decision;
 
-                if (candidate.State == EntryState.ARMED && !candidate.TriggerConfirmed)
-                {
-                    decision = "ARMED";
-                }
-                else if (candidate.State != EntryState.TRIGGERED || !candidate.TriggerConfirmed)
+                if (!candidate.IsValid)
                 {
                     decision = "REJECT";
                 }
@@ -75,7 +71,7 @@ namespace GeminiV26.Core
                 }
                 else
                 {
-                    decision = "ACCEPT";
+                    decision = candidate.TriggerConfirmed ? "ACCEPT" : "ACCEPT_SCORE_MODEL";
 
                     if (winner == null
                         || candidate.Score > winner.Score

@@ -74,9 +74,6 @@ namespace GeminiV26.EntryTypes.FX
                 (ctx.LastClosedBarInTrendDirection && ctx.HasReactionCandle_M5) ||
                 m1Aligned;
 
-            if (!continuationSignal)
-                return Invalid(ctx, dir, "NO_CONTINUATION_SIGNAL", 50);
-
             bool hasStructure =
                 pullbackDepthR >= MinPullbackAtr;
 
@@ -115,6 +112,15 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.Session == FxSession.NewYork)
                 score += 2;
 
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = m1Aligned || ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal;
+
+            score = TriggerScoreModel.Apply(ctx, $"FX_MICRO_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_CONTINUATION_SIGNAL");
             score += setupScore;
 
             if (setupScore <= 0)

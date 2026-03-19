@@ -107,15 +107,17 @@ namespace GeminiV26.EntryTypes
             }
 
             // =========================================================
-            // 4️⃣ M1 FLAG BREAK TRIGGER – HARD
+            // 4️⃣ M1 FLAG BREAK TRIGGER – SCORE ONLY
             // =========================================================
             if (!ctx.M1FlagBreakTrigger)
             {
                 eval.Reason += "NoM1Break;";
-                return eval;
+                score -= 10;
             }
-
-            score += 30;
+            else
+            {
+                score += 30;
+            }
 
             var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
 
@@ -208,6 +210,13 @@ namespace GeminiV26.EntryTypes
 
             if (ctx.IsVolumeIncreasing_M5)
                 score += 5;
+
+            bool breakoutDetected =
+                ctx.M1FlagBreakTrigger ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = breakoutDetected || ctx.IsAtrExpanding_M5;
+            score = TriggerScoreModel.Apply(ctx, $"TC_FLAG_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_FLAG_BREAK_TRIGGER");
 
             // =========================================================
             // 6️⃣ MIN SCORE – ENTRYTYPE SZINT

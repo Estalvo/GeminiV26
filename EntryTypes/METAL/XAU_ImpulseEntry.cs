@@ -134,6 +134,16 @@ namespace GeminiV26.EntryTypes.METAL
             if (hasConfirmation)
                 setupScore += 20;
 
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = breakoutConfirmed || earlyBreakout;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = hasConfirmation;
+
+            score = TriggerScoreModel.Apply(ctx, $"XAU_IMPULSE_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_IMPULSE_TRIGGER");
+
             // =====================================================
             // FINAL DECISION
             // =====================================================

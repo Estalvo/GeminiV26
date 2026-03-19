@@ -104,6 +104,17 @@ namespace GeminiV26.EntryTypes.FX
             if (hasContinuation)
                 setupScore += 20;
 
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected =
+                ctx.M1ReversalTrigger ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == ctx.ReversalDirection);
+            bool strongCandle =
+                (ctx.ReversalDirection == TradeDirection.Long && bar.Close > bar.Open) ||
+                (ctx.ReversalDirection == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
+
+            score = TriggerScoreModel.Apply(ctx, $"FX_REV_{ctx.ReversalDirection}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)

@@ -191,6 +191,10 @@ namespace GeminiV26.EntryTypes
                     setupScore += 20;
             }
 
+            bool breakoutDetected = ctx.M1ReversalTrigger;
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
+            score = TriggerScoreModel.Apply(ctx, $"TR_REV_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)
