@@ -28,25 +28,11 @@ namespace GeminiV26.EntryTypes.FX
                     Reason = "SESSION_MATRIX_BREAKOUT_DISABLED"
                 };
             }
-
-            return new EntryEvaluation
-            {
-                Symbol = ctx?.Symbol,
-                Type = Type,
-                IsValid = false,
-                Reason = "FX_RESET_DISABLED_RANGE_BREAKOUT"
-            };
-        }
-        
-        /*
-        public EntryEvaluation Evaluate(EntryContext ctx)
-        {
-            // 🛑 DATA-ONLY PIPELINE GUARD
-            if (!ctx.IsReady)
+            if (ctx == null || !ctx.IsReady)
             {
                 return new EntryEvaluation
                 {
-                    Symbol = ctx.Symbol,
+                    Symbol = ctx?.Symbol,
                     Type = Type,
                     IsValid = false,
                     Reason = "CTX_NOT_READY;"
@@ -94,12 +80,14 @@ namespace GeminiV26.EntryTypes.FX
             else
                 score -= 15;
 
-            if (ctx.M1TriggerInTrendDirection)
-                score += 10;
+            bool breakoutDetected = ctx.RangeBreakDirection == eval.Direction;
+            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
 
             if (ctx.IsAtrExpanding_M5)
                 score += 5;
 
+            score = TriggerScoreModel.Apply(ctx, $"FX_RANGE_BREAKOUT_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
             eval.Score = score;
 
             if (score < MIN_SCORE)
@@ -113,8 +101,6 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             return eval;
-
         }
-        */
     }
 }

@@ -187,7 +187,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 if (!compressionDetected)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: deep pullback without compression");
-                    return Reject(ctx, dir, score, "DEEP_PULLBACK_NO_COMPRESSION");
+                    score -= 10;
                 }
 
                 TradeDirection impulseDirection =
@@ -200,7 +200,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 if (!breakoutAligned)
                 {
                     ctx.Log?.Invoke($"[PB] dir={dir} rejected: breakout against impulse");
-                    return Reject(ctx, dir, score, "BREAKOUT_AGAINST_IMPULSE");
+                    score -= 10;
                 }
 
                 ctx.Log?.Invoke($"[PB] dir={dir} DeepPullbackContinuation accepted");
@@ -214,7 +214,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, dir, score, "PULLBACK_BARS_TOO_LONG");
 
             if (!ctx.HasReactionCandle_M5)
-                return Reject(ctx, dir, score, "NO_REACTION");
+                score -= 8;
 
             if (!lastBarInDir)
                 score -= 10;
@@ -261,6 +261,10 @@ namespace GeminiV26.EntryTypes.INDEX
             // =====================================================
             // FINAL SCORE GATE
             // =====================================================
+            bool breakoutDetected = breakoutConfirmed || ctx.RangeBreakDirection == dir;
+            bool strongCandle = lastBarInDir;
+            bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
+            score = TriggerScoreModel.Apply(ctx, $"IDX_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)

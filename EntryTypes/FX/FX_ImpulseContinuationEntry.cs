@@ -116,6 +116,15 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.IsRange_M5)
                 score -= 10;
 
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = continuationSignal || ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal || (ctx.LastClosedBarInTrendDirection && ctx.HasReactionCandle_M5);
+
+            score = TriggerScoreModel.Apply(ctx, $"FX_IMPULSE_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_CONTINUATION_SIGNAL");
             score += setupScore;
 
             if (setupScore <= 0)

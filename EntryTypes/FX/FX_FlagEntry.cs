@@ -427,7 +427,10 @@ namespace GeminiV26.EntryTypes.FX
                     int.MaxValue;
 
                 if (asiaBarsSinceBreak2 > 2)
-                    return Invalid(ctx, flagDir, $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})", score);
+                {
+                    ApplyPenalty(6);
+                    flagDirReason = $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})";
+                }
             }
 
             // =====================================================
@@ -600,20 +603,18 @@ namespace GeminiV26.EntryTypes.FX
                     $"[FX_FLAG COOLDOWN] candDir={flagDir} breakoutReason={breakoutReason} " +
                     $"barsSinceBreak={barsSinceBreak} minRequired={minBreakoutBars}"
                 );
-
-                return Invalid(
-                    ctx,
-                    flagDir,
-                    $"POST_BREAKOUT_COOLDOWN({breakoutReason},{barsSinceBreak}<{minBreakoutBars})",
-                    score
-                );
+                ApplyPenalty(8);
+                flagDirReason = $"POST_BREAKOUT_COOLDOWN({breakoutReason},{barsSinceBreak}<{minBreakoutBars})";
             }
 
             if (ctx.Session == FxSession.Asia)
             {
                 int asiaBarsSinceBreak2 = barsSinceBreak;
                 if (asiaBarsSinceBreak2 > 2)
-                    return Invalid(ctx, flagDir, $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})", score);
+                {
+                    ApplyPenalty(6);
+                    flagDirReason = $"ASIA_LATE_CONT_DIR({asiaBarsSinceBreak2})";
+                }
             }
 
             if (ctx.Session == FxSession.London && htfTransitionZone && !breakout && !hasM1Confirmation)
@@ -638,9 +639,8 @@ namespace GeminiV26.EntryTypes.FX
 
                     if (veryHighAdx && rollingHard && noEnergy && lateStructure)
                     {
-                        return Invalid(ctx, flagDir,
-                            $"ADX_EXHAUSTION_BLOCK adx={adxNow2:F1} slope={adxSlopeNow:F2}",
-                            score);
+                        ApplyPenalty(10);
+                        flagDirReason = $"ADX_EXHAUSTION_BLOCK adx={adxNow2:F1} slope={adxSlopeNow:F2}";
                     }
 
                     if (adxNow2 >= 40.0 && adxSlopeNow <= -0.5)
@@ -718,14 +718,18 @@ namespace GeminiV26.EntryTypes.FX
             if (!breakout && !hasM1Confirmation)
             {
                 if (barsSinceBreak > fx.MaxContinuationBarsSinceBreak)
-                    return Invalid(ctx, flagDir, $"CONT_TOO_LATE({barsSinceBreak})", score);
+                {
+                    ApplyPenalty(8);
+                    flagDirReason = $"CONT_TOO_LATE({barsSinceBreak})";
+                }
 
                 if (TryGetDouble(ctx, "TotalMoveSinceBreakAtr", out var totalMoveAtr))
                 {
                     if (totalMoveAtr > fx.MaxContinuationRatr)
-                        return Invalid(ctx, flagDir,
-                            $"CONT_STRETCHED({totalMoveAtr:F2}>{fx.MaxContinuationRatr})",
-                            score);
+                    {
+                        ApplyPenalty(8);
+                        flagDirReason = $"CONT_STRETCHED({totalMoveAtr:F2}>{fx.MaxContinuationRatr})";
+                    }
                 }
 
                 if (htfTransitionZone && !hasTrigger)
