@@ -11,6 +11,9 @@
         // 0–100
         public int Score;
 
+        // Router-level score gate for this candidate.
+        public int MinScoreThreshold;
+
         // instrument bias
         public int LogicConfidence;
 
