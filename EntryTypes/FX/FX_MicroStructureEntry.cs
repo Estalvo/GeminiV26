@@ -30,9 +30,11 @@ namespace GeminiV26.EntryTypes.FX
             var shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
 
             if (longEval.IsValid && shortEval.IsValid)
+            {
                 var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
                 return EntryDecisionPolicy.Normalize(selected);
+            }
 
             if (longEval.IsValid) return longEval;
             if (shortEval.IsValid) return shortEval;
