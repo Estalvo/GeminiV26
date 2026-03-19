@@ -81,6 +81,7 @@ namespace GeminiV26.Core
         private readonly LogWriter _logWriter;
         private readonly ITradeLogger _logger;
         private readonly Dictionary<long, PositionContext> _positionContexts = new();
+        private readonly Dictionary<string, ArmedSetup> _armedSetups = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
         private readonly TradeStatsTracker _statsTracker;
         private readonly string _symbolCanonical;
@@ -1127,6 +1128,8 @@ namespace GeminiV26.Core
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
 
+                UpdateExecutionStateMachine(_ctx, symbolSignals);
+
                 // =====================================================
                 // ROUTER
                 // =====================================================
@@ -1229,6 +1232,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _xauExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsNasSymbol(_bot.SymbolName))
@@ -1245,12 +1249,14 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _nasExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsUs30(_bot.SymbolName))
             {
                 if (!_us30SessionGate.AllowEntry(gateDir)) return;
                 if (!_us30ImpulseGate.AllowEntry(gateDir)) return;
+                LogEntryExecuted(selected);
                 _us30Executor.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GER40"))
@@ -1267,6 +1273,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _ger40Executor?.ExecuteEntry(selected, _ctx);
             }
 
@@ -1284,6 +1291,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _eurUsdExecutor?.ExecuteEntry(selected, _ctx);
               
             }
@@ -1301,6 +1309,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _usdJpyExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GBPUSD"))
@@ -1317,6 +1326,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _gbpUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
 
@@ -1334,6 +1344,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _audUsdExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1351,6 +1362,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _audNzdExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1368,6 +1380,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _eurJpyExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1385,6 +1398,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _gbpJpyExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1402,6 +1416,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _nzdUsdExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1419,6 +1434,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _usdCadExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1436,6 +1452,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
+                LogEntryExecuted(selected);
                 _usdChfExecutor.ExecuteEntry(selected, _ctx);
             }
 
@@ -1464,6 +1481,7 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print("[BTC GATE] ALLOWED (Session+Impulse)");
+                LogEntryExecuted(selected);
                 _btcUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
 
@@ -1492,12 +1510,14 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print("[ETH GATE] ALLOWED (Session+Impulse)");
+                LogEntryExecuted(selected);
                 _ethUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
             else if (IsGer40(_bot.SymbolName))
             {
                 if (!_ger40SessionGate.AllowEntry(gateDir)) return;
                 if (!_ger40ImpulseGate.AllowEntry(gateDir)) return;
+                LogEntryExecuted(selected);
                 _ger40Executor.ExecuteEntry(selected, _ctx);
             }
         }
@@ -1606,6 +1626,219 @@ namespace GeminiV26.Core
                 default:
                     return 0;
             }
+        }
+
+        private void UpdateExecutionStateMachine(EntryContext ctx, List<EntryEvaluation> symbolSignals)
+        {
+            if (ctx == null || symbolSignals == null)
+                return;
+
+            foreach (var candidate in symbolSignals)
+            {
+                if (candidate == null)
+                    continue;
+
+                candidate.TriggerConfirmed = false;
+                candidate.State = EntryState.NONE;
+
+                if (candidate.Direction == TradeDirection.None || EntryDecisionPolicy.IsHardInvalid(candidate))
+                {
+                    ClearArmedSetup(candidate);
+                    continue;
+                }
+
+                if (candidate.Score > 0)
+                    candidate.State = EntryState.SETUP_DETECTED;
+
+                int barsSinceBreak = GetBarsSinceBreak(ctx, candidate.Direction);
+                if (barsSinceBreak == 0)
+                {
+                    int originalScore = candidate.Score;
+                    candidate.Score = Math.Max(0, candidate.Score - 15);
+                    candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
+                    _bot.Print($"[ENTRY][EARLY_PROTECT] symbol={candidate.Symbol} type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}");
+                }
+
+                if (candidate.Score < EntryDecisionPolicy.MinScoreThreshold)
+                {
+                    ClearArmedSetup(candidate);
+                    continue;
+                }
+
+                var trigger = ResolveTriggerDiagnostics(ctx, candidate);
+
+                if (!trigger.IsManaged)
+                {
+                    candidate.TriggerConfirmed = true;
+                    candidate.State = EntryState.TRIGGERED;
+                    continue;
+                }
+
+                candidate.TriggerConfirmed = trigger.TriggerConfirmed;
+                candidate.State = candidate.TriggerConfirmed ? EntryState.TRIGGERED : EntryState.ARMED;
+
+                if (candidate.State == EntryState.ARMED)
+                {
+                    UpsertArmedSetup(candidate, barsSinceBreak);
+                    _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state={candidate.State} type={candidate.Type} dir={candidate.Direction}");
+                    _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction}");
+                }
+                else
+                {
+                    UpsertArmedSetup(candidate, barsSinceBreak);
+                    _bot.Print($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
+                }
+            }
+        }
+
+        private TriggerDiagnostics ResolveTriggerDiagnostics(EntryContext ctx, EntryEvaluation candidate)
+        {
+            var diagnostics = new TriggerDiagnostics();
+            if (ctx == null || candidate == null)
+                return diagnostics;
+
+            diagnostics.IsManaged = IsTriggerManaged(candidate.Type);
+            if (!diagnostics.IsManaged)
+            {
+                diagnostics.TriggerConfirmed = true;
+                return diagnostics;
+            }
+
+            if (!string.IsNullOrWhiteSpace(candidate.Reason) &&
+                candidate.Reason.IndexOf("WAIT_BREAKOUT", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                diagnostics.WaitReason = "WAIT_BREAKOUT";
+                diagnostics.TriggerConfirmed = false;
+                return diagnostics;
+            }
+
+            int lastClosedM5 = ctx.M5?.Count >= 2 ? ctx.M5.Count - 2 : -1;
+            double buffer = ctx.FlagAtr_M5 > 0 ? ctx.FlagAtr_M5 * 0.10 : ctx.AtrM5 * 0.10;
+
+            if (lastClosedM5 >= 1)
+            {
+                double rangeHigh = ctx.FlagHigh;
+                double rangeLow = ctx.FlagLow;
+
+                if (rangeHigh > rangeLow)
+                {
+                    double close = ctx.M5.ClosePrices[lastClosedM5];
+                    diagnostics.BreakoutClose =
+                        close > rangeHigh + buffer ||
+                        close < rangeLow - buffer;
+                }
+
+                double prevHigh = ctx.M5.HighPrices[lastClosedM5 - 1];
+                double prevLow = ctx.M5.LowPrices[lastClosedM5 - 1];
+                double currentHigh = ctx.M5.HighPrices[lastClosedM5];
+                double currentLow = ctx.M5.LowPrices[lastClosedM5];
+
+                diagnostics.StructureBreak =
+                    currentHigh > prevHigh ||
+                    currentLow < prevLow ||
+                    ctx.BrokeLastSwingHigh_M5 ||
+                    ctx.BrokeLastSwingLow_M5;
+            }
+
+            diagnostics.M1Break =
+                ctx.HasBreakout_M1 &&
+                ctx.BreakoutDirection == candidate.Direction;
+
+            diagnostics.TriggerConfirmed =
+                diagnostics.BreakoutClose ||
+                diagnostics.StructureBreak ||
+                diagnostics.M1Break;
+
+            if (!diagnostics.TriggerConfirmed && string.IsNullOrWhiteSpace(diagnostics.WaitReason))
+                diagnostics.WaitReason = "WAIT_BREAKOUT";
+
+            return diagnostics;
+        }
+
+        private static bool IsTriggerManaged(EntryType type)
+        {
+            switch (type)
+            {
+                case EntryType.FX_Flag:
+                case EntryType.FX_MicroStructure:
+                case EntryType.FX_RangeBreakout:
+                case EntryType.FX_FlagContinuation:
+                case EntryType.FX_MicroContinuation:
+                case EntryType.FX_ImpulseContinuation:
+                case EntryType.Index_Flag:
+                case EntryType.Index_Breakout:
+                case EntryType.Crypto_Flag:
+                case EntryType.Crypto_RangeBreakout:
+                case EntryType.XAU_Flag:
+                case EntryType.XAU_Impulse:
+                case EntryType.TC_Flag:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private static int GetBarsSinceBreak(EntryContext ctx, TradeDirection direction)
+        {
+            if (ctx == null)
+                return int.MaxValue;
+
+            return direction == TradeDirection.Long
+                ? ctx.BarsSinceHighBreak_M5
+                : direction == TradeDirection.Short
+                    ? ctx.BarsSinceLowBreak_M5
+                    : int.MaxValue;
+        }
+
+        private void UpsertArmedSetup(EntryEvaluation candidate, int barsSinceBreak)
+        {
+            if (candidate == null)
+                return;
+
+            string key = GetArmedSetupKey(candidate);
+            _armedSetups[key] = new ArmedSetup
+            {
+                Symbol = candidate.Symbol ?? _bot.SymbolName,
+                Direction = candidate.Direction,
+                Score = candidate.Score,
+                DetectedAt = _bot.Server.Time,
+                BarsSince = barsSinceBreak,
+                EntryType = candidate.Type,
+                Reason = candidate.Reason ?? string.Empty
+            };
+        }
+
+        private void ClearArmedSetup(EntryEvaluation candidate)
+        {
+            if (candidate == null)
+                return;
+
+            _armedSetups.Remove(GetArmedSetupKey(candidate));
+        }
+
+        private static string GetArmedSetupKey(EntryEvaluation candidate)
+        {
+            return $"{candidate?.Symbol}:{candidate?.Type}:{candidate?.Direction}";
+        }
+
+        private void LogEntryExecuted(EntryEvaluation candidate)
+        {
+            if (candidate == null)
+                return;
+
+            ClearArmedSetup(candidate);
+            _bot.Print($"[ENTRY EXECUTED] symbol={candidate.Symbol ?? _bot.SymbolName} score={candidate.Score} type={candidate.Type} dir={candidate.Direction}");
+        }
+
+        private sealed class TriggerDiagnostics
+        {
+            public bool IsManaged { get; set; }
+            public bool TriggerConfirmed { get; set; }
+            public bool BreakoutClose { get; set; }
+            public bool StructureBreak { get; set; }
+            public bool M1Break { get; set; }
+            public string WaitReason { get; set; } = string.Empty;
         }
         
         // =========================================================
@@ -1976,10 +2209,6 @@ namespace GeminiV26.Core
             if (symbolSignals == null || bias == null)
                 return;
 
-            const double MisalignedPenalty = 0.70;
-            const double TransitionPenalty = 0.85;
-            const double AlignedDirectionalBoost = 1.10;
-
             _bot.Print($"[HTF][BIAS] asset={assetTag} direction={bias.AllowedDirection} state={bias.State} impact=ScoreOnly conf={bias.Confidence01:0.00}");
 
             int alignedCandidates = 0;
@@ -2000,31 +2229,24 @@ namespace GeminiV26.Core
                 if (misaligned)
                     misalignedCandidates++;
 
-                double multiplier = 1.0;
+                int originalScore = candidate.Score;
+
+                if (aligned)
+                    candidate.Score += 5;
 
                 if (misaligned)
-                    multiplier *= MisalignedPenalty;
+                    candidate.Score -= 10;
 
-                if (bias.State == HtfBiasState.Transition)
-                    multiplier *= TransitionPenalty;
-                else if (aligned && (bias.State == HtfBiasState.Bull || bias.State == HtfBiasState.Bear))
-                    multiplier *= AlignedDirectionalBoost;
-
-                int originalScore = candidate.Score;
-                candidate.Score = Math.Max(1, (int)Math.Round(candidate.Score * multiplier));
+                candidate.Score = Math.Max(0, Math.Min(100, candidate.Score));
 
                 _bot.Print(
                     $"[HTF][CANDIDATE] asset={assetTag} type={candidate.Type} dir={candidate.Direction} " +
-                    $"aligned={aligned} multiplier={multiplier:0.00} score={originalScore}->{candidate.Score} state={bias.State}");
+                    $"aligned={aligned} misaligned={misaligned} score={originalScore}->{candidate.Score} state={bias.State}");
             }
-
-            string statePenaltyText = bias.State == HtfBiasState.Transition
-                ? TransitionPenalty.ToString("0.00")
-                : "1.00";
 
             _bot.Print(
                 $"[HTF][APPLIED] asset={assetTag} dir={bias.AllowedDirection} state={bias.State} " +
-                $"penalty={statePenaltyText} directionalPenalty={MisalignedPenalty:0.00} " +
+                $"alignedBonus=5 misalignedPenalty=10 " +
                 $"alignedCandidates={alignedCandidates} misaligned={misalignedCandidates}");
         }
 

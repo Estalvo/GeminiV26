@@ -15,5 +15,9 @@
         public int LogicConfidence;
 
         public string Reason;
+
+        public EntryState State = EntryState.NONE;
+
+        public bool TriggerConfirmed;
     }
 }
