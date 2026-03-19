@@ -10,6 +10,8 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_MicroStructure;
 
+        private const double MinPullbackAtr = 0.15;
+
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
@@ -41,6 +43,7 @@ namespace GeminiV26.EntryTypes.FX
             TradeDirection dir)
         {
             int score = 54;   // base score aligned with FlagEntry universe
+            int setupScore = 0;
 
             ctx.Log?.Invoke(
                 $"[FX_MICRO START] sym={ctx.Symbol} dir={dir} " +
@@ -52,6 +55,11 @@ namespace GeminiV26.EntryTypes.FX
                 dir == TradeDirection.Long
                 ? ctx.BarsSinceHighBreak_M5
                 : ctx.BarsSinceLowBreak_M5;
+
+            double pullbackDepthR =
+                dir == TradeDirection.Long
+                    ? ctx.PullbackDepthRLong_M5
+                    : ctx.PullbackDepthRShort_M5;
 
             ctx.Log?.Invoke($"[FX_MICRO STRUCT] barsSinceBreak={barsSinceBreak}");
             
@@ -128,6 +136,22 @@ namespace GeminiV26.EntryTypes.FX
             if (!breakout)
                 return Invalid(ctx, dir, "WAIT_BREAKOUT", score);
 
+            bool continuationSignal = breakout;
+
+            bool hasStructure =
+                pullbackDepthR >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             score += 6;
 
             // -----------------------------------------------------
@@ -174,6 +198,11 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
 
             int minScore = 68;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, minScore - 10);
 
             ctx.Log?.Invoke($"[FX_MICRO FINAL] dir={dir} score={score} min={minScore}");
 

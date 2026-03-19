@@ -85,6 +85,7 @@ namespace GeminiV26.EntryTypes.FX
             TradeDirection dir)
         {
             int score = 60;
+            int setupScore = 0;
             int penalty = 0;
             int penaltyBudget = 14;
 
@@ -361,7 +362,27 @@ namespace GeminiV26.EntryTypes.FX
                 return Block(ctx, dir, "PB_TOO_WEAK", score);
             }
 
+            bool continuationSignal = hasDirectionalM1Trigger;
+
+            bool hasStructure =
+                pullbackDepth >= 0.5;
+
+            if (!hasStructure)
+                setupScore -= 35;
+            else
+                setupScore += 15;
+
+            bool hasContinuation =
+                continuationSignal;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MIN_SCORE - 10);
 
             if (score < MIN_SCORE)
                 return Block(ctx, dir, $"LOW_SCORE_{score}", score);

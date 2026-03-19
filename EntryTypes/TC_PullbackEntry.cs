@@ -39,6 +39,7 @@ namespace GeminiV26.EntryTypes
             };
 
             int score = 0;
+            int setupScore = 0;
 
             var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
             string symbolCanonical = SymbolRouting.NormalizeSymbol(ctx.Symbol);
@@ -310,6 +311,84 @@ namespace GeminiV26.EntryTypes
             if (ctx.HasImpulse_M5) score += 5;
             if (ctx.IsAtrExpanding_M5) score += 5;
 
+            if (instrumentClass == InstrumentClass.METAL)
+            {
+                bool hasStructure =
+                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
+                    || ctx.HasEarlyPullback_M5;
+
+                if (!hasStructure)
+                    setupScore -= 40;
+                else
+                    setupScore += 20;
+
+                bool hasConfirmation =
+                    (!noM1Trigger) || ctx.LastClosedBarInTrendDirection;
+
+                if (hasConfirmation)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.INDEX)
+            {
+                bool hasImpulse = ctx.HasImpulse_M5;
+                if (!hasImpulse)
+                    setupScore -= 40;
+                else
+                    setupScore += 15;
+
+                bool hasStructure =
+                    ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5;
+
+                if (hasStructure)
+                    setupScore += 10;
+
+                bool continuationSignal = !noM1Trigger;
+                bool breakoutConfirmed = continuationSignal;
+
+                if (continuationSignal || breakoutConfirmed)
+                    setupScore += 20;
+            }
+            else if (instrumentClass == InstrumentClass.CRYPTO)
+            {
+                if (!ctx.IsAtrExpanding_M5)
+                    setupScore -= 30;
+
+                bool hasStructure =
+                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
+
+                if (!hasStructure)
+                    setupScore -= 30;
+                else
+                    setupScore += 15;
+
+                bool continuationSignal = !noM1Trigger;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+            else
+            {
+                double pullbackDepthR =
+                    eval.Direction == TradeDirection.Short
+                        ? ctx.PullbackDepthRShort_M5
+                        : ctx.PullbackDepthRLong_M5;
+
+                bool hasStructure =
+                    pullbackDepthR >= 0.15;
+
+                if (!hasStructure)
+                    setupScore -= 35;
+                else
+                    setupScore += 15;
+
+                bool continuationSignal = !noM1Trigger;
+
+                if (continuationSignal)
+                    setupScore += 20;
+            }
+
             // =========================================================
             // FINAL RULES
             // =========================================================
@@ -318,6 +397,11 @@ namespace GeminiV26.EntryTypes
                 eval.Reason += "NoDirection;";
                 return eval;
             }
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
             eval.IsValid = score >= MIN_SCORE;

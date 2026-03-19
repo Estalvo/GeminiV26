@@ -14,6 +14,7 @@ namespace GeminiV26.EntryTypes.Crypto
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             int score = 36;
+            int setupScore = 0;
 
             void ScoreLog(string label, int delta, int current)
             {
@@ -794,6 +795,43 @@ namespace GeminiV26.EntryTypes.Crypto
                     $"[BTC ASIA] passed: drift={directionalDriftOk}, retrace={retracementRatio:0.00}, bars={ctx.PullbackBars_M5}, confidence={score}"
                 );
             }
+
+            bool hasVolatility =
+                ctx.IsAtrExpanding_M5;
+
+            if (!hasVolatility)
+                setupScore -= 30;
+
+            bool hasFlag =
+                dir == TradeDirection.Long
+                    ? ctx.HasFlagLong_M5
+                    : ctx.HasFlagShort_M5;
+
+            bool structuredPB =
+                ctx.PullbackBars_M5 >= 2 &&
+                ctx.IsPullbackDecelerating_M5;
+
+            bool hasStructure =
+                hasFlag || structuredPB;
+
+            if (!hasStructure)
+                setupScore -= 30;
+            else
+                setupScore += 15;
+
+            bool continuationSignal =
+                ctx.M1TriggerInTrendDirection || validPullbackReaction;
+
+            bool hasMomentum =
+                continuationSignal;
+
+            if (hasMomentum)
+                setupScore += 20;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, dynamicMinScore - 10);
 
             // =========================
             // FINAL CHECK

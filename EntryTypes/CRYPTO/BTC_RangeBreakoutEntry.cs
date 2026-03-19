@@ -17,6 +17,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "CTX_NOT_READY");
 
             int score = 25;
+            int setupScore = 0;
 
             // =========================
             // VOL REGIME – SOFT
@@ -39,6 +40,38 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "NO_BREAK_DIR");
 
             var eval = NewEval(ctx, dir);
+
+            bool hasVolatility =
+                ctx.IsAtrExpanding_M5;
+
+            if (!hasVolatility)
+                setupScore -= 30;
+
+            bool hasFlag =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
+                ctx.IsValidFlagStructure_M5;
+
+            bool structuredPB =
+                ctx.PullbackBars_M5 >= 2 &&
+                ctx.IsPullbackDecelerating_M5;
+
+            bool hasStructure =
+                hasFlag || structuredPB;
+
+            if (!hasStructure)
+                setupScore -= 30;
+            else
+                setupScore += 15;
+
+            bool continuationSignal =
+                ctx.RangeBreakDirection == dir;
+
+            bool hasMomentum =
+                continuationSignal;
+
+            if (hasMomentum)
+                setupScore += 20;
 
             // =========================
             // BREAK STRENGTH
@@ -67,6 +100,11 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (ctx.IsAtrExpanding_M5)
                 score += 10;
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
             eval.IsValid = score >= MIN_SCORE;

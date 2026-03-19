@@ -33,6 +33,7 @@ namespace GeminiV26.EntryTypes.METAL
                 return Reject(ctx, "CTX_NOT_READY");
 
             int score = 60; // base impulse score
+            int setupScore = 0;
 
             // =====================================================
             // 1️⃣ IRÁNY
@@ -97,10 +98,50 @@ namespace GeminiV26.EntryTypes.METAL
 
             score += 5;
 
+            bool hasFlag =
+                dir == TradeDirection.Long
+                    ? ctx.HasFlagLong_M5
+                    : ctx.HasFlagShort_M5;
+
+            bool structuredPB =
+                ctx.IsPullbackDecelerating_M5 &&
+                ctx.PullbackBars_M5 >= 2;
+
+            bool earlyPB =
+                ctx.HasEarlyPullback_M5;
+
+            bool hasStructure =
+                hasFlag
+                || structuredPB
+                || earlyPB;
+
+            if (!hasStructure)
+                setupScore -= 40;
+            else
+                setupScore += 20;
+
+            bool breakoutConfirmed =
+                ctx.HasBreakout_M1 &&
+                ctx.BreakoutDirection == dir;
+
+            bool earlyBreakout =
+                ctx.M1TriggerInTrendDirection;
+
+            bool hasConfirmation =
+                breakoutConfirmed
+                || earlyBreakout;
+
+            if (hasConfirmation)
+                setupScore += 20;
+
             // =====================================================
             // FINAL DECISION
             // =====================================================
             score += (int)System.Math.Round(matrix.EntryScoreModifier);
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score})");

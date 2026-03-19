@@ -135,6 +135,7 @@ namespace GeminiV26.EntryTypes.INDEX
             double scoreMultiplier)
         {
             int score = BaseScore;
+            int setupScore = 0;
             int penaltyBudget = 0;
             const int maxPenalty = 22;
 
@@ -171,6 +172,11 @@ namespace GeminiV26.EntryTypes.INDEX
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 :
                 dir == TradeDirection.Short ? ctx.HasImpulseShort_M5 :
+                false;
+
+            bool hasPullback =
+                dir == TradeDirection.Long ? ctx.HasPullbackLong_M5 :
+                dir == TradeDirection.Short ? ctx.HasPullbackShort_M5 :
                 false;
 
             DateTime traceBarTime = bars.OpenTimes[lastClosed];
@@ -375,6 +381,28 @@ namespace GeminiV26.EntryTypes.INDEX
                 (dir == TradeDirection.Long && (bullBreak || breakoutSignal)) ||
                 (dir == TradeDirection.Short && (bearBreak || breakoutSignal));
 
+            bool continuationSignal = breakoutSignal;
+
+            bool hasImpulseSetup =
+                hasImpulse;
+
+            if (!hasImpulseSetup)
+                setupScore -= 40;
+            else
+                setupScore += 15;
+
+            bool hasStructure =
+                hasPullback || hasFlag;
+
+            if (hasStructure)
+                setupScore += 10;
+
+            bool hasContinuation =
+                continuationSignal || breakoutConfirmed;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             if (!breakoutConfirmed)
                 return Reject(ctx, "NO_FLAG_BREAKOUT", score, dir);
 
@@ -480,6 +508,11 @@ namespace GeminiV26.EntryTypes.INDEX
                     "[FLAG][PENALTY] Missing impulse detected → score penalty applied " +
                     $"symbol={ctx.Symbol} entry={Type} penalty=6 score={score}");
             }
+
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MinScore - 10);
 
             ctx.Log?.Invoke(
                 $"[IDX_FLAG][FINAL] dir={dir} score={score} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +

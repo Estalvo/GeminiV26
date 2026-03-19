@@ -16,6 +16,7 @@ namespace GeminiV26.EntryTypes.INDEX
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             int score = 0;
+            int setupScore = 0;
 
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowBreakout)
@@ -92,6 +93,32 @@ namespace GeminiV26.EntryTypes.INDEX
             if (!ctx.IsAtrExpanding_M5)
                 score -= 10;
 
+            bool hasImpulseSetup =
+                ctx.HasImpulse_M5;
+
+            if (!hasImpulseSetup)
+                setupScore -= 40;
+            else
+                setupScore += 15;
+
+            bool hasStructure =
+                (dir == TradeDirection.Long ? ctx.HasPullbackLong_M5 : ctx.HasPullbackShort_M5);
+
+            if (hasStructure)
+                setupScore += 10;
+
+            bool continuationSignal =
+                ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
+
+            bool breakoutConfirmed =
+                continuationSignal;
+
+            bool hasContinuation =
+                continuationSignal || breakoutConfirmed;
+
+            if (hasContinuation)
+                setupScore += 20;
+
             // =====================================================
             // Core breakout scoring
             // =====================================================
@@ -136,6 +163,10 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 4;
 
             score += (int)Math.Round(matrix.EntryScoreModifier);
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
                 return Reject(ctx, $"LOW_SCORE({score})", score, dir);
