@@ -32,11 +32,45 @@ namespace GeminiV26.EntryTypes
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            if (ctx == null || !ctx.IsReady)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "CTX_NOT_READY;"
+                };
+            }
+
+            if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NoRange;"
+                };
+            }
+
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
             var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = TradeDirection.None,
+                Direction = dir,
                 Score = 0,
                 IsValid = false,
                 Reason = ""
@@ -127,7 +161,7 @@ namespace GeminiV26.EntryTypes
             else
             {
                 double pullbackDepthR =
-                    ctx.RangeBreakDirection == TradeDirection.Short
+                    dir == TradeDirection.Short
                         ? ctx.PullbackDepthRShort_M5
                         : ctx.PullbackDepthRLong_M5;
 
@@ -144,14 +178,12 @@ namespace GeminiV26.EntryTypes
             // 2️⃣ BREAKOUT (HARD LÉTEZÉSI FELTÉTEL)
             // =========================================================
 
-            if (ctx.RangeBreakDirection == TradeDirection.None)
-            {
+            if (ctx.RangeBreakDirection == dir)
+                score += 15;
+            else if (ctx.RangeBreakDirection != TradeDirection.None)
+                score -= 15;
+            else
                 eval.Reason += "NoBreak;";
-                return eval;
-            }
-
-            eval.Direction = ctx.RangeBreakDirection;
-            score += 15;
 
             // Break ereje ATR-ben (minőségi súlyozás)
             if (ctx.RangeBreakAtrSize_M5 >= MinBreakATR * 1.5)
@@ -201,7 +233,7 @@ namespace GeminiV26.EntryTypes
             if (instrumentClass == InstrumentClass.METAL)
             {
                 bool hasConfirmation =
-                    ctx.RangeBreakDirection != TradeDirection.None
+                    ctx.RangeBreakDirection == dir
                     || ctx.M1TriggerInTrendDirection;
 
                 if (hasConfirmation)
@@ -210,7 +242,7 @@ namespace GeminiV26.EntryTypes
             else if (instrumentClass == InstrumentClass.INDEX)
             {
                 bool continuationSignal =
-                    ctx.RangeBreakDirection != TradeDirection.None;
+                    ctx.RangeBreakDirection == dir;
                 bool breakoutConfirmed = continuationSignal;
 
                 if (continuationSignal || breakoutConfirmed)
@@ -219,7 +251,7 @@ namespace GeminiV26.EntryTypes
             else if (instrumentClass == InstrumentClass.CRYPTO)
             {
                 bool continuationSignal =
-                    ctx.RangeBreakDirection != TradeDirection.None;
+                    ctx.RangeBreakDirection == dir;
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -227,7 +259,7 @@ namespace GeminiV26.EntryTypes
             else
             {
                 bool continuationSignal =
-                    ctx.RangeBreakDirection != TradeDirection.None;
+                    ctx.RangeBreakDirection == dir;
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -236,16 +268,14 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // HARD RULE – irány nélkül nincs setup
             // =========================================================
-            if (eval.Direction == TradeDirection.None)
-            {
-                eval.Reason += "NoDirection;";
-                return eval;
-            }
-
-            bool breakoutDetected = ctx.RangeBreakDirection == eval.Direction;
-            bool strongCandle = ctx.LastClosedBarInTrendDirection;
-            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
-            score = TriggerScoreModel.Apply(ctx, $"BR_RANGE_BREAKOUT_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            score = TriggerScoreModel.Apply(ctx, $"BR_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
 
             // =========================================================
             // MIN SCORE – ENTRYTYPE SZINTEN
@@ -256,7 +286,7 @@ namespace GeminiV26.EntryTypes
                 score = Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

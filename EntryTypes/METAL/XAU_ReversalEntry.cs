@@ -19,26 +19,23 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx == null || !ctx.IsReady || ctx.M5 == null)
                 return Reject(ctx, "CTX_NOT_READY");
 
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
             var reasons = new List<string>(8);
             int setupScore = 0;
 
-            // =====================================================
-            // 1️⃣ TREND IRÁNY (XAU saját)
-            // =====================================================
             TradeDirection trendDir = ResolveXauDirection(ctx);
             if (trendDir == TradeDirection.None)
-                return Reject(ctx, "NO_TREND_DIR");
-
-            // Reversal irány = trend ellen
-            TradeDirection dir = trendDir == TradeDirection.Long
-                ? TradeDirection.Short
-                : TradeDirection.Long;
+                return Reject(ctx, $"NO_TREND_DIR_{dir}");
 
             reasons.Add($"Trend={trendDir}");
 
-            // =====================================================
-            // 2️⃣ RANGE KÖTELEZŐ
-            // =====================================================
             if (!ctx.IsRange_M5)
                 return RejectDecision(ctx, dir, 0, "NOT_RANGE", reasons);
 
@@ -59,6 +56,11 @@ namespace GeminiV26.EntryTypes.METAL
                 reasons.Add($"WEAK_EVIDENCE({evidence})");
             }
             reasons.Add($"Evidence={evidence}");
+
+            if (trendDir != dir)
+                score += 12;
+            else
+                score -= 12;
 
             // =====================================================
             // 4️⃣ M1 REVERSAL TRIGGER
@@ -141,7 +143,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                IsValid = true,
+                IsValid = score >= MinScore,
                 Reason = note
             };
         }

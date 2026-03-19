@@ -39,38 +39,53 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
+            if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NoRange;"
+                };
+            }
+
+            if (Math.Abs(ctx.Ema21Slope_M5) > MaxSlopeForRange)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "Trending;"
+                };
+            }
+
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
             var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = TradeDirection.None,
+                Direction = dir,
                 Score = 0,
                 IsValid = false,
                 Reason = ""
             };
 
-            if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
-            {
-                eval.Reason += "NoRange;";
-                return eval;
-            }
-
-            if (Math.Abs(ctx.Ema21Slope_M5) > MaxSlopeForRange)
-            {
-                eval.Reason += "Trending;";
-                return eval;
-            }
-
-            if (ctx.RangeBreakDirection == TradeDirection.None)
-            {
-                eval.Reason += "NoBreak;";
-                return eval;
-            }
-
-            eval.Direction = ctx.RangeBreakDirection;
             int score = 20;
 
-            if (ctx.RangeBreakAtrSize_M5 >= MinBreakATR)
+            if (ctx.RangeBreakDirection == dir && ctx.RangeBreakAtrSize_M5 >= MinBreakATR)
                 score += 15;
             else
                 score -= 10;
@@ -80,14 +95,21 @@ namespace GeminiV26.EntryTypes.FX
             else
                 score -= 15;
 
-            bool breakoutDetected = ctx.RangeBreakDirection == eval.Direction;
-            bool strongCandle = ctx.LastClosedBarInTrendDirection;
-            bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = (ctx.RangeBreakDirection == dir && ctx.M1TriggerInTrendDirection) || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
             if (ctx.IsAtrExpanding_M5)
                 score += 5;
 
-            score = TriggerScoreModel.Apply(ctx, $"FX_RANGE_BREAKOUT_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
+            if (ctx.RangeBreakDirection != dir && ctx.RangeBreakDirection != TradeDirection.None)
+                score -= 10;
+
+            score = TriggerScoreModel.Apply(ctx, $"FX_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
             eval.Score = score;
 
             if (score < MIN_SCORE)

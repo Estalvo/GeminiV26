@@ -63,7 +63,7 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            return longEval.Score >= shortEval.Score ? longEval : shortEval;
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
         }
 
         private EntryEvaluation EvaluateSide(

@@ -10,22 +10,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            // =========================
-            // HARD GUARDS
-            // =========================
             if (!ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
-
-            int score = 25;
-            int setupScore = 0;
-
-            // =========================
-            // VOL REGIME – SOFT
-            // =========================
-            if (!ctx.IsVolatilityAcceptable_Crypto)
-            {
-                score -= 15;   // SOFT penalty, NEM return
-            }
 
             var crypto = CryptoInstrumentMatrix.Get(ctx.Symbol);
 
@@ -35,9 +21,19 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MIN_RANGE_BARS)
                 return Invalid(ctx, "NO_RANGE");
 
-            TradeDirection dir = ctx.RangeBreakDirection;
-            if (dir == TradeDirection.None)
-                return Invalid(ctx, "NO_BREAK_DIR");
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
+            int score = 25;
+            int setupScore = 0;
+
+            if (!ctx.IsVolatilityAcceptable_Crypto)
+                score -= 15;
 
             var eval = NewEval(ctx, dir);
 
@@ -101,8 +97,15 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.IsAtrExpanding_M5)
                 score += 10;
 
+            if (ctx.RangeBreakDirection != dir && ctx.RangeBreakDirection != TradeDirection.None)
+                score -= 12;
+
             bool breakoutDetected = ctx.RangeBreakDirection == dir;
-            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
             score = TriggerScoreModel.Apply(ctx, $"BTC_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
             score += setupScore;
@@ -111,7 +114,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score = System.Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             if (!eval.IsValid)
                 eval.Reason += $"LowScore({score});";

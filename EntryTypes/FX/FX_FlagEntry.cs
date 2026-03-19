@@ -60,9 +60,15 @@ namespace GeminiV26.EntryTypes.FX
 
             // Prefer VALID; if both valid -> higher score wins
             if (buyValid && sellValid)
-                return (longEval.Score >= shortEval.Score) ? longEval : shortEval;
+                return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
 
-            if (buyValid) return longEval;
+            if (buyValid)
+            {
+                EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+                return longEval;
+            }
+
+            EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
             return shortEval;
         }
 

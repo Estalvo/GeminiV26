@@ -13,6 +13,25 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            if (ctx == null || !ctx.IsReady)
+                return Block(ctx, "CTX_NOT_READY", 36);
+
+            var originalTrendDirection = ctx.TrendDirection;
+            try
+            {
+                var longEval = EvaluateDirectional(ctx, TradeDirection.Long);
+                var shortEval = EvaluateDirectional(ctx, TradeDirection.Short);
+
+                return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+            }
+            finally
+            {
+                ctx.TrendDirection = originalTrendDirection;
+            }
+        }
+
+        private EntryEvaluation EvaluateDirectional(EntryContext ctx, TradeDirection forcedDirection)
+        {
             int score = 36;
             int setupScore = 0;
 
@@ -31,15 +50,16 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Block(ctx, "NO_CRYPTO_PROFILE", score);
 
             var bars = ctx.M5;
-            int lastClosed = bars.Count - 2;
-
-            var bar = bars[lastClosed];
-
             if (bars == null || bars.Count < 20)
                 return Block(ctx, "M5_NOT_READY", score);
 
-            TradeDirection dir = ctx.TrendDirection;
+            int lastClosed = bars.Count - 2;
+            var bar = bars[lastClosed];
+
             var originalTrendDir = ctx.TrendDirection;
+            ctx.TrendDirection = forcedDirection;
+
+            TradeDirection dir = forcedDirection;
 
             // =========================
             // HTF DIRECTIONAL BIAS (score-only)

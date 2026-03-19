@@ -32,11 +32,45 @@ namespace GeminiV26.EntryTypes
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            if (ctx == null || !ctx.IsReady)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "CTX_NOT_READY;"
+                };
+            }
+
+            if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = $"WeakEvidence({ctx.ReversalEvidenceScore});"
+                };
+            }
+
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
             var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = TradeDirection.None,
+                Direction = dir,
                 Score = 0,
                 IsValid = false,
                 Reason = ""
@@ -45,36 +79,13 @@ namespace GeminiV26.EntryTypes
             int score = 0;
             int setupScore = 0;
 
-            // =========================================================
-            // 1️⃣ REVERSAL EVIDENCE (HARD QUALITY GATE)
-            // =========================================================
-            // EvidenceScore egy összegzett kontextus jel:
-            // (pl. divergencia / túlterjedés / SR / momentum gyengülés stb.)
-            if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
-            {
-                eval.Score = 0;
-                eval.IsValid = false;
-                eval.Reason += $"WeakEvidence({ctx.ReversalEvidenceScore});";
-                return eval;
-            }
-
-            // Evidence pontozás: minél több, annál jobb (de nem végtelen)
-            // 3 = ok, 4-5 = jobb, 6+ = nagyon erős
-            score += ctx.ReversalEvidenceScore * 12; // 3->36, 4->48, 5->60
-
-            // =========================================================
-            // 2️⃣ IRÁNY (HARD RULE)
-            // =========================================================
-            if (ctx.ReversalDirection == TradeDirection.None)
-            {
-                eval.Score = 0;
-                eval.IsValid = false;
-                eval.Reason += "NoDirection;";
-                return eval;
-            }
-
-            eval.Direction = ctx.ReversalDirection;
+            score += ctx.ReversalEvidenceScore * 12;
             score += 20;
+
+            if (ctx.ReversalDirection == dir)
+                score += 12;
+            else if (ctx.ReversalDirection != TradeDirection.None)
+                score -= 12;
 
             // =========================================================
             // 3️⃣ TRIGGER MINŐSÉG (soft, de erős hatás)
@@ -116,7 +127,7 @@ namespace GeminiV26.EntryTypes
             if (instrumentClass == InstrumentClass.METAL)
             {
                 bool hasStructure =
-                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    (dir == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
                     || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
                     || ctx.HasEarlyPullback_M5;
 
@@ -157,7 +168,7 @@ namespace GeminiV26.EntryTypes
                     setupScore -= 30;
 
                 bool hasStructure =
-                    (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
+                    (dir == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
                     || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
 
                 if (!hasStructure)
@@ -173,7 +184,7 @@ namespace GeminiV26.EntryTypes
             else
             {
                 double pullbackDepthR =
-                    eval.Direction == TradeDirection.Short
+                    dir == TradeDirection.Short
                         ? ctx.PullbackDepthRShort_M5
                         : ctx.PullbackDepthRLong_M5;
 
@@ -191,20 +202,21 @@ namespace GeminiV26.EntryTypes
                     setupScore += 20;
             }
 
-            bool breakoutDetected = ctx.M1ReversalTrigger;
-            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = ctx.M1ReversalTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
-            score = TriggerScoreModel.Apply(ctx, $"TR_REV_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
+            score = TriggerScoreModel.Apply(ctx, $"TR_REV_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)
                 score = Math.Min(score, MIN_SCORE - 10);
 
-            // =========================================================
-            // 5️⃣ MIN SCORE (EntryType szinten)
-            // =========================================================
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

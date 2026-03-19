@@ -31,12 +31,17 @@ namespace GeminiV26.EntryTypes.FX
             if (!fx.MeanReversionFriendly)
                 return Invalid(ctx, "NO_MEAN_REVERSION");
 
-            if (ctx.ReversalDirection == TradeDirection.None)
-                return Invalid(ctx, "NO_DIRECTION");
-
             if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
                 return Invalid(ctx, "WEAK_EVIDENCE");
 
+            var longEval = EvaluateSide(ctx, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        {
             int score = 0;
             int setupScore = 0;
 
@@ -69,7 +74,7 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
                 ctx.FxHtfConfidence01 > 0.0)
             {
-                if (ctx.ReversalDirection != ctx.FxHtfAllowedDirection)
+                if (dir != ctx.FxHtfAllowedDirection)
                 {
                     // Reversal HTF ellen: enyhe büntetés
                     int htfPenalty = (int)(4 + 3 * ctx.FxHtfConfidence01);
@@ -84,11 +89,14 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             double pullbackDepthR =
-                ctx.ReversalDirection == TradeDirection.Long
+                dir == TradeDirection.Long
                     ? ctx.PullbackDepthRLong_M5
                     : ctx.PullbackDepthRShort_M5;
 
-            bool continuationSignal = ctx.M1ReversalTrigger;
+            if (ctx.ReversalDirection == dir)
+                score += 12;
+            else if (ctx.ReversalDirection != TradeDirection.None)
+                score -= 12;
 
             bool hasStructure =
                 pullbackDepthR >= 0.15;
@@ -99,7 +107,7 @@ namespace GeminiV26.EntryTypes.FX
                 setupScore += 15;
 
             bool hasContinuation =
-                continuationSignal;
+                ctx.M1ReversalTrigger;
 
             if (hasContinuation)
                 setupScore += 20;
@@ -108,26 +116,26 @@ namespace GeminiV26.EntryTypes.FX
             var bar = ctx.M5[lastClosed];
             bool breakoutDetected =
                 ctx.M1ReversalTrigger ||
-                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == ctx.ReversalDirection);
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
             bool strongCandle =
-                (ctx.ReversalDirection == TradeDirection.Long && bar.Close > bar.Open) ||
-                (ctx.ReversalDirection == TradeDirection.Short && bar.Close < bar.Open);
-            bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = ctx.M1ReversalTrigger || ctx.HasReactionCandle_M5;
 
-            score = TriggerScoreModel.Apply(ctx, $"FX_REV_{ctx.ReversalDirection}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
+            score = TriggerScoreModel.Apply(ctx, $"FX_REV_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
             score += setupScore;
 
             if (setupScore <= 0)
                 score = System.Math.Min(score, MIN_SCORE - 10);
 
             var eval = BaseEval(ctx);
-            eval.Direction = ctx.ReversalDirection;
+            eval.Direction = dir;
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             eval.Reason =
                 $"FX_REV dir={eval.Direction} score={score} " +
-                $"evid={ctx.ReversalEvidenceScore} m1={ctx.M1ReversalTrigger} " +
+                $"evid={ctx.ReversalEvidenceScore} reversalDir={ctx.ReversalDirection} m1={ctx.M1ReversalTrigger} " +
                 $"range={ctx.IsRange_M5} sess={ctx.Session};";
 
             return eval;

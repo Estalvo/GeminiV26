@@ -27,32 +27,43 @@ namespace GeminiV26.EntryTypes
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            var eval = new EntryEvaluation
+            if (ctx == null || !ctx.IsReady)
             {
-                Symbol = ctx.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                Score = 0,
-                IsValid = false,
-                Reason = ""
-            };
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "CTX_NOT_READY;"
+                };
+            }
 
-            int score = 0;
-            int setupScore = 0;
-
-            // =========================================================
-            // 1️⃣ IMPULSE – HARD (M5)
-            // =========================================================
             if (!ctx.HasImpulse_M5)
             {
-                eval.Reason += "NoImpulse;";
-                return eval;
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NoImpulse;"
+                };
             }
 
             if (ctx.M5.Count < ImpulseLookback + 1)
             {
-                eval.Reason += "NotEnoughBars;";
-                return eval;
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NotEnoughBars;"
+                };
             }
 
             double impulseMove =
@@ -62,9 +73,37 @@ namespace GeminiV26.EntryTypes
             // Gyenge impulse kiszűrése
             if (Math.Abs(impulseMove) < ctx.AtrM5 * 0.8)
             {
-                eval.Reason += "WeakImpulse;";
-                return eval;
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "WeakImpulse;"
+                };
             }
+
+            var longEval = EvaluateSide(ctx, impulseMove, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, impulseMove, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, double impulseMove, TradeDirection dir)
+        {
+            var eval = new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = dir,
+                Score = 0,
+                IsValid = false,
+                Reason = ""
+            };
+
+            int score = 0;
+            int setupScore = 0;
 
             TradeDirection impulseDirection =
                 impulseMove > 0 ? TradeDirection.Long : TradeDirection.Short;
@@ -90,20 +129,15 @@ namespace GeminiV26.EntryTypes
             bool trendUp = ctx.Ema21Slope_M15 > MinSlope;
             bool trendDown = ctx.Ema21Slope_M15 < -MinSlope;
 
-            if (trendUp && impulseDirection == TradeDirection.Long)
+            if ((dir == TradeDirection.Long && trendUp && impulseDirection == dir) ||
+                (dir == TradeDirection.Short && trendDown && impulseDirection == dir))
             {
-                eval.Direction = TradeDirection.Long;
-                score += 25;
-            }
-            else if (trendDown && impulseDirection == TradeDirection.Short)
-            {
-                eval.Direction = TradeDirection.Short;
                 score += 25;
             }
             else
             {
                 eval.Reason += "TrendImpulseMismatch;";
-                return eval;
+                score -= 20;
             }
 
             // =========================================================
@@ -134,7 +168,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 20;
 
                 bool hasConfirmation =
-                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
                 if (hasConfirmation)
                     setupScore += 20;
@@ -154,7 +188,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 10;
 
                 bool continuationSignal =
-                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
                 bool breakoutConfirmed = continuationSignal;
 
                 if (continuationSignal || breakoutConfirmed)
@@ -175,7 +209,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 15;
 
                 bool continuationSignal =
-                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -183,7 +217,7 @@ namespace GeminiV26.EntryTypes
             else
             {
                 double pullbackDepthR =
-                    eval.Direction == TradeDirection.Short
+                    dir == TradeDirection.Short
                         ? ctx.PullbackDepthRShort_M5
                         : ctx.PullbackDepthRLong_M5;
 
@@ -196,7 +230,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 15;
 
                 bool continuationSignal =
-                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
+                    ctx.M1FlagBreakTrigger || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -213,10 +247,14 @@ namespace GeminiV26.EntryTypes
 
             bool breakoutDetected =
                 ctx.M1FlagBreakTrigger ||
-                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
-            bool strongCandle = ctx.LastClosedBarInTrendDirection;
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = breakoutDetected || ctx.IsAtrExpanding_M5;
-            score = TriggerScoreModel.Apply(ctx, $"TC_FLAG_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_FLAG_BREAK_TRIGGER");
+            score = TriggerScoreModel.Apply(ctx, $"TC_FLAG_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_FLAG_BREAK_TRIGGER");
 
             // =========================================================
             // 6️⃣ MIN SCORE – ENTRYTYPE SZINT
@@ -227,7 +265,7 @@ namespace GeminiV26.EntryTypes
                 score = Math.Min(score, MIN_SCORE - 10);
 
             eval.Score = score;
-            eval.IsValid = true;
+            eval.IsValid = score >= MIN_SCORE;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

@@ -95,7 +95,7 @@ namespace GeminiV26.EntryTypes.METAL
                     return sell;
             }
 
-            return diff >= 0 ? buy : sell;
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, buy, sell);
         }
 
         private EntryEvaluation EvaluateSide(

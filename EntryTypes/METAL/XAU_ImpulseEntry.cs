@@ -32,35 +32,35 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx == null || !ctx.IsReady || ctx.M5 == null)
                 return Reject(ctx, "CTX_NOT_READY");
 
-            int score = 60; // base impulse score
+            var longEval = EvaluateSide(ctx, matrix, TradeDirection.Long);
+            var shortEval = EvaluateSide(ctx, matrix, TradeDirection.Short);
+
+            return EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
+        }
+
+        private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir)
+        {
+            int score = 60;
             int setupScore = 0;
 
             // =====================================================
-            // 1️⃣ IRÁNY
+            // 1️⃣ DIRECTIONAL CONTEXT
             // =====================================================
-            TradeDirection dir = ResolveXauDirection(ctx);
-            if (dir == TradeDirection.None)
-                return Reject(ctx, "NO_CLEAR_DIRECTION");
+            TradeDirection slopeDirection = ResolveXauDirection(ctx);
+            if (slopeDirection == dir)
+                score += 8;
+            else if (slopeDirection != TradeDirection.None)
+                score -= 8;
 
-            // =====================================================
-            // 2️⃣ ATR EXPANSION
-            // =====================================================
             if (!ctx.IsAtrExpanding_M5)
-                return Reject(ctx, "ATR_NOT_EXPANDING");
+                return Reject(ctx, $"ATR_NOT_EXPANDING_{dir}");
 
             score += 5;
 
-            // =====================================================
-            // 3️⃣ IMPULSE M5
-            // =====================================================
             if (!ctx.HasImpulse_M5)
-                return Reject(ctx, "NO_M5_IMPULSE");
+                return Reject(ctx, $"NO_M5_IMPULSE_{dir}");
 
             score += 5;
-
-            // =====================================================
-            // 4️⃣ ADX FILTER (XAU stricter momentum control)
-            // =====================================================
 
             double minAdxRequired = 18.0;
 
@@ -71,7 +71,7 @@ namespace GeminiV26.EntryTypes.METAL
             minAdxRequired = System.Math.Max(minAdxRequired, matrix.MinAdx);
 
             if (ctx.Adx_M5 < minAdxRequired)
-                return Reject(ctx, $"ADX_TOO_LOW({ctx.Adx_M5:F1})");
+                return Reject(ctx, $"ADX_TOO_LOW_{dir}({ctx.Adx_M5:F1})");
 
             if (ctx.Adx_M5 >= 30)
                 score += 5;
@@ -164,7 +164,7 @@ namespace GeminiV26.EntryTypes.METAL
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                IsValid = true,
+                IsValid = score >= MinScore,
                 Reason = note
             };
         }
