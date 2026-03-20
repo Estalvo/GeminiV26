@@ -39,8 +39,36 @@ namespace GeminiV26.EntryTypes.FX
             if (!matrix.AllowPullback)
                 return Block(ctx, TradeDirection.None, "SESSION_MATRIX_PULLBACK_DISABLED", 0);
 
-            var longEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Block(ctx, TradeDirection.None, "NO_DIRECTIONAL_EDGE", 0);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
+            else
+                longEval = Block(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
+
+            if (allowShort)
+                shortEval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
+            else
+                shortEval = Block(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
 
             bool longValid = longEval.IsValid;
             bool shortValid = shortEval.IsValid;

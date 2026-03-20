@@ -30,8 +30,36 @@ namespace GeminiV26.EntryTypes.INDEX
             if (p == null)
                 return Reject(ctx, TradeDirection.None, 0, "NO_INDEX_PROFILE");
 
-            var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Reject(ctx, TradeDirection.None, 0, "NO_DIRECTIONAL_EDGE");
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
+            else
+                longEval = Reject(ctx, TradeDirection.Long, 0, "DIR_BLOCKED");
+
+            if (allowShort)
+                shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+            else
+                shortEval = Reject(ctx, TradeDirection.Short, 0, "DIR_BLOCKED");
 
             if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {

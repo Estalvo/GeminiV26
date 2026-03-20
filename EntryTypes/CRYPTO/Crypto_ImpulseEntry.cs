@@ -18,8 +18,36 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            var longEval = EvaluateSide(ctx, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Invalid(ctx, "NO_DIRECTIONAL_EDGE", TradeDirection.None, 0);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(ctx, TradeDirection.Long);
+            else
+                longEval = Invalid(ctx, "DIR_BLOCKED", TradeDirection.Long, 0);
+
+            if (allowShort)
+                shortEval = EvaluateSide(ctx, TradeDirection.Short);
+            else
+                shortEval = Invalid(ctx, "DIR_BLOCKED", TradeDirection.Short, 0);
 
             var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
             EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
