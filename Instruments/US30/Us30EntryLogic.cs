@@ -54,10 +54,8 @@ namespace GeminiV26.Instruments.US30
 
             if (ema50 > ema200)
                 direction = TradeDirection.Long;
-            else if (ema50 < ema200)
-                direction = TradeDirection.Short;
             else
-                return false;
+                direction = TradeDirection.Short;
 
             // =========================
             // ADX – trend erő
@@ -65,8 +63,10 @@ namespace GeminiV26.Instruments.US30
             var adxInd = _bot.Indicators.AverageDirectionalMovementIndexRating(14);
             double adx = adxInd.ADX.LastValue;
 
+            bool fallbackBias = false;
+
             if (adx < 18)
-                return false;
+                fallbackBias = true;
 
             // =========================
             // ATR – skálázás
@@ -99,7 +99,13 @@ namespace GeminiV26.Instruments.US30
                 impulseSoft;
 
             if (!valid)
-                return false;
+                fallbackBias = true;
+
+            if (fallbackBias)
+            {
+                confidence = 50;
+                _bot.Print("[US30][FALLBACK] EMA-based bias applied");
+            }
 
             LastDirection = direction;
             LastBias = direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
