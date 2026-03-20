@@ -29,8 +29,8 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.LogicBias == TradeDirection.None)
                 return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
 
-            if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
-                return Invalid(ctx, TradeDirection.None, "HTF_STRONG_OPPOSITE_LTF_WEAK", 0);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {

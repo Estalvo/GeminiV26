@@ -43,8 +43,8 @@ namespace GeminiV26.EntryTypes.FX
             if (!matrix.AllowPullback)
                 return Block(ctx, TradeDirection.None, "SESSION_MATRIX_PULLBACK_DISABLED", 0);
 
-            if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
-                return Block(ctx, TradeDirection.None, "HTF_STRONG_OPPOSITE_LTF_WEAK", 0);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Block(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
