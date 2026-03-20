@@ -267,6 +267,53 @@ namespace GeminiV26.Core.Entry
         // =========================
         // TEMP BACKWARD COMPAT
         // =========================
+        [Obsolete("LEGACY – use LogicBiasDirection")]
+        public TradeDirection LogicBias => LogicBiasDirection;
+
+        [Obsolete("LEGACY – use LogicBiasConfidence")]
+        public int LogicConfidence => LogicBiasConfidence;
+
+        [Obsolete("LEGACY – use the instrument-specific *HtfAllowedDirection property")]
+        public TradeDirection HtfDirection
+        {
+            get
+            {
+                if (FxHtfAllowedDirection != TradeDirection.None)
+                    return FxHtfAllowedDirection;
+
+                if (CryptoHtfAllowedDirection != TradeDirection.None)
+                    return CryptoHtfAllowedDirection;
+
+                if (IndexHtfAllowedDirection != TradeDirection.None)
+                    return IndexHtfAllowedDirection;
+
+                if (MetalHtfAllowedDirection != TradeDirection.None)
+                    return MetalHtfAllowedDirection;
+
+                return TradeDirection.None;
+            }
+        }
+
+        [Obsolete("LEGACY – use the instrument-specific *HtfConfidence01 property")]
+        public double HtfConfidence
+        {
+            get
+            {
+                double maxConfidence = FxHtfConfidence01;
+
+                if (CryptoHtfConfidence01 > maxConfidence)
+                    maxConfidence = CryptoHtfConfidence01;
+
+                if (IndexHtfConfidence01 > maxConfidence)
+                    maxConfidence = IndexHtfConfidence01;
+
+                if (MetalHtfConfidence01 > maxConfidence)
+                    maxConfidence = MetalHtfConfidence01;
+
+                return maxConfidence;
+            }
+        }
+
         public bool IsValidFlagStructure_M5 =>
             HasFlagLong_M5 || HasFlagShort_M5;
     }
