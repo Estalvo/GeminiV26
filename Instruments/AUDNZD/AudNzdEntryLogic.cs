@@ -21,6 +21,7 @@
 using System;
 using cAlgo.API;
 using cAlgo.API.Indicators;
+using GeminiV26.Instruments.FX;
 using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.AUDNZD
@@ -85,8 +86,7 @@ namespace GeminiV26.Instruments.AUDNZD
         /// </summary>
         public void Evaluate()
         {
-            // Safe defaults (router majd dönt)
-            LastBias = TradeType.Buy;
+            LastBias = LastBias == 0 ? TradeType.Buy : LastBias;
             LastLogicConfidence = 50;
 
             if (_m5 == null || _m5.Count < MinBars || _m15 == null || _m15.Count < 50)
@@ -95,66 +95,22 @@ namespace GeminiV26.Instruments.AUDNZD
                 return;
             }
 
-            int i = _m5.Count - 1;
+            var result = FxBiasTuningHelper.Evaluate(
+                _m5,
+                _m15,
+                _ema50.Result,
+                _ema200.Result,
+                _emaHtf.Result,
+                _adx,
+                _atr);
 
-            // ===== Trend direction (M5) =====
-            double ema50 = _ema50.Result[i];
-            double ema200 = _ema200.Result[i];
-            double emaDiff = ema50 - ema200;
+            LastBias = result.Bias;
+            LastLogicConfidence = result.Confidence;
 
-            // Bias (nincs veto, csak default+soft)
-            if (emaDiff > 0)
-                LastBias = TradeType.Buy;
-            else if (emaDiff < 0)
-                LastBias = TradeType.Sell;
+            if (result.State == "FX_FALLBACK")
+                _bot.Print("[FX BIAS FALLBACK] trend-based bias");
 
-            // ===== Strength / volatility =====
-            double adx = _adx.ADX.LastValue;
-            double atr = _atr.Result.LastValue;
-
-            // ===== HTF sanity =====
-            double htfEma = _emaHtf.Result.LastValue;
-            double htfPrice = _m15.ClosePrices.LastValue;
-            bool htfBull = htfPrice >= htfEma;
-
-            // =====================================================
-            // LOGIC CONFIDENCE (SOFT SCORING)
-            // =====================================================
-            int conf = 50;
-
-            // Trend exists (EMA50 vs EMA200)
-            if (Math.Abs(emaDiff) > 0)
-                conf += 10;
-
-            // ADX trend strength (soft)
-            if (adx >= AdxTrend) conf += 10;
-            if (adx >= AdxStrong) conf += 10;
-
-            // EMA separation relative to ATR (soft)
-            double emaAbs = Math.Abs(emaDiff);
-            if (atr > 0 && emaAbs > atr * 0.35) // EUR: enyhébb, mint NAS
-                conf += 10;
-
-            // HTF alignment bonus (soft)
-            if (LastBias == TradeType.Buy && htfBull) conf += 5;
-            else if (LastBias == TradeType.Sell && !htfBull) conf += 5;
-
-            // Soft “uncertain” penalty, ha EMA-k túl közel vannak egymáshoz
-            if (atr > 0 && emaAbs < atr * 0.12)
-                conf -= 5;
-
-            // Clamp 0..100
-            conf = Math.Max(0, Math.Min(100, conf));
-            LastLogicConfidence = conf;
-
-            // =====================================================
-            // DEBUG (informatív, nem gate)
-            // =====================================================
-            _bot.Print(
-                $"[AUDNZD LOGIC] bias={LastBias} logicConf={LastLogicConfidence} | " +
-                $"ema50={ema50:F5} ema200={ema200:F5} diff={emaDiff:F5} | " +
-                $"adx={adx:F1} atr={atr:F5} | htfBull={htfBull}"
-            );
+            _bot.Print($"[AUDNZD LOGIC] state={result.State} bias={LastBias} logicConf={LastLogicConfidence} | {result.Details}");
         }
     }
 }
