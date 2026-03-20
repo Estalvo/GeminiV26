@@ -314,6 +314,22 @@ namespace GeminiV26.Core.Entry
             }
         }
 
+        public string SymbolName => Symbol;
+
+        public void Print(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            if (Log != null)
+            {
+                Log(message);
+                return;
+            }
+
+            Bot?.Print(message);
+        }
+
         public bool IsValidFlagStructure_M5 =>
             HasFlagLong_M5 || HasFlagShort_M5;
     }

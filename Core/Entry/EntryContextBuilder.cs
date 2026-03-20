@@ -59,7 +59,8 @@ namespace GeminiV26.Core.Entry
             {
                 Symbol = symbol,
                 IsReady = false,
-                TrendDirection = TradeDirection.None
+                TrendDirection = TradeDirection.None,
+                Log = message => _bot.Print(message)
             };
 
             // -------------------------

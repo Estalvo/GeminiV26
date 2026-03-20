@@ -15,6 +15,7 @@ namespace GeminiV26.EntryTypes.FX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
                 return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY", 0);
 

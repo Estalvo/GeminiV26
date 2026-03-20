@@ -28,6 +28,7 @@ namespace GeminiV26.EntryTypes
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
             if (ctx == null || !ctx.IsReady)
             {
                 return new EntryEvaluation
