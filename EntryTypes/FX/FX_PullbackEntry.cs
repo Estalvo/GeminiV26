@@ -44,7 +44,7 @@ namespace GeminiV26.EntryTypes.FX
                 return Block(ctx, TradeDirection.None, "SESSION_MATRIX_PULLBACK_DISABLED", 0);
 
             if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
-                return Block(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
+                return Block(ctx, TradeDirection.None, "HTF_STRONG_OPPOSITE_LTF_WEAK", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {

@@ -27,38 +27,20 @@ namespace GeminiV26.EntryTypes.FX
             var htfDirection = ctx.FxHtfAllowedDirection;
             var htfConfidence = ctx.FxHtfConfidence01;
 
-            if (htfDirection == TradeDirection.None || htfDirection == logicBias || htfConfidence < 0.60)
+            if (htfDirection == TradeDirection.None || htfDirection == logicBias)
                 return false;
 
-            bool targetedFx = IsTargetedFx(symbol);
-            bool localStructure = HasDirectionalStructure(ctx, logicBias);
-            bool trendAligned = IsTrendAligned(ctx, logicBias);
-            bool strongLocalAlignment = localStructure && trendAligned;
-            int strongLogicConfidence = targetedFx ? 68 : 70;
-            double hardBlockConfidence = targetedFx ? 0.78 : 0.76;
-
-            bool strongOpposingHtf = htfDirection != logicBias && htfConfidence >= hardBlockConfidence;
-            bool highLogicConfidence = ctx.LogicBiasConfidence >= strongLogicConfidence;
-
-            if (!strongOpposingHtf)
+            if (htfConfidence < 0.80 || ctx.LogicBiasConfidence >= 60)
             {
                 ctx.Log?.Invoke(
-                    $"[FX HTF][SOFTEN] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                    $"htf={htfDirection}/{htfConfidence:F2} reason=weak_htf_conflict structure={localStructure} trendAligned={trendAligned}");
-                return false;
-            }
-
-            if (strongLocalAlignment || highLogicConfidence)
-            {
-                ctx.Log?.Invoke(
-                    $"[FX HTF][SOFTEN] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                    $"htf={htfDirection}/{htfConfidence:F2} reason=local_logic_override structure={localStructure} trendAligned={trendAligned}");
+                    $"[HTF][PENALTY] mismatch applied sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                    $"htf={htfDirection}/{htfConfidence:F2}");
                 return false;
             }
 
             ctx.Log?.Invoke(
-                $"[FX HTF][BLOCK] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                $"htf={htfDirection}/{htfConfidence:F2} structure={localStructure} trendAligned={trendAligned}");
+                $"[HTF][BLOCK] strong opposite HTF + weak LTF sym={symbol} logicBias={logicBias} " +
+                $"logicConf={ctx.LogicBiasConfidence} htf={htfDirection}/{htfConfidence:F2}");
             return true;
         }
 
@@ -71,29 +53,20 @@ namespace GeminiV26.EntryTypes.FX
             var htfDirection = ctx.FxHtfAllowedDirection;
             var htfConfidence = ctx.FxHtfConfidence01;
 
-            if (htfDirection == TradeDirection.None || htfDirection == logicBias || htfConfidence < 0.60)
+            if (htfDirection == TradeDirection.None || htfDirection == logicBias)
                 return false;
 
-            bool targetedFx = IsTargetedFx(symbol);
-            bool localStructure = HasDirectionalStructure(ctx, logicBias);
-            bool trendAligned = IsTrendAligned(ctx, logicBias);
-            int minLogicConfidence = targetedFx ? 60 : 64;
-            double hardBlockConfidence = targetedFx ? 0.72 : 0.70;
-
-            if (htfConfidence < hardBlockConfidence &&
-                ctx.LogicBiasConfidence >= minLogicConfidence &&
-                localStructure &&
-                trendAligned)
+            if (htfConfidence < 0.80 || ctx.LogicBiasConfidence >= 60)
             {
                 ctx.Log?.Invoke(
-                    $"[FX HTF][SOFTEN] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                    $"htf={htfDirection}/{htfConfidence:F2} structure={localStructure} trendAligned={trendAligned}");
+                    $"[HTF][PENALTY] mismatch applied sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                    $"htf={htfDirection}/{htfConfidence:F2}");
                 return false;
             }
 
             ctx.Log?.Invoke(
-                $"[FX HTF][BLOCK] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                $"htf={htfDirection}/{htfConfidence:F2} structure={localStructure} trendAligned={trendAligned}");
+                $"[HTF][BLOCK] strong opposite HTF + weak LTF sym={symbol} logicBias={logicBias} " +
+                $"logicConf={ctx.LogicBiasConfidence} htf={htfDirection}/{htfConfidence:F2}");
             return true;
         }
 

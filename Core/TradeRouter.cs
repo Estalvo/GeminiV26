@@ -100,6 +100,8 @@ namespace GeminiV26.Core
 
         private bool ApplyFxAcceptanceFilters(EntryEvaluation eval, EntryContext entryContext)
         {
+            const int HtfMismatchPenalty = 10;
+
             if (eval == null || !eval.IsValid)
                 return false;
 
@@ -116,10 +118,21 @@ namespace GeminiV26.Core
                 && eval.Direction != entryContext.FxHtfAllowedDirection;
 
             int decisionScore = eval.Score;
-            if (eval.HtfConfidence01 < 0.5 && eval.IsHTFMisaligned)
+            if (eval.IsHTFMisaligned)
             {
-                eval.IgnoreHTFForDecision = true;
-                decisionScore = Math.Max(0, Math.Min(100, decisionScore + 10));
+                if (eval.HtfConfidence01 >= 0.80 && entryContext?.LogicBiasConfidence < 60)
+                {
+                    _bot.Print(
+                        $"[HTF][BLOCK] strong opposite HTF + weak LTF type={eval.Type} dir={eval.Direction} " +
+                        $"score={eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}");
+                    return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK");
+                }
+
+                int originalScore = eval.Score;
+                eval.Score = Math.Max(0, eval.Score - HtfMismatchPenalty);
+                _bot.Print(
+                    $"[HTF][PENALTY] mismatch applied type={eval.Type} dir={eval.Direction} " +
+                    $"score={originalScore}->{eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}");
             }
 
             if (decisionScore < EntryDecisionPolicy.MinScoreThreshold)

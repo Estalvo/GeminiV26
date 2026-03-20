@@ -90,7 +90,7 @@ namespace GeminiV26.EntryTypes.FX
                     Direction = TradeDirection.None,
                     Score = 0,
                     IsValid = false,
-                    Reason = "HTF_MISMATCH"
+                    Reason = "HTF_STRONG_OPPOSITE_LTF_WEAK"
                 };
             }
 
