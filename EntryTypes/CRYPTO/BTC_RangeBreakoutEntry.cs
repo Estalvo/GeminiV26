@@ -23,8 +23,60 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MIN_RANGE_BARS)
                 return Invalid(ctx, "NO_RANGE");
 
-            var longEval = EvaluateSide(ctx, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = EntryType.Crypto_RangeBreakout,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NO_DIRECTIONAL_EDGE;"
+                };
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(ctx, TradeDirection.Long);
+            else
+                longEval = new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = EntryType.Crypto_RangeBreakout,
+                    Direction = TradeDirection.Long,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "DIR_BLOCKED;"
+                };
+
+            if (allowShort)
+                shortEval = EvaluateSide(ctx, TradeDirection.Short);
+            else
+                shortEval = new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = EntryType.Crypto_RangeBreakout,
+                    Direction = TradeDirection.Short,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "DIR_BLOCKED;"
+                };
 
             var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
             EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);

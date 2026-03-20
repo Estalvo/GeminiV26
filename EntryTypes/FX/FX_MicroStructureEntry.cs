@@ -25,9 +25,36 @@ namespace GeminiV26.EntryTypes.FX
             if (fx == null)
                 return Invalid(ctx, TradeDirection.None, "NO_FX_PROFILE", 0);
 
-            // evaluate both directions
-            var longEval = EvalForDir(ctx, fx, TradeDirection.Long);
-            var shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Invalid(ctx, TradeDirection.None, "NO_DIRECTIONAL_EDGE", 0);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvalForDir(ctx, fx, TradeDirection.Long);
+            else
+                longEval = Invalid(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
+
+            if (allowShort)
+                shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
+            else
+                shortEval = Invalid(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
 
             EntryEvaluation selected; // ✅ egyszer deklarálva
 

@@ -25,8 +25,37 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
-            var longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Reject(ctx, "NO_DIRECTIONAL_EDGE", 0, TradeDirection.None);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
+            else
+                longEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Long);
+
+            if (allowShort)
+                shortEval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+            else
+                shortEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Short);
 
             var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
             EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
