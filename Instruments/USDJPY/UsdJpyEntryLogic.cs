@@ -50,6 +50,7 @@ namespace GeminiV26.Instruments.USDJPY
             double close = m5.ClosePrices[i];
             double open = m5.OpenPrices[i];
             double high = m5.HighPrices[i];
+            double low = m5.LowPrices[i];
 
             double ema8Now = ema8[i];
             double ema21Now = ema21[i];
