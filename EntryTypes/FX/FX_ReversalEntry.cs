@@ -178,6 +178,17 @@ namespace GeminiV26.EntryTypes.FX
                 Reason = reason
             };
 
+        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score) =>
+            new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = dir,
+                Score = score,
+                IsValid = false,
+                Reason = reason
+            };
+
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
         {
             return EntryDirectionQuality.Apply(

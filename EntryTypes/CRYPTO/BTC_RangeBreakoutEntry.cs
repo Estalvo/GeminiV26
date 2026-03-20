@@ -158,6 +158,17 @@ namespace GeminiV26.EntryTypes.Crypto
                 Reason = reason + ";"
             };
 
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason, TradeDirection dir, int score)
+            => new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.Crypto_RangeBreakout,
+                Direction = dir,
+                Score = score,
+                IsValid = false,
+                Reason = reason + ";"
+            };
+
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
         {
             return EntryDirectionQuality.Apply(
