@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 
@@ -15,7 +16,13 @@ namespace GeminiV26.EntryTypes
 
             if (SymbolRouting.NormalizeSymbol(ctx.Symbol) == "AUDNZD")
             {
-                ctx.Print($"[AUDNZD TRACE] step3_entry={ctx.LogicBiasDirection} conf={ctx.LogicBiasConfidence}");
+                var entryBias = ctx.LogicBiasDirection;
+                if (ctx.SymbolName == "AUDNZD")
+                {
+                    Debug.Assert(ctx.LogicBias == entryBias);
+                }
+
+                ctx.Print($"[AUDNZD TRACE] step3_entry={entryBias} conf={ctx.LogicBiasConfidence}");
             }
         }
     }

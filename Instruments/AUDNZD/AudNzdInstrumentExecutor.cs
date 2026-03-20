@@ -117,8 +117,14 @@ namespace GeminiV26.Instruments.AUDNZD
             // =========================================================
             // ENTRY LOGIC – PRE-EXEC CONFIDENCE (AUDNZD)
             // =========================================================
-            _entryLogic.Evaluate();
-            int logicConfidence = _entryLogic.LastLogicConfidence;
+            int logicConfidence = entryContext.LogicBiasConfidence;
+            if (logicConfidence <= 0)
+            {
+                _entryLogic.Evaluate();
+                logicConfidence = _entryLogic.LastLogicConfidence;
+                _bot.Print($"[AUDNZD EXEC] logicConfidence fallback={logicConfidence}");
+            }
+
             int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
             int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
