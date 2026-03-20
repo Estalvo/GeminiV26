@@ -16,6 +16,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx == null)
                 return false;
 
+            string symbol = Normalize(ctx.Symbol);
+            if (symbol == "GBPUSD")
+                return LegacyShouldBlockHtfMismatch(ctx, symbol);
+
             var logicBias = ctx.LogicBiasDirection;
             if (logicBias == TradeDirection.None)
                 return false;
@@ -26,7 +30,50 @@ namespace GeminiV26.EntryTypes.FX
             if (htfDirection == TradeDirection.None || htfDirection == logicBias || htfConfidence < 0.60)
                 return false;
 
-            string symbol = Normalize(ctx.Symbol);
+            bool targetedFx = IsTargetedFx(symbol);
+            bool localStructure = HasDirectionalStructure(ctx, logicBias);
+            bool trendAligned = IsTrendAligned(ctx, logicBias);
+            bool strongLocalAlignment = localStructure && trendAligned;
+            int strongLogicConfidence = targetedFx ? 68 : 70;
+            double hardBlockConfidence = targetedFx ? 0.78 : 0.76;
+
+            bool strongOpposingHtf = htfDirection != logicBias && htfConfidence >= hardBlockConfidence;
+            bool highLogicConfidence = ctx.LogicBiasConfidence >= strongLogicConfidence;
+
+            if (!strongOpposingHtf)
+            {
+                ctx.Log?.Invoke(
+                    $"[FX HTF][SOFTEN] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                    $"htf={htfDirection}/{htfConfidence:F2} reason=weak_htf_conflict structure={localStructure} trendAligned={trendAligned}");
+                return false;
+            }
+
+            if (strongLocalAlignment || highLogicConfidence)
+            {
+                ctx.Log?.Invoke(
+                    $"[FX HTF][SOFTEN] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                    $"htf={htfDirection}/{htfConfidence:F2} reason=local_logic_override structure={localStructure} trendAligned={trendAligned}");
+                return false;
+            }
+
+            ctx.Log?.Invoke(
+                $"[FX HTF][BLOCK] sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                $"htf={htfDirection}/{htfConfidence:F2} structure={localStructure} trendAligned={trendAligned}");
+            return true;
+        }
+
+        private static bool LegacyShouldBlockHtfMismatch(EntryContext ctx, string symbol)
+        {
+            var logicBias = ctx.LogicBiasDirection;
+            if (logicBias == TradeDirection.None)
+                return false;
+
+            var htfDirection = ctx.FxHtfAllowedDirection;
+            var htfConfidence = ctx.FxHtfConfidence01;
+
+            if (htfDirection == TradeDirection.None || htfDirection == logicBias || htfConfidence < 0.60)
+                return false;
+
             bool targetedFx = IsTargetedFx(symbol);
             bool localStructure = HasDirectionalStructure(ctx, logicBias);
             bool trendAligned = IsTrendAligned(ctx, logicBias);

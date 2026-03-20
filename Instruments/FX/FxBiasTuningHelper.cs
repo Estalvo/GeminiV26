@@ -8,9 +8,9 @@ namespace GeminiV26.Instruments.FX
     {
         private const double TrendDeadzoneAtr = 0.08;
         private const double StructureLookbackAtr = 2.20;
-        private const double StructuredConfidence = 62.0;
-        private const double StrongTrendFallbackConfidence = 56.0;
-        private const double TrendOnlyConfidence = 42.0;
+        private const double StructuredConfidence = 68.0;
+        private const double StrongTrendFallbackConfidence = 52.0;
+        private const double TrendOnlyConfidence = 34.0;
 
         internal struct FxBiasResult
         {
@@ -137,24 +137,47 @@ namespace GeminiV26.Instruments.FX
                 }
             }
 
+            bool structureAligned = (trendLong && structureLong) || (trendShort && structureShort);
+            bool continuationAligned = continuationLong || continuationShort;
+            bool clearStructure = structureAligned && !choppy && !oppositeSignal;
+            bool strongSetup =
+                clearStructure &&
+                continuationAligned &&
+                adxValue >= 23.0 &&
+                atrValue > 0 &&
+                emaAbs >= atrValue * 0.22;
+
             if (trendLong || trendShort)
-                confidence += 5;
-            if (adxValue >= 16.0)
-                confidence += 5;
-            if (adxValue >= 23.0)
-                confidence += 5;
-            if (atrValue > 0 && emaAbs > atrValue * 0.22)
-                confidence += 5;
-            if (htfAligned)
-                confidence += 5;
-            if (continuationLong || continuationShort)
                 confidence += 4;
+            if (adxValue >= 16.0)
+                confidence += 4;
+            if (adxValue >= 23.0)
+                confidence += structureAligned ? 6 : 4;
+            if (atrValue > 0 && emaAbs > atrValue * 0.22)
+                confidence += structureAligned ? 6 : 4;
+            if (htfAligned)
+                confidence += structureAligned ? 5 : 3;
+            if (continuationAligned)
+                confidence += structureAligned ? 6 : 3;
             if (choppy)
-                confidence -= 15;
+                confidence -= structureAligned ? 14 : 18;
             if (oppositeSignal)
-                confidence -= 15;
+                confidence -= structureAligned ? 14 : 18;
             if ((state == "STRUCTURED_BIAS") && ((trendLong && (flagLong || pullbackLong)) || (trendShort && (flagShort || pullbackShort))))
-                confidence += 5;
+                confidence += 4;
+            if (strongSetup)
+                confidence += 6;
+            else if (clearStructure && continuationAligned)
+                confidence += 3;
+
+            if (state == "TREND_ONLY")
+            {
+                confidence -= strongTrendContext && htfAligned && !choppy && !oppositeSignal ? 2 : 6;
+            }
+            else if (state == "NO_TREND")
+            {
+                confidence -= 6;
+            }
 
             confidence = Math.Max(0, Math.Min(100, confidence));
 
