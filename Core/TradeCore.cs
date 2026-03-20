@@ -934,33 +934,25 @@ namespace GeminiV26.Core
             _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
             _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
 
-            bool hasValidLogic =
-                _ctx.LogicBiasDirection != TradeDirection.None &&
-                _ctx.LogicBiasConfidence > 0;
-
-            if (!isIndexSymbol || !hasValidLogic)
-            {
-                _ctx.LogicBiasDirection = TradeDirection.None;
-                _ctx.LogicBiasConfidence = 0;
-            }
-
             TradeType xauBias = TradeType.Buy;
             int xauBiasConfidence = 0;
             TradeDirection cryptoBias = TradeDirection.None;
             int cryptoLogicConfidence = 0;
+            TradeDirection logicBias = TradeDirection.None;
+            int logicConfidence = 0;
 
             if (IsSymbol("XAUUSD"))
             {
                 _xauEntryLogic?.Evaluate(out xauBias, out xauBiasConfidence);
-                _ctx.LogicBiasDirection = FromTradeType(xauBias);
-                _ctx.LogicBiasConfidence = xauBiasConfidence;
+                logicBias = FromTradeType(xauBias);
+                logicConfidence = xauBiasConfidence;
             }
 
             if (IsSymbol("EURUSD"))
             {
                 _eurUsdEntryLogic?.Evaluate();
-                _ctx.LogicBiasDirection = FromTradeType(_eurUsdEntryLogic.LastBias);
-                _ctx.LogicBiasConfidence = _eurUsdEntryLogic.LastLogicConfidence;
+                logicBias = FromTradeType(_eurUsdEntryLogic.LastBias);
+                logicConfidence = _eurUsdEntryLogic.LastLogicConfidence;
             }
 
             if (IsSymbol("GBPUSD"))
@@ -968,46 +960,74 @@ namespace GeminiV26.Core
                 _gbpUsdEntryLogic?.Evaluate();
                 if (_gbpUsdEntryLogic != null && _gbpUsdEntryLogic.CheckEntry(out var gbpBias, out var gbpLogicConfidence))
                 {
-                    _ctx.LogicBiasDirection = gbpBias;
-                    _ctx.LogicBiasConfidence = gbpLogicConfidence;
+                    logicBias = gbpBias;
+                    logicConfidence = gbpLogicConfidence;
                 }
             }
 
             if (IsSymbol("USDJPY"))
             {
                 _usdJpyEntryLogic?.Evaluate();
-                _ctx.LogicBiasDirection = FromTradeType(_usdJpyEntryLogic.LastBias);
-                _ctx.LogicBiasConfidence = _usdJpyEntryLogic.LastLogicConfidence;
+                logicBias = FromTradeType(_usdJpyEntryLogic.LastBias);
+                logicConfidence = _usdJpyEntryLogic.LastLogicConfidence;
             }
 
             if (IsSymbol("AUDUSD"))
+            {
                 _audUsdEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_audUsdEntryLogic.LastBias);
+                logicConfidence = _audUsdEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("AUDNZD"))
+            {
                 _audNzdEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_audNzdEntryLogic.LastBias);
+                logicConfidence = _audNzdEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("EURJPY"))
+            {
                 _eurJpyEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_eurJpyEntryLogic.LastBias);
+                logicConfidence = _eurJpyEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("GBPJPY"))
+            {
                 _gbpJpyEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_gbpJpyEntryLogic.LastBias);
+                logicConfidence = _gbpJpyEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("NZDUSD"))
+            {
                 _nzdUsdEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_nzdUsdEntryLogic.LastBias);
+                logicConfidence = _nzdUsdEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("USDCAD"))
+            {
                 _usdCadEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_usdCadEntryLogic.LastBias);
+                logicConfidence = _usdCadEntryLogic.LastLogicConfidence;
+            }
 
             if (IsSymbol("USDCHF"))
+            {
                 _usdChfEntryLogic?.Evaluate();
+                logicBias = FromTradeType(_usdChfEntryLogic.LastBias);
+                logicConfidence = _usdChfEntryLogic.LastLogicConfidence;
+            }
 
             if (IsNasSymbol(_bot.SymbolName))
             {
                 _nasEntryLogic?.Evaluate();
                 if (_nasEntryLogic != null)
                 {
-                    _ctx.LogicBiasDirection = FromTradeType(_nasEntryLogic.LastBias);
-                    _ctx.LogicBiasConfidence = _nasEntryLogic.LastLogicConfidence;
+                    logicBias = FromTradeType(_nasEntryLogic.LastBias);
+                    logicConfidence = _nasEntryLogic.LastLogicConfidence;
                 }
             }
 
@@ -1016,35 +1036,37 @@ namespace GeminiV26.Core
                 _ger40EntryLogic?.Evaluate();
                 if (_ger40EntryLogic != null)
                 {
-                    _ctx.LogicBiasDirection = FromTradeType(_ger40EntryLogic.LastBias);
-                    _ctx.LogicBiasConfidence = _ger40EntryLogic.LastLogicConfidence;
+                    logicBias = FromTradeType(_ger40EntryLogic.LastBias);
+                    logicConfidence = _ger40EntryLogic.LastLogicConfidence;
                 }
             }
 
             if (IsSymbol("US30"))
             {
-                _us30EntryLogic?.Evaluate();
-                if (_us30EntryLogic != null)
+                if (_us30EntryLogic != null && _us30EntryLogic.CheckEntry(out var us30Bias, out var us30LogicConfidence))
                 {
-                    _ctx.LogicBiasDirection = FromTradeType(_us30EntryLogic.LastBias);
-                    _ctx.LogicBiasConfidence = _us30EntryLogic.LastLogicConfidence;
+                    logicBias = us30Bias;
+                    logicConfidence = us30LogicConfidence;
                 }
             }
 
             if (IsSymbol("BTCUSD"))
             {
                 _btcUsdEntryLogic?.Evaluate(out cryptoBias, out cryptoLogicConfidence);
-                _ctx.LogicBiasDirection = cryptoBias;
-                _ctx.LogicBiasConfidence = cryptoLogicConfidence;
+                logicBias = cryptoBias;
+                logicConfidence = cryptoLogicConfidence;
             }
 
             if (IsSymbol("ETHUSD"))
             {
                 _ethUsdEntryLogic?.Evaluate(out cryptoBias, out cryptoLogicConfidence);
-                _ctx.LogicBiasDirection = cryptoBias;
-                _ctx.LogicBiasConfidence = cryptoLogicConfidence;
+                logicBias = cryptoBias;
+                logicConfidence = cryptoLogicConfidence;
             }
 
+            _ctx.LogicBiasDirection = logicBias;
+            _ctx.LogicBiasConfidence = logicConfidence;
+            _bot.Print($"[CTX PROPAGATION] bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
             _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
 
             _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
