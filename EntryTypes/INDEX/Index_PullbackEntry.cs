@@ -19,6 +19,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowPullback)
                 return Reject(ctx, TradeDirection.None, 0, "SESSION_MATRIX_ALLOWPULLBACK_DISABLED");

@@ -1066,7 +1066,15 @@ namespace GeminiV26.Core
 
             _ctx.LogicBiasDirection = logicBias;
             _ctx.LogicBiasConfidence = logicConfidence;
-            _bot.Print($"[CTX PROPAGATION] bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
+
+            if (_ctx.LogicBiasDirection == TradeDirection.None && _ctx.TrendDirection != TradeDirection.None)
+            {
+                _ctx.LogicBiasDirection = _ctx.TrendDirection;
+                _ctx.LogicBiasConfidence = 50;
+                _ctx.Print("[BIAS FALLBACK] using TrendDirection");
+            }
+
+            _bot.Print($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
             _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
 
             _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
@@ -1077,6 +1085,7 @@ namespace GeminiV26.Core
 
             _entryRouterPassCounter++;
             _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
+            _bot.Print($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}");
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
