@@ -1076,11 +1076,11 @@ namespace GeminiV26.Core
                 _ctx.Print("[BIAS FALLBACK] using TrendDirection");
             }
 
-            if (IsSymbol("AUDNZD"))
-                _ctx.Print($"[AUDNZD FIX] finalBias={_ctx.LogicBias} finalConf={_ctx.LogicConfidence}");
-
-            _bot.Print($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
             _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
+            _bot.Print($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
+
+            if (IsSymbol("AUDNZD"))
+                _ctx.Print($"[AUDNZD TRACE] step2_ctx={_ctx.LogicBiasDirection} conf={_ctx.LogicBiasConfidence}");
 
             _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
             _bot.Print($"[DEBUG] M5.Count={_ctx?.M5?.Count}");
@@ -1089,6 +1089,7 @@ namespace GeminiV26.Core
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
 
             _entryRouterPassCounter++;
+            _ctx.DirectionDebugLogged = false;
             _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
             _bot.Print($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}");
 

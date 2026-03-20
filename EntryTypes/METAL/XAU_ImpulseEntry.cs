@@ -26,7 +26,7 @@ namespace GeminiV26.EntryTypes.METAL
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
+            DirectionDebug.LogOnce(ctx);
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowBreakout)
                 return Reject(ctx, "SESSION_MATRIX_BREAKOUT_DISABLED");

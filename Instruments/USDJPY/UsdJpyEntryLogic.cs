@@ -18,13 +18,14 @@ namespace GeminiV26.Instruments.USDJPY
         public UsdJpyEntryLogic(Robot bot)
         {
             _bot = bot;
-            LastBias = TradeType.Buy;
+            LastBias = TradeType.Sell;
             LastLogicConfidence = 0;
         }
 
         public void Evaluate()
         {
             LastLogicConfidence = 0;
+            bool hasQualifiedLongBias = false;
 
             var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5);
             var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15);
@@ -147,6 +148,7 @@ namespace GeminiV26.Instruments.USDJPY
 
                 LastBias = TradeType.Buy;
                 LastLogicConfidence = Math.Min(confidence, 92);
+                hasQualifiedLongBias = true;
             }
             else if (weakeningShort && earlyShortAllowed)
             {
@@ -168,16 +170,13 @@ namespace GeminiV26.Instruments.USDJPY
                 LastBias = TradeType.Sell;
                 LastLogicConfidence = Math.Min(confidence, 84);
             }
-            else if (trendLong && incompleteLongStructure)
-            {
-                LastBias = TradeType.Buy;
-                LastLogicConfidence = 0;
-            }
+            _bot.Print(
+                $"[USDJPY STRUCTURE] trendLong={trendLong} higherLow={higherLowConfirmed} contLong={continuationLong} pbLong={pullbackCompleteLong} extLong={extendedLong} exhLong={exhaustionLong} qualifiedLong={hasQualifiedLongBias}");
 
             _bot.Print(
                 $"[USDJPY LOGIC] trend={(trendLong ? "Long" : trendShort ? "Short" : "None")} " +
                 $"longCont={continuationLong} longPb={pullbackCompleteLong} ext={extendedLong} exh={exhaustionLong} " +
-                $"shortWeak={weakeningShort} shortBreak={shortBreakdown} bias={LastBias} logicConf={LastLogicConfidence}");
+                $"shortWeak={weakeningShort} shortBreak={shortBreakdown} bias={LastBias} logicConf={LastLogicConfidence} hasLongStructure={higherLowConfirmed && continuationLong && pullbackCompleteLong}");
         }
 
         private static double GetRecentHigh(Bars bars, int endIndex, int length)
