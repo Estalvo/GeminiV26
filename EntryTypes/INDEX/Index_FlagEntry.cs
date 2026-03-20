@@ -69,40 +69,70 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"minAdx={minAdxTrend:F1} chopAdx={chopAdxThreshold:F1} fatigueTh={fatigueThreshold} scoreMult={scoreMultiplier:F2}"
             );
 
-            var longEval = EvaluateDir(
-                ctx,
-                TradeDirection.Long,
-                flagBars,
-                maxBarsSinceImpulse,
-                maxFlagRangeAtr,
-                breakoutBufferAtr,
-                maxDistFromEmaAtr,
-                requireStructure,
-                minAdxTrend,
-                chopAdxThreshold,
-                chopDiDiff,
-                fatigueThreshold,
-                fatigueAdxLevel,
-                scoreMultiplier);
+            bool allowLong = true;
+            bool allowShort = true;
 
-            var shortEval = EvaluateDir(
-                ctx,
-                TradeDirection.Short,
-                flagBars,
-                maxBarsSinceImpulse,
-                maxFlagRangeAtr,
-                breakoutBufferAtr,
-                maxDistFromEmaAtr,
-                requireStructure,
-                minAdxTrend,
-                chopAdxThreshold,
-                chopDiDiff,
-                fatigueThreshold,
-                fatigueAdxLevel,
-                scoreMultiplier);
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
 
-            longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
-            shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Reject(ctx, "NO_DIRECTIONAL_EDGE", 0, TradeDirection.None);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateDir(
+                    ctx,
+                    TradeDirection.Long,
+                    flagBars,
+                    maxBarsSinceImpulse,
+                    maxFlagRangeAtr,
+                    breakoutBufferAtr,
+                    maxDistFromEmaAtr,
+                    requireStructure,
+                    minAdxTrend,
+                    chopAdxThreshold,
+                    chopDiDiff,
+                    fatigueThreshold,
+                    fatigueAdxLevel,
+                    scoreMultiplier);
+            else
+                longEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Long);
+
+            if (allowShort)
+                shortEval = EvaluateDir(
+                    ctx,
+                    TradeDirection.Short,
+                    flagBars,
+                    maxBarsSinceImpulse,
+                    maxFlagRangeAtr,
+                    breakoutBufferAtr,
+                    maxDistFromEmaAtr,
+                    requireStructure,
+                    minAdxTrend,
+                    chopAdxThreshold,
+                    chopDiDiff,
+                    fatigueThreshold,
+                    fatigueAdxLevel,
+                    scoreMultiplier);
+            else
+                shortEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Short);
+
+            if (allowLong)
+                longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
+
+            if (allowShort)
+                shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
 
             if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {

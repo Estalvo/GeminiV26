@@ -29,8 +29,36 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.MarketState?.IsTrend != true)
                 return Reject(ctx, "NO_TREND_STATE");
 
-            var buy = EvaluateSide(TradeDirection.Long, ctx, matrix);
-            var sell = EvaluateSide(TradeDirection.Short, ctx, matrix);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Reject(ctx, "NO_DIRECTIONAL_EDGE");
+
+            EntryEvaluation buy;
+            EntryEvaluation sell;
+
+            if (allowLong)
+                buy = EvaluateSide(TradeDirection.Long, ctx, matrix);
+            else
+                buy = InvalidDir(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
+
+            if (allowShort)
+                sell = EvaluateSide(TradeDirection.Short, ctx, matrix);
+            else
+                sell = InvalidDir(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
 
             if (EntryDecisionPolicy.IsHardInvalid(buy) && EntryDecisionPolicy.IsHardInvalid(sell))
             {
