@@ -130,8 +130,9 @@ namespace GeminiV26.EntryTypes
 
         public static void LogDecision(EntryContext ctx, string typeTag, EntryEvaluation longEval, EntryEvaluation shortEval, TradeDirection selected)
         {
+            var eval = longEval ?? shortEval;
             ctx?.Log?.Invoke(
-                $"[DIR DECISION] type={typeTag} longScore={longEval?.Score ?? 0} shortScore={shortEval?.Score ?? 0} selected={selected}");
+                $"[DIR FLOW] type={typeTag} logicBias={ctx?.LogicBiasDirection ?? TradeDirection.None} evalDir={eval?.Direction ?? TradeDirection.None} score={eval?.Score ?? 0}");
         }
 
         private static void ResolveHtf(
