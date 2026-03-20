@@ -19,7 +19,7 @@ namespace GeminiV26.EntryTypes.FX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
+            FxDirectionValidation.LogDirectionDebug(ctx);
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowBreakout)
             {
@@ -81,7 +81,7 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
             {
                 return new EntryEvaluation
                 {

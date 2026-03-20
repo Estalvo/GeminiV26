@@ -968,8 +968,10 @@ namespace GeminiV26.Core
             if (IsSymbol("USDJPY"))
             {
                 _usdJpyEntryLogic?.Evaluate();
-                logicBias = FromTradeType(_usdJpyEntryLogic.LastBias);
                 logicConfidence = _usdJpyEntryLogic.LastLogicConfidence;
+                logicBias = logicConfidence > 0
+                    ? FromTradeType(_usdJpyEntryLogic.LastBias)
+                    : TradeDirection.None;
             }
 
             if (IsSymbol("AUDUSD"))
@@ -1073,6 +1075,9 @@ namespace GeminiV26.Core
                 _ctx.LogicBiasConfidence = 50;
                 _ctx.Print("[BIAS FALLBACK] using TrendDirection");
             }
+
+            if (IsSymbol("AUDNZD"))
+                _ctx.Print($"[AUDNZD FIX] finalBias={_ctx.LogicBias} finalConf={_ctx.LogicConfidence}");
 
             _bot.Print($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
             _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
