@@ -28,8 +28,36 @@ namespace GeminiV26.EntryTypes.FX
             if (!fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, "NO_SESSION_TUNING");
 
-            var longEval = EvaluateSide(TradeDirection.Long, ctx, tuning);
-            var shortEval = EvaluateSide(TradeDirection.Short, ctx, tuning);
+            bool allowLong = true;
+            bool allowShort = true;
+
+            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            {
+                allowLong = ctx.LogicBias == TradeDirection.Long;
+                allowShort = ctx.LogicBias == TradeDirection.Short;
+            }
+
+            if (ctx.HtfConfidence >= 0.6)
+            {
+                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
+                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
+            }
+
+            if (!allowLong && !allowShort)
+                return Invalid(ctx, TradeDirection.None, "NO_DIRECTIONAL_EDGE", 0);
+
+            EntryEvaluation longEval;
+            EntryEvaluation shortEval;
+
+            if (allowLong)
+                longEval = EvaluateSide(TradeDirection.Long, ctx, tuning);
+            else
+                longEval = Invalid(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
+
+            if (allowShort)
+                shortEval = EvaluateSide(TradeDirection.Short, ctx, tuning);
+            else
+                shortEval = Invalid(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
 
             if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
             {
