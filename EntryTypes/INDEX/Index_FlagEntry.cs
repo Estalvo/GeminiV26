@@ -40,6 +40,9 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 40)
                 return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
+            if (ctx.LogicBias == TradeDirection.None)
+                return Reject(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
+
             if (ctx.AtrM5 <= 0)
                 return Reject(ctx, "ATR_NOT_READY", 0, TradeDirection.None);
 
@@ -69,29 +72,12 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"minAdx={minAdxTrend:F1} chopAdx={chopAdxThreshold:F1} fatigueTh={fatigueThreshold} scoreMult={scoreMultiplier:F2}"
             );
 
-            bool allowLong = true;
-            bool allowShort = true;
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return Reject(ctx, "HTF_MISMATCH", 0, TradeDirection.None);
 
-            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                allowLong = ctx.LogicBias == TradeDirection.Long;
-                allowShort = ctx.LogicBias == TradeDirection.Short;
-            }
-
-            if (ctx.HtfConfidence >= 0.6)
-            {
-                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
-                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
-            }
-
-            if (!allowLong && !allowShort)
-                return Reject(ctx, "NO_DIRECTIONAL_EDGE", 0, TradeDirection.None);
-
-            EntryEvaluation longEval;
-            EntryEvaluation shortEval;
-
-            if (allowLong)
-                longEval = EvaluateDir(
+                var eval = EvaluateDir(
                     ctx,
                     TradeDirection.Long,
                     flagBars,
@@ -106,11 +92,13 @@ namespace GeminiV26.EntryTypes.INDEX
                     fatigueThreshold,
                     fatigueAdxLevel,
                     scoreMultiplier);
-            else
-                longEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Long);
-
-            if (allowShort)
-                shortEval = EvaluateDir(
+                eval.Score += (int)Math.Round(matrix.EntryScoreModifier);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateDir(
                     ctx,
                     TradeDirection.Short,
                     flagBars,
@@ -125,27 +113,13 @@ namespace GeminiV26.EntryTypes.INDEX
                     fatigueThreshold,
                     fatigueAdxLevel,
                     scoreMultiplier);
-            else
-                shortEval = Reject(ctx, "DIR_BLOCKED", 0, TradeDirection.Short);
-
-            if (allowLong)
-                longEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
-
-            if (allowShort)
-                shortEval.Score += (int)Math.Round(matrix.EntryScoreModifier);
-
-            if (EntryDecisionPolicy.IsHardInvalid(longEval) && EntryDecisionPolicy.IsHardInvalid(shortEval))
-            {
-                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, TradeDirection.None);
-                ctx.Log?.Invoke($"[FLAG][REJECT] No hard-tradable direction long={longEval.Score}/{longEval.IsValid} short={shortEval.Score}/{shortEval.IsValid}");
-                return Reject(ctx, "FLAG_DIRECTION_INVALID", Math.Max(longEval.Score, shortEval.Score), TradeDirection.None);
+                eval.Score += (int)Math.Round(matrix.EntryScoreModifier);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
 
-            var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
-            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
-            return EntryDecisionPolicy.Normalize(selected);
+            return Reject(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
         }
-
         private EntryEvaluation EvaluateDir(
             EntryContext ctx,
             TradeDirection dir,

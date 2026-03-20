@@ -41,6 +41,19 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
+            if (ctx.LogicBias == TradeDirection.None)
+            {
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NO_LOGIC_BIAS"
+                };
+            }
+
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
             {
                 return new EntryEvaluation
@@ -67,22 +80,7 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            bool allowLong = true;
-            bool allowShort = true;
-
-            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
-            {
-                allowLong = ctx.LogicBias == TradeDirection.Long;
-                allowShort = ctx.LogicBias == TradeDirection.Short;
-            }
-
-            if (ctx.HtfConfidence >= 0.6)
-            {
-                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
-                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
-            }
-
-            if (!allowLong && !allowShort)
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
             {
                 return new EntryEvaluation
                 {
@@ -91,42 +89,32 @@ namespace GeminiV26.EntryTypes.FX
                     Direction = TradeDirection.None,
                     Score = 0,
                     IsValid = false,
-                    Reason = "NO_DIRECTIONAL_EDGE"
+                    Reason = "HTF_MISMATCH"
                 };
             }
 
-            EntryEvaluation longEval;
-            EntryEvaluation shortEval;
+            if (ctx.LogicBias == TradeDirection.Long)
+            {
+                var eval = EvaluateSide(ctx, TradeDirection.Long);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(ctx, TradeDirection.Short);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
 
-            if (allowLong)
-                longEval = EvaluateSide(ctx, TradeDirection.Long);
-            else
-                longEval = new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.Long,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "DIR_BLOCKED"
-                };
-
-            if (allowShort)
-                shortEval = EvaluateSide(ctx, TradeDirection.Short);
-            else
-                shortEval = new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.Short,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "DIR_BLOCKED"
-                };
-
-            var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
-            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
-            return EntryDecisionPolicy.Normalize(selected);
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = 0,
+                IsValid = false,
+                Reason = "NO_LOGIC_BIAS"
+            };
         }
 
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)

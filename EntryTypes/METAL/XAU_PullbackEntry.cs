@@ -26,69 +26,30 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < BarsNotReadyMin)
                 return Reject(ctx, "CTX_NOT_READY");
 
+            if (ctx.LogicBias == TradeDirection.None)
+                return Reject(ctx, "NO_LOGIC_BIAS");
+
             if (ctx.MarketState?.IsTrend != true)
                 return Reject(ctx, "NO_TREND_STATE");
 
-            bool allowLong = true;
-            bool allowShort = true;
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return Reject(ctx, "HTF_MISMATCH");
 
-            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                allowLong = ctx.LogicBias == TradeDirection.Long;
-                allowShort = ctx.LogicBias == TradeDirection.Short;
+                var eval = EvaluateSide(TradeDirection.Long, ctx, matrix);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(TradeDirection.Short, ctx, matrix);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
 
-            if (ctx.HtfConfidence >= 0.6)
-            {
-                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
-                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
-            }
-
-            if (!allowLong && !allowShort)
-                return Reject(ctx, "NO_DIRECTIONAL_EDGE");
-
-            EntryEvaluation buy;
-            EntryEvaluation sell;
-
-            if (allowLong)
-                buy = EvaluateSide(TradeDirection.Long, ctx, matrix);
-            else
-                buy = InvalidDir(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
-
-            if (allowShort)
-                sell = EvaluateSide(TradeDirection.Short, ctx, matrix);
-            else
-                sell = InvalidDir(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
-
-            if (EntryDecisionPolicy.IsHardInvalid(buy) && EntryDecisionPolicy.IsHardInvalid(sell))
-            {
-                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), buy, sell, TradeDirection.None);
-                return RejectBoth(ctx, buy, sell);
-            }
-
-            int diff = buy.Score - sell.Score;
-
-            if (Math.Abs(diff) <= ScoreDeadband)
-            {
-                // döntés: melyik oldal reagált előbb
-                if (ctx.BarsSinceImpulseLong_M5 < ctx.BarsSinceImpulseShort_M5)
-                {
-                    EntryDirectionQuality.LogDecision(ctx, Type.ToString(), buy, sell, buy.Direction);
-                    return buy;
-                }
-
-                if (ctx.BarsSinceImpulseShort_M5 < ctx.BarsSinceImpulseLong_M5)
-                {
-                    EntryDirectionQuality.LogDecision(ctx, Type.ToString(), buy, sell, sell.Direction);
-                    return sell;
-                }
-            }
-
-            var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, buy, sell);
-            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), buy, sell, selected.Direction);
-            return EntryDecisionPolicy.Normalize(selected);
+            return Reject(ctx, "NO_LOGIC_BIAS");
         }
-
         private EntryEvaluation EvaluateSide(
             TradeDirection dir,
             EntryContext ctx,
