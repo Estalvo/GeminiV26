@@ -17,7 +17,7 @@ namespace GeminiV26.EntryTypes.FX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
+            FxDirectionValidation.LogDirectionDebug(ctx);
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
@@ -32,7 +32,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, "NO_SESSION_TUNING");
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
                 return Invalid(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)

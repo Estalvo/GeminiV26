@@ -8,8 +8,9 @@ namespace GeminiV26.Instruments.FX
     {
         private const double TrendDeadzoneAtr = 0.08;
         private const double StructureLookbackAtr = 2.20;
-        private const double MinPatternConfidence = 60.0;
-        private const double FallbackConfidence = 50.0;
+        private const double StructuredConfidence = 62.0;
+        private const double StrongTrendFallbackConfidence = 56.0;
+        private const double TrendOnlyConfidence = 42.0;
 
         internal struct FxBiasResult
         {
@@ -98,32 +99,39 @@ namespace GeminiV26.Instruments.FX
 
             double recentStructureRange = atrValue > 0 ? (GetRecentHigh(m5, i, 6) - GetRecentLow(m5, i, 6)) / atrValue : 0;
             bool choppy = (adxValue < 14 && emaAbs <= deadzone * 1.25) || recentStructureRange < 0.90 || recentStructureRange > StructureLookbackAtr;
+            bool strongTrendContext =
+                !choppy &&
+                adxValue >= 18.0 &&
+                atrValue > 0 &&
+                emaAbs >= atrValue * 0.18;
 
             double htfEmaValue = emaHtf.LastValue;
             double htfPrice = m15.ClosePrices.LastValue;
             bool htfBull = htfPrice >= htfEmaValue;
             bool htfAligned = (trendLong && htfBull) || (trendShort && !htfBull);
+            bool continuationLong = trendLong && (hhhlLong || breakoutLong || (pullbackLong && bullishClose));
+            bool continuationShort = trendShort && (lhllShort || breakoutShort || (pullbackShort && bearishClose));
 
-            int confidence = 45;
+            int confidence = 35;
             string state = "NO_TREND";
             string pattern = "none";
 
             if (trendLong || trendShort)
             {
-                confidence = 50;
+                confidence = (int)TrendOnlyConfidence;
                 state = "TREND_ONLY";
 
                 if ((trendLong && structureLong) || (trendShort && structureShort))
                 {
-                    confidence = (int)MinPatternConfidence;
+                    confidence = (int)StructuredConfidence;
                     state = "STRUCTURED_BIAS";
                     pattern = trendLong
                         ? flagLong ? "flag" : pullbackLong ? "pullback" : breakoutLong ? "breakout" : "hhhl"
                         : flagShort ? "flag" : pullbackShort ? "pullback" : breakoutShort ? "breakout" : "lhll";
                 }
-                else if (!choppy && !oppositeSignal)
+                else if (strongTrendContext && !oppositeSignal && htfAligned)
                 {
-                    confidence = (int)FallbackConfidence;
+                    confidence = (int)StrongTrendFallbackConfidence;
                     state = "FX_FALLBACK";
                     pattern = "trend";
                 }
@@ -139,6 +147,8 @@ namespace GeminiV26.Instruments.FX
                 confidence += 5;
             if (htfAligned)
                 confidence += 5;
+            if (continuationLong || continuationShort)
+                confidence += 4;
             if (choppy)
                 confidence -= 15;
             if (oppositeSignal)
