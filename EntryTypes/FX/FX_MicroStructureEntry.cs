@@ -18,6 +18,9 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
                 return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY", 0);
 
+            if (ctx.LogicBias == TradeDirection.None)
+                return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
+
             if (ctx.AtrM5 <= 0)
                 return Invalid(ctx, TradeDirection.None, "ATR_NOT_READY", 0);
 
@@ -25,52 +28,23 @@ namespace GeminiV26.EntryTypes.FX
             if (fx == null)
                 return Invalid(ctx, TradeDirection.None, "NO_FX_PROFILE", 0);
 
-            bool allowLong = true;
-            bool allowShort = true;
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return Invalid(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
 
-            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                allowLong = ctx.LogicBias == TradeDirection.Long;
-                allowShort = ctx.LogicBias == TradeDirection.Short;
+                var eval = EvalForDir(ctx, fx, TradeDirection.Long);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvalForDir(ctx, fx, TradeDirection.Short);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
 
-            if (ctx.HtfConfidence >= 0.6)
-            {
-                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
-                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
-            }
-
-            if (!allowLong && !allowShort)
-                return Invalid(ctx, TradeDirection.None, "NO_DIRECTIONAL_EDGE", 0);
-
-            EntryEvaluation longEval;
-            EntryEvaluation shortEval;
-
-            if (allowLong)
-                longEval = EvalForDir(ctx, fx, TradeDirection.Long);
-            else
-                longEval = Invalid(ctx, TradeDirection.Long, "DIR_BLOCKED", 0);
-
-            if (allowShort)
-                shortEval = EvalForDir(ctx, fx, TradeDirection.Short);
-            else
-                shortEval = Invalid(ctx, TradeDirection.Short, "DIR_BLOCKED", 0);
-
-            EntryEvaluation selected; // ✅ egyszer deklarálva
-
-            if (longEval.IsValid && shortEval.IsValid)
-            {
-                selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
-                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
-                return EntryDecisionPolicy.Normalize(selected);
-            }
-
-            if (longEval.IsValid) return longEval;
-            if (shortEval.IsValid) return shortEval;
-
-            selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
-            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
-            return EntryDecisionPolicy.Normalize(selected);
+            return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
         }
 
         private static EntryEvaluation EvalForDir(

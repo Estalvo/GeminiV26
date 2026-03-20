@@ -15,45 +15,30 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
+            if (ctx.LogicBias == TradeDirection.None)
+                return Invalid(ctx, "NO_LOGIC_BIAS", TradeDirection.None, 0);
+
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            bool allowLong = true;
-            bool allowShort = true;
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return Invalid(ctx, "HTF_MISMATCH", TradeDirection.None, 0);
 
-            if (ctx.LogicBias != TradeDirection.None && ctx.LogicConfidence >= 60)
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                allowLong = ctx.LogicBias == TradeDirection.Long;
-                allowShort = ctx.LogicBias == TradeDirection.Short;
+                var eval = EvaluateSide(ctx, TradeDirection.Long);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(ctx, TradeDirection.Short);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
 
-            if (ctx.HtfConfidence >= 0.6)
-            {
-                allowLong = allowLong && ctx.HtfDirection == TradeDirection.Long;
-                allowShort = allowShort && ctx.HtfDirection == TradeDirection.Short;
-            }
-
-            if (!allowLong && !allowShort)
-                return Invalid(ctx, "NO_DIRECTIONAL_EDGE", TradeDirection.None, 0);
-
-            EntryEvaluation longEval;
-            EntryEvaluation shortEval;
-
-            if (allowLong)
-                longEval = EvaluateSide(ctx, TradeDirection.Long);
-            else
-                longEval = Invalid(ctx, "DIR_BLOCKED", TradeDirection.Long, 0);
-
-            if (allowShort)
-                shortEval = EvaluateSide(ctx, TradeDirection.Short);
-            else
-                shortEval = Invalid(ctx, "DIR_BLOCKED", TradeDirection.Short, 0);
-
-            var selected = EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval);
-            EntryDirectionQuality.LogDecision(ctx, Type.ToString(), longEval, shortEval, selected.Direction);
-            return EntryDecisionPolicy.Normalize(selected);
+            return Invalid(ctx, "NO_LOGIC_BIAS", TradeDirection.None, 0);
         }
-
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
             int score = 60;

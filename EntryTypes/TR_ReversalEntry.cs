@@ -45,6 +45,17 @@ namespace GeminiV26.EntryTypes
                 };
             }
 
+            if (ctx.LogicBias == TradeDirection.None)
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NO_LOGIC_BIAS"
+                };
+
             if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
             {
                 return new EntryEvaluation
@@ -58,12 +69,40 @@ namespace GeminiV26.EntryTypes
                 };
             }
 
-            var longEval = EvaluateSide(ctx, TradeDirection.Long);
-            var shortEval = EvaluateSide(ctx, TradeDirection.Short);
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return new EntryEvaluation
+                {
+                    Symbol = ctx.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "HTF_MISMATCH"
+                };
 
-            return EntryDecisionPolicy.Normalize(EntryDecisionPolicy.SelectBalancedEvaluation(ctx, Type, longEval, shortEval));
+            if (ctx.LogicBias == TradeDirection.Long)
+            {
+                var eval = EvaluateSide(ctx, TradeDirection.Long);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(ctx, TradeDirection.Short);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = 0,
+                IsValid = false,
+                Reason = "NO_LOGIC_BIAS"
+            };
         }
-
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
             var eval = new EntryEvaluation
