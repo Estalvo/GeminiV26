@@ -44,6 +44,22 @@ namespace GeminiV26.EntryTypes.FX
             return true;
         }
 
+        public static bool ShouldRejectLowConfidenceHtfConflict(EntryContext ctx)
+        {
+            if (ctx == null)
+                return false;
+
+            var logicBias = ctx.LogicBiasDirection;
+            if (logicBias == TradeDirection.None)
+                return false;
+
+            var htfDirection = ctx.FxHtfAllowedDirection;
+            if (htfDirection == TradeDirection.None || htfDirection == logicBias)
+                return false;
+
+            return ctx.LogicBiasConfidence < 60;
+        }
+
         private static bool LegacyShouldBlockHtfMismatch(EntryContext ctx, string symbol)
         {
             var logicBias = ctx.LogicBiasDirection;

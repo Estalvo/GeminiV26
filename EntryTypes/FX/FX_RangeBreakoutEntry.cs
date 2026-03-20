@@ -81,7 +81,7 @@ namespace GeminiV26.EntryTypes.FX
                 };
             }
 
-            if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
             {
                 return new EntryEvaluation
                 {
@@ -90,7 +90,7 @@ namespace GeminiV26.EntryTypes.FX
                     Direction = TradeDirection.None,
                     Score = 0,
                     IsValid = false,
-                    Reason = "HTF_STRONG_OPPOSITE_LTF_WEAK"
+                    Reason = "FX_LOW_CONF_HTF_CONFLICT"
                 };
             }
 
