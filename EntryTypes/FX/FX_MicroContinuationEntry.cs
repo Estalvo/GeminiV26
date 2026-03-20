@@ -33,7 +33,7 @@ namespace GeminiV26.EntryTypes.FX
                 return Invalid(ctx, "NO_SESSION_TUNING");
 
             if (FxDirectionValidation.ShouldBlockHtfMismatch(ctx))
-                return Invalid(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
+                return Invalid(ctx, TradeDirection.None, "HTF_STRONG_OPPOSITE_LTF_WEAK", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
