@@ -22,7 +22,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
+            DirectionDebug.LogOnce(ctx);
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
                 return Invalid(ctx, "CTX_NOT_READY");
 

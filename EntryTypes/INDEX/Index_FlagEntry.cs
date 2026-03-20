@@ -33,7 +33,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
-            ctx?.Print($"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBias ?? TradeDirection.None} conf={ctx?.LogicConfidence ?? 0}");
+            DirectionDebug.LogOnce(ctx);
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowFlag)
                 return Reject(ctx, "SESSION_MATRIX_ALLOWFLAG_DISABLED", 0, TradeDirection.None);

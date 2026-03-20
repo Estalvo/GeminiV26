@@ -8,8 +8,7 @@ namespace GeminiV26.EntryTypes.FX
     {
         public static void LogDirectionDebug(EntryContext ctx)
         {
-            ctx?.Print(
-                $"[DIR DEBUG] symbol={ctx?.SymbolName} bias={ctx?.LogicBiasDirection ?? TradeDirection.None} conf={ctx?.LogicBiasConfidence ?? 0}");
+            DirectionDebug.LogOnce(ctx);
         }
 
         public static bool ShouldBlockHtfMismatch(EntryContext ctx)

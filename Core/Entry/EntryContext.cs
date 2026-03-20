@@ -253,6 +253,7 @@ namespace GeminiV26.Core.Entry
         public int LogicBiasConfidence { get; set; } = 0;
         public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
         public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
+        public bool DirectionDebugLogged { get; set; }
 
         public double TotalMoveSinceBreakAtr { get; set; }
 

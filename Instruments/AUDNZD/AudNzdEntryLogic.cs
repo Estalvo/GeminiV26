@@ -107,6 +107,8 @@ namespace GeminiV26.Instruments.AUDNZD
             LastBias = result.Bias;
             LastLogicConfidence = result.Confidence;
 
+            _bot.Print($"[AUDNZD TRACE] step1_logic={LastBias} conf={LastLogicConfidence}");
+
             if (result.State == "FX_FALLBACK")
                 _bot.Print("[FX BIAS FALLBACK] trend-based bias");
 
