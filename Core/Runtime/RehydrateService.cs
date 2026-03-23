@@ -348,6 +348,7 @@ namespace GeminiV26.Core.Runtime
                 EntryTimeUtc = position.EntryTime.ToUniversalTime(),
                 EntryPrice = entryPrice,
                 RiskPriceDistance = riskDistance,
+                PipSize = symbol.PipSize,
                 Tp1Hit = tp1Hit,
                 Tp1Executed = tp1Hit,
                 Tp1CloseFraction = 0,

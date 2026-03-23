@@ -209,6 +209,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
                 RiskPriceDistance = slPriceDist,
+                PipSize = entryContext.PipSize,
 
                 EntryVolumeInUnits = result.Position.VolumeInUnits,
                 RemainingVolumeInUnits = result.Position.VolumeInUnits,

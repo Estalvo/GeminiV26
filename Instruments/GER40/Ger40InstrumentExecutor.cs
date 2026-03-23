@@ -200,6 +200,7 @@ namespace GeminiV26.Instruments.GER40
                 EntryPrice = result.Position.EntryPrice,
 
                 RiskPriceDistance = slPriceDist,
+                PipSize = entryContext.PipSize,
 
                 Tp1R = tp1R,
                 Tp1Ratio = tp1Ratio,

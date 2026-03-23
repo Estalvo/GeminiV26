@@ -153,6 +153,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 EntryPrice = tradeType == TradeType.Buy
                     ? _bot.Symbol.Ask
                     : _bot.Symbol.Bid,
+                PipSize = entryContext.PipSize > 0 ? entryContext.PipSize : _bot.Symbol.PipSize,
 
                 // TP1 policy (Phase 3.7.x – determinisztikus XAU)
                 Tp1Hit = false,
@@ -296,6 +297,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             ctx.PositionId = result.Position.Id;
             ctx.EntryPrice = result.Position.EntryPrice;
+            ctx.PipSize = entryContext.PipSize > 0 ? entryContext.PipSize : _bot.Symbol.PipSize;
 
             ctx.EntryVolumeInUnits = result.Position.VolumeInUnits;
             ctx.RemainingVolumeInUnits = result.Position.VolumeInUnits;

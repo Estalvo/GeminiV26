@@ -185,6 +185,7 @@ namespace GeminiV26.Instruments.US30
 
                 // TP1 fix: keep full R-context so ExitManager can evaluate TP1 deterministically
                 RiskPriceDistance = slPriceDist,
+                PipSize = entryContext.PipSize,
 
                 Tp1R = tp1R,
                 Tp1Ratio = tp1Ratio,
