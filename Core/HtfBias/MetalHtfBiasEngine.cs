@@ -16,6 +16,7 @@ namespace GeminiV26.Core.HtfBias
     public sealed class MetalHtfBiasEngine : IHtfBiasProvider
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
 
         // === HTF settings (XAU) ===
         private static readonly TimeFrame BiasTf = TimeFrame.Hour;        // H1 bias
@@ -69,6 +70,7 @@ namespace GeminiV26.Core.HtfBias
         public MetalHtfBiasEngine(Robot bot)
         {
             _bot = bot ?? throw new ArgumentNullException(nameof(bot)); 
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
         }
 
         /*
@@ -99,8 +101,8 @@ namespace GeminiV26.Core.HtfBias
             {
                 c = new MetalBiasContext
                 {
-                    H1 = _bot.MarketData.GetBars(BiasTf, symbolName),
-                    M15 = _bot.MarketData.GetBars(UpdateTf, symbolName)
+                    H1 = _runtimeSymbols.GetBars(BiasTf, symbolName),
+                    M15 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
                 };
 
                 if (c.H1 == null || c.M15 == null)
