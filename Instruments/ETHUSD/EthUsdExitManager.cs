@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using cAlgo.API;
+using cAlgo.API.Internals;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
