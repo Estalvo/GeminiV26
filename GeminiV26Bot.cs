@@ -1,6 +1,7 @@
 using System;
 using cAlgo.API;
 using GeminiV26.Core;
+using GeminiV26.Core.Runtime;
 using GeminiV26.Data;
 using GeminiV26.Data.Models;
 
@@ -38,6 +39,7 @@ namespace GeminiV26
             // 🔹 SESSION (restart = új session)
             // =========================
             CurrentSessionId = Guid.NewGuid().ToString();
+            BotRestartState.Initialize(Server.Time, Bars != null ? Bars.Count : 0);
 
             // =========================
             // 🔹 CORE
@@ -70,12 +72,14 @@ namespace GeminiV26
 
         protected override void OnBar()
         {
+            BotRestartState.Update(Server.Time, Bars != null ? Bars.Count : 0);
             // Trade logika (entry, bar-alapú exit)
             _core.OnBar();
         }
 
         protected override void OnTick()
         {
+            BotRestartState.Update(Server.Time, Bars != null ? Bars.Count : 0);
             // M1 + M5 BAR LOGGING (TF-független)
             _barLogger.OnTick();
 

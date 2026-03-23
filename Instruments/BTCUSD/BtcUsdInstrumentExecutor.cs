@@ -175,6 +175,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             long posId = result.Position.Id;
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={posId} symbol={result.Position.SymbolName}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =========================================================
             // POSITION CONTEXT (SSOT)
@@ -228,6 +229,7 @@ namespace GeminiV26.Instruments.BTCUSD
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[BTCUSD][EXEC] OPEN {tradeType} " +
                 $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}", ctx));

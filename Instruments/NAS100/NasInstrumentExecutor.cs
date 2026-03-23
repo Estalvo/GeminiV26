@@ -175,6 +175,7 @@ namespace GeminiV26.Instruments.NAS100
 
             long positionKey = Convert.ToInt64(result.Position.Id);
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={positionKey} symbol={result.Position.SymbolName}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =========================
             // CONTEXT – TELJES, R-ALAPÚ
@@ -221,6 +222,7 @@ namespace GeminiV26.Instruments.NAS100
             _positionContexts[positionKey] = ctx;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)

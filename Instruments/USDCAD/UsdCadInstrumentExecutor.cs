@@ -183,6 +183,7 @@ namespace GeminiV26.Instruments.USDCAD
             }
 
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             var ctx = new PositionContext
             {
@@ -236,6 +237,7 @@ namespace GeminiV26.Instruments.USDCAD
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[USDCAD EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}", ctx));

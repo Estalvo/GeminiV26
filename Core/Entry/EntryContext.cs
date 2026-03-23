@@ -36,6 +36,7 @@ namespace GeminiV26.Core.Entry
 
         public int BarsSinceHighBreak_M5 { get; set; }
         public int BarsSinceLowBreak_M5 { get; set; }
+        public int BarsSinceStart { get; set; }
 
         public double PipSize { get; set; }
 
@@ -331,6 +332,26 @@ namespace GeminiV26.Core.Entry
             }
 
             Bot?.Print(TradeLogIdentity.WithTempId(message, this));
+        }
+
+        public int GetBarsSinceImpulse(TradeDirection direction)
+        {
+            return direction switch
+            {
+                TradeDirection.Long => BarsSinceImpulseLong_M5,
+                TradeDirection.Short => BarsSinceImpulseShort_M5,
+                _ => BarsSinceImpulse_M5
+            };
+        }
+
+        public bool HasDirectionalPullback(TradeDirection direction)
+        {
+            return direction switch
+            {
+                TradeDirection.Long => HasPullbackLong_M5,
+                TradeDirection.Short => HasPullbackShort_M5,
+                _ => HasPullbackLong_M5 || HasPullbackShort_M5 || PullbackTouchedEma21_M5
+            };
         }
 
         public bool IsValidFlagStructure_M5 =>

@@ -280,6 +280,7 @@ namespace GeminiV26.Instruments.XAUUSD
             }
 
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =====================================================
             // 9 CONTEXT FINALIZÁLÁS (FILL UTÁN)
@@ -316,6 +317,7 @@ namespace GeminiV26.Instruments.XAUUSD
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[XAU EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"FC={ctx.FinalConfidence} fill={ctx.EntryPrice:F2} " +
