@@ -58,6 +58,7 @@ namespace GeminiV26.Core.Entry
             var ctx = new EntryContext
             {
                 Symbol = symbol,
+                TempId = $"{symbol}_{_bot.Server.Time:yyyyMMdd_HHmmss_fff}",
                 IsReady = false,
                 TrendDirection = TradeDirection.None,
                 Log = message => _bot.Print(message)

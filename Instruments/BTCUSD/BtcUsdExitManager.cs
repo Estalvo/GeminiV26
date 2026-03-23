@@ -4,6 +4,7 @@ using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.BTCUSD
@@ -179,25 +180,22 @@ namespace GeminiV26.Instruments.BTCUSD
                                 ? m1Bar.High >= tp1Price
                                 : m1Bar.Low <= tp1Price;
 
-                            _bot.Print(
+                            _bot.Print(TradeLogIdentity.WithPositionIds(
                                 $"[BTCUSD][TP1][CHECK] pos={pos.Id} " +
                                 $"tp1={tp1Price} m1High={m1Bar.High} m1Low={m1Bar.Low} " +
-                                $"bid={sym.Bid} ask={sym.Ask} reached={reached}"
-                            );
+                                $"bid={sym.Bid} ask={sym.Ask} reached={reached}", ctx, pos));
                         }
 
-                        _bot.Print(
+                        _bot.Print(TradeLogIdentity.WithPositionIds(
                             $"[BTCUSD][TP1][CHECK:FALLBACK] pos={pos.Id} " +
-                            $"tp1={tp1Price} bid={sym.Bid} ask={sym.Ask} reached={reached}"
-                        );
+                            $"tp1={tp1Price} bid={sym.Bid} ask={sym.Ask} reached={reached}", ctx, pos));
                     }
 
                     if (reached)
                     {
-                        _bot.Print(
+                        _bot.Print(TradeLogIdentity.WithPositionIds(
                             $"[BTCUSD][TP1][HIT] symbol={pos.SymbolName} pos={pos.Id} " +
-                            $"dir={pos.TradeType} tp1={tp1Price} rDist={rDist} tp1R={ctx.Tp1R}"
-                        );
+                            $"dir={pos.TradeType} tp1={tp1Price} rDist={rDist} tp1R={ctx.Tp1R}", ctx, pos));
 
                         ExecuteTp1(pos, ctx, rDist);
 
@@ -220,12 +218,11 @@ namespace GeminiV26.Instruments.BTCUSD
 
                             if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                             {
-                                _bot.Print(
+                                _bot.Print(TradeLogIdentity.WithPositionIds(
                                     $"[TVM EXIT] {pos.SymbolName} pos={pos.Id} " +
                                     $"reason={ctx.DeadTradeReason} " +
                                     $"MFE_R={ctx.MfeR:0.00} MAE_R={ctx.MaeR:0.00} " +
-                                    $"barsM5={ctx.BarsSinceEntryM5}"
-                                );
+                                    $"barsM5={ctx.BarsSinceEntryM5}", ctx, pos));
 
                                 _bot.ClosePosition(pos);
                                 _contexts.Remove(key);
@@ -285,10 +282,9 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (closeUnits < minUnits)
             {
-                _bot.Print(
+                _bot.Print(TradeLogIdentity.WithPositionIds(
                     $"[BTCUSD][TP1][SKIP] partial close below min " +
-                    $"pos={pos.Id} requested={closeUnits} min={minUnits}"
-                );
+                    $"pos={pos.Id} requested={closeUnits} min={minUnits}", ctx, pos));
                 return;
             }
 
@@ -302,25 +298,23 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (closeUnits < minUnits)
             {
-                _bot.Print(
+                _bot.Print(TradeLogIdentity.WithPositionIds(
                     $"[BTCUSD][TP1][SKIP] adjusted partial close below min " +
-                    $"pos={pos.Id} adjusted={closeUnits} min={minUnits}"
-                );
+                    $"pos={pos.Id} adjusted={closeUnits} min={minUnits}", ctx, pos));
                 return;
             }
 
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
             {
-                _bot.Print($"[BTCUSD][TP1][FAIL] partial close failed pos={pos.Id}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[BTCUSD][TP1][FAIL] partial close failed pos={pos.Id}", ctx, pos));
                 return;
             }
 
-            _bot.Print(
+            _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} " +
                 $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
-                $"closedUnits={closeUnits}"
-            );
+                $"closedUnits={closeUnits}", ctx, pos));
 
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
@@ -464,11 +458,10 @@ namespace GeminiV26.Instruments.BTCUSD
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
 
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
-            _bot.Print(
+            _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} " +
                 $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym?.Bid : sym?.Ask)} " +
-                $"oldTp={currentTp} newTp={newTp}"
-            );
+                $"oldTp={currentTp} newTp={newTp}", ctx, pos));
 
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;

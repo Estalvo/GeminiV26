@@ -44,6 +44,8 @@ namespace GeminiV26.Core
 
         public string Symbol { get; set; } = string.Empty;
 
+        public string TempId { get; set; } = string.Empty;
+
         public string EntryType { get; set; } = string.Empty;
 
         public string EntryReason { get; set; } = string.Empty;

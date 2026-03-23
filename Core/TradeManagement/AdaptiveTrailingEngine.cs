@@ -3,6 +3,7 @@ using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 
 namespace GeminiV26.Core.TradeManagement
 {
@@ -124,7 +125,7 @@ namespace GeminiV26.Core.TradeManagement
                 if (!ctx.TrailNoImprovementLogged)
                 {
                     ctx.TrailNoImprovementLogged = true;
-                    _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=no_improvement");
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=no_improvement", ctx, pos));
                 }
                 return;
             }
@@ -136,13 +137,13 @@ namespace GeminiV26.Core.TradeManagement
             double minDelta = Math.Max(profile.MinSlUpdateDeltaPips * _bot.Symbol.PipSize, atr * 0.05);
             if (Math.Abs(newSl - oldSl) < minDelta)
             {
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=below_min_delta minDelta={minDelta:0.00000}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=below_min_delta minDelta={minDelta:0.00000}", ctx, pos));
                 return;
             }
 
             if (ctx.LastTrailingStopTarget.HasValue && Math.Abs(ctx.LastTrailingStopTarget.Value - newSl) < epsilon)
             {
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=duplicate_target");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=duplicate_target", ctx, pos));
                 return;
             }
 
@@ -154,17 +155,17 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!result.IsSuccessful)
             {
-                _bot.Print($"[TRAIL] modify FAILED pos={pos.Id} error={result.Error}");
-                _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=modify_failed error={result.Error}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TRAIL] modify FAILED pos={pos.Id} error={result.Error}", ctx, pos));
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=modify_failed error={result.Error}", ctx, pos));
                 return;
             }
 
             ctx.LastTrailingStopTarget = newSl;
             ctx.LastStopLossPrice = newSl;
             ctx.TrailingActivated = true;
-            _bot.Print($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}");
-            _bot.Print($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slNew={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=updated");
-            _bot.Print($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask)} sl={newSl} tp={pos.TakeProfit}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}", ctx, pos));
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slNew={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=updated", ctx, pos));
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask)} sl={newSl} tp={pos.TakeProfit}", ctx, pos));
         }
 
         private bool TryBuildStructureStop(bool isLong, StructureSnapshot structure, TrailingProfile profile, double atr, double slAtrMultiplier, out double newSl, out string reason, out int anchorBarsAgo)
@@ -278,7 +279,7 @@ namespace GeminiV26.Core.TradeManagement
                 ctx.TrailNoStructureLogged = true;
             }
 
-            _bot.Print(message);
+            _bot.Print(TradeLogIdentity.WithPositionIds(message, ctx));
         }
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Instruments.INDEX;
 using GeminiV26.Core.Risk.PositionSizing;
 
@@ -52,11 +53,11 @@ namespace GeminiV26.Instruments.US30
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
             if (_marketStateDetector != null)
@@ -144,17 +145,20 @@ namespace GeminiV26.Instruments.US30
                 volumeUnits,
                 _botLabel,
                 slPips,
-                tp2Pips);
+                tp2Pips,
+                entryContext.TempId);
 
             if (!result.IsSuccessful || result.Position == null)
                 return;
 
             long positionKey = Convert.ToInt64(result.Position.Id);
+            _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={positionKey} symbol={result.Position.SymbolName}");
 
             var ctx = new PositionContext
             {
                 PositionId = positionKey,
                 Symbol = result.Position.SymbolName,
+                TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
                 FinalDirection = entryContext.FinalDirection,
@@ -195,7 +199,7 @@ namespace GeminiV26.Instruments.US30
             ctx.ComputeFinalConfidence();
 
             _positionContexts[positionKey] = ctx;
-            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
         }
 

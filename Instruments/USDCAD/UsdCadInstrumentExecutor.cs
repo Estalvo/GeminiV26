@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Core.Risk.PositionSizing;
 
@@ -59,11 +60,11 @@ namespace GeminiV26.Instruments.USDCAD
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
             var ms = _marketStateDetector.Evaluate();
@@ -172,7 +173,8 @@ namespace GeminiV26.Instruments.USDCAD
                 volumeUnits,
                 _botLabel,
                 slPips,
-                tp2Pips);
+                tp2Pips,
+                entryContext.TempId);
 
             if (!result.IsSuccessful || result.Position == null)
             {
@@ -180,10 +182,13 @@ namespace GeminiV26.Instruments.USDCAD
                 return;
             }
 
+            _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
+
             var ctx = new PositionContext
             {
                 PositionId = result.Position.Id,
                 Symbol = result.Position.SymbolName,
+                TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
                 FinalDirection = entryContext.FinalDirection,
@@ -228,13 +233,12 @@ namespace GeminiV26.Instruments.USDCAD
             ctx.ComputeFinalConfidence();
 
             _positionContexts[ctx.PositionId] = ctx;
-            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
-            _bot.Print(
+            _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[USDCAD EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
-                $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}"
-            );
+                $"score={entry.Score} SLpips={slPips:F1} TP2={tp2Price:F5}", ctx));
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)

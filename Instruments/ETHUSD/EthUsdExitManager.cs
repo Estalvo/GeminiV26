@@ -4,6 +4,7 @@ using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.ETHUSD
@@ -169,7 +170,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (reached)
                     {
-                        _bot.Print($"[ETHUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[ETHUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
 
                         ExecuteTp1(pos, ctx, rDist);
 
