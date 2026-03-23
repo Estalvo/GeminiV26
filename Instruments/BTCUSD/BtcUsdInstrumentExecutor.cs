@@ -87,6 +87,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // 🔑 ENTRY LOGIC – PRE-EXEC CONFIDENCE
             // =========================================================
             _entryLogic.Evaluate(out _, out int logicConfidence);
+            int statePenalty = 0;
 
             int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
             int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence);
