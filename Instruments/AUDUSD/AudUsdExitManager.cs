@@ -159,9 +159,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
                     if (reached)
                     {
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]
-pos={pos.Id}
-tp1={tp1Price:0.#####}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
