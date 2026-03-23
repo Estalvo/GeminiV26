@@ -73,6 +73,7 @@ namespace GeminiV26.Core
     public class TradeCore
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
         private readonly TradeRouter _router;
 
         private readonly EntryRouter _entryRouter;
@@ -289,6 +290,7 @@ namespace GeminiV26.Core
         public TradeCore(Robot bot)
         {
             _bot = bot;
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _router = new TradeRouter(_bot);
             _symbolCanonical = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
             _instrumentClass = SymbolRouting.ResolveInstrumentClass(_symbolCanonical);
@@ -1866,17 +1868,16 @@ namespace GeminiV26.Core
             if (_isMemoryReady)
                 return;
 
-            var symbols = GetAllMemorySymbols()
-                .ToDictionary(symbol => symbol, ResolveMarketDataSymbol, StringComparer.OrdinalIgnoreCase);
+            var symbols = GetAllMemorySymbols();
 
-            foreach (var pair in symbols)
+            foreach (var symbol in symbols)
             {
-                _memoryEngine.Initialize(pair.Key);
-                _memoryEngine.BuildFromHistory(pair.Key, LoadMemoryHistory(pair.Value));
+                _memoryEngine.Initialize(symbol);
+                _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
             }
 
             _isMemoryReady = true;
-            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols.Keys)}");
+            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols)}");
             _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
         }
 
@@ -1885,7 +1886,13 @@ namespace GeminiV26.Core
             if (string.IsNullOrWhiteSpace(symbol))
                 return new List<Bar>();
 
-            Bars bars = _bot.MarketData.GetBars(TimeFrame.Minute5, symbol);
+            Bars bars = _runtimeSymbols.GetBars(TimeFrame.Minute5, symbol);
+            if (bars == null)
+            {
+                _bot.Print($"[MEMORY][SYMBOL_UNRESOLVED] canonical={NormalizeSymbol(symbol)}");
+                return new List<Bar>();
+            }
+
             return ToClosedBarList(bars);
         }
 
@@ -2344,7 +2351,16 @@ namespace GeminiV26.Core
                     exitMode = "SL";
             }
 
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
+            double pipSize = sym?.PipSize ?? (ctx?.PipSize > 0 ? ctx.PipSize : 0);
+            double exitPrice = pipSize > 0
+                ? pos.EntryPrice + pos.Pips * pipSize * (pos.TradeType == TradeType.Buy ? 1 : -1)
+                : pos.EntryPrice;
+
+            if (pipSize <= 0)
+            {
+                _bot.Print($"[EXIT][WARN] pos={pos.Id} symbol={pos.SymbolName} reason=missing_runtime_pipsize");
+            }
 
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[EXIT][BROKER_CLOSE_DETECTED]\nreason={MapBrokerCloseReason(args.Reason)}",
@@ -2356,7 +2372,7 @@ namespace GeminiV26.Core
                     pos,
                     args.Reason.ToString(),
                     _bot.Server.Time,
-                    pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1)),
+                    exitPrice),
                 ctx,
                 pos));
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={args.Reason}\ndetail=broker_closed_event", ctx, pos));
@@ -2369,7 +2385,7 @@ namespace GeminiV26.Core
                     ExitMode = exitMode,
                     ExitReason = args.Reason.ToString(),
                     ExitTimeUtc = _bot.Server.Time,
-                    ExitPrice = pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
+                    ExitPrice = exitPrice,
                     NetProfit = pos.NetProfit,
                     GrossProfit = pos.GrossProfit,
                     Commissions = pos.Commissions,
@@ -2523,23 +2539,6 @@ namespace GeminiV26.Core
                 .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
                 .OrderBy(symbol => symbol, StringComparer.OrdinalIgnoreCase)
                 .ToList();
-        }
-
-        private static string ResolveMarketDataSymbol(string canonicalSymbol)
-        {
-            if (string.IsNullOrWhiteSpace(canonicalSymbol))
-                return string.Empty;
-
-            return canonicalSymbol.ToUpperInvariant() switch
-            {
-                "NAS100" => "NAS100",
-                "US30" => "US30",
-                "GER40" => "GER40",
-                "XAUUSD" => "XAUUSD",
-                "BTCUSD" => "BTCUSD",
-                "ETHUSD" => "ETHUSD",
-                _ => canonicalSymbol.ToUpperInvariant()
-            };
         }
 
         private bool RegisterRehydratedContextWithExitManager(PositionContext ctx)

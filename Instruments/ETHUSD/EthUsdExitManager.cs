@@ -12,6 +12,7 @@ namespace GeminiV26.Instruments.ETHUSD
     public class EthUsdExitManager
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
 
         private readonly TradeViabilityMonitor _tvm;
         private readonly TrendTradeManager _trendTradeManager;
@@ -34,6 +35,7 @@ namespace GeminiV26.Instruments.ETHUSD
         public EthUsdExitManager(Robot bot)
         {
             _bot = bot;
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
 
             _tvm = new TradeViabilityMonitor(bot);
             _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
@@ -79,7 +81,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             ctx.BarsSinceEntryM5++;
 
-            var stateSymbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            var stateSymbol = _runtimeSymbols.ResolveSymbol(position.SymbolName);
             if (stateSymbol != null)
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
@@ -118,7 +120,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
                 if (sym == null)
                     continue;
 
@@ -167,7 +169,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (!reached)
                     {
-                        var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
+                        var m1 = _runtimeSymbols.GetBars(TimeFrame.Minute, pos.SymbolName);
 
                         if (m1 != null && m1.Count > 0)
                         {
@@ -194,8 +196,8 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
-                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+                        var m5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
@@ -262,7 +264,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
 
             if (sym == null)
                 return;

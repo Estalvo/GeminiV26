@@ -13,6 +13,7 @@ namespace GeminiV26.Core.Entry
     public class EntryContextBuilder
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
         private readonly CryptoHtfBiasEngine _cryptoHtf;
         private readonly FxHtfBiasEngine _fxHtf;
         private readonly IndexHtfBiasEngine _indexHtf;
@@ -21,6 +22,7 @@ namespace GeminiV26.Core.Entry
         public EntryContextBuilder(Robot bot)
         {
             _bot = bot;
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _cryptoHtf = new CryptoHtfBiasEngine(_bot);
             _fxHtf = new FxHtfBiasEngine(_bot);
             _indexHtf = new IndexHtfBiasEngine(_bot);
@@ -67,9 +69,9 @@ namespace GeminiV26.Core.Entry
             // -------------------------
             // BAR DATA
             // -------------------------
-            ctx.M1 = _bot.MarketData.GetBars(TimeFrame.Minute, symbol);
-            ctx.M5 = _bot.MarketData.GetBars(TimeFrame.Minute5, symbol);
-            ctx.M15 = _bot.MarketData.GetBars(TimeFrame.Minute15, symbol);
+            ctx.M1 = _runtimeSymbols.GetBars(TimeFrame.Minute, symbol);
+            ctx.M5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, symbol);
+            ctx.M15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, symbol);
 
             if (ctx.M1 == null || ctx.M5 == null || ctx.M15 == null)
                 return ctx;
@@ -101,7 +103,7 @@ namespace GeminiV26.Core.Entry
                 (atr_m5.Result[m5Idx - 2] - atr_m5.Result[m5Idx - 4]);
 
             // pip konverzió
-            var sym = _bot.Symbols.GetSymbol(symbol);
+            var sym = _runtimeSymbols.ResolveSymbol(symbol);
             double pipSize = sym?.PipSize ?? 0;
 
             ctx.PipSize = pipSize;   // <<< EZ AZ ÚJ SOR

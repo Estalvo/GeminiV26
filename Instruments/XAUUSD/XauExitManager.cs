@@ -35,6 +35,7 @@ namespace GeminiV26.Instruments.XAUUSD
     public class XauExitManager
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
         private readonly EventLogger _eventLogger;
 
         // Profile (matrixból) – TP1/BE paraméterek innen jönnek
@@ -52,6 +53,7 @@ namespace GeminiV26.Instruments.XAUUSD
         public XauExitManager(Robot bot)
         {
             _bot = bot;
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _eventLogger = new EventLogger(bot.SymbolName);
             _tvm = new TradeViabilityMonitor(bot);
             _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
@@ -104,7 +106,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             ctx.BarsSinceEntryM5++;
 
-            var stateSymbol = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var stateSymbol = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             if (stateSymbol != null)
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
@@ -158,7 +160,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
                 if (sym == null)
                     continue;
 
@@ -211,7 +213,7 @@ namespace GeminiV26.Instruments.XAUUSD
                                         
                     if (!hit)
                     {
-                        var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
+                        var m1 = _runtimeSymbols.GetBars(TimeFrame.Minute, pos.SymbolName);
 
                         if (m1 != null && m1.Count > 0)
                         {
@@ -234,8 +236,8 @@ namespace GeminiV26.Instruments.XAUUSD
                     
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
-                        var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                        var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+                        var m5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                        var m15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
@@ -294,7 +296,7 @@ namespace GeminiV26.Instruments.XAUUSD
         // =====================================================
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             if (sym == null)
                 return;
 
@@ -352,7 +354,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             if (sym == null)
                 return;
 
@@ -390,7 +392,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (!pos.StopLoss.HasValue)
                 return;
 
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             if (sym == null)
                 return;
 
@@ -545,7 +547,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
                 return;
 
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
             double currentR = ctx.Tp2ExtensionMultiplierApplied > 0 ? baseR * ctx.Tp2ExtensionMultiplierApplied : baseR;

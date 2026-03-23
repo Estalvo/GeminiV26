@@ -19,6 +19,7 @@ namespace GeminiV26.Core.HtfBias
     public sealed class FxHtfBiasEngine : IHtfBiasProvider
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
 
         private static readonly TimeFrame BiasTf = TimeFrame.Hour4;
         private static readonly TimeFrame UpdateTf = TimeFrame.Hour;
@@ -64,6 +65,7 @@ namespace GeminiV26.Core.HtfBias
         public FxHtfBiasEngine(Robot bot)
         {
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
         }
 
         public HtfBiasSnapshot Get(string symbolName)
@@ -78,8 +80,8 @@ namespace GeminiV26.Core.HtfBias
             {
                 c = new FxBiasContext
                 {
-                    H4 = _bot.MarketData.GetBars(BiasTf, symbolName),
-                    H1 = _bot.MarketData.GetBars(UpdateTf, symbolName)
+                    H4 = _runtimeSymbols.GetBars(BiasTf, symbolName),
+                    H1 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
                 };
 
                 SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF INIT NEUTRAL", 0.50);

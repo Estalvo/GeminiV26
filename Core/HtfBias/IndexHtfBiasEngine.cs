@@ -19,6 +19,7 @@ namespace GeminiV26.Core.HtfBias
     public sealed class IndexHtfBiasEngine : IHtfBiasProvider
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
 
         private static readonly TimeFrame BiasTf = TimeFrame.Hour;
         private static readonly TimeFrame UpdateTf = TimeFrame.Minute15;
@@ -63,6 +64,7 @@ namespace GeminiV26.Core.HtfBias
         public IndexHtfBiasEngine(Robot bot)
         {
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
         }
 
         public HtfBiasSnapshot Get(string symbolName)
@@ -90,8 +92,8 @@ namespace GeminiV26.Core.HtfBias
 
             c = new IndexBiasContext
             {
-                H1 = _bot.MarketData.GetBars(BiasTf, symbolName),
-                M15 = _bot.MarketData.GetBars(UpdateTf, symbolName)
+                H1 = _runtimeSymbols.GetBars(BiasTf, symbolName),
+                M15 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
             };
 
             SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "INDEX_HTF INIT NEUTRAL", 0.30);
@@ -393,7 +395,7 @@ namespace GeminiV26.Core.HtfBias
 
         private double GetAtrFallback(string symbolName)
         {
-            var symbol = _bot.Symbols.GetSymbol(symbolName);
+            var symbol = _runtimeSymbols.ResolveSymbol(symbolName);
             double tick = symbol?.TickSize ?? _bot.Symbol.TickSize;
             return Math.Max(tick * 50.0, 1e-6);
         }

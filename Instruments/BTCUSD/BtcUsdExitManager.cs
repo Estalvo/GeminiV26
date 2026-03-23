@@ -18,6 +18,7 @@ namespace GeminiV26.Instruments.BTCUSD
     public class BtcUsdExitManager
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
 
         // PositionId -> context
         private readonly Dictionary<long, PositionContext> _contexts = new();
@@ -42,6 +43,7 @@ namespace GeminiV26.Instruments.BTCUSD
         public BtcUsdExitManager(Robot bot)
         {
             _bot = bot;
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _tvm = new TradeViabilityMonitor(bot);
             _trendTradeManager = new TrendTradeManager(_bot, _bot.Bars);
             _adaptiveTrailingEngine = new AdaptiveTrailingEngine(_bot);
@@ -92,7 +94,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             ctx.BarsSinceEntryM5++;
 
-            var stateSymbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            var stateSymbol = _runtimeSymbols.ResolveSymbol(position.SymbolName);
             if (stateSymbol != null)
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
@@ -134,7 +136,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+                var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
                 if (sym == null)
                     continue;
 
@@ -182,7 +184,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
                     if (!reached)
                     {
-                        var m1 = _bot.MarketData.GetBars(TimeFrame.Minute, pos.SymbolName);
+                        var m1 = _runtimeSymbols.GetBars(TimeFrame.Minute, pos.SymbolName);
 
                         if (m1 != null && m1.Count > 0)
                         {
@@ -213,8 +215,8 @@ namespace GeminiV26.Instruments.BTCUSD
 
                         if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                         {
-                            var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                            var m15 = _bot.MarketData.GetBars(TimeFrame.Minute15, pos.SymbolName);
+                            var m5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, pos.SymbolName);
+                            var m15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, pos.SymbolName);
 
                             if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                             {
@@ -275,7 +277,7 @@ namespace GeminiV26.Instruments.BTCUSD
         // =========================================================
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             if (sym == null)
                 return;
 
@@ -474,7 +476,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             SafeModify(pos, pos.StopLoss, newTp);
 
-            var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} " +
                 $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym?.Bid : sym?.Ask)} " +

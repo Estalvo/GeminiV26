@@ -16,6 +16,7 @@ namespace GeminiV26.Core.Runtime
     public sealed class RehydrateService
     {
         private readonly Robot _bot;
+        private readonly RuntimeSymbolResolver _runtimeSymbols;
         private readonly Dictionary<long, PositionContext> _registry;
         private readonly ContextRegistry _contextRegistry;
         private readonly string _botLabel;
@@ -31,6 +32,7 @@ namespace GeminiV26.Core.Runtime
             MarketMemoryEngine memoryEngine)
         {
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _contextRegistry = contextRegistry ?? throw new ArgumentNullException(nameof(contextRegistry));
             _botLabel = botLabel ?? string.Empty;
@@ -198,7 +200,7 @@ namespace GeminiV26.Core.Runtime
                 return result;
             }
 
-            var symbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            var symbol = _runtimeSymbols.ResolveSymbol(position.SymbolName);
             if (symbol == null)
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
@@ -452,7 +454,7 @@ namespace GeminiV26.Core.Runtime
 
         private bool TryComputeBarsSinceEntry(PositionContext ctx, string symbolName, TimeFrame timeFrame)
         {
-            Bars bars = _bot.MarketData.GetBars(timeFrame, symbolName);
+            Bars bars = _runtimeSymbols.GetBars(timeFrame, symbolName);
             if (bars == null || bars.Count == 0)
                 return false;
 
@@ -470,7 +472,7 @@ namespace GeminiV26.Core.Runtime
             if (ctx.RiskPriceDistance <= 0 || ctx.FinalDirection == TradeDirection.None)
                 return false;
 
-            Bars bars = _bot.MarketData.GetBars(timeFrame, symbolName);
+            Bars bars = _runtimeSymbols.GetBars(timeFrame, symbolName);
             if (bars == null || bars.Count == 0)
                 return false;
 
