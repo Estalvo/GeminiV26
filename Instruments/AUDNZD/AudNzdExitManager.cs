@@ -90,7 +90,10 @@ namespace GeminiV26.Instruments.AUDNZD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(ctx.PositionId, "position_not_found"), ctx));
+                    if (ctx.Tp1Executed && !ctx.IsFullyClosing)
+                        continue;
+
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -154,12 +157,11 @@ namespace GeminiV26.Instruments.AUDNZD
                         }
                     }
 
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][CHECK]\ntp1={tp1Price:0.#####}\nreached={reached.ToString().ToLowerInvariant()}\nrDist={rDist:0.#####}", ctx, pos));
-
                     if (reached)
                     {
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[AUDNZD][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]
+pos={pos.Id}
+tp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -183,13 +185,12 @@ namespace GeminiV26.Instruments.AUDNZD
                                 $"reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds($"[AUDNZD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
+                            ctx.IsFullyClosing = true;
                             _bot.ClosePosition(pos);
                             _contexts.Remove(key);
                             continue;
                         }
                     }
-
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][MISS]\ntp1={tp1Price:0.#####}\nrDist={rDist:0.#####}", ctx, pos));
                     continue;
                 }
 
@@ -238,22 +239,15 @@ namespace GeminiV26.Instruments.AUDNZD
             if (closeUnits < minUnits)
                 return;
 
-            bool closeExecuted = false;
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
                 return;
 
-            closeExecuted = true;
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
             ctx.Tp1Hit = true;
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
-
-            if (closeExecuted && FindPosition(ctx.PositionId) == null)
-            {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] skip modify after close positionId={ctx.PositionId}", ctx));
-                return;
-            }
+            ctx.Tp1Executed = true;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
             ApplyBreakEven(pos, ctx, rDist);
         }

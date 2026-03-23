@@ -356,6 +356,7 @@ namespace GeminiV26.Core.Runtime
                 EntryPrice = entryPrice,
                 RiskPriceDistance = riskDistance,
                 Tp1Hit = tp1Hit,
+                Tp1Executed = tp1Hit,
                 Tp1CloseFraction = 0,
                 Tp1ClosedVolumeInUnits = tp1ClosedVolumeInUnits,
                 EntryVolumeInUnits = entryVolumeInUnits,

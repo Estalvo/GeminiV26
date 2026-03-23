@@ -147,7 +147,10 @@ namespace GeminiV26.Instruments.XAUUSD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(ctx.PositionId, "position_not_found"), ctx));
+                    if (ctx.Tp1Executed && !ctx.IsFullyClosing)
+                        continue;
+
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -219,13 +222,12 @@ namespace GeminiV26.Instruments.XAUUSD
                                 : bar.Low <= tp1Price;
                         }
                     }
- 
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][CHECK]\ntp1={tp1Price:0.#####}\nreached={hit.ToString().ToLowerInvariant()}\nrDist={rDist:0.#####}", ctx, pos));
 
                     if (hit)
                     {
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]
+pos={pos.Id}
+tp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -251,6 +253,7 @@ namespace GeminiV26.Instruments.XAUUSD
                             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
 
+                            ctx.IsFullyClosing = true;
                             _bot.ClosePosition(pos);
 
                             _eventLogger.Log(new EventRecord
@@ -313,7 +316,6 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
-            bool closeExecuted = false;
             var closeResult = _bot.ClosePosition(pos, closeVolume);
             if (!closeResult.IsSuccessful)
             {
@@ -321,22 +323,17 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
-            closeExecuted = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
+            ctx.Tp1Executed = true;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeVolume}", ctx, pos));
 
             // Remaining volume (analytics + rehydrate friendliness)
             ctx.Tp1ClosedVolumeInUnits = closeVolume;
             ctx.RemainingVolumeInUnits =
                 Math.Max(0, pos.VolumeInUnits - closeVolume);
-
-            if (closeExecuted && FindPosition(ctx.PositionId) == null)
-            {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] skip modify after close positionId={ctx.PositionId}", ctx));
-                return;
-            }
 
             // BE (profilból)
             ApplyBreakEven(pos, ctx, rDist);

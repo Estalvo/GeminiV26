@@ -99,6 +99,10 @@ namespace GeminiV26.Core
         // =========================
         public bool Tp1Hit { get; set; }
 
+        public bool Tp1Executed { get; set; }
+
+        public bool IsFullyClosing { get; set; }
+
         // =========================
         // Take profit prices (resolved at entry time)
         // =========================
