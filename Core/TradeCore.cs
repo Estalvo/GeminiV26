@@ -266,6 +266,25 @@ namespace GeminiV26.Core
         private static readonly TimeSpan ContextPruneInterval = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan ContextMaxAge = TimeSpan.FromMinutes(30);
         private bool _isMemoryReady;
+        private static readonly string[] RequiredMemorySymbols =
+        {
+            "EURUSD",
+            "USDJPY",
+            "GBPUSD",
+            "AUDUSD",
+            "AUDNZD",
+            "EURJPY",
+            "GBPJPY",
+            "NZDUSD",
+            "USDCAD",
+            "USDCHF",
+            "XAUUSD",
+            "NAS100",
+            "US30",
+            "GER40",
+            "BTCUSD",
+            "ETHUSD"
+        };
 
         public TradeCore(Robot bot)
         {
@@ -685,6 +704,9 @@ namespace GeminiV26.Core
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
 
             _bot.Print($"[ONBAR DBG] raw={rawSym} canonical={sym}");
+
+            EnsureStartupMemoryReady();
+            AuditMemoryCoverage();
 
             bool isFx = _fxMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.FX;
 
@@ -1844,20 +1866,8 @@ namespace GeminiV26.Core
             if (_isMemoryReady)
                 return;
 
-            var symbols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                [_symbolCanonical] = _bot.SymbolName
-            };
-
-            foreach (var position in _bot.Positions)
-            {
-                if (position == null || string.IsNullOrWhiteSpace(position.SymbolName))
-                    continue;
-
-                string canonical = SymbolRouting.NormalizeSymbol(position.SymbolName);
-                if (!symbols.ContainsKey(canonical))
-                    symbols[canonical] = position.SymbolName;
-            }
+            var symbols = GetAllMemorySymbols()
+                .ToDictionary(symbol => symbol, ResolveMarketDataSymbol, StringComparer.OrdinalIgnoreCase);
 
             foreach (var pair in symbols)
             {
@@ -1866,6 +1876,7 @@ namespace GeminiV26.Core
             }
 
             _isMemoryReady = true;
+            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols.Keys)}");
             _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
         }
 
@@ -2456,6 +2467,79 @@ namespace GeminiV26.Core
         private static string NormalizeSymbol(string symbol)
         {
             return SymbolRouting.NormalizeSymbol(symbol);
+        }
+
+        private void AuditMemoryCoverage()
+        {
+            var symbols = GetAllMemorySymbols();
+            bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
+
+            foreach (var symbol in symbols)
+            {
+                SymbolMemoryState memoryState = _memoryEngine.GetState(symbol);
+                bool isNull = memoryState == null;
+                bool isBuilt = memoryState?.IsBuilt == true;
+
+                if (isNull || !isBuilt)
+                {
+                    _bot.Print($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} stateNull={isNull}");
+
+                    if (isStartupWindow)
+                        _bot.Print($"[MEMORY][CRITICAL] symbol={symbol} missing_after_startup");
+
+                    continue;
+                }
+
+                _bot.Print(
+                    $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount}");
+            }
+
+            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols)}");
+        }
+
+        private List<string> GetAllMemorySymbols()
+        {
+            var symbols = new HashSet<string>(RequiredMemorySymbols, StringComparer.OrdinalIgnoreCase)
+            {
+                _symbolCanonical,
+                NormalizeSymbol(_bot.SymbolName)
+            };
+
+            foreach (var position in _bot.Positions)
+            {
+                if (position == null || string.IsNullOrWhiteSpace(position.SymbolName))
+                    continue;
+
+                symbols.Add(NormalizeSymbol(position.SymbolName));
+            }
+
+            foreach (var memorySymbol in _memoryEngine.States.Keys)
+            {
+                if (!string.IsNullOrWhiteSpace(memorySymbol))
+                    symbols.Add(NormalizeSymbol(memorySymbol));
+            }
+
+            return symbols
+                .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
+                .OrderBy(symbol => symbol, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private static string ResolveMarketDataSymbol(string canonicalSymbol)
+        {
+            if (string.IsNullOrWhiteSpace(canonicalSymbol))
+                return string.Empty;
+
+            return canonicalSymbol.ToUpperInvariant() switch
+            {
+                "NAS100" => "NAS100",
+                "US30" => "US30",
+                "GER40" => "GER40",
+                "XAUUSD" => "XAUUSD",
+                "BTCUSD" => "BTCUSD",
+                "ETHUSD" => "ETHUSD",
+                _ => canonicalSymbol.ToUpperInvariant()
+            };
         }
 
         private bool RegisterRehydratedContextWithExitManager(PositionContext ctx)

@@ -17,5 +17,6 @@ namespace Gemini.Memory
         public double SessionFatigueScore { get; set; }
         public MemoryTrustLevel TrustLevel { get; set; } = MemoryTrustLevel.Unknown;
         public MemoryBuildMode BuildMode { get; set; } = MemoryBuildMode.Default;
+        public bool IsBuilt { get; set; }
     }
 }
