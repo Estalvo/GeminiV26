@@ -63,12 +63,9 @@ namespace GeminiV26
             });
 
             // =========================
-            // 🔹 REHYDRATE (XAU)
+            // 🔹 STARTUP REHYDRATE
             // =========================
-            if (SymbolRouting.ResolveInstrumentClass(SymbolName) == InstrumentClass.METAL)
-            {
-                _core.XauExitManager.RehydrateFromLivePositions(this);
-            }
+            _core.RehydrateOpenPositions();
         }
 
         protected override void OnBar()
