@@ -77,30 +77,25 @@ namespace GeminiV26.Core.HtfBias
             if (_ctx.TryGetValue(symbolName, out var c))
                 return c.Snapshot;
 
-            return new HtfBiasSnapshot
-            {
-                State = HtfBiasState.Neutral,
-                AllowedDirection = TradeDirection.None,
-                Confidence01 = 0.0,
-                Reason = "CRYPTO_HTF NOT_READY"
-            };
+            return CreateUnavailableSnapshot(symbolName);
         }
 
         private void UpdateIfNeeded(string symbolName)
         {
             if (!_ctx.TryGetValue(symbolName, out var c))
             {
-                c = new CryptoBiasContext
-                {
-                    H4 = _runtimeSymbols.GetBars(BiasTf, symbolName),
-                    H1 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
-                };
-
+                c = new CryptoBiasContext();
+                _ctx[symbolName] = c;
                 SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "CRYPTO_HTF INIT NEUTRAL", 0.0);
 
-                if (c.H4 == null || c.H1 == null)
+                if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H4) ||
+                    !_runtimeSymbols.TryGetBars(UpdateTf, symbolName, out c.H1))
                 {
-                    _ctx[symbolName] = c;
+                    var unavailable = CreateUnavailableSnapshot(symbolName);
+                    c.Snapshot.State = unavailable.State;
+                    c.Snapshot.AllowedDirection = unavailable.AllowedDirection;
+                    c.Snapshot.Confidence01 = unavailable.Confidence01;
+                    c.Snapshot.Reason = unavailable.Reason;
                     return;
                 }
 
@@ -430,6 +425,18 @@ namespace GeminiV26.Core.HtfBias
             snapshot.Confidence01 = Clamp01(confidence01);
         }
 
+
+        private HtfBiasSnapshot CreateUnavailableSnapshot(string symbolName)
+        {
+            _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
+            return new HtfBiasSnapshot
+            {
+                State = HtfBiasState.Neutral,
+                AllowedDirection = TradeDirection.None,
+                Confidence01 = 0.0,
+                Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
+            };
+        }
         private static double Clamp01(double value)
         {
             if (value < 0.0)

@@ -69,12 +69,18 @@ namespace GeminiV26.Core.Entry
             // -------------------------
             // BAR DATA
             // -------------------------
-            ctx.M1 = _runtimeSymbols.GetBars(TimeFrame.Minute, symbol);
-            ctx.M5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, symbol);
-            ctx.M15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, symbol);
-
-            if (ctx.M1 == null || ctx.M5 == null || ctx.M15 == null)
+            if (!_runtimeSymbols.TryGetBars(TimeFrame.Minute, symbol, out var m1) ||
+                !_runtimeSymbols.TryGetBars(TimeFrame.Minute5, symbol, out var m5) ||
+                !_runtimeSymbols.TryGetBars(TimeFrame.Minute15, symbol, out var m15))
+            {
+                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
                 return ctx;
+            }
+
+            ctx.M1 = m1;
+            ctx.M5 = m5;
+            ctx.M15 = m15;
+            ctx.RuntimeResolved = true;
 
             if (ctx.M1.Count < 10 || ctx.M5.Count < 30 || ctx.M15.Count < 30)
                 return ctx;
@@ -103,10 +109,15 @@ namespace GeminiV26.Core.Entry
                 (atr_m5.Result[m5Idx - 2] - atr_m5.Result[m5Idx - 4]);
 
             // pip konverzió
-            var sym = _runtimeSymbols.ResolveSymbol(symbol);
-            double pipSize = sym?.PipSize ?? 0;
+            if (!_runtimeSymbols.TryGetPipSize(symbol, out double pipSize) ||
+                !_runtimeSymbols.TryGetSymbolMeta(symbol, out _))
+            {
+                ctx.RuntimeResolved = false;
+                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                return ctx;
+            }
 
-            ctx.PipSize = pipSize;   // <<< EZ AZ ÚJ SOR
+            ctx.PipSize = pipSize;
 
             ctx.AtrPips_M5 = (pipSize > 0)
                 ? (ctx.AtrM5 / pipSize)

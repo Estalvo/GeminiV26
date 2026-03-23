@@ -80,6 +80,9 @@ namespace GeminiV26.Core.Logging
                    $"isLateMove={ToLower(ctx?.MemoryAssessment?.IsLateMove ?? false)}\n" +
                    $"isChaseRisk={ToLower(ctx?.MemoryAssessment?.IsChaseRisk ?? false)}\n" +
                    $"contextTrust={FormatScore(ctx?.MemoryAssessment?.ContextTrustScore ?? 0)}\n" +
+                   $"runtimeResolved={ToLower(ctx?.RuntimeResolved ?? false)}\n" +
+                   $"memoryResolved={ToLower(ctx?.MemoryResolved ?? false)}\n" +
+                   $"memoryUsable={ToLower(ctx?.MemoryUsable ?? false)}\n" +
                    $"restartPhase={ResolveRestartPhase(ctx)}";
         }
 

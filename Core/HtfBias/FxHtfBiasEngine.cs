@@ -71,26 +71,32 @@ namespace GeminiV26.Core.HtfBias
         public HtfBiasSnapshot Get(string symbolName)
         {
             UpdateIfNeeded(symbolName);
-            return _ctx[symbolName].Snapshot;
+            return _ctx.TryGetValue(symbolName, out var context)
+                ? context.Snapshot
+                : CreateUnavailableSnapshot(symbolName);
         }
 
         private void UpdateIfNeeded(string symbolName)
         {
             if (!_ctx.TryGetValue(symbolName, out var c))
             {
-                c = new FxBiasContext
-                {
-                    H4 = _runtimeSymbols.GetBars(BiasTf, symbolName),
-                    H1 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
-                };
-
+                c = new FxBiasContext();
+                _ctx[symbolName] = c;
                 SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF INIT NEUTRAL", 0.50);
 
-                if (c.H4 == null || c.H4.Count < EmaSlow + 8 || c.H1 == null || c.H1.Count < 10)
+                if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H4) ||
+                    !_runtimeSymbols.TryGetBars(UpdateTf, symbolName, out c.H1))
                 {
-                    _ctx[symbolName] = c;
+                    var unavailable = CreateUnavailableSnapshot(symbolName);
+                    c.Snapshot.State = unavailable.State;
+                    c.Snapshot.AllowedDirection = unavailable.AllowedDirection;
+                    c.Snapshot.Confidence01 = unavailable.Confidence01;
+                    c.Snapshot.Reason = unavailable.Reason;
                     return;
                 }
+
+                if (c.H4.Count < EmaSlow + 8 || c.H1.Count < 10)
+                    return;
 
                 c.Ema50 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaFast);
                 c.Ema200 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaSlow);
@@ -355,6 +361,18 @@ namespace GeminiV26.Core.HtfBias
             snap.Confidence01 = Clamp01(conf01);
         }
 
+
+        private HtfBiasSnapshot CreateUnavailableSnapshot(string symbolName)
+        {
+            _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
+            return new HtfBiasSnapshot
+            {
+                State = HtfBiasState.Neutral,
+                AllowedDirection = TradeDirection.None,
+                Confidence01 = 0.0,
+                Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
+            };
+        }
         private static double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
     }
 }

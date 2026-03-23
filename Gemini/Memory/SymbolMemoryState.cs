@@ -18,5 +18,8 @@ namespace Gemini.Memory
         public MemoryTrustLevel TrustLevel { get; set; } = MemoryTrustLevel.Unknown;
         public MemoryBuildMode BuildMode { get; set; } = MemoryBuildMode.Default;
         public bool IsBuilt { get; set; }
+        public bool IsResolved { get; set; }
+        public bool IsUsable { get; set; }
+        public string ResolveFailureReason { get; set; } = string.Empty;
     }
 }

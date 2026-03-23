@@ -92,29 +92,38 @@ namespace GeminiV26.Core.HtfBias
         public HtfBiasSnapshot Get(string symbolName)
         {
             UpdateIfNeeded(symbolName);
-            return _ctx[symbolName].Snapshot;
+            return _ctx.TryGetValue(symbolName, out var context)
+                ? context.Snapshot
+                : CreateUnavailableSnapshot(symbolName);
         }
 
         private void UpdateIfNeeded(string symbolName)
         {
             if (!_ctx.TryGetValue(symbolName, out var c))
             {
-                c = new MetalBiasContext
-                {
-                    H1 = _runtimeSymbols.GetBars(BiasTf, symbolName),
-                    M15 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
-                };
+                c = new MetalBiasContext();
+                _ctx[symbolName] = c;
 
-                if (c.H1 == null || c.M15 == null)
+                if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H1) ||
+                    !_runtimeSymbols.TryGetBars(UpdateTf, symbolName, out c.M15))
+                {
+                    var unavailable = CreateUnavailableSnapshot(symbolName);
+                    c.Snapshot.State = unavailable.State;
+                    c.Snapshot.AllowedDirection = unavailable.AllowedDirection;
+                    c.Snapshot.Confidence01 = unavailable.Confidence01;
+                    c.Snapshot.Reason = unavailable.Reason;
                     return;
+                }
 
                 c.Ema21 = _bot.Indicators.ExponentialMovingAverage(c.H1.ClosePrices, EmaFast);
                 c.Ema55 = _bot.Indicators.ExponentialMovingAverage(c.H1.ClosePrices, EmaSlow);
                 c.AtrH1 = _bot.Indicators.AverageTrueRange(c.H1, 14, MovingAverageType.Exponential);
                 c.Dms = _bot.Indicators.DirectionalMovementSystem(c.H1, 14);
 
-                _ctx[symbolName] = c;
             }
+
+            if (c.M15 == null || c.H1 == null || c.Ema21 == null || c.Ema55 == null || c.AtrH1 == null || c.Dms == null)
+                return;
 
             if (c.M15.Count < 10 || c.H1.Count < Math.Max(EmaSlow, 80))
                 return;
@@ -241,6 +250,18 @@ namespace GeminiV26.Core.HtfBias
             snap.Confidence01 = Clamp01(conf01);
         }
 
+
+        private HtfBiasSnapshot CreateUnavailableSnapshot(string symbolName)
+        {
+            _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
+            return new HtfBiasSnapshot
+            {
+                State = HtfBiasState.Neutral,
+                AllowedDirection = TradeDirection.None,
+                Confidence01 = 0.0,
+                Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
+            };
+        }
         private static double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
     }
 }

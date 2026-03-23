@@ -71,15 +71,7 @@ namespace GeminiV26.Core.HtfBias
         {
             var c = EnsureContext(symbolName);
             if (c == null)
-            {
-                return new HtfBiasSnapshot
-                {
-                    State = HtfBiasState.Neutral,
-                    AllowedDirection = TradeDirection.None,
-                    Confidence01 = 0.25,
-                    Reason = "INDEX_HTF INIT NEUTRAL (context unavailable)"
-                };
-            }
+                return CreateUnavailableSnapshot(symbolName);
 
             UpdateIfNeeded(symbolName, c);
             return c.Snapshot;
@@ -90,17 +82,20 @@ namespace GeminiV26.Core.HtfBias
             if (_ctx.TryGetValue(symbolName, out var c))
                 return c;
 
-            c = new IndexBiasContext
-            {
-                H1 = _runtimeSymbols.GetBars(BiasTf, symbolName),
-                M15 = _runtimeSymbols.GetBars(UpdateTf, symbolName)
-            };
-
+            c = new IndexBiasContext();
             SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "INDEX_HTF INIT NEUTRAL", 0.30);
             _ctx[symbolName] = c;
 
-            if (c.H1 == null || c.M15 == null)
+            if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H1) ||
+                !_runtimeSymbols.TryGetBars(UpdateTf, symbolName, out c.M15))
+            {
+                var unavailable = CreateUnavailableSnapshot(symbolName);
+                c.Snapshot.State = unavailable.State;
+                c.Snapshot.AllowedDirection = unavailable.AllowedDirection;
+                c.Snapshot.Confidence01 = unavailable.Confidence01;
+                c.Snapshot.Reason = unavailable.Reason;
                 return c;
+            }
 
             c.Ema21 = _bot.Indicators.ExponentialMovingAverage(c.H1.ClosePrices, EmaImpulse);
             c.Ema50 = _bot.Indicators.ExponentialMovingAverage(c.H1.ClosePrices, EmaStructure);
@@ -395,8 +390,9 @@ namespace GeminiV26.Core.HtfBias
 
         private double GetAtrFallback(string symbolName)
         {
-            var symbol = _runtimeSymbols.ResolveSymbol(symbolName);
-            double tick = symbol?.TickSize ?? _bot.Symbol.TickSize;
+            double tick = _runtimeSymbols.TryGetSymbolMeta(symbolName, out var symbol)
+                ? symbol.TickSize
+                : _bot.Symbol.TickSize;
             return Math.Max(tick * 50.0, 1e-6);
         }
 
@@ -408,6 +404,18 @@ namespace GeminiV26.Core.HtfBias
             snap.Confidence01 = Clamp01(conf01);
         }
 
+
+        private HtfBiasSnapshot CreateUnavailableSnapshot(string symbolName)
+        {
+            _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
+            return new HtfBiasSnapshot
+            {
+                State = HtfBiasState.Neutral,
+                AllowedDirection = TradeDirection.None,
+                Confidence01 = 0.0,
+                Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
+            };
+        }
         private static double Clamp01(double value)
         {
             if (value < 0) return 0;

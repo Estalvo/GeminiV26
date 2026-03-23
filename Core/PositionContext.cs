@@ -279,6 +279,8 @@ namespace GeminiV26.Core
 
         public MemoryTrustLevel ContextTrust { get; set; } = MemoryTrustLevel.Unknown;
 
+        public bool RuntimeSymbolAvailable { get; set; } = true;
+
         // =========================================================
         // FinalConfidence calculation
         // =========================================================
