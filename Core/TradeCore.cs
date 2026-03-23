@@ -265,6 +265,7 @@ namespace GeminiV26.Core
         private DateTime _lastContextPruneUtc = DateTime.MinValue;
         private static readonly TimeSpan ContextPruneInterval = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan ContextMaxAge = TimeSpan.FromMinutes(30);
+        private bool _isMemoryReady;
 
         public TradeCore(Robot bot)
         {
@@ -1795,30 +1796,32 @@ namespace GeminiV26.Core
             if (ctx == null || string.IsNullOrWhiteSpace(ctx.Symbol))
                 return;
 
+            string memorySymbol = NormalizeSymbol(ctx.Symbol);
+
             if (ctx.M5 == null || ctx.M5.Count <= 0)
             {
-                ctx.MemoryState = _memoryEngine.GetState(ctx.Symbol);
-                ctx.MemoryAssessment = _memoryEngine.GetAssessment(ctx.Symbol);
+                ctx.MemoryState = _memoryEngine.GetState(memorySymbol);
+                ctx.MemoryAssessment = _memoryEngine.GetAssessment(memorySymbol);
                 return;
             }
 
-            SymbolMemoryState state = _memoryEngine.GetState(ctx.Symbol);
+            SymbolMemoryState state = _memoryEngine.GetState(memorySymbol);
             if (state.BuildMode == MemoryBuildMode.Default)
             {
-                _memoryEngine.BuildFromHistory(ctx.Symbol, ToClosedBarList(ctx.M5));
+                _memoryEngine.BuildFromHistory(memorySymbol, ToClosedBarList(ctx.M5));
             }
             else
             {
                 int lastClosedIndex = Math.Max(0, ctx.M5.Count - 2);
-                _memoryEngine.OnBar(ctx.Symbol, ctx.M5[lastClosedIndex]);
+                _memoryEngine.OnBar(memorySymbol, ctx.M5[lastClosedIndex]);
             }
 
-            state = _memoryEngine.GetState(ctx.Symbol);
+            state = _memoryEngine.GetState(memorySymbol);
             state.SessionName = ctx.Session.ToString();
             state.SessionFatigueScore = Math.Max(0, ctx.BarsSinceStart);
 
             ctx.MemoryState = state;
-            ctx.MemoryAssessment = _memoryEngine.GetAssessment(ctx.Symbol);
+            ctx.MemoryAssessment = _memoryEngine.GetAssessment(memorySymbol);
         }
 
         private static List<Bar> ToClosedBarList(Bars bars)
@@ -1834,6 +1837,45 @@ namespace GeminiV26.Core
             }
 
             return result;
+        }
+
+        private void EnsureStartupMemoryReady()
+        {
+            if (_isMemoryReady)
+                return;
+
+            var symbols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [_symbolCanonical] = _bot.SymbolName
+            };
+
+            foreach (var position in _bot.Positions)
+            {
+                if (position == null || string.IsNullOrWhiteSpace(position.SymbolName))
+                    continue;
+
+                string canonical = SymbolRouting.NormalizeSymbol(position.SymbolName);
+                if (!symbols.ContainsKey(canonical))
+                    symbols[canonical] = position.SymbolName;
+            }
+
+            foreach (var pair in symbols)
+            {
+                _memoryEngine.Initialize(pair.Key);
+                _memoryEngine.BuildFromHistory(pair.Key, LoadMemoryHistory(pair.Value));
+            }
+
+            _isMemoryReady = true;
+            _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
+        }
+
+        private List<Bar> LoadMemoryHistory(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol))
+                return new List<Bar>();
+
+            Bars bars = _bot.MarketData.GetBars(TimeFrame.Minute5, symbol);
+            return ToClosedBarList(bars);
         }
 
         private static bool ContainsAny(string value, params string[] tokens)
@@ -2388,12 +2430,22 @@ namespace GeminiV26.Core
 
         public void RehydrateOpenPositions()
         {
+            EnsureStartupMemoryReady();
+
+            if (!_isMemoryReady)
+            {
+                _bot.Print("[BOOT][REHYDRATE_BLOCKED] reason=memory_not_ready");
+                return;
+            }
+
+            _bot.Print("[BOOT][REHYDRATE_START]");
             var service = new RehydrateService(
                 _bot,
                 _positionContexts,
                 _contextRegistry,
                 BotLabel,
-                RegisterRehydratedContextWithExitManager);
+                RegisterRehydratedContextWithExitManager,
+                _memoryEngine);
 
             service.Run();
         }

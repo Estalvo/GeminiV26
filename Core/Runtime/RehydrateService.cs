@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using cAlgo.API;
+using Gemini.Memory;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
@@ -19,21 +20,22 @@ namespace GeminiV26.Core.Runtime
         private readonly ContextRegistry _contextRegistry;
         private readonly string _botLabel;
         private readonly Func<PositionContext, bool> _registerExitContext;
-        private readonly string _currentSymbolCanonical;
+        private readonly MarketMemoryEngine _memoryEngine;
 
         public RehydrateService(
             Robot bot,
             Dictionary<long, PositionContext> registry,
             ContextRegistry contextRegistry,
             string botLabel,
-            Func<PositionContext, bool> registerExitContext)
+            Func<PositionContext, bool> registerExitContext,
+            MarketMemoryEngine memoryEngine)
         {
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _contextRegistry = contextRegistry ?? throw new ArgumentNullException(nameof(contextRegistry));
             _botLabel = botLabel ?? string.Empty;
             _registerExitContext = registerExitContext ?? throw new ArgumentNullException(nameof(registerExitContext));
-            _currentSymbolCanonical = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
+            _memoryEngine = memoryEngine ?? throw new ArgumentNullException(nameof(memoryEngine));
         }
 
         public RehydrateSummary Run()
@@ -63,8 +65,7 @@ namespace GeminiV26.Core.Runtime
             if (summary.GeminiManagedCandidates > 0 && summary.SuccessfullyRehydrated == 0)
             {
                 _bot.Print(
-                    $"[REHYDRATE_WARN] currentSymbol={_currentSymbolCanonical} " +
-                    $"geminiCandidates={summary.GeminiManagedCandidates} reason=zero_successful_rehydrates");
+                    $"[REHYDRATE_WARN] geminiCandidates={summary.GeminiManagedCandidates} reason=zero_successful_rehydrates");
             }
 
             _bot.Print(
@@ -86,7 +87,6 @@ namespace GeminiV26.Core.Runtime
                 return;
             }
 
-            string normalizedSymbol = SymbolRouting.NormalizeSymbol(position.SymbolName);
             bool exactOwner = string.Equals(position.Label, _botLabel, StringComparison.Ordinal);
             bool ambiguousOwner =
                 !exactOwner &&
@@ -113,15 +113,6 @@ namespace GeminiV26.Core.Runtime
                 positionKey,
                 position.Comment,
                 position.SymbolName));
-
-            if (!string.Equals(normalizedSymbol, _currentSymbolCanonical, StringComparison.Ordinal))
-            {
-                summary.Skipped++;
-                _bot.Print(
-                    $"[REHYDRATE_SKIP] pos={Convert.ToInt64(position.Id)} symbol={position.SymbolName} " +
-                    $"reason=symbol_scope_mismatch currentSymbol={_currentSymbolCanonical}");
-                return;
-            }
 
             if (_registry.ContainsKey(positionKey))
             {
@@ -351,8 +342,8 @@ namespace GeminiV26.Core.Runtime
                 // so we restore with neutral placeholders and keep FinalConfidence deterministic via ComputeFinalConfidence().
                 EntryScore = 50,
                 LogicConfidence = 50,
-                EntryTime = _bot.Server.Time,
-                EntryTimeUtc = _bot.Server.Time.ToUniversalTime(),
+                EntryTime = position.EntryTime,
+                EntryTimeUtc = position.EntryTime.ToUniversalTime(),
                 EntryPrice = entryPrice,
                 RiskPriceDistance = riskDistance,
                 Tp1Hit = tp1Hit,
@@ -379,6 +370,8 @@ namespace GeminiV26.Core.Runtime
 
             // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
             ctx.ComputeFinalConfidence();
+            AttachMemoryState(ctx, position.SymbolName, ref defaultedLifecycleFields);
+            RebuildTradeExcursions(ctx, position);
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, position));
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, position));
 
@@ -408,6 +401,141 @@ namespace GeminiV26.Core.Runtime
             result.AmbiguousTp1 = ambiguousTp1;
             result.DirectionMismatch = directionMismatch;
             return result;
+        }
+
+        private void AttachMemoryState(PositionContext ctx, string symbolName, ref bool defaultedLifecycleFields)
+        {
+            string normalizedSymbol = SymbolRouting.NormalizeSymbol(symbolName);
+            SymbolMemoryState memoryState = _memoryEngine.GetState(normalizedSymbol);
+
+            if (memoryState != null && memoryState.BuildMode != MemoryBuildMode.Default)
+            {
+                ctx.MovePhase = memoryState.MovePhase;
+                ctx.MoveAge = memoryState.MoveAgeBars;
+                ctx.PullbackCount = memoryState.PullbackCount;
+                ctx.ContextTrust = memoryState.TrustLevel;
+                _bot.Print(
+                    $"[REHYDRATE][MEMORY_ATTACH] phase={ctx.MovePhase} age={ctx.MoveAge} pullbacks={ctx.PullbackCount}");
+                defaultedLifecycleFields = false;
+                return;
+            }
+
+            ctx.ContextTrust = MemoryTrustLevel.Low;
+            defaultedLifecycleFields = true;
+            _bot.Print($"[REHYDRATE][NO_MEMORY] symbol={normalizedSymbol}");
+        }
+
+        private void RebuildTradeExcursions(PositionContext ctx, Position position)
+        {
+            if (ctx == null || position == null)
+                return;
+
+            if (!TryComputeBarsSinceEntry(ctx, position.SymbolName, TimeFrame.Minute5))
+            {
+                if (!TryComputeBarsSinceEntry(ctx, position.SymbolName, TimeFrame.Minute))
+                {
+                    _bot.Print($"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_entry_history");
+                    return;
+                }
+            }
+
+            if (TryRebuildExcursions(ctx, position.SymbolName, TimeFrame.Minute) ||
+                TryRebuildExcursions(ctx, position.SymbolName, TimeFrame.Minute5))
+            {
+                _bot.Print(
+                    $"[MFE][REBUILD_OK] pos={ctx.PositionId} symbol={position.SymbolName} mfe={ctx.MfeR:0.##} mae={ctx.MaeR:0.##}");
+                return;
+            }
+
+            _bot.Print($"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_price_history");
+        }
+
+        private bool TryComputeBarsSinceEntry(PositionContext ctx, string symbolName, TimeFrame timeFrame)
+        {
+            Bars bars = _bot.MarketData.GetBars(timeFrame, symbolName);
+            if (bars == null || bars.Count == 0)
+                return false;
+
+            int startIndex = FindStartBarIndex(bars, ctx.EntryTime);
+            if (startIndex < 0)
+                return false;
+
+            int lastClosedIndex = Math.Max(0, bars.Count - 2);
+            ctx.BarsSinceEntryM5 = Math.Max(0, lastClosedIndex - startIndex);
+            return true;
+        }
+
+        private bool TryRebuildExcursions(PositionContext ctx, string symbolName, TimeFrame timeFrame)
+        {
+            if (ctx.RiskPriceDistance <= 0 || ctx.FinalDirection == TradeDirection.None)
+                return false;
+
+            Bars bars = _bot.MarketData.GetBars(timeFrame, symbolName);
+            if (bars == null || bars.Count == 0)
+                return false;
+
+            int startIndex = FindStartBarIndex(bars, ctx.EntryTime);
+            int lastClosedIndex = Math.Max(0, bars.Count - 2);
+            if (startIndex < 0 || startIndex > lastClosedIndex)
+                return false;
+
+            double bestFavorablePrice = ctx.EntryPrice;
+            double worstAdversePrice = ctx.EntryPrice;
+
+            for (int i = startIndex; i <= lastClosedIndex; i++)
+            {
+                Bar bar = bars[i];
+                if (ctx.FinalDirection == TradeDirection.Long)
+                {
+                    if (bar.High > bestFavorablePrice)
+                        bestFavorablePrice = bar.High;
+
+                    if (bar.Low < worstAdversePrice)
+                        worstAdversePrice = bar.Low;
+                }
+                else
+                {
+                    if (bar.Low < bestFavorablePrice)
+                        bestFavorablePrice = bar.Low;
+
+                    if (bar.High > worstAdversePrice)
+                        worstAdversePrice = bar.High;
+                }
+            }
+
+            ctx.BestFavorablePrice = bestFavorablePrice;
+            ctx.WorstAdversePrice = worstAdversePrice;
+
+            if (ctx.FinalDirection == TradeDirection.Long)
+            {
+                ctx.MfeR = Math.Max(0, (bestFavorablePrice - ctx.EntryPrice) / ctx.RiskPriceDistance);
+                ctx.MaeR = Math.Max(0, (ctx.EntryPrice - worstAdversePrice) / ctx.RiskPriceDistance);
+            }
+            else
+            {
+                ctx.MfeR = Math.Max(0, (ctx.EntryPrice - bestFavorablePrice) / ctx.RiskPriceDistance);
+                ctx.MaeR = Math.Max(0, (worstAdversePrice - ctx.EntryPrice) / ctx.RiskPriceDistance);
+            }
+
+            return true;
+        }
+
+        private static int FindStartBarIndex(Bars bars, DateTime entryTime)
+        {
+            if (bars == null || bars.Count == 0)
+                return -1;
+
+            int startIndex = -1;
+            for (int i = 0; i < bars.Count; i++)
+            {
+                DateTime barOpenTime = bars.OpenTimes[i];
+                if (barOpenTime > entryTime)
+                    break;
+
+                startIndex = i;
+            }
+
+            return startIndex >= 0 ? startIndex : 0;
         }
 
         private static bool IsFinitePositive(double value)
