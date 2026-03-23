@@ -17,6 +17,25 @@ namespace Gemini.Memory
             _log = log;
         }
 
+        public int TotalSymbolCount { get; private set; }
+        public double MemoryCoverageRatio { get; private set; }
+
+        public int BuiltSymbolCount
+        {
+            get
+            {
+                int count = 0;
+
+                foreach (var state in States.Values)
+                {
+                    if (state != null && state.IsBuilt)
+                        count++;
+                }
+
+                return count;
+            }
+        }
+
         public SymbolMemoryState GetState(string symbol)
         {
             if (string.IsNullOrWhiteSpace(symbol))
@@ -35,7 +54,8 @@ namespace Gemini.Memory
                 Symbol = key,
                 MovePhase = MovePhase.Unknown,
                 TrustLevel = MemoryTrustLevel.Unknown,
-                BuildMode = MemoryBuildMode.Default
+                BuildMode = MemoryBuildMode.Default,
+                IsBuilt = false
             };
 
             States[key] = state;
@@ -59,9 +79,11 @@ namespace Gemini.Memory
             state.MovePhase = MovePhase.Unknown;
             state.BuildMode = MemoryBuildMode.HistoricalReplay;
             state.TrustLevel = MemoryTrustLevel.Medium;
+            state.IsBuilt = false;
 
             if (bars == null || bars.Count == 0)
             {
+                state.IsBuilt = true;
                 _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} bars=0 reason=no_history");
                 _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars}");
                 return;
@@ -72,12 +94,15 @@ namespace Gemini.Memory
                 ReplayBar(state, bar);
             }
 
+            state.IsBuilt = true;
             _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars} pullbacks={state.PullbackCount} sinceImpulse={state.BarsSinceImpulse}");
         }
 
         public void OnBar(string symbol, Bar bar)
         {
             var state = GetState(symbol);
+            state.IsBuilt = true;
+
             if (state.BuildMode == MemoryBuildMode.Default)
             {
                 state.BuildMode = MemoryBuildMode.Live;
@@ -131,6 +156,38 @@ namespace Gemini.Memory
             }
 
             _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
+        }
+
+        public string GetCoverageRatio(IEnumerable<string> symbols)
+        {
+            int totalSymbols = 0;
+            int builtSymbols = 0;
+
+            if (symbols != null)
+            {
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var symbol in symbols)
+                {
+                    if (string.IsNullOrWhiteSpace(symbol))
+                        continue;
+
+                    string key = symbol.Trim();
+                    if (!seen.Add(key))
+                        continue;
+
+                    totalSymbols++;
+
+                    if (States.TryGetValue(key, out var state) && state != null && state.IsBuilt)
+                        builtSymbols++;
+                }
+            }
+
+            TotalSymbolCount = totalSymbols;
+            MemoryCoverageRatio = totalSymbols > 0
+                ? (double)builtSymbols / totalSymbols
+                : 0d;
+
+            return $"{builtSymbols}/{totalSymbols}";
         }
 
         public MemoryAssessment GetAssessment(string symbol)
