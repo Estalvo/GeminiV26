@@ -24,6 +24,7 @@
 // =========================================================
 
 using System;
+using Gemini.Memory;
 using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core
@@ -264,6 +265,17 @@ namespace GeminiV26.Core
         /// Opcionális: miért lett dead trade (audit/analytics).
         /// </summary>
         public string DeadTradeReason { get; set; } = string.Empty;
+
+        // =========================
+        // MEMORY LIFECYCLE SNAPSHOT
+        // =========================
+        public MovePhase MovePhase { get; set; } = MovePhase.Unknown;
+
+        public int MoveAge { get; set; }
+
+        public int PullbackCount { get; set; }
+
+        public MemoryTrustLevel ContextTrust { get; set; } = MemoryTrustLevel.Unknown;
 
         // =========================================================
         // FinalConfidence calculation

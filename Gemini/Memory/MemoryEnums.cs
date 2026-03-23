@@ -6,7 +6,8 @@ namespace Gemini.Memory
         Impulse = 1,
         Pullback = 2,
         Decay = 3,
-        Stale = 4
+        Stale = 4,
+        Continuation = 5
     }
 
     public enum MemoryBuildMode

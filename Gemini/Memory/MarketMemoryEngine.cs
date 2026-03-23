@@ -52,12 +52,17 @@ namespace Gemini.Memory
             state.BarsSinceImpulse = 0;
             state.IsStaleImpulse = false;
             state.IsImpulseDecay = false;
+            state.HasActiveImpulse = false;
+            state.ImpulseDirection = 0;
+            state.LastImpulseHigh = 0;
+            state.LastImpulseLow = 0;
             state.MovePhase = MovePhase.Unknown;
             state.BuildMode = MemoryBuildMode.HistoricalReplay;
             state.TrustLevel = MemoryTrustLevel.Medium;
 
             if (bars == null || bars.Count == 0)
             {
+                _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} bars=0 reason=no_history");
                 _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars}");
                 return;
             }
@@ -89,21 +94,29 @@ namespace Gemini.Memory
 
             if (IsStrongMove(bar))
             {
-                state.MovePhase = MovePhase.Impulse;
-                state.MoveAgeBars = 1;
-                state.BarsSinceImpulse = 0;
-                state.IsStaleImpulse = false;
-                state.IsImpulseDecay = false;
+                ApplyImpulse(state, bar, "new_impulse");
                 _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
                 _log?.Invoke($"[MEMORY][IMPULSE] symbol={state.Symbol} phase={state.MovePhase}");
                 return;
             }
 
-            if (IsRetrace(bar))
+            if (HasTrendBreak(state, bar))
             {
-                state.PullbackCount++;
-                state.MovePhase = MovePhase.Pullback;
-                _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} pullbacks={state.PullbackCount}");
+                ResetPullback(state, "trend_break");
+                state.MovePhase = MovePhase.Decay;
+                state.BarsSinceImpulse = 0;
+                state.HasActiveImpulse = false;
+            }
+            else if (HasContinuation(state, bar))
+            {
+                UpdateImpulseExtremes(state, bar);
+                state.MovePhase = MovePhase.Continuation;
+                state.IsImpulseDecay = false;
+                state.IsStaleImpulse = false;
+            }
+            else if (IsEligiblePullback(state, bar))
+            {
+                IncrementPullback(state, "retrace_without_new_extreme");
             }
             else if (state.BarsSinceImpulse > 1)
             {
@@ -149,19 +162,30 @@ namespace Gemini.Memory
 
             if (IsStrongMove(bar))
             {
-                state.MovePhase = MovePhase.Impulse;
-                state.MoveAgeBars = 1;
-                state.BarsSinceImpulse = 0;
-                state.IsStaleImpulse = false;
-                state.IsImpulseDecay = false;
+                ApplyImpulse(state, bar, "new_impulse");
                 _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
                 return;
             }
 
-            if (IsRetrace(bar))
+            if (HasTrendBreak(state, bar))
             {
-                state.PullbackCount++;
-                state.MovePhase = MovePhase.Pullback;
+                ResetPullback(state, "trend_break");
+                state.MovePhase = MovePhase.Decay;
+                state.BarsSinceImpulse = 0;
+                state.HasActiveImpulse = false;
+                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+            }
+            else if (HasContinuation(state, bar))
+            {
+                UpdateImpulseExtremes(state, bar);
+                state.MovePhase = MovePhase.Continuation;
+                state.IsImpulseDecay = false;
+                state.IsStaleImpulse = false;
+                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+            }
+            else if (IsEligiblePullback(state, bar))
+            {
+                IncrementPullback(state, "retrace_without_new_extreme");
                 _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase} pullbacks={state.PullbackCount}");
             }
             else if (state.BarsSinceImpulse > 1)
@@ -203,6 +227,87 @@ namespace Gemini.Memory
 
             double body = Math.Abs(bar.Close - bar.Open);
             return body <= range * 0.35;
+        }
+
+        private void ApplyImpulse(SymbolMemoryState state, Bar bar, string reason)
+        {
+            ResetPullback(state, reason);
+            state.MovePhase = MovePhase.Impulse;
+            state.MoveAgeBars = 1;
+            state.BarsSinceImpulse = 0;
+            state.IsStaleImpulse = false;
+            state.IsImpulseDecay = false;
+            state.HasActiveImpulse = true;
+            state.ImpulseDirection = ResolveDirection(bar);
+            UpdateImpulseExtremes(state, bar);
+        }
+
+        private void IncrementPullback(SymbolMemoryState state, string reason)
+        {
+            state.PullbackCount = Math.Min(5, state.PullbackCount + 1);
+            state.MovePhase = MovePhase.Pullback;
+            state.IsImpulseDecay = false;
+            _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
+        }
+
+        private void ResetPullback(SymbolMemoryState state, string reason)
+        {
+            state.PullbackCount = 0;
+            _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
+        }
+
+        private static bool IsEligiblePullback(SymbolMemoryState state, Bar bar)
+        {
+            return state.HasActiveImpulse && IsRetrace(bar) && !HasContinuation(state, bar);
+        }
+
+        private static bool HasContinuation(SymbolMemoryState state, Bar bar)
+        {
+            if (state == null || bar == null || !state.HasActiveImpulse)
+                return false;
+
+            return state.ImpulseDirection switch
+            {
+                > 0 => bar.High > state.LastImpulseHigh,
+                < 0 => bar.Low < state.LastImpulseLow,
+                _ => false
+            };
+        }
+
+        private static bool HasTrendBreak(SymbolMemoryState state, Bar bar)
+        {
+            if (state == null || bar == null || !state.HasActiveImpulse)
+                return false;
+
+            return state.ImpulseDirection switch
+            {
+                > 0 => bar.Low < state.LastImpulseLow,
+                < 0 => bar.High > state.LastImpulseHigh,
+                _ => false
+            };
+        }
+
+        private static void UpdateImpulseExtremes(SymbolMemoryState state, Bar bar)
+        {
+            if (state == null || bar == null)
+                return;
+
+            state.LastImpulseHigh = bar.High;
+            state.LastImpulseLow = bar.Low;
+        }
+
+        private static int ResolveDirection(Bar bar)
+        {
+            if (bar == null)
+                return 0;
+
+            if (bar.Close > bar.Open)
+                return 1;
+
+            if (bar.Close < bar.Open)
+                return -1;
+
+            return 0;
         }
 
         private static double ResolveContextTrustScore(MemoryBuildMode buildMode)
