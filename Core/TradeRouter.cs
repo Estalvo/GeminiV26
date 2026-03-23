@@ -67,6 +67,7 @@ namespace GeminiV26.Core
                 if (!candidate.IsValid)
                 {
                     decision = "REJECT";
+                    _bot.Print(TradeLogIdentity.WithTempId($"[BLOCK] type={candidate.Type} dir={candidate.Direction} score={candidate.Score} reason=invalid_candidate", entryContext));
                 }
                 else if (!ApplyFxAcceptanceFilters(candidate, entryContext))
                 {
@@ -94,6 +95,7 @@ namespace GeminiV26.Core
                 return null;
             }
 
+            _bot.Print(TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
             _bot.Print(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
         }
@@ -162,6 +164,8 @@ namespace GeminiV26.Core
 
             _bot.Print(TradeLogIdentity.WithTempId(
                 $"[FX FILTER] type={eval.Type} dir={eval.Direction} score={eval.Score} decisionScore={decisionScore} reason={reasonToken}", entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[BLOCK] type={eval.Type} dir={eval.Direction} score={eval.Score} reason={reasonToken}", entryContext));
 
             return false;
         }
@@ -176,6 +180,7 @@ namespace GeminiV26.Core
             foreach (var e in list)
             {
                 if (e == null) continue;
+                _bot.Print(TradeLogIdentity.WithTempId($"[CANDIDATE] type={e.Type} dir={e.Direction} valid={e.IsValid.ToString().ToLowerInvariant()} score={e.Score} reason={e.Reason}", entryContext));
                 _bot.Print(TradeLogIdentity.WithTempId($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}", entryContext));
             }
         }

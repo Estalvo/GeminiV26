@@ -57,6 +57,8 @@ namespace GeminiV26.Instruments.GBPJPY
                 _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
+
+            TradeAuditLog.EnsureAttemptId(entryContext, _bot.Server.Time);
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
@@ -123,6 +125,14 @@ namespace GeminiV26.Instruments.GBPJPY
             int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
             int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
 
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, finalConfidence, statePenalty, riskConfidence), entryContext));
+
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
+
+            if (statePenalty != 0)
+
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
+
             double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
 
             if (riskPercent <= 0)
@@ -166,6 +176,8 @@ namespace GeminiV26.Instruments.GBPJPY
 
             double slPips = slPriceDist / _bot.Symbol.PipSize;
             double tp2Pips = Math.Abs(tp2Price - entryPrice) / _bot.Symbol.PipSize;
+
+            _bot.Print(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
@@ -232,6 +244,11 @@ namespace GeminiV26.Instruments.GBPJPY
 
             // ✅ Kanonikus 70/30 FinalConfidence
             ctx.ComputeFinalConfidence();
+
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[ctx.PositionId] = ctx;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));

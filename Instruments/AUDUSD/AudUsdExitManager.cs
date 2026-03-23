@@ -46,6 +46,8 @@ namespace GeminiV26.Instruments.AUDUSD
             }
 
             _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
 
         public void OnBar(Position position)
@@ -59,6 +61,18 @@ namespace GeminiV26.Instruments.AUDUSD
                 return;
 
             ctx.BarsSinceEntryM5++;
+
+            var stateSymbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            if (stateSymbol != null)
+            {
+                string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
+                if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, position, stateSymbol), ctx, position));
+                    ctx.LastStateTraceBarIndex = ctx.BarsSinceEntryM5;
+                    ctx.LastStateTraceFingerprint = stateFingerprint;
+                }
+            }
         }
 
         public void OnTick()
@@ -76,7 +90,7 @@ namespace GeminiV26.Instruments.AUDUSD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] Position not found: {ctx.PositionId}", ctx));
+                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(ctx.PositionId, "position_not_found"), ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -140,6 +154,8 @@ namespace GeminiV26.Instruments.AUDUSD
                         }
                     }
 
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][CHECK]\ntp1={tp1Price:0.#####}\nreached={reached.ToString().ToLowerInvariant()}\nrDist={rDist:0.#####}", ctx, pos));
+
                     if (reached)
                     {
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
@@ -156,6 +172,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
+                            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={ctx.DeadTradeReason}\ndetail=tvm_early_exit", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
                                 $"symbol={pos.SymbolName}\n" +
                                 $"positionId={pos.Id}\n" +
@@ -172,6 +189,7 @@ namespace GeminiV26.Instruments.AUDUSD
                         }
                     }
 
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][MISS]\ntp1={tp1Price:0.#####}\nrDist={rDist:0.#####}", ctx, pos));
                     continue;
                 }
 
@@ -229,6 +247,7 @@ namespace GeminiV26.Instruments.AUDUSD
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
             ctx.Tp1Hit = true;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
             if (closeExecuted && FindPosition(ctx.PositionId) == null)
             {
@@ -246,10 +265,13 @@ namespace GeminiV26.Instruments.AUDUSD
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[BE][REQUEST]\nbePrice={bePrice:0.#####}\ntp={pos.TakeProfit}", ctx, pos));
             SafeModify(pos, bePrice, pos.TakeProfit);
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
+            ctx.BeActivated = true;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[BE][SUCCESS]\nbePrice={bePrice:0.#####}\ntp={pos.TakeProfit}", ctx, pos));
             _bot.Print(TradeLogIdentity.WithPositionIds($"[BE] moved", ctx, pos));
 
             if (ctx.TrailingMode == TrailingMode.None)
@@ -325,16 +347,25 @@ namespace GeminiV26.Instruments.AUDUSD
             if (position == null)
                 return;
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
             var livePos = FindPosition(Convert.ToInt64(position.Id));
             if (livePos == null)
             {
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
                 _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
                 return;
             }
 
             var result = _bot.ModifyPosition(livePos, sl, tp);
             if (!result.IsSuccessful)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
                 _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[BE][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
+                return;
+            }
+
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][SUCCESS]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
         }
 
         private static bool IsLong(PositionContext ctx)

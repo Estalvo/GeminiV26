@@ -1756,16 +1756,16 @@ namespace GeminiV26.Core
             if (ctx == null || selected == null)
                 return;
 
-            _bot.Print(
-                "[ENTRY SNAPSHOT]\n" +
-                $"symbol={selected.Symbol ?? _bot.SymbolName}\n" +
-                $"time={_bot.Server.Time:O}\n" +
-                $"regime={ResolveEntrySnapshotRegime(ctx)}\n" +
-                $"atr={ctx.AtrM5:0.#####}\n" +
-                $"adx={ctx.Adx_M5:0.##}\n" +
-                $"confidence={selected.Score}\n" +
-                $"direction={selected.Direction}\n" +
-                $"barsSinceStart={ctx.BarsSinceStart}");
+            int logicConfidence = Math.Max(0, ctx.LogicBiasConfidence);
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(selected.Score, logicConfidence);
+            int riskFinal = PositionContext.ClampRiskConfidence(finalConfidence);
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected, logicConfidence, finalConfidence, 0, riskFinal),
+                ctx));
+            _bot.Print(TradeLogIdentity.WithTempId(
+                TradeAuditLog.BuildDirectionSnapshot(ctx, selected),
+                ctx));
         }
 
         private string ResolveEntrySnapshotRegime(EntryContext ctx)
@@ -2243,17 +2243,19 @@ namespace GeminiV26.Core
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
 
             _bot.Print(TradeLogIdentity.WithPositionIds(
-                "[EXIT SNAPSHOT]\n" +
-                $"symbol={pos.SymbolName}\n" +
-                $"positionId={pos.Id}\n" +
-                $"mfe={ctx?.MfeR ?? 0.0:0.##}\n" +
-                $"mae={ctx?.MaeR ?? 0.0:0.##}\n" +
-                $"tp1Hit={(ctx?.Tp1Hit ?? false).ToString().ToLowerInvariant()}\n" +
-                $"barsOpen={ctx?.BarsSinceEntryM5 ?? 0}\n" +
-                $"reason={args.Reason}",
+                $"[EXIT][BROKER_CLOSE_DETECTED]\nreason={MapBrokerCloseReason(args.Reason)}",
                 ctx,
                 pos));
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={args.Reason}", ctx, pos));
+            _bot.Print(TradeLogIdentity.WithPositionIds(
+                TradeAuditLog.BuildExitSnapshot(
+                    ctx,
+                    pos,
+                    args.Reason.ToString(),
+                    _bot.Server.Time,
+                    pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1)),
+                ctx,
+                pos));
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={args.Reason}\ndetail=broker_closed_event", ctx, pos));
 
             _logger.OnTradeClosed(
                 BuildLogContext(pos, meta, ctx, entryCtx),
@@ -2299,6 +2301,16 @@ namespace GeminiV26.Core
             _contextRegistry.RemovePosition(pos.Id);
             _contextRegistry.RemoveEntry(pos.Id);
             _tradeMetaStore.Remove(pos.Id);
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(pos.Id, "position_closed_event"), ctx, pos));
+        }
+
+        private static string MapBrokerCloseReason(PositionCloseReason reason)
+        {
+            return reason == PositionCloseReason.StopLoss
+                ? "STOP_LOSS"
+                : reason == PositionCloseReason.TakeProfit
+                    ? "TAKE_PROFIT"
+                    : "UNKNOWN";
         }
 
         private TradeLogContext BuildLogContext(Position pos, PendingEntryMeta meta, PositionContext pctx = null, EntryContext ectx = null)
