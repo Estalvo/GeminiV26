@@ -77,6 +77,8 @@ namespace GeminiV26.Instruments.XAUUSD
                 _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
+
+            TradeAuditLog.EnsureAttemptId(entryContext, _bot.Server.Time);
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
@@ -170,6 +172,10 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.ComputeFinalConfidence();
 
             int riskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, ctx.LogicConfidence, ctx.FinalConfidence, statePenalty, riskConfidence), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
+            if (statePenalty != 0)
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
 
             // Trailing mód riskConfidence alapján (FinalConfidence + statePenalty)
             ctx.TrailingMode =
@@ -263,6 +269,8 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 8 EXECUTE ORDER
             // =====================================================
+            _bot.Print(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
+
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
                 _bot.SymbolName,
@@ -275,6 +283,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (!result.IsSuccessful || result.Position == null)
             {
+                _bot.Print(TradeLogIdentity.WithTempId($"[EXEC][FAIL] side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
                 _bot.Print("[XAU EXEC] Order execution failed");
                 return;
             }
@@ -313,6 +322,11 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 10 REGISTER CONTEXT
             // =====================================================
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
+
             _positionContexts[ctx.PositionId] = ctx;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);

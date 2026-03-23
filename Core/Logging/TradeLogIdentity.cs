@@ -12,34 +12,61 @@ namespace GeminiV26.Core.Logging
             if (ctx == null)
                 return message;
 
-            return WithTempId(message, ctx.TempId);
+            return WithAttemptPrefix(message, ctx.Symbol, ctx.EntryAttemptId);
         }
 
         public static string WithTempId(string message, string tempId)
         {
-            if (string.IsNullOrWhiteSpace(message) || string.IsNullOrWhiteSpace(tempId) || message.Contains("tempId=", StringComparison.Ordinal))
+            if (string.IsNullOrWhiteSpace(message))
                 return message;
 
-            return InsertFields(message, $"tempId={tempId}");
+            if (string.IsNullOrWhiteSpace(tempId))
+                return message;
+
+            string prefixed = EnsureAttemptPrefix(message, null, tempId);
+            if (prefixed.Contains("tempId=", StringComparison.Ordinal))
+                return prefixed;
+
+            return InsertFields(prefixed, $"tempId={tempId}");
+        }
+
+        public static string WithAttemptPrefix(string message, string symbol, string attemptId)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return message;
+
+            message = EnsureAttemptPrefix(message, symbol, attemptId);
+
+            if (string.IsNullOrWhiteSpace(attemptId) || message.Contains("attemptId=", StringComparison.Ordinal))
+                return message;
+
+            return InsertFields(message, $"attemptId={attemptId}");
         }
 
         public static string WithPositionIds(string message, PositionContext ctx, Position pos = null)
         {
             long posId = 0;
+            string symbol = null;
             if (pos != null && pos.Id > 0)
+            {
                 posId = pos.Id;
+                symbol = pos.SymbolName;
+            }
             else if (ctx != null && ctx.PositionId > 0)
+            {
                 posId = ctx.PositionId;
+                symbol = ctx.Symbol;
+            }
 
-            return WithPositionIds(message, posId > 0 ? posId : (long?)null, ctx?.TempId);
+            return WithPositionIds(message, posId > 0 ? posId : (long?)null, ctx?.TempId, symbol);
         }
 
-        public static string WithPositionIds(string message, long? posId, string tempId = null)
+        public static string WithPositionIds(string message, long? posId, string tempId = null, string symbol = null)
         {
             if (string.IsNullOrWhiteSpace(message))
                 return message;
 
-            message = EnsurePositionPrefix(message, posId);
+            message = EnsurePositionPrefix(message, symbol, posId);
 
             var fields = new List<string>();
             if (!string.IsNullOrWhiteSpace(tempId) && !message.Contains("tempId=", StringComparison.Ordinal))
@@ -69,16 +96,42 @@ namespace GeminiV26.Core.Logging
             return $"{fields} {message}";
         }
 
-        private static string EnsurePositionPrefix(string message, long? posId)
+        private static string EnsureAttemptPrefix(string message, string symbol, string attemptId)
         {
-            string prefix = posId.HasValue && posId.Value > 0
-                ? $"[POS {posId.Value}]"
-                : "[POS ?]";
+            string prefix = $"{EnsureSymbolPrefix(symbol)} {EnsureAttemptToken(attemptId)}";
 
             if (message.StartsWith(prefix, StringComparison.Ordinal))
                 return message;
 
             return $"{prefix} {message}";
+        }
+
+        private static string EnsurePositionPrefix(string message, string symbol, long? posId)
+        {
+            string prefix =
+                $"{EnsureSymbolPrefix(symbol)} " +
+                (posId.HasValue && posId.Value > 0
+                    ? $"[POS {posId.Value}]"
+                    : "[POS ?]");
+
+            if (message.StartsWith(prefix, StringComparison.Ordinal))
+                return message;
+
+            return $"{prefix} {message}";
+        }
+
+        private static string EnsureSymbolPrefix(string symbol)
+        {
+            return string.IsNullOrWhiteSpace(symbol)
+                ? "[UNKNOWN]"
+                : $"[{symbol.Trim().ToUpperInvariant()}]";
+        }
+
+        private static string EnsureAttemptToken(string attemptId)
+        {
+            return string.IsNullOrWhiteSpace(attemptId)
+                ? "[ATTEMPT ?]"
+                : $"[ATTEMPT {attemptId}]";
         }
     }
 }

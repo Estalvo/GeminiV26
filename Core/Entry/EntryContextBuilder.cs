@@ -58,7 +58,7 @@ namespace GeminiV26.Core.Entry
             var ctx = new EntryContext
             {
                 Symbol = symbol,
-                TempId = $"{symbol}_{_bot.Server.Time:yyyyMMdd_HHmmss_fff}",
+                TempId = CreateEntryAttemptId(symbol),
                 IsReady = false,
                 TrendDirection = TradeDirection.None,
                 Log = message => _bot.Print(message)
@@ -740,6 +740,39 @@ namespace GeminiV26.Core.Entry
 
             ctx.IsReady = true;
             return ctx;
+        }
+
+        private string CreateEntryAttemptId(string symbol)
+        {
+            string cleanSymbol = string.IsNullOrWhiteSpace(symbol)
+                ? "SYM"
+                : symbol.Trim().ToUpperInvariant();
+
+            string head = cleanSymbol.Length <= 3
+                ? cleanSymbol
+                : cleanSymbol.Substring(0, 3);
+
+            long millis = _bot.Server.Time.Ticks / TimeSpan.TicksPerMillisecond;
+            string suffix = ToBase36(Math.Abs(millis % 2176782336L)).PadLeft(6, '0');
+            return $"{head}{suffix}";
+        }
+
+        private static string ToBase36(long value)
+        {
+            const string alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (value <= 0)
+                return "0";
+
+            char[] buffer = new char[16];
+            int index = buffer.Length;
+
+            while (value > 0)
+            {
+                buffer[--index] = alphabet[(int)(value % 36)];
+                value /= 36;
+            }
+
+            return new string(buffer, index, buffer.Length - index);
         }
     }
 }

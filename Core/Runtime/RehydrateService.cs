@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 
 namespace GeminiV26.Core.Runtime
 {
@@ -105,7 +106,13 @@ namespace GeminiV26.Core.Runtime
                 return;
             }
 
+            long positionKey = Convert.ToInt64(position.Id);
             summary.GeminiManagedCandidates++;
+            _bot.Print(TradeLogIdentity.WithPositionIds(
+                $"[REHYDRATE][DISCOVERED]\npositionId={positionKey}\nsymbol={position.SymbolName}\nlabel={position.Label}",
+                positionKey,
+                position.Comment,
+                position.SymbolName));
 
             if (!string.Equals(normalizedSymbol, _currentSymbolCanonical, StringComparison.Ordinal))
             {
@@ -116,7 +123,6 @@ namespace GeminiV26.Core.Runtime
                 return;
             }
 
-            long positionKey = Convert.ToInt64(position.Id);
             if (_registry.ContainsKey(positionKey))
             {
                 summary.Duplicates++;
@@ -173,11 +179,19 @@ namespace GeminiV26.Core.Runtime
                 $"[REHYDRATE] pos={positionKey} symbol={position.SymbolName} dir={rebuild.Context.FinalDirection} " +
                 $"tp1Hit={rebuild.Context.Tp1Hit} be={rebuild.Context.BeActivated} trailing={rebuild.Context.TrailingActivated} " +
                 $"remainingUnits={rebuild.Context.RemainingVolumeInUnits} source={rebuild.Context.RehydrateSource}");
+            _bot.Print(TradeLogIdentity.WithPositionIds(
+                $"[REHYDRATE][ATTACH]\npositionId={positionKey}\nfinalDirection={rebuild.Context.FinalDirection}\ntp1Hit={rebuild.Context.Tp1Hit}\nbeMoved={rebuild.Context.BeActivated}\ntrailActive={rebuild.Context.TrailingActivated}",
+                rebuild.Context,
+                position));
 
             if (rebuild.DefaultedLifecycleFields)
             {
                 _bot.Print(
                     $"[REHYDRATE_FALLBACK] pos={positionKey} symbol={position.SymbolName} reason=lifecycle_fields_defaulted");
+                _bot.Print(TradeLogIdentity.WithPositionIds(
+                    "[REHYDRATE][FALLBACK]\nreason=lifecycle_fields_defaulted",
+                    rebuild.Context,
+                    position));
             }
         }
 
@@ -189,6 +203,7 @@ namespace GeminiV26.Core.Runtime
             if (string.IsNullOrWhiteSpace(position.SymbolName))
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} reason=missing_symbol_name");
+                _bot.Print(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_name", positionKey, position?.Comment, position?.SymbolName));
                 return result;
             }
 
@@ -196,6 +211,7 @@ namespace GeminiV26.Core.Runtime
             if (symbol == null)
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
+                _bot.Print(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_metadata", positionKey, position.Comment, position.SymbolName));
                 return result;
             }
 
@@ -203,6 +219,7 @@ namespace GeminiV26.Core.Runtime
             if (!IsFinitePositive(entryPrice))
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_entry_price value={entryPrice}");
+                _bot.Print(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_entry_price", positionKey, position.Comment, position.SymbolName));
                 return result;
             }
 
@@ -210,6 +227,7 @@ namespace GeminiV26.Core.Runtime
             if (!IsFinitePositive(currentVolumeInUnits))
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_volume_units value={currentVolumeInUnits}");
+                _bot.Print(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_volume_units", positionKey, position.Comment, position.SymbolName));
                 return result;
             }
 
@@ -360,6 +378,8 @@ namespace GeminiV26.Core.Runtime
 
             // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
             ctx.ComputeFinalConfidence();
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, position));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, position));
 
             TradeDirection liveDirection = position.TradeType == TradeType.Buy
                 ? TradeDirection.Long

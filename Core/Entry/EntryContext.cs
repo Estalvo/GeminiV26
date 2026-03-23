@@ -16,6 +16,11 @@ namespace GeminiV26.Core.Entry
         public bool IsReady { get; set; }
         public string Symbol;
         public string TempId { get; set; }
+        public string EntryAttemptId
+        {
+            get => TempId;
+            set => TempId = value;
+        }
         public Action<string> Log { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;

@@ -46,6 +46,12 @@ namespace GeminiV26.Core
 
         public string TempId { get; set; } = string.Empty;
 
+        public string EntryAttemptId
+        {
+            get => TempId;
+            set => TempId = value;
+        }
+
         public string EntryType { get; set; } = string.Empty;
 
         public string EntryReason { get; set; } = string.Empty;
@@ -393,6 +399,12 @@ namespace GeminiV26.Core
         public bool TrailNoImprovementLogged { get; set; }
 
         public bool TrailNoStructureLogged { get; set; }
+
+        public int TrailSteps { get; set; }
+
+        public int LastStateTraceBarIndex { get; set; } = -1;
+
+        public string LastStateTraceFingerprint { get; set; } = string.Empty;
 
         public bool MarketTrend { get; set; }
 

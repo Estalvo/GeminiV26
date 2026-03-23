@@ -87,6 +87,8 @@ namespace GeminiV26.Instruments.XAUUSD
             }
 
             _contexts[ctx.PositionId] = ctx;
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
+            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
 
         // =====================================================
@@ -101,6 +103,18 @@ namespace GeminiV26.Instruments.XAUUSD
             // M5 bar counter (TVM / rescue / viability window)
             // =====================================================
             ctx.BarsSinceEntryM5++;
+
+            var stateSymbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            if (stateSymbol != null)
+            {
+                string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
+                if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, position, stateSymbol), ctx, position));
+                    ctx.LastStateTraceBarIndex = ctx.BarsSinceEntryM5;
+                    ctx.LastStateTraceFingerprint = stateFingerprint;
+                }
+            }
 
             if (ctx.Tp1Hit)
                 TryEarlyExit(pos, ctx);
@@ -133,7 +147,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] Position not found: {ctx.PositionId}", ctx));
+                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(ctx.PositionId, "position_not_found"), ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -206,6 +220,8 @@ namespace GeminiV26.Instruments.XAUUSD
                         }
                     }
  
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][CHECK]\ntp1={tp1Price:0.#####}\nreached={hit.ToString().ToLowerInvariant()}\nrDist={rDist:0.#####}", ctx, pos));
+
                     if (hit)
                     {
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
@@ -223,6 +239,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
+                            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={ctx.DeadTradeReason}\ndetail=tvm_early_exit", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
                                 $"symbol={pos.SymbolName}\n" +
                                 $"positionId={pos.Id}\n" +
@@ -576,16 +593,25 @@ namespace GeminiV26.Instruments.XAUUSD
             if (position == null)
                 return;
 
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
             var livePos = FindPosition(Convert.ToInt64(position.Id));
             if (livePos == null)
             {
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
                 _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
                 return;
             }
 
             var result = _bot.ModifyPosition(livePos, sl, tp);
             if (!result.IsSuccessful)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
                 _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[BE][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
+                return;
+            }
+
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][SUCCESS]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
         }
 
         private static bool IsLong(PositionContext ctx)
