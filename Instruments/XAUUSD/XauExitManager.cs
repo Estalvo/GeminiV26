@@ -18,6 +18,7 @@
 // =========================================================
 
 using cAlgo.API;
+using cAlgo.API.Internals;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
