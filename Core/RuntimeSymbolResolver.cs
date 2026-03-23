@@ -51,46 +51,112 @@ namespace GeminiV26.Core
         {
             runtimeName = null;
 
-            if (string.IsNullOrWhiteSpace(symbolReference))
-                return false;
-
-            Refresh();
-
-            string requested = symbolReference.Trim();
-            string canonical = SymbolRouting.NormalizeSymbol(requested);
-            if (string.IsNullOrWhiteSpace(canonical))
-                return false;
-
-            if (SymbolRouting.NormalizeSymbol(_bot.SymbolName) == canonical)
+            try
             {
-                runtimeName = _bot.SymbolName;
-                return true;
+                if (string.IsNullOrWhiteSpace(symbolReference))
+                    return false;
+
+                Refresh();
+
+                string requested = symbolReference.Trim();
+                string canonical = SymbolRouting.NormalizeSymbol(requested);
+                if (string.IsNullOrWhiteSpace(canonical))
+                    return false;
+
+                if (SymbolRouting.NormalizeSymbol(_bot.SymbolName) == canonical)
+                {
+                    runtimeName = _bot.SymbolName;
+                    return true;
+                }
+
+                if (_runtimeNamesByCanonical.TryGetValue(canonical, out runtimeName) && !string.IsNullOrWhiteSpace(runtimeName))
+                    return true;
+
+                var directSymbol = _bot.Symbols.GetSymbol(requested);
+                if (directSymbol != null)
+                {
+                    runtimeName = directSymbol.Name;
+                    RegisterRuntimeName(runtimeName);
+                    return true;
+                }
+            }
+            catch
+            {
+                runtimeName = null;
+                return false;
             }
 
-            if (_runtimeNamesByCanonical.TryGetValue(canonical, out runtimeName) && !string.IsNullOrWhiteSpace(runtimeName))
-                return true;
-
-            var directSymbol = _bot.Symbols.GetSymbol(requested);
-            if (directSymbol != null)
-            {
-                runtimeName = directSymbol.Name;
-                RegisterRuntimeName(runtimeName);
-                return true;
-            }
-
+            runtimeName = null;
             return false;
+        }
+
+        public bool TryResolveSymbol(string symbolReference, out Symbol symbol)
+        {
+            symbol = null;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(symbolReference))
+                    return false;
+
+                if (SymbolRouting.NormalizeSymbol(symbolReference) == SymbolRouting.NormalizeSymbol(_bot.SymbolName))
+                {
+                    symbol = _bot.Symbol;
+                    return symbol != null;
+                }
+
+                if (!TryResolveRuntimeName(symbolReference, out var runtimeName))
+                    return false;
+
+                symbol = _bot.Symbols.GetSymbol(runtimeName);
+                return symbol != null;
+            }
+            catch
+            {
+                symbol = null;
+                return false;
+            }
+        }
+
+        public bool TryGetBars(TimeFrame timeFrame, string symbolReference, out Bars bars)
+        {
+            bars = null;
+
+            try
+            {
+                if (!TryResolveRuntimeName(symbolReference, out var runtimeName))
+                    return false;
+
+                bars = _bot.MarketData.GetBars(timeFrame, runtimeName);
+                return bars != null;
+            }
+            catch
+            {
+                bars = null;
+                return false;
+            }
+        }
+
+        public bool TryGetPipSize(string symbolReference, out double pipSize)
+        {
+            pipSize = 0;
+
+            if (!TryGetSymbolMeta(symbolReference, out var symbol))
+                return false;
+
+            pipSize = symbol.PipSize;
+            return pipSize > 0;
+        }
+
+        public bool TryGetSymbolMeta(string symbolReference, out Symbol symbol)
+        {
+            return TryResolveSymbol(symbolReference, out symbol);
         }
 
         public Symbol ResolveSymbol(string symbolReference)
         {
-            if (string.IsNullOrWhiteSpace(symbolReference))
-                return null;
-
-            if (SymbolRouting.NormalizeSymbol(symbolReference) == SymbolRouting.NormalizeSymbol(_bot.SymbolName))
-                return _bot.Symbol;
-
-            return TryResolveRuntimeName(symbolReference, out var runtimeName)
-                ? _bot.Symbols.GetSymbol(runtimeName)
+            return TryResolveSymbol(symbolReference, out var symbol)
+                ? symbol
                 : null;
         }
 
@@ -101,8 +167,8 @@ namespace GeminiV26.Core
 
         public Bars GetBars(TimeFrame timeFrame, string symbolReference)
         {
-            return TryResolveRuntimeName(symbolReference, out var runtimeName)
-                ? _bot.MarketData.GetBars(timeFrame, runtimeName)
+            return TryGetBars(timeFrame, symbolReference, out var bars)
+                ? bars
                 : null;
         }
 

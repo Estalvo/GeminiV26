@@ -709,6 +709,7 @@ namespace GeminiV26.Core
 
             EnsureStartupMemoryReady();
             AuditMemoryCoverage();
+            AuditResolverCoverage();
 
             bool isFx = _fxMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.FX;
 
@@ -1825,11 +1826,15 @@ namespace GeminiV26.Core
             if (ctx.M5 == null || ctx.M5.Count <= 0)
             {
                 ctx.MemoryState = _memoryEngine.GetState(memorySymbol);
+                ctx.MemoryResolved = ctx.MemoryState?.IsResolved == true;
+                ctx.MemoryUsable = ctx.MemoryState?.IsUsable == true;
                 ctx.MemoryAssessment = _memoryEngine.GetAssessment(memorySymbol);
                 return;
             }
 
             SymbolMemoryState state = _memoryEngine.GetState(memorySymbol);
+            _memoryEngine.MarkResolved(memorySymbol);
+
             if (state.BuildMode == MemoryBuildMode.Default)
             {
                 _memoryEngine.BuildFromHistory(memorySymbol, ToClosedBarList(ctx.M5));
@@ -1845,6 +1850,8 @@ namespace GeminiV26.Core
             state.SessionFatigueScore = Math.Max(0, ctx.BarsSinceStart);
 
             ctx.MemoryState = state;
+            ctx.MemoryResolved = state.IsResolved;
+            ctx.MemoryUsable = state.IsUsable;
             ctx.MemoryAssessment = _memoryEngine.GetAssessment(memorySymbol);
         }
 
@@ -1877,7 +1884,9 @@ namespace GeminiV26.Core
             }
 
             _isMemoryReady = true;
-            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
             _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
         }
 
@@ -1886,12 +1895,15 @@ namespace GeminiV26.Core
             if (string.IsNullOrWhiteSpace(symbol))
                 return new List<Bar>();
 
-            Bars bars = _runtimeSymbols.GetBars(TimeFrame.Minute5, symbol);
-            if (bars == null)
+            if (!_runtimeSymbols.TryGetBars(TimeFrame.Minute5, symbol, out Bars bars))
             {
-                _bot.Print($"[MEMORY][SYMBOL_UNRESOLVED] canonical={NormalizeSymbol(symbol)}");
+                string normalizedSymbol = NormalizeSymbol(symbol);
+                _memoryEngine.MarkResolveFailure(normalizedSymbol, "unresolved_runtime_symbol");
+                _bot.Print($"[MEMORY][SYMBOL_UNRESOLVED] canonical={normalizedSymbol}");
                 return new List<Bar>();
             }
+
+            _memoryEngine.MarkResolved(NormalizeSymbol(symbol));
 
             return ToClosedBarList(bars);
         }
@@ -2495,6 +2507,8 @@ namespace GeminiV26.Core
                 SymbolMemoryState memoryState = _memoryEngine.GetState(symbol);
                 bool isNull = memoryState == null;
                 bool isBuilt = memoryState?.IsBuilt == true;
+                bool isResolved = memoryState?.IsResolved == true;
+                bool isUsable = memoryState?.IsUsable == true;
 
                 if (isNull || !isBuilt)
                 {
@@ -2506,11 +2520,43 @@ namespace GeminiV26.Core
                     continue;
                 }
 
+                if (!isResolved)
+                {
+                    _bot.Print($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} resolved={isResolved} usable={isUsable} reason={memoryState?.ResolveFailureReason ?? string.Empty}");
+                    continue;
+                }
+
                 _bot.Print(
-                    $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount}");
+                    $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount} usable={isUsable}");
             }
 
-            _bot.Print($"[MEMORY][COVERAGE] ratio={_memoryEngine.GetCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
+            _bot.Print($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
+        }
+
+        private void AuditResolverCoverage()
+        {
+            var symbols = GetAllMemorySymbols();
+            int resolved = 0;
+            int total = 0;
+            bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
+
+            foreach (var symbol in symbols)
+            {
+                total++;
+                if (_runtimeSymbols.TryResolveSymbol(symbol, out _))
+                {
+                    resolved++;
+                    continue;
+                }
+
+                _bot.Print($"[RESOLVER][MISSING] symbol={symbol}");
+                if (isStartupWindow)
+                    _bot.Print($"[RESOLVER][CRITICAL] symbol={symbol} missing_after_startup");
+            }
+
+            _bot.Print($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
         }
 
         private List<string> GetAllMemorySymbols()

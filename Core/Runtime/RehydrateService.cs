@@ -200,13 +200,44 @@ namespace GeminiV26.Core.Runtime
                 return result;
             }
 
-            var symbol = _runtimeSymbols.ResolveSymbol(position.SymbolName);
-            if (symbol == null)
+            if (!_runtimeSymbols.TryGetSymbolMeta(position.SymbolName, out var symbol))
             {
+                _bot.Print($"[REHYDRATE][RESOLVER_FAIL] symbol={position.SymbolName} positionId={positionKey}");
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
                 _bot.Print(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_metadata", positionKey, position.Comment, position.SymbolName));
+
+                var unresolvedContext = new PositionContext
+                {
+                    PositionId = positionKey,
+                    Symbol = position.SymbolName,
+                    TempId = position.Comment ?? string.Empty,
+                    EntryType = "REHYDRATED",
+                    EntryReason = "Startup rehydrate from live open position",
+                    FinalDirection = position.TradeType == TradeType.Buy ? TradeDirection.Long : TradeDirection.Short,
+                    EntryScore = 50,
+                    LogicConfidence = 50,
+                    EntryTime = position.EntryTime,
+                    EntryTimeUtc = position.EntryTime.ToUniversalTime(),
+                    EntryPrice = position.EntryPrice,
+                    RemainingVolumeInUnits = position.VolumeInUnits,
+                    InitialVolumeInUnits = position.VolumeInUnits,
+                    EntryVolumeInUnits = position.VolumeInUnits,
+                    IsRehydrated = true,
+                    RehydratedAtUtc = _bot.Server.Time.ToUniversalTime(),
+                    RehydrateSource = "LiveOpenPosition",
+                    ContextTrust = MemoryTrustLevel.Low,
+                    RuntimeSymbolAvailable = false,
+                    MarketTrend = true,
+                    Adx_M5 = 0
+                };
+                unresolvedContext.ComputeFinalConfidence();
+                result.Context = unresolvedContext;
+                result.UsedFallback = true;
+                result.DefaultedLifecycleFields = true;
                 return result;
             }
+
+            _bot.Print($"[REHYDRATE][RESOLVER_OK] symbol={position.SymbolName} positionId={positionKey}");
 
             double entryPrice = position.EntryPrice;
             if (!IsFinitePositive(entryPrice))
@@ -368,12 +399,14 @@ namespace GeminiV26.Core.Runtime
                 RehydratedAtUtc = _bot.Server.Time.ToUniversalTime(),
                 RehydrateSource = "LiveOpenPosition",
                 MarketTrend = direction != TradeDirection.None,
-                Adx_M5 = 0
+                Adx_M5 = 0,
+                RuntimeSymbolAvailable = true
             };
 
             // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
             ctx.ComputeFinalConfidence();
-            AttachMemoryState(ctx, position.SymbolName, ref defaultedLifecycleFields);
+            if (ctx.RuntimeSymbolAvailable)
+                AttachMemoryState(ctx, position.SymbolName, ref defaultedLifecycleFields);
             RebuildTradeExcursions(ctx, position);
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, position));
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, position));
@@ -455,7 +488,12 @@ namespace GeminiV26.Core.Runtime
 
         private bool TryComputeBarsSinceEntry(PositionContext ctx, string symbolName, TimeFrame timeFrame)
         {
-            Bars bars = _runtimeSymbols.GetBars(timeFrame, symbolName);
+            if (!_runtimeSymbols.TryGetBars(timeFrame, symbolName, out Bars bars))
+            {
+                _bot.Print($"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
+                return false;
+            }
+
             if (bars == null || bars.Count == 0)
                 return false;
 
@@ -473,7 +511,12 @@ namespace GeminiV26.Core.Runtime
             if (ctx.RiskPriceDistance <= 0 || ctx.FinalDirection == TradeDirection.None)
                 return false;
 
-            Bars bars = _runtimeSymbols.GetBars(timeFrame, symbolName);
+            if (!_runtimeSymbols.TryGetBars(timeFrame, symbolName, out Bars bars))
+            {
+                _bot.Print($"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
+                return false;
+            }
+
             if (bars == null || bars.Count == 0)
                 return false;
 

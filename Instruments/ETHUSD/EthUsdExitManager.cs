@@ -69,6 +69,30 @@ namespace GeminiV26.Instruments.ETHUSD
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
 
+        private bool TryResolveExitSymbol(Position pos, out Symbol symbol)
+        {
+            symbol = null;
+            if (pos == null || !_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol))
+            {
+                _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars)
+        {
+            bars = null;
+            if (pos == null || !_runtimeSymbols.TryGetBars(timeFrame, pos.SymbolName, out bars))
+            {
+                _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                return false;
+            }
+
+            return bars != null;
+        }
+
         public void OnBar(Position position)
         {
             if (position == null)
@@ -81,8 +105,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             ctx.BarsSinceEntryM5++;
 
-            var stateSymbol = _runtimeSymbols.ResolveSymbol(position.SymbolName);
-            if (stateSymbol != null)
+            if (TryResolveExitSymbol(position, out var stateSymbol))
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
                 if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
@@ -120,8 +143,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
-                if (sym == null)
+                if (!TryResolveExitSymbol(pos, out var sym))
                     continue;
 
                 double rDist = GetRiskDistance(pos, ctx);
@@ -169,9 +191,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (!reached)
                     {
-                        var m1 = _runtimeSymbols.GetBars(TimeFrame.Minute, pos.SymbolName);
-
-                        if (m1 != null && m1.Count > 0)
+                        if (TryGetExitBars(pos, TimeFrame.Minute, out var m1) && m1.Count > 0)
                         {
                             var m1Bar = m1.LastBar;
 
@@ -196,8 +216,11 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
-                        var m5 = _runtimeSymbols.GetBars(TimeFrame.Minute5, pos.SymbolName);
-                        var m15 = _runtimeSymbols.GetBars(TimeFrame.Minute15, pos.SymbolName);
+                        if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5) ||
+                            !TryGetExitBars(pos, TimeFrame.Minute15, out var m15))
+                        {
+                            continue;
+                        }
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
@@ -264,9 +287,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            var sym = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
-
-            if (sym == null)
+            if (!TryResolveExitSymbol(pos, out var sym))
                 return;
 
             double frac = ctx.Tp1CloseFraction;

@@ -20,21 +20,9 @@ namespace Gemini.Memory
         public int TotalSymbolCount { get; private set; }
         public double MemoryCoverageRatio { get; private set; }
 
-        public int BuiltSymbolCount
-        {
-            get
-            {
-                int count = 0;
-
-                foreach (var state in States.Values)
-                {
-                    if (state != null && state.IsBuilt)
-                        count++;
-                }
-
-                return count;
-            }
-        }
+        public int BuiltSymbolCount => CountStates(state => state.IsBuilt);
+        public int ResolvedSymbolCount => CountStates(state => state.IsResolved);
+        public int UsableSymbolCount => CountStates(state => state.IsUsable);
 
         public SymbolMemoryState GetState(string symbol)
         {
@@ -55,11 +43,30 @@ namespace Gemini.Memory
                 MovePhase = MovePhase.Unknown,
                 TrustLevel = MemoryTrustLevel.Unknown,
                 BuildMode = MemoryBuildMode.Default,
-                IsBuilt = false
+                IsBuilt = false,
+                IsResolved = false,
+                IsUsable = false,
+                ResolveFailureReason = string.Empty
             };
 
             States[key] = state;
             return state;
+        }
+
+        public void MarkResolved(string symbol)
+        {
+            var state = GetState(symbol);
+            state.IsResolved = true;
+            state.ResolveFailureReason = string.Empty;
+            RecomputeUsable(state);
+        }
+
+        public void MarkResolveFailure(string symbol, string reason)
+        {
+            var state = GetState(symbol);
+            state.IsResolved = false;
+            state.IsUsable = false;
+            state.ResolveFailureReason = reason ?? string.Empty;
         }
 
         public void BuildFromHistory(string symbol, List<Bar> bars)
@@ -84,6 +91,7 @@ namespace Gemini.Memory
             if (bars == null || bars.Count == 0)
             {
                 state.IsBuilt = true;
+                RecomputeUsable(state);
                 _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} bars=0 reason=no_history");
                 _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars}");
                 return;
@@ -95,6 +103,7 @@ namespace Gemini.Memory
             }
 
             state.IsBuilt = true;
+            RecomputeUsable(state);
             _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars} pullbacks={state.PullbackCount} sinceImpulse={state.BarsSinceImpulse}");
         }
 
@@ -120,6 +129,7 @@ namespace Gemini.Memory
             if (IsStrongMove(bar))
             {
                 ApplyImpulse(state, bar, "new_impulse");
+                RecomputeUsable(state);
                 _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
                 _log?.Invoke($"[MEMORY][IMPULSE] symbol={state.Symbol} phase={state.MovePhase}");
                 return;
@@ -155,39 +165,37 @@ namespace Gemini.Memory
                 state.MovePhase = MovePhase.Stale;
             }
 
+            RecomputeUsable(state);
             _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
         }
 
         public string GetCoverageRatio(IEnumerable<string> symbols)
         {
-            int totalSymbols = 0;
-            int builtSymbols = 0;
-
-            if (symbols != null)
-            {
-                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var symbol in symbols)
-                {
-                    if (string.IsNullOrWhiteSpace(symbol))
-                        continue;
-
-                    string key = symbol.Trim();
-                    if (!seen.Add(key))
-                        continue;
-
-                    totalSymbols++;
-
-                    if (States.TryGetValue(key, out var state) && state != null && state.IsBuilt)
-                        builtSymbols++;
-                }
-            }
-
-            TotalSymbolCount = totalSymbols;
-            MemoryCoverageRatio = totalSymbols > 0
-                ? (double)builtSymbols / totalSymbols
+            var coverage = ComputeCoverage(symbols);
+            TotalSymbolCount = coverage.Total;
+            MemoryCoverageRatio = coverage.Total > 0
+                ? (double)coverage.Built / coverage.Total
                 : 0d;
 
-            return $"{builtSymbols}/{totalSymbols}";
+            return $"{coverage.Built}/{coverage.Total}";
+        }
+
+        public string GetBuiltCoverageRatio(IEnumerable<string> symbols)
+        {
+            var coverage = ComputeCoverage(symbols);
+            return FormatCoverage(coverage.Built, coverage.Total);
+        }
+
+        public string GetResolvedCoverageRatio(IEnumerable<string> symbols)
+        {
+            var coverage = ComputeCoverage(symbols);
+            return FormatCoverage(coverage.Resolved, coverage.Total);
+        }
+
+        public string GetUsableCoverageRatio(IEnumerable<string> symbols)
+        {
+            var coverage = ComputeCoverage(symbols);
+            return FormatCoverage(coverage.Usable, coverage.Total);
         }
 
         public MemoryAssessment GetAssessment(string symbol)
@@ -197,7 +205,7 @@ namespace Gemini.Memory
             {
                 IsLateMove = state.PullbackCount > 2 || state.IsStaleImpulse,
                 IsChaseRisk = state.BarsSinceImpulse > ChaseRiskThresholdBars,
-                ContextTrustScore = ResolveContextTrustScore(state.BuildMode),
+                ContextTrustScore = state.IsUsable ? ResolveContextTrustScore(state.BuildMode) : 0.0,
                 RecommendedPenalty = 0
             };
 
@@ -365,6 +373,67 @@ namespace Gemini.Memory
                 return -1;
 
             return 0;
+        }
+
+        private int CountStates(Func<SymbolMemoryState, bool> predicate)
+        {
+            int count = 0;
+
+            foreach (var state in States.Values)
+            {
+                if (state != null && predicate(state))
+                    count++;
+            }
+
+            return count;
+        }
+
+        private (int Total, int Built, int Resolved, int Usable) ComputeCoverage(IEnumerable<string> symbols)
+        {
+            int totalSymbols = 0;
+            int builtSymbols = 0;
+            int resolvedSymbols = 0;
+            int usableSymbols = 0;
+
+            if (symbols != null)
+            {
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var symbol in symbols)
+                {
+                    if (string.IsNullOrWhiteSpace(symbol))
+                        continue;
+
+                    string key = symbol.Trim();
+                    if (!seen.Add(key))
+                        continue;
+
+                    totalSymbols++;
+
+                    if (!States.TryGetValue(key, out var state) || state == null)
+                        continue;
+
+                    if (state.IsBuilt)
+                        builtSymbols++;
+
+                    if (state.IsResolved)
+                        resolvedSymbols++;
+
+                    if (state.IsUsable)
+                        usableSymbols++;
+                }
+            }
+
+            return (totalSymbols, builtSymbols, resolvedSymbols, usableSymbols);
+        }
+
+        private static string FormatCoverage(int covered, int total) => $"{covered}/{total}";
+
+        private static void RecomputeUsable(SymbolMemoryState state)
+        {
+            if (state == null)
+                return;
+
+            state.IsUsable = state.IsBuilt && state.IsResolved;
         }
 
         private static double ResolveContextTrustScore(MemoryBuildMode buildMode)
