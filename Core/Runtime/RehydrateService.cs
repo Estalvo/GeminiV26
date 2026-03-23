@@ -192,7 +192,7 @@ namespace GeminiV26.Core.Runtime
                 return result;
             }
 
-            Symbol symbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            var symbol = _bot.Symbols.GetSymbol(position.SymbolName);
             if (symbol == null)
             {
                 _bot.Print($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
