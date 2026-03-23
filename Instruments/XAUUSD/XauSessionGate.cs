@@ -37,8 +37,8 @@ namespace GeminiV26.Instruments.XAUUSD
             {
                 if (h >= 0 && h < 8)
                 {
-                    _bot.Print("[XAU SESSION] BLOCKED: Asian disabled");
-                    return false;
+                    _bot.Print("[XAU SESSION] ALLOWED: XAU_ASIA_ALLOWED");
+                    return true;
                 }
             }
 

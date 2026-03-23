@@ -51,6 +51,15 @@ public class GlobalSessionGate
             Reason = "Default blocked"
         };
 
+        if (utc.DayOfWeek == DayOfWeek.Monday &&
+            utc.TimeOfDay >= new TimeSpan(7, 0, 0) &&
+            utc.TimeOfDay < new TimeSpan(8, 30, 0))
+        {
+            decision.Reason = "MONDAY_0700_0830_BLOCK";
+            LogGate(symbol, tf, GetTimeframeTier(tf), decision);
+            return decision;
+        }
+
         if (IsCrypto(symbol))
         {
             decision.Bucket = SessionBucket.CryptoAlwaysOn;
