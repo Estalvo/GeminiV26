@@ -74,6 +74,12 @@ namespace GeminiV26.Core.Logging
                    $"adx={ctx?.Adx_M5 ?? 0:0.##}\n" +
                    $"htfDirection={htfDirection}\n" +
                    $"htfConfidence={htfConfidence}\n" +
+                   $"movePhase={ctx?.MemoryState?.MovePhase.ToString() ?? "Unknown"}\n" +
+                   $"moveAge={ctx?.MemoryState?.MoveAgeBars ?? 0}\n" +
+                   $"pullbackCount={ctx?.MemoryState?.PullbackCount ?? 0}\n" +
+                   $"isLateMove={ToLower(ctx?.MemoryAssessment?.IsLateMove ?? false)}\n" +
+                   $"isChaseRisk={ToLower(ctx?.MemoryAssessment?.IsChaseRisk ?? false)}\n" +
+                   $"contextTrust={FormatScore(ctx?.MemoryAssessment?.ContextTrustScore ?? 0)}\n" +
                    $"restartPhase={ResolveRestartPhase(ctx)}";
         }
 
@@ -218,6 +224,14 @@ namespace GeminiV26.Core.Logging
                 return "NA";
 
             return value.Value.ToString("0.#####", CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatScore(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+                return "0";
+
+            return value.ToString("0.##", CultureInfo.InvariantCulture);
         }
 
         private static string ToBase36(long value)

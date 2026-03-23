@@ -28,6 +28,8 @@
 // =========================================================
 
 using cAlgo.API;
+using cAlgo.API.Internals;
+using Gemini.Memory;
 using GeminiV26.Core.Entry;
 using GeminiV26.EntryTypes;
 using GeminiV26.EntryTypes.FX;
@@ -85,6 +87,7 @@ namespace GeminiV26.Core
         private readonly Dictionary<string, ArmedSetup> _armedSetups = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
         private readonly TradeStatsTracker _statsTracker;
+        private readonly MarketMemoryEngine _memoryEngine;
         private readonly string _symbolCanonical;
         private readonly InstrumentClass _instrumentClass;
        
@@ -370,6 +373,7 @@ namespace GeminiV26.Core
                 new CsvTradeLogger(_logWriter, safePrint),
                 new CsvAnalyticsLogger(_logWriter, safePrint));
             _statsTracker = new TradeStatsTracker(safePrint);
+            _memoryEngine = new MarketMemoryEngine(safePrint);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 
@@ -937,6 +941,7 @@ namespace GeminiV26.Core
             // =========================
             _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
             _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
+            SyncMemoryState(_ctx);
 
             TradeType xauBias = TradeType.Buy;
             int xauBiasConfidence = 0;
@@ -1783,6 +1788,52 @@ namespace GeminiV26.Core
                 return "Transition";
 
             return _instrumentClass.ToString();
+        }
+
+        private void SyncMemoryState(EntryContext ctx)
+        {
+            if (ctx == null || string.IsNullOrWhiteSpace(ctx.Symbol))
+                return;
+
+            if (ctx.M5 == null || ctx.M5.Count <= 0)
+            {
+                ctx.MemoryState = _memoryEngine.GetState(ctx.Symbol);
+                ctx.MemoryAssessment = _memoryEngine.GetAssessment(ctx.Symbol);
+                return;
+            }
+
+            SymbolMemoryState state = _memoryEngine.GetState(ctx.Symbol);
+            if (state.BuildMode == MemoryBuildMode.Default)
+            {
+                _memoryEngine.BuildFromHistory(ctx.Symbol, ToClosedBarList(ctx.M5));
+            }
+            else
+            {
+                int lastClosedIndex = Math.Max(0, ctx.M5.Count - 2);
+                _memoryEngine.OnBar(ctx.Symbol, ctx.M5[lastClosedIndex]);
+            }
+
+            state = _memoryEngine.GetState(ctx.Symbol);
+            state.SessionName = ctx.Session.ToString();
+            state.SessionFatigueScore = Math.Max(0, ctx.BarsSinceStart);
+
+            ctx.MemoryState = state;
+            ctx.MemoryAssessment = _memoryEngine.GetAssessment(ctx.Symbol);
+        }
+
+        private static List<Bar> ToClosedBarList(Bars bars)
+        {
+            var result = new List<Bar>();
+            if (bars == null)
+                return result;
+
+            int closedCount = Math.Max(0, bars.Count - 1);
+            for (int i = 0; i < closedCount; i++)
+            {
+                result.Add(bars[i]);
+            }
+
+            return result;
         }
 
         private static bool ContainsAny(string value, params string[] tokens)
