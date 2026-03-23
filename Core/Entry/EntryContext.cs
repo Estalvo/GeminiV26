@@ -1,5 +1,6 @@
 ﻿using cAlgo.API;
 using cAlgo.API.Internals;
+using Gemini.Memory;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
 using GeminiV26.Core.Matrix;
@@ -272,6 +273,12 @@ namespace GeminiV26.Core.Entry
 
         public SessionMatrixConfig SessionMatrixConfig { get; set; }
             = SessionMatrixDefaults.Neutral;
+
+        // =========================
+        // MEMORY
+        // =========================
+        public SymbolMemoryState MemoryState { get; set; }
+        public MemoryAssessment MemoryAssessment { get; set; }
 
         // =========================
         // TEMP BACKWARD COMPAT
