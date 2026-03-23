@@ -216,6 +216,7 @@ namespace GeminiV26.Instruments.GBPJPY
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
                 RiskPriceDistance = slPriceDist,
+                PipSize = entryContext.PipSize,
 
                 Tp1R = tp1R,
                 Tp1Ratio = tp1Ratio,

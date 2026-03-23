@@ -229,6 +229,7 @@ namespace GeminiV26.Instruments.GBPUSD
                 EntryPrice = result.Position.EntryPrice,
 
                 RiskPriceDistance = slPriceDist, // now consistent with sizing & SL & TP
+                PipSize = entryContext.PipSize,
 
                 Tp1R = tp1R,
                 Tp1Hit = false,

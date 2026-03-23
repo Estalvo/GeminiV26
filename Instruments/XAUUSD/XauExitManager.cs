@@ -524,6 +524,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     // SSOT snapshot
                     RiskPriceDistance = rDist,
+                    PipSize = bot.Symbol.PipSize,
                     LastStopLossPrice = pos.StopLoss.Value,
 
                     Tp1Hit = false,

@@ -95,6 +95,8 @@ namespace GeminiV26.Core
 
         public double EntryPrice { get; set; }
 
+        public double PipSize { get; set; }
+
         // =========================
         // TP / state flags
         // =========================
