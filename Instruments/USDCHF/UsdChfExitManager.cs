@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
 
 namespace GeminiV26.Instruments.USDCHF
@@ -143,7 +144,7 @@ namespace GeminiV26.Instruments.USDCHF
 
                     if (reached)
                     {
-                        _bot.Print($"[USDCHF][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[USDCHF][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -156,7 +157,7 @@ namespace GeminiV26.Instruments.USDCHF
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
-                            _bot.Print($"[USDCHF][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}");
+                            _bot.Print(TradeLogIdentity.WithPositionIds($"[USDCHF][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.ClosePosition(pos);
                             _contexts.Remove(key);
                             continue;

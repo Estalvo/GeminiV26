@@ -19,6 +19,7 @@
 // =========================================================
 using cAlgo.API;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace GeminiV26.Core
             int validCount = signals.Count(e => e != null && e.IsValid);
 
             _bot.Print($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
-            LogCandidates("CAND", signals);
+            LogCandidates("CAND", signals, entryContext);
 
             EntryEvaluation winner = null;
 
@@ -84,7 +85,7 @@ namespace GeminiV26.Core
                     }
                 }
 
-                _bot.Print($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}", entryContext));
             }
 
             if (winner == null)
@@ -93,7 +94,7 @@ namespace GeminiV26.Core
                 return null;
             }
 
-            _bot.Print($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
         }
 
@@ -122,45 +123,45 @@ namespace GeminiV26.Core
             {
                 if (eval.HtfConfidence01 >= 0.80 && entryContext?.LogicBiasConfidence < 60)
                 {
-                    _bot.Print(
+                    _bot.Print(TradeLogIdentity.WithTempId(
                         $"[HTF][BLOCK] strong opposite HTF + weak LTF type={eval.Type} dir={eval.Direction} " +
-                        $"score={eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}");
-                    return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK");
+                        $"score={eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
+                    return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK", entryContext);
                 }
 
                 int originalScore = eval.Score;
                 eval.Score = Math.Max(0, eval.Score - HtfMismatchPenalty);
-                _bot.Print(
+                _bot.Print(TradeLogIdentity.WithTempId(
                     $"[HTF][PENALTY] mismatch applied type={eval.Type} dir={eval.Direction} " +
-                    $"score={originalScore}->{eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}");
+                    $"score={originalScore}->{eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
             }
 
             if (decisionScore < EntryDecisionPolicy.MinScoreThreshold)
-                return RejectFxCandidate(eval, decisionScore, "FX_SCORE_BELOW_THRESHOLD");
+                return RejectFxCandidate(eval, decisionScore, "FX_SCORE_BELOW_THRESHOLD", entryContext);
 
             if (!eval.HasTrigger)
             {
                 if (eval.State == EntryState.SETUP_DETECTED)
-                    return RejectFxCandidate(eval, decisionScore, "FX_EARLY_BLOCK");
+                    return RejectFxCandidate(eval, decisionScore, "FX_EARLY_BLOCK", entryContext);
 
-                return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED");
+                return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED", entryContext);
             }
 
             if (decisionScore < 45)
-                return RejectFxCandidate(eval, decisionScore, "FX_MIN_QUALITY_BLOCK");
+                return RejectFxCandidate(eval, decisionScore, "FX_MIN_QUALITY_BLOCK", entryContext);
 
             return true;
         }
 
-        private bool RejectFxCandidate(EntryEvaluation eval, int decisionScore, string reasonToken)
+        private bool RejectFxCandidate(EntryEvaluation eval, int decisionScore, string reasonToken, EntryContext entryContext)
         {
             eval.IsValid = false;
             eval.Reason = string.IsNullOrWhiteSpace(eval.Reason)
                 ? $"[{reasonToken}]"
                 : $"{eval.Reason} [{reasonToken}]";
 
-            _bot.Print(
-                $"[FX FILTER] type={eval.Type} dir={eval.Direction} score={eval.Score} decisionScore={decisionScore} reason={reasonToken}");
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[FX FILTER] type={eval.Type} dir={eval.Direction} score={eval.Score} decisionScore={decisionScore} reason={reasonToken}", entryContext));
 
             return false;
         }
@@ -168,14 +169,14 @@ namespace GeminiV26.Core
         // =========================================================
         // LOGGING
         // =========================================================
-        private void LogCandidates(string scope, IEnumerable<EntryEvaluation> list)
+        private void LogCandidates(string scope, IEnumerable<EntryEvaluation> list, EntryContext entryContext)
         {
             if (list == null) return;
 
             foreach (var e in list)
             {
                 if (e == null) continue;
-                _bot.Print($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}", entryContext));
             }
         }
 

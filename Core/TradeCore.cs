@@ -904,7 +904,7 @@ namespace GeminiV26.Core
             _ctx.TransitionValid = transition.IsValid;
             _ctx.TransitionScoreBonus = transition.BonusScore;
             _flagBreakoutDetector.Evaluate(_ctx);
-            _bot.Print($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}", _ctx));
 
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
@@ -1078,8 +1078,8 @@ namespace GeminiV26.Core
                 _ctx.Print("[BIAS FALLBACK] using TrendDirection");
             }
 
-            _bot.Print($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}");
-            _bot.Print($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}", _ctx));
+            _bot.Print(TradeLogIdentity.WithTempId($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}", _ctx));
 
             if (IsSymbol("AUDNZD"))
                 _ctx.Print($"[AUDNZD TRACE] step2_ctx={_ctx.LogicBiasDirection} conf={_ctx.LogicBiasConfidence}");
@@ -1092,8 +1092,8 @@ namespace GeminiV26.Core
 
             _entryRouterPassCounter++;
             _ctx.DirectionDebugLogged = false;
-            _bot.Print($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}");
-            _bot.Print($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}", _ctx));
+            _bot.Print(TradeLogIdentity.WithTempId($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}", _ctx));
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
@@ -1113,11 +1113,11 @@ namespace GeminiV26.Core
 
             ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
-            _bot.Print($"[DBG ENTRY] total candidates={symbolSignals.Count}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
 
             foreach (var e in symbolSignals)
             {
-                _bot.Print($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
             }
 
         // =====================================================
@@ -1133,7 +1133,7 @@ namespace GeminiV26.Core
             _ctx.FxHtfConfidence01 = bias.Confidence01;
             _ctx.FxHtfReason = bias.Reason;
 
-            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "FX");
         }
         else if (isCryptoSymbol && _cryptoBias != null)
@@ -1143,7 +1143,7 @@ namespace GeminiV26.Core
             _ctx.CryptoHtfConfidence01 = bias.Confidence01;
             _ctx.CryptoHtfReason = bias.Reason;
 
-            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "CRYPTO");
         }
         else if (isMetalSymbol && _metalBias != null)
@@ -1153,7 +1153,7 @@ namespace GeminiV26.Core
             _ctx.MetalHtfConfidence01 = bias.Confidence01;
             _ctx.MetalHtfReason = bias.Reason;
 
-            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "XAU");
         }
         else if (isIndexSymbol && _indexBias != null)
@@ -1163,7 +1163,7 @@ namespace GeminiV26.Core
             _ctx.IndexHtfConfidence01 = bias.Confidence01;
             _ctx.IndexHtfReason = bias.Reason;
 
-            _bot.Print($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
 
@@ -1227,12 +1227,12 @@ namespace GeminiV26.Core
                     }
                 );
 
-                _bot.Print($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}");
-                _bot.Print($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
-                _bot.Print($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
@@ -1240,7 +1240,7 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _bot.Print($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}", _ctx));
                 DirectionGuard.Validate(_ctx, null, _bot.Print);
 
                 if (!ValidateDirectionConsistency(_ctx, selected))
@@ -1248,11 +1248,11 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                _bot.Print($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}");
-                _bot.Print($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
 
                 if (!HasDirectionTraceCompleteness(_ctx))
-                    _bot.Print($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}");
+                    _bot.Print(TradeLogIdentity.WithTempId($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
 
                 var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
 

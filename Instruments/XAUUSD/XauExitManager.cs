@@ -20,6 +20,7 @@
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
 using GeminiV26.Data;
 using GeminiV26.Data.Models;
@@ -198,7 +199,7 @@ namespace GeminiV26.Instruments.XAUUSD
  
                     if (hit)
                     {                        
-                        _bot.Print($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}");
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[XAUUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -212,7 +213,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
-                            _bot.Print($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}");
+                            _bot.Print(TradeLogIdentity.WithPositionIds($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
 
                             _bot.ClosePosition(pos);
 
@@ -268,22 +269,22 @@ namespace GeminiV26.Instruments.XAUUSD
             long flooredUnits = (long)Math.Floor(rawUnitsD);
             long closeVolume = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
 
-            _bot.Print($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
             
             if (closeVolume < sym.VolumeInUnitsMin)
             {
-                _bot.Print($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
                 return;
             }
 
             var closeResult = _bot.ClosePosition(pos, closeVolume);
             if (!closeResult.IsSuccessful)
             {
-                _bot.Print($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
                 return;
             }
 
-            _bot.Print($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
@@ -326,7 +327,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             ctx.BePrice = bePrice;
             double newSl = bePrice;
-            _bot.Print($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} be={bePrice}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} be={bePrice}", ctx, pos));
 
             _bot.ModifyPosition(
                 pos,
@@ -472,6 +473,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 {
                     PositionId = pos.Id,
                     Symbol = pos.SymbolName,
+                    TempId = pos.Comment ?? string.Empty,
                     EntryPrice = pos.EntryPrice,
 
                     EntryVolumeInUnits = pos.VolumeInUnits,
@@ -524,7 +526,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
 
             _bot.ModifyPosition(pos, pos.StopLoss, newTp);
-            _bot.Print($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}", ctx, pos));
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }

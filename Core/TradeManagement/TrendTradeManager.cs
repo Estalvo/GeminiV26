@@ -3,6 +3,7 @@ using cAlgo.API;
 using cAlgo.API.Indicators;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 
 namespace GeminiV26.Core.TradeManagement
 {
@@ -74,8 +75,8 @@ namespace GeminiV26.Core.TradeManagement
             if (isRunner && !ctx.RunnerActivated)
             {
                 ctx.RunnerActivated = true;
-                _bot.Print($"[TTM] Runner mode activated.");
-                _bot.Print($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM] Runner mode activated.", ctx, position));
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit", ctx, position));
             }
 
             double priceNow = isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask;
@@ -145,7 +146,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (profileStateChanged || profileBucketChanged)
             {
-                _bot.Print($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile", ctx, position));
                 ctx.LastProfileState = state.ToString();
                 ctx.LastProfileBucket = confidenceBucket;
             }
@@ -164,7 +165,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (stateChanged || valueChanged)
             {
-                _bot.Print($"[TTM] state={state} score={score} mode={mode} allowTp2Ext={allowTp2Extension} mult={tpAtrMultiplier:0.00}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TTM] state={state} score={score} mode={mode} allowTp2Ext={allowTp2Extension} mult={tpAtrMultiplier:0.00}", ctx, position));
                 ctx.LastTtmAllowTp2Extension = allowTp2Extension;
                 ctx.LastTtmTp2Multiplier = tpAtrMultiplier;
             }
@@ -262,7 +263,7 @@ namespace GeminiV26.Core.TradeManagement
 
             ctx.LastTp2State = state;
             ctx.LastTp2Value = value;
-            _bot.Print(message);
+            _bot.Print(TradeLogIdentity.WithPositionIds(message, ctx));
         }
 
         private string GetConfidenceBucket(int score)

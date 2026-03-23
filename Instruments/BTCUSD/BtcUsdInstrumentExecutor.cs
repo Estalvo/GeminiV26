@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.CRYPTO;
 using GeminiV26.Instruments.BTCUSD;
@@ -61,11 +62,11 @@ namespace GeminiV26.Instruments.BTCUSD
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            _bot.Print($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                _bot.Print($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
             _bot.Print("[BTCUSD][EXEC] ExecuteEntry");
@@ -161,7 +162,8 @@ namespace GeminiV26.Instruments.BTCUSD
                 volumeUnits,
                 _botLabel,
                 slPips,
-                tp2Pips);
+                tp2Pips,
+                entryContext.TempId);
 
             if (!result.IsSuccessful || result.Position == null)
             {
@@ -172,6 +174,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
 
             long posId = result.Position.Id;
+            _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={posId} symbol={result.Position.SymbolName}");
 
             // =========================================================
             // POSITION CONTEXT (SSOT)
@@ -180,6 +183,7 @@ namespace GeminiV26.Instruments.BTCUSD
             {
                 PositionId = posId,
                 Symbol = result.Position.SymbolName,
+                TempId = entryContext.TempId,
 
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
@@ -221,13 +225,12 @@ namespace GeminiV26.Instruments.BTCUSD
                                              TrailingMode.Tight;
 
             _positionContexts[posId] = ctx;
-            _bot.Print($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
-            _bot.Print(
+            _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[BTCUSD][EXEC] OPEN {tradeType} " +
-                $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}"
-            );
+                $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}", ctx));
         }
 
         // =========================================================

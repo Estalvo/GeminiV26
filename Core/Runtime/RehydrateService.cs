@@ -324,6 +324,7 @@ namespace GeminiV26.Core.Runtime
             {
                 PositionId = positionKey,
                 Symbol = position.SymbolName,
+                TempId = position.Comment ?? string.Empty,
                 EntryType = "REHYDRATED",
                 EntryReason = "Startup rehydrate from live open position",
                 FinalDirection = direction,

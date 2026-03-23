@@ -3,6 +3,7 @@ using cAlgo.API.Internals;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
 using GeminiV26.Core.Matrix;
+using GeminiV26.Core.Logging;
 using System;
 
 namespace GeminiV26.Core.Entry
@@ -14,6 +15,7 @@ namespace GeminiV26.Core.Entry
         // =========================
         public bool IsReady { get; set; }
         public string Symbol;
+        public string TempId { get; set; }
         public Action<string> Log { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
@@ -324,11 +326,11 @@ namespace GeminiV26.Core.Entry
 
             if (Log != null)
             {
-                Log(message);
+                Log(TradeLogIdentity.WithTempId(message, this));
                 return;
             }
 
-            Bot?.Print(message);
+            Bot?.Print(TradeLogIdentity.WithTempId(message, this));
         }
 
         public bool IsValidFlagStructure_M5 =>
