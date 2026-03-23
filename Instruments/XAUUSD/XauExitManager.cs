@@ -104,13 +104,13 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             ctx.BarsSinceEntryM5++;
 
-            var stateSymbol = _bot.Symbols.GetSymbol(position.SymbolName);
+            var stateSymbol = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (stateSymbol != null)
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
                 if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, position, stateSymbol), ctx, position));
+                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, pos, stateSymbol), ctx, pos));
                     ctx.LastStateTraceBarIndex = ctx.BarsSinceEntryM5;
                     ctx.LastStateTraceFingerprint = stateFingerprint;
                 }

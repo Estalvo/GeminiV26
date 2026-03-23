@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using cAlgo.API;
+using cAlgo.API.Internals;
 using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core.Logging
