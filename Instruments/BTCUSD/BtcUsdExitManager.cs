@@ -106,18 +106,13 @@ namespace GeminiV26.Instruments.BTCUSD
                 if (ctx.FinalDirection == TradeDirection.None)
                     continue;
 
-                Position pos = null;
-                foreach (var p in _bot.Positions)
-                {
-                    if (Convert.ToInt64(p.Id) == key)
-                    {
-                        pos = p;
-                        break;
-                    }
-                }
-
+                var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
+                {
+                    _bot.Print($"[EXIT][CLEANUP] Position not found: {ctx.PositionId}");
+                    _contexts.Remove(key);
                     continue;
+                }
 
                 if (!pos.StopLoss.HasValue)
                     continue;
@@ -304,6 +299,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
             }
 
+            bool closeExecuted = false;
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
             {
@@ -311,6 +307,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
             }
 
+            closeExecuted = true;
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} " +
                 $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
@@ -321,6 +318,12 @@ namespace GeminiV26.Instruments.BTCUSD
 
             // 2) TP1 state
             ctx.Tp1Hit = true;
+
+            if (closeExecuted && FindPosition(ctx.PositionId) == null)
+            {
+                _bot.Print($"[EXIT][SKIP MODIFY AFTER CLOSE] {ctx.PositionId}");
+                return;
+            }
 
             // 3) BE / protective SL after TP1
             ApplyBreakEven(pos, ctx, rDist);
@@ -368,7 +371,7 @@ namespace GeminiV26.Instruments.BTCUSD
             if (!improve)
                 return;
 
-            _bot.ModifyPosition(pos, desiredSl, pos.TakeProfit);
+            SafeModify(pos, desiredSl, pos.TakeProfit);
         }
 
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
@@ -378,7 +381,7 @@ namespace GeminiV26.Instruments.BTCUSD
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
-            _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
+            SafeModify(pos, bePrice, pos.TakeProfit);
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
@@ -455,7 +458,7 @@ namespace GeminiV26.Instruments.BTCUSD
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
                 return;
 
-            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            SafeModify(pos, pos.StopLoss, newTp);
 
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
             _bot.Print(TradeLogIdentity.WithPositionIds(
@@ -466,6 +469,35 @@ namespace GeminiV26.Instruments.BTCUSD
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }
+
+        private Position FindPosition(long positionId)
+        {
+            foreach (var position in _bot.Positions)
+            {
+                if (Convert.ToInt64(position.Id) == positionId)
+                    return position;
+            }
+
+            return null;
+        }
+
+        private void SafeModify(Position position, double? sl, double? tp)
+        {
+            if (position == null)
+                return;
+
+            var livePos = FindPosition(Convert.ToInt64(position.Id));
+            if (livePos == null)
+            {
+                _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
+                return;
+            }
+
+            var result = _bot.ModifyPosition(livePos, sl, tp);
+            if (!result.IsSuccessful)
+                _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
+        }
+
         private static bool IsLong(PositionContext ctx)
         {
             return ctx?.FinalDirection == TradeDirection.Long;

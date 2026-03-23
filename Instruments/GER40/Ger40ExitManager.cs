@@ -73,17 +73,15 @@ namespace GeminiV26.Instruments.GER40
                 if (ctx.FinalDirection == TradeDirection.None)
                     continue;
 
-                Position pos = null;
-                foreach (var p in _bot.Positions)
+                var pos = FindPosition(ctx.PositionId);
+                if (pos == null)
                 {
-                    if (Convert.ToInt64(p.Id) == key)
-                    {
-                        pos = p;
-                        break;
-                    }
+                    _bot.Print($"[EXIT][CLEANUP] Position not found: {ctx.PositionId}");
+                    _contexts.Remove(key);
+                    continue;
                 }
 
-                if (pos == null || !pos.StopLoss.HasValue)
+                if (!pos.StopLoss.HasValue)
                     continue;
 
                 var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
@@ -212,13 +210,21 @@ namespace GeminiV26.Instruments.GER40
             if (closeUnits < minUnits)
                 return;
 
+            bool closeExecuted = false;
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
                 return;
 
+            closeExecuted = true;
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
             ctx.Tp1Hit = true;
+
+            if (closeExecuted && FindPosition(ctx.PositionId) == null)
+            {
+                _bot.Print($"[EXIT][SKIP MODIFY AFTER CLOSE] {ctx.PositionId}");
+                return;
+            }
 
             ApplyBreakEven(pos, ctx, rDist);
         }
@@ -230,7 +236,7 @@ namespace GeminiV26.Instruments.GER40
                     ? pos.EntryPrice + rDist * BeOffsetR
                     : pos.EntryPrice - rDist * BeOffsetR;
 
-            _bot.ModifyPosition(pos, bePrice, pos.TakeProfit);
+            SafeModify(pos, bePrice, pos.TakeProfit);
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
@@ -287,10 +293,39 @@ namespace GeminiV26.Instruments.GER40
             if (!outward)
                 return;
 
-            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            SafeModify(pos, pos.StopLoss, newTp);
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }
+
+        private Position FindPosition(long positionId)
+        {
+            foreach (var position in _bot.Positions)
+            {
+                if (Convert.ToInt64(position.Id) == positionId)
+                    return position;
+            }
+
+            return null;
+        }
+
+        private void SafeModify(Position position, double? sl, double? tp)
+        {
+            if (position == null)
+                return;
+
+            var livePos = FindPosition(Convert.ToInt64(position.Id));
+            if (livePos == null)
+            {
+                _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
+                return;
+            }
+
+            var result = _bot.ModifyPosition(livePos, sl, tp);
+            if (!result.IsSuccessful)
+                _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
+        }
+
         private static bool IsLong(PositionContext ctx)
         {
             return ctx?.FinalDirection == TradeDirection.Long;

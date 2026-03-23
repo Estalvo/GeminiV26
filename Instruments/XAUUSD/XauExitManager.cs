@@ -120,14 +120,23 @@ namespace GeminiV26.Instruments.XAUUSD
         // =====================================================
         public void OnTick()
         {
-            foreach (var ctx in _contexts.Values)
+            var keys = new List<long>(_contexts.Keys);
+
+            foreach (var key in keys)
             {
+                if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+                    continue;
+
                 if (ctx.FinalDirection == TradeDirection.None)
                     continue;
 
-                var pos = _bot.Positions.FirstOrDefault(p => p.Id == ctx.PositionId);
+                var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
+                {
+                    _bot.Print($"[EXIT][CLEANUP] Position not found: {ctx.PositionId}");
+                    _contexts.Remove(key);
                     continue;
+                }
 
                 if (!pos.StopLoss.HasValue)
                     continue;
@@ -277,6 +286,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
+            bool closeExecuted = false;
             var closeResult = _bot.ClosePosition(pos, closeVolume);
             if (!closeResult.IsSuccessful)
             {
@@ -284,6 +294,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
+            closeExecuted = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
 
             // TP1 state (SSOT) – csak itt állítjuk
@@ -293,6 +304,12 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.Tp1ClosedVolumeInUnits = closeVolume;
             ctx.RemainingVolumeInUnits =
                 Math.Max(0, pos.VolumeInUnits - closeVolume);
+
+            if (closeExecuted && FindPosition(ctx.PositionId) == null)
+            {
+                _bot.Print($"[EXIT][SKIP MODIFY AFTER CLOSE] {ctx.PositionId}");
+                return;
+            }
 
             // BE (profilból)
             ApplyBreakEven(pos, ctx, rDist);
@@ -329,7 +346,7 @@ namespace GeminiV26.Instruments.XAUUSD
             double newSl = bePrice;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} be={bePrice}", ctx, pos));
 
-            _bot.ModifyPosition(
+            SafeModify(
                 pos,
                 Normalize(bePrice, sym.TickSize, sym.Digits),
                 pos.TakeProfit
@@ -398,7 +415,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (improvePips < _profile.MinTrailImprovePips)
                 return;
 
-            _bot.ModifyPosition(
+            SafeModify(
                  pos,
                 Normalize(newSl, sym.TickSize, sym.Digits),
                 pos.TakeProfit
@@ -525,10 +542,39 @@ namespace GeminiV26.Instruments.XAUUSD
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
                 return;
 
-            _bot.ModifyPosition(pos, pos.StopLoss, newTp);
+            SafeModify(pos, pos.StopLoss, newTp);
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}", ctx, pos));
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
+        }
+
+
+        private Position FindPosition(long positionId)
+        {
+            foreach (var position in _bot.Positions)
+            {
+                if (Convert.ToInt64(position.Id) == positionId)
+                    return position;
+            }
+
+            return null;
+        }
+
+        private void SafeModify(Position position, double? sl, double? tp)
+        {
+            if (position == null)
+                return;
+
+            var livePos = FindPosition(Convert.ToInt64(position.Id));
+            if (livePos == null)
+            {
+                _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
+                return;
+            }
+
+            var result = _bot.ModifyPosition(livePos, sl, tp);
+            if (!result.IsSuccessful)
+                _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
         }
 
         private static bool IsLong(PositionContext ctx)
