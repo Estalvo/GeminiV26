@@ -63,6 +63,7 @@ using GeminiV26.Core.HtfBias;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Analytics;
+using GeminiV26.Core.Runtime;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -760,6 +761,7 @@ namespace GeminiV26.Core
                 if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
                 {
                     _bot.Print($"[TC] Context missing for position posId={pos.Id}");
+                    _bot.Print($"[REHYDRATE_WARN] pos={Convert.ToInt64(pos.Id)} symbol={pos.SymbolName} reason=exit_pipeline_missing_context");
                     continue;
                 }
 
@@ -2175,12 +2177,131 @@ namespace GeminiV26.Core
             _logWriter?.Dispose();
         }
 
+        public void RehydrateOpenPositions()
+        {
+            var service = new RehydrateService(
+                _bot,
+                _positionContexts,
+                _contextRegistry,
+                BotLabel,
+                RegisterRehydratedContextWithExitManager);
+
+            service.Run();
+        }
+
         // =================================================
         // SYMBOL NORMALIZATION
         // =================================================
         private static string NormalizeSymbol(string symbol)
         {
             return SymbolRouting.NormalizeSymbol(symbol);
+        }
+
+        private bool RegisterRehydratedContextWithExitManager(PositionContext ctx)
+        {
+            if (ctx == null)
+                return false;
+
+            string symbol = NormalizeSymbol(ctx.Symbol);
+
+            if (symbol == "XAUUSD")
+            {
+                _xauExitManager?.RegisterContext(ctx);
+                return _xauExitManager != null;
+            }
+
+            if (symbol == "NAS100")
+            {
+                _nasExitManager?.RegisterContext(ctx);
+                return _nasExitManager != null;
+            }
+
+            if (symbol == "US30")
+            {
+                _us30ExitManager?.RegisterContext(ctx);
+                return _us30ExitManager != null;
+            }
+
+            if (symbol == "GER40")
+            {
+                _ger40ExitManager?.RegisterContext(ctx);
+                return _ger40ExitManager != null;
+            }
+
+            if (symbol == "EURUSD")
+            {
+                _eurUsdExitManager?.RegisterContext(ctx);
+                return _eurUsdExitManager != null;
+            }
+
+            if (symbol == "USDJPY")
+            {
+                _usdJpyExitManager?.RegisterContext(ctx);
+                return _usdJpyExitManager != null;
+            }
+
+            if (symbol == "GBPUSD")
+            {
+                _gbpUsdExitManager?.RegisterContext(ctx);
+                return _gbpUsdExitManager != null;
+            }
+
+            if (symbol == "AUDUSD")
+            {
+                _audUsdExitManager?.RegisterContext(ctx);
+                return _audUsdExitManager != null;
+            }
+
+            if (symbol == "AUDNZD")
+            {
+                _audNzdExitManager?.RegisterContext(ctx);
+                return _audNzdExitManager != null;
+            }
+
+            if (symbol == "EURJPY")
+            {
+                _eurJpyExitManager?.RegisterContext(ctx);
+                return _eurJpyExitManager != null;
+            }
+
+            if (symbol == "GBPJPY")
+            {
+                _gbpJpyExitManager?.RegisterContext(ctx);
+                return _gbpJpyExitManager != null;
+            }
+
+            if (symbol == "NZDUSD")
+            {
+                _nzdUsdExitManager?.RegisterContext(ctx);
+                return _nzdUsdExitManager != null;
+            }
+
+            if (symbol == "USDCAD")
+            {
+                _usdCadExitManager?.RegisterContext(ctx);
+                return _usdCadExitManager != null;
+            }
+
+            if (symbol == "USDCHF")
+            {
+                _usdChfExitManager?.RegisterContext(ctx);
+                return _usdChfExitManager != null;
+            }
+
+            if (symbol == "BTCUSD")
+            {
+                _btcUsdExitManager?.RegisterContext(ctx);
+                return _btcUsdExitManager != null;
+            }
+
+            if (symbol == "ETHUSD")
+            {
+                _ethUsdExitManager?.RegisterContext(ctx);
+                return _ethUsdExitManager != null;
+            }
+
+            _bot.Print($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=no_exit_manager_for_symbol");
+            return false;
         }
 
         // =================================================

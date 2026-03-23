@@ -341,6 +341,18 @@ namespace GeminiV26.Core
         public bool IsRehydrated { get; set; }
 
         /// <summary>
+        /// Rehydrate meta timestamp UTC-ban.
+        /// Restart audit / debug.
+        /// </summary>
+        public DateTime? RehydratedAtUtc { get; set; }
+
+        /// <summary>
+        /// Rehydrate eredet rövid leírása.
+        /// Pl. LiveOpenPosition.
+        /// </summary>
+        public string RehydrateSource { get; set; } = string.Empty;
+
+        /// <summary>
         /// Utolsó ismert SL ár (pozíció az igazság).
         /// Trailing restore előkészítés.
         /// </summary>
