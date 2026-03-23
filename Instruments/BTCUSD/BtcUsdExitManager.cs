@@ -109,7 +109,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print($"[EXIT][CLEANUP] Position not found: {ctx.PositionId}");
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] Position not found: {ctx.PositionId}", ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -188,6 +188,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
                     if (reached)
                     {
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
                         _bot.Print(TradeLogIdentity.WithPositionIds(
                             $"[BTCUSD][TP1][HIT] symbol={pos.SymbolName} pos={pos.Id} " +
                             $"dir={pos.TradeType} tp1={tp1Price} rDist={rDist} tp1R={ctx.Tp1R}", ctx, pos));
@@ -213,6 +214,15 @@ namespace GeminiV26.Instruments.BTCUSD
 
                             if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                             {
+                                _bot.Print(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
+                                    $"symbol={pos.SymbolName}\n" +
+                                    $"positionId={pos.Id}\n" +
+                                    $"mfe={ctx.MfeR:0.##}\n" +
+                                    $"mae={ctx.MaeR:0.##}\n" +
+                                    $"tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}\n" +
+                                    $"barsOpen={ctx.BarsSinceEntryM5}\n" +
+                                    $"reason={ctx.DeadTradeReason}", ctx, pos));
+                                _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
                                 _bot.Print(TradeLogIdentity.WithPositionIds(
                                     $"[TVM EXIT] {pos.SymbolName} pos={pos.Id} " +
                                     $"reason={ctx.DeadTradeReason} " +
@@ -321,7 +331,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (closeExecuted && FindPosition(ctx.PositionId) == null)
             {
-                _bot.Print($"[EXIT][SKIP MODIFY AFTER CLOSE] {ctx.PositionId}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] skip modify after close positionId={ctx.PositionId}", ctx));
                 return;
             }
 
@@ -385,6 +395,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[BE] moved", ctx, pos));
 
             if (ctx.TrailingMode == TrailingMode.None)
                 ctx.TrailingMode = TrailingMode.Normal;

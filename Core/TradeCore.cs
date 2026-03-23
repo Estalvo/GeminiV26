@@ -864,6 +864,8 @@ namespace GeminiV26.Core
                 return;
             }
 
+            _ctx.BarsSinceStart = BotRestartState.BarsSinceStart;
+
 
             if (isMetalSymbol)
             {
@@ -1168,6 +1170,7 @@ namespace GeminiV26.Core
         }
 
                 UpdateExecutionStateMachine(_ctx, symbolSignals);
+                ApplyRestartProtection(_ctx, symbolSignals);
 
                 // =====================================================
                 // ROUTER
@@ -1227,7 +1230,9 @@ namespace GeminiV26.Core
                     }
                 );
 
+                LogEntrySnapshot(_ctx, selected);
                 _bot.Print(TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
+                _bot.Print($"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
 
                 _ctx.RoutedDirection = selected.Direction;
@@ -1665,6 +1670,134 @@ namespace GeminiV26.Core
                 default:
                     return 0;
             }
+        }
+
+        private void ApplyRestartProtection(EntryContext ctx, List<EntryEvaluation> symbolSignals)
+        {
+            if (ctx == null || symbolSignals == null || symbolSignals.Count == 0)
+                return;
+
+            foreach (var candidate in symbolSignals)
+            {
+                if (candidate == null || candidate.Direction == TradeDirection.None)
+                    continue;
+
+                if (!TryGetRestartDecayState(ctx, candidate, out string restartReason))
+                    continue;
+
+                if (BotRestartState.IsHardProtectionPhase)
+                {
+                    candidate.IsValid = false;
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[RESTART_DECAY_AFTER_RESTART]"
+                        : $"{candidate.Reason} [RESTART_DECAY_AFTER_RESTART]";
+                    EntryDecisionPolicy.Normalize(candidate);
+
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                        $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                        ctx));
+                    continue;
+                }
+
+                if (!BotRestartState.IsSoftProtectionPhase)
+                    continue;
+
+                const int softPenalty = 20;
+                int originalScore = candidate.Score;
+                candidate.Score = Math.Max(0, candidate.Score - softPenalty);
+                candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                    ? $"[RESTART_SOFT_{restartReason}]"
+                    : $"{candidate.Reason} [RESTART_SOFT_{restartReason}]";
+                EntryDecisionPolicy.Normalize(candidate);
+
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[RESTART SOFT] penalty applied symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
+                    $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                    ctx));
+            }
+        }
+
+        private static bool TryGetRestartDecayState(EntryContext ctx, EntryEvaluation candidate, out string restartReason)
+        {
+            restartReason = null;
+            if (ctx == null || candidate == null)
+                return false;
+
+            string reason = candidate.Reason ?? string.Empty;
+            int barsSinceImpulse = ctx.GetBarsSinceImpulse(candidate.Direction);
+            bool hasDirectionalPullback = ctx.HasDirectionalPullback(candidate.Direction);
+
+            bool staleImpulse =
+                ContainsAny(reason, "STALE_IMPULSE", "IMPULSE_TOO_OLD") ||
+                barsSinceImpulse > 6;
+
+            bool pullbackNotFormed =
+                ContainsAny(reason, "NO_PULLBACK", "PULLBACK_NOT_MATURE", "PULLBACK_TOO_EARLY", "NO_DECELERATION") ||
+                !hasDirectionalPullback;
+
+            bool impulseDecay =
+                ContainsAny(reason, "DECAY", "IMPULSE_COOLDOWN") ||
+                (barsSinceImpulse <= 2 && !ctx.IsPullbackDecelerating_M5) ||
+                (barsSinceImpulse <= 2 && !ctx.HasReactionCandle_M5 && !ctx.HasDirectionalPullback(candidate.Direction));
+
+            if (impulseDecay)
+                restartReason = "ImpulseDecay";
+            else if (staleImpulse)
+                restartReason = "StaleImpulse";
+            else if (pullbackNotFormed)
+                restartReason = "PullbackNotFormed";
+
+            return restartReason != null;
+        }
+
+        private void LogEntrySnapshot(EntryContext ctx, EntryEvaluation selected)
+        {
+            if (ctx == null || selected == null)
+                return;
+
+            _bot.Print(
+                "[ENTRY SNAPSHOT]\n" +
+                $"symbol={selected.Symbol ?? _bot.SymbolName}\n" +
+                $"time={_bot.Server.Time:O}\n" +
+                $"regime={ResolveEntrySnapshotRegime(ctx)}\n" +
+                $"atr={ctx.AtrM5:0.#####}\n" +
+                $"adx={ctx.Adx_M5:0.##}\n" +
+                $"confidence={selected.Score}\n" +
+                $"direction={selected.Direction}\n" +
+                $"barsSinceStart={ctx.BarsSinceStart}");
+        }
+
+        private string ResolveEntrySnapshotRegime(EntryContext ctx)
+        {
+            if (ctx?.MarketState != null)
+            {
+                if (ctx.MarketState.IsRange)
+                    return "Range";
+
+                if (ctx.MarketState.IsTrend)
+                    return "Trend";
+            }
+
+            if (ctx?.TransitionValid == true)
+                return "Transition";
+
+            return _instrumentClass.ToString();
+        }
+
+        private static bool ContainsAny(string value, params string[] tokens)
+        {
+            if (string.IsNullOrWhiteSpace(value) || tokens == null)
+                return false;
+
+            foreach (var token in tokens)
+            {
+                if (!string.IsNullOrWhiteSpace(token) &&
+                    value.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+            }
+
+            return false;
         }
 
         private void UpdateExecutionStateMachine(EntryContext ctx, List<EntryEvaluation> symbolSignals)
@@ -2108,6 +2241,19 @@ namespace GeminiV26.Core
             }
 
             var sym = _bot.Symbols.GetSymbol(pos.SymbolName);
+
+            _bot.Print(TradeLogIdentity.WithPositionIds(
+                "[EXIT SNAPSHOT]\n" +
+                $"symbol={pos.SymbolName}\n" +
+                $"positionId={pos.Id}\n" +
+                $"mfe={ctx?.MfeR ?? 0.0:0.##}\n" +
+                $"mae={ctx?.MaeR ?? 0.0:0.##}\n" +
+                $"tp1Hit={(ctx?.Tp1Hit ?? false).ToString().ToLowerInvariant()}\n" +
+                $"barsOpen={ctx?.BarsSinceEntryM5 ?? 0}\n" +
+                $"reason={args.Reason}",
+                ctx,
+                pos));
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={args.Reason}", ctx, pos));
 
             _logger.OnTradeClosed(
                 BuildLogContext(pos, meta, ctx, entryCtx),

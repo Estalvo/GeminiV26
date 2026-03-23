@@ -39,6 +39,8 @@ namespace GeminiV26.Core.Logging
             if (string.IsNullOrWhiteSpace(message))
                 return message;
 
+            message = EnsurePositionPrefix(message, posId);
+
             var fields = new List<string>();
             if (!string.IsNullOrWhiteSpace(tempId) && !message.Contains("tempId=", StringComparison.Ordinal))
                 fields.Add($"tempId={tempId}");
@@ -65,6 +67,18 @@ namespace GeminiV26.Core.Logging
             }
 
             return $"{fields} {message}";
+        }
+
+        private static string EnsurePositionPrefix(string message, long? posId)
+        {
+            string prefix = posId.HasValue && posId.Value > 0
+                ? $"[POS {posId.Value}]"
+                : "[POS ?]";
+
+            if (message.StartsWith(prefix, StringComparison.Ordinal))
+                return message;
+
+            return $"{prefix} {message}";
         }
     }
 }

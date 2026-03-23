@@ -198,6 +198,7 @@ namespace GeminiV26.Instruments.GBPUSD
             long positionKey = result.Position.Id;
 
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             var ctx = new PositionContext
             {
@@ -233,6 +234,7 @@ namespace GeminiV26.Instruments.GBPUSD
             _positionContexts[positionKey] = ctx;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)

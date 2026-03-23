@@ -76,7 +76,7 @@ namespace GeminiV26.Instruments.AUDUSD
                 var pos = FindPosition(ctx.PositionId);
                 if (pos == null)
                 {
-                    _bot.Print($"[EXIT][CLEANUP] Position not found: {ctx.PositionId}");
+                    _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] Position not found: {ctx.PositionId}", ctx));
                     _contexts.Remove(key);
                     continue;
                 }
@@ -142,6 +142,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
                     if (reached)
                     {
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1] hit", ctx, pos));
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[AUDUSD][TP1][HIT] pos={pos.Id} tp1={tp1Price}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
@@ -155,6 +156,15 @@ namespace GeminiV26.Instruments.AUDUSD
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
+                            _bot.Print(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
+                                $"symbol={pos.SymbolName}\n" +
+                                $"positionId={pos.Id}\n" +
+                                $"mfe={ctx.MfeR:0.##}\n" +
+                                $"mae={ctx.MaeR:0.##}\n" +
+                                $"tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}\n" +
+                                $"barsOpen={ctx.BarsSinceEntryM5}\n" +
+                                $"reason={ctx.DeadTradeReason}", ctx, pos));
+                            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.Print(TradeLogIdentity.WithPositionIds($"[AUDUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
                             _bot.ClosePosition(pos);
                             _contexts.Remove(key);
@@ -222,7 +232,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
             if (closeExecuted && FindPosition(ctx.PositionId) == null)
             {
-                _bot.Print($"[EXIT][SKIP MODIFY AFTER CLOSE] {ctx.PositionId}");
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[CLEANUP] skip modify after close positionId={ctx.PositionId}", ctx));
                 return;
             }
 
@@ -240,6 +250,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
             ctx.BePrice = bePrice;
             ctx.BeMode = BeMode.AfterTp1;
+            _bot.Print(TradeLogIdentity.WithPositionIds($"[BE] moved", ctx, pos));
 
             if (ctx.TrailingMode == TrailingMode.None)
                 ctx.TrailingMode = TrailingMode.Normal;
