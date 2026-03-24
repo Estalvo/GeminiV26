@@ -10,16 +10,6 @@ namespace GeminiV26.Core
     /// </summary>
     public sealed class RuntimeSymbolResolver
     {
-        private static readonly Dictionary<string, string> CanonicalSymbolMap = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ["AUDUSD"] = "AUDUSD",
-            ["EURUSD"] = "EURUSD",
-            ["XAUUSD"] = "XAUUSD",
-            ["NAS100"] = "US TECH 100",
-            ["US30"] = "US 30",
-            ["GER40"] = "GERMANY 40"
-        };
-
         private readonly Robot _bot;
         private readonly Dictionary<string, Symbol> _cache = new(StringComparer.OrdinalIgnoreCase);
 
@@ -47,42 +37,75 @@ namespace GeminiV26.Core
             if (string.IsNullOrWhiteSpace(symbolReference))
             {
                 _bot.Print("[RESOLVER][INPUT] input=");
-                _bot.Print("[RESOLVER][FATAL] symbol=");
-                _bot.Print("[CORE][BLOCK] symbol resolution failed");
+                _bot.Print("[RESOLVER][SKIP] reason=empty_input");
                 return false;
             }
 
-            string requested = symbolReference.Trim().ToUpperInvariant();
+            string requested = symbolReference.Trim();
             _bot.Print($"[RESOLVER][INPUT] input={requested}");
 
-            if (_cache.ContainsKey(requested))
+            string canonical = SymbolRouting.NormalizeSymbol(requested);
+            _bot.Print($"[RESOLVER][CANONICAL] input={requested} canonical={canonical}");
+
+            if (TryResolveCurrentBotSymbol(canonical, out symbol))
             {
-                symbol = _cache[requested];
-                return symbol != null;
+                CacheAliases(requested, canonical, symbol);
+                _bot.Print($"[RESOLVER][RUNTIME] source=current_bot runtime={symbol.Name}");
+                _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                return true;
             }
 
-            if (!CanonicalSymbolMap.TryGetValue(requested, out string canonical))
+            if (!IsGeminiSupportedCanonical(canonical))
             {
-                _bot.Print($"[RESOLVER][FATAL] symbol={requested}");
-                _bot.Print("[CORE][BLOCK] symbol resolution failed");
+                _bot.Print($"[RESOLVER][SKIP] reason=unsupported_canonical canonical={canonical}");
                 return false;
             }
 
-            _bot.Print($"[RESOLVER][CANONICAL] resolved={canonical}");
+            if (_cache.TryGetValue(requested, out symbol) && IsUsableSymbol(symbol))
+            {
+                _bot.Print($"[RESOLVER][RUNTIME] source=cache runtime={symbol.Name}");
+                _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                return true;
+            }
 
             symbol = _bot.Symbols.GetSymbol(canonical);
-            if (!IsUsableSymbol(symbol) || !IsTradable(symbol))
+            if (IsUsableSymbol(symbol))
             {
-                _bot.Print($"[RESOLVER][FATAL] symbol={canonical}");
-                _bot.Print("[CORE][BLOCK] symbol resolution failed");
-                return false;
+                CacheAliases(requested, canonical, symbol);
+                _bot.Print($"[RESOLVER][RUNTIME] source=direct runtime={symbol.Name}");
+                _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                return true;
             }
 
-            _cache[requested] = symbol;
-            _cache[canonical] = symbol;
-            _cache[symbol.Name] = symbol;
-            _bot.Print($"[RESOLVER][SUCCESS] symbol={symbol.Name} tradable=TRUE");
-            return true;
+            foreach (var symbolEntry in _bot.Symbols)
+            {
+                object raw = symbolEntry;
+                string runtimeName = raw is Symbol runtimeSymbol
+                    ? runtimeSymbol.Name
+                    : raw?.ToString();
+
+                if (string.IsNullOrWhiteSpace(runtimeName))
+                    continue;
+
+                string runtimeCanonical = SymbolRouting.NormalizeSymbol(runtimeName);
+                if (!IsGeminiSupportedCanonical(runtimeCanonical))
+                    continue;
+
+                if (!string.Equals(runtimeCanonical, canonical, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                symbol = _bot.Symbols.GetSymbol(runtimeName);
+                if (!IsUsableSymbol(symbol))
+                    continue;
+
+                CacheAliases(requested, canonical, symbol);
+                _bot.Print($"[RESOLVER][RUNTIME] source=scan runtime={symbol.Name}");
+                _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                return true;
+            }
+
+            _bot.Print($"[RESOLVER][SKIP] reason=runtime_not_found canonical={canonical}");
+            return false;
         }
 
         public bool TryGetBars(TimeFrame timeFrame, string symbolReference, out Bars bars)
@@ -136,9 +159,48 @@ namespace GeminiV26.Core
             return symbol != null && !string.IsNullOrWhiteSpace(symbol.Name);
         }
 
-        private static bool IsTradable(Symbol symbol)
+        private static bool IsGeminiSupportedCanonical(string canonical)
         {
-            return symbol != null && symbol.Bid != 0 && symbol.Ask != 0;
+            if (string.IsNullOrWhiteSpace(canonical))
+                return false;
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(canonical);
+            if (instrumentClass != InstrumentClass.FX)
+                return true;
+
+            if (canonical.Length != 6)
+                return false;
+
+            for (int i = 0; i < canonical.Length; i++)
+            {
+                if (canonical[i] < 'A' || canonical[i] > 'Z')
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void CacheAliases(string requested, string canonical, Symbol symbol)
+        {
+            if (!IsUsableSymbol(symbol))
+                return;
+
+            _cache[requested] = symbol;
+            _cache[canonical] = symbol;
+            _cache[symbol.Name] = symbol;
+        }
+
+        private bool TryResolveCurrentBotSymbol(string canonical, out Symbol symbol)
+        {
+            symbol = _bot.Symbol;
+            if (!IsUsableSymbol(symbol))
+                return false;
+
+            string botCanonicalFromName = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
+            string botCanonicalFromSymbol = SymbolRouting.NormalizeSymbol(symbol.Name);
+
+            return string.Equals(canonical, botCanonicalFromName, StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(canonical, botCanonicalFromSymbol, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
