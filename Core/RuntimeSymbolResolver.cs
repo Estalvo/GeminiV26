@@ -28,7 +28,7 @@ namespace GeminiV26.Core
             _resolverOkLogged.Clear();
             _resolverErrorLogged.Clear();
 
-            if (_bot.Symbol != null && _bot.Symbol.HasQuotes && !string.IsNullOrWhiteSpace(_bot.Symbol.Name))
+            if (IsUsableSymbol(_bot.Symbol))
                 _cache[_bot.Symbol.Name] = _bot.Symbol;
         }
 
@@ -56,7 +56,7 @@ namespace GeminiV26.Core
             if (string.Equals(requested, _bot.Symbol?.Name, StringComparison.OrdinalIgnoreCase))
             {
                 symbol = _bot.Symbol;
-                if (symbol != null && symbol.HasQuotes)
+                if (IsUsableSymbol(symbol))
                 {
                     CacheAndLogOk(requested, symbol);
                     return true;
@@ -64,16 +64,17 @@ namespace GeminiV26.Core
             }
 
             symbol = _bot.Symbols.GetSymbol(requested);
-            if (symbol != null && symbol.HasQuotes)
+            if (IsUsableSymbol(symbol))
             {
                 CacheAndLogOk(requested, symbol);
                 return true;
             }
 
-            var fallback = _bot.Symbols
-                .FirstOrDefault(s => s != null && s.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase) && s.HasQuotes);
+            string fallbackName = _bot.Symbols
+                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s) && s.StartsWith(requested, StringComparison.OrdinalIgnoreCase));
+            var fallback = string.IsNullOrWhiteSpace(fallbackName) ? null : _bot.Symbols.GetSymbol(fallbackName);
 
-            if (fallback != null)
+            if (IsUsableSymbol(fallback))
             {
                 if (_resolverOkLogged.Add($"FALLBACK:{requested}:{fallback.Name}"))
                     _bot.Print($"[RESOLVER][FALLBACK] {requested} → {fallback.Name}");
@@ -136,7 +137,7 @@ namespace GeminiV26.Core
 
         private void CacheAndLogOk(string requested, Symbol symbol)
         {
-            if (symbol == null)
+            if (!IsUsableSymbol(symbol))
                 return;
 
             _cache[requested] = symbol;
@@ -144,6 +145,11 @@ namespace GeminiV26.Core
 
             if (_resolverOkLogged.Add($"OK:{requested}:{symbol.Name}"))
                 _bot.Print($"[RESOLVER][OK] {requested} → {symbol.Name}");
+        }
+
+        private static bool IsUsableSymbol(Symbol symbol)
+        {
+            return symbol != null && !string.IsNullOrWhiteSpace(symbol.Name);
         }
     }
 }

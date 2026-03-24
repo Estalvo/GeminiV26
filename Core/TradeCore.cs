@@ -1911,9 +1911,6 @@ namespace GeminiV26.Core
                 if (runtimeSymbol == null)
                     continue;
 
-                if (!runtimeSymbol.HasQuotes)
-                    continue;
-
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
             }
