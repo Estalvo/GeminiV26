@@ -56,13 +56,25 @@ namespace GeminiV26.Instruments.USDCHF
         private bool TryResolveExitSymbol(Position pos, out Symbol symbol)
         {
             symbol = null;
-            if (pos == null || !_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol))
+
+            if (pos == null)
             {
-                _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                _bot.Print("[RESOLVER][EXIT_SKIP] symbol=UNKNOWN positionId=0 reason=position_null");
                 return false;
             }
 
-            return true;
+            if (_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol) && symbol != null)
+                return true;
+
+            symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
+            if (symbol != null)
+            {
+                _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
+                return true;
+            }
+
+            _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos.SymbolName} positionId={pos.Id} reason=unresolved_runtime_symbol");
+            return false;
         }
 
         private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars)
@@ -167,7 +179,7 @@ namespace GeminiV26.Instruments.USDCHF
                     bool reached =
                         IsLong(ctx)
                             ? sym.Bid >= tp1Price
-                            : sym.Bid <= tp1Price;
+                            : sym.Ask <= tp1Price;
 
                     if (!reached)
                     {
@@ -182,6 +194,7 @@ namespace GeminiV26.Instruments.USDCHF
 
                     if (reached)
                     {
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;

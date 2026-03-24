@@ -1835,9 +1835,9 @@ namespace GeminiV26.Core
             SymbolMemoryState state = _memoryEngine.GetState(memorySymbol);
             _memoryEngine.MarkResolved(memorySymbol);
 
-            if (state.BuildMode == MemoryBuildMode.Default)
+            if (state == null || !state.IsBuilt || state.BuildMode == MemoryBuildMode.Default)
             {
-                _memoryEngine.BuildFromHistory(memorySymbol, ToClosedBarList(ctx.M5));
+                state = RecoverMissingMemoryState(memorySymbol, state, "sync");
             }
             else
             {
@@ -1853,6 +1853,29 @@ namespace GeminiV26.Core
             ctx.MemoryResolved = state.IsResolved;
             ctx.MemoryUsable = state.IsUsable;
             ctx.MemoryAssessment = _memoryEngine.GetAssessment(memorySymbol);
+        }
+
+        private SymbolMemoryState RecoverMissingMemoryState(string symbol, SymbolMemoryState currentState, string source)
+        {
+            string normalized = NormalizeSymbol(symbol);
+            bool resolverOk = _runtimeSymbols.TryResolveSymbol(normalized, out _);
+
+            if (!resolverOk)
+            {
+                _memoryEngine.MarkResolveFailure(normalized, "unresolved_runtime_symbol");
+                return currentState ?? _memoryEngine.GetState(normalized);
+            }
+
+            _bot.Print($"[MEMORY][RECOVER] symbol={normalized} source={source}");
+            _memoryEngine.BuildFromHistory(normalized, LoadMemoryHistory(normalized));
+
+            SymbolMemoryState rebuiltState = _memoryEngine.GetState(normalized);
+            if (rebuiltState == null || !rebuiltState.IsBuilt)
+            {
+                _bot.Print($"[MEMORY][CRITICAL_MISSING] symbol={normalized} source={source}");
+            }
+
+            return rebuiltState;
         }
 
         private static List<Bar> ToClosedBarList(Bars bars)
@@ -2512,6 +2535,15 @@ namespace GeminiV26.Core
 
                 if (isNull || !isBuilt)
                 {
+                    memoryState = RecoverMissingMemoryState(symbol, memoryState, "audit");
+                    isNull = memoryState == null;
+                    isBuilt = memoryState?.IsBuilt == true;
+                    isResolved = memoryState?.IsResolved == true;
+                    isUsable = memoryState?.IsUsable == true;
+
+                    if (isBuilt)
+                        continue;
+
                     _bot.Print($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} stateNull={isNull}");
 
                     if (isStartupWindow)
