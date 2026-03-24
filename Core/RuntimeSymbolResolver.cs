@@ -19,7 +19,7 @@ namespace GeminiV26.Core
         private readonly Robot _bot;
         private readonly Dictionary<string, string> _runtimeNamesByCanonical = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _aliasResolvedLogged = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> _aliasFallbackLogged = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _resolveErrorLogged = new(StringComparer.OrdinalIgnoreCase);
 
         public RuntimeSymbolResolver(Robot bot)
         {
@@ -61,6 +61,14 @@ namespace GeminiV26.Core
                 Refresh();
 
                 string requested = symbolReference.Trim();
+                var requestedSymbol = _bot.Symbols.GetSymbol(requested);
+                if (requestedSymbol != null)
+                {
+                    runtimeName = requestedSymbol.Name;
+                    RegisterRuntimeName(runtimeName);
+                    return true;
+                }
+
                 string canonical = SymbolRouting.NormalizeSymbol(requested);
                 if (string.IsNullOrWhiteSpace(canonical))
                     return false;
@@ -74,14 +82,11 @@ namespace GeminiV26.Core
                 if (_runtimeNamesByCanonical.TryGetValue(canonical, out runtimeName) && !string.IsNullOrWhiteSpace(runtimeName))
                     return true;
 
-                string aliasRuntime = SymbolAliasRegistry.Resolve(_bot.Symbols, canonical, out var aliasResolved, out var fallbackUsed);
+                string aliasRuntime = SymbolAliasRegistry.Resolve(_bot.Symbols, canonical, out var aliasResolved, out _);
                 if (!string.IsNullOrWhiteSpace(aliasRuntime))
                 {
                     if (aliasResolved && _aliasResolvedLogged.Add(canonical))
                         _bot.Print($"[RESOLVER][ALIAS_RESOLVED] {canonical} → {aliasRuntime}");
-
-                    if (fallbackUsed && _aliasFallbackLogged.Add(canonical))
-                        _bot.Print($"[RESOLVER][ALIAS_FALLBACK] {canonical} → {aliasRuntime} (NOT FOUND)");
 
                     var aliasSymbol = _bot.Symbols.GetSymbol(aliasRuntime);
                     if (aliasSymbol != null)
@@ -92,13 +97,8 @@ namespace GeminiV26.Core
                     }
                 }
 
-                var directSymbol = _bot.Symbols.GetSymbol(requested);
-                if (directSymbol != null)
-                {
-                    runtimeName = directSymbol.Name;
-                    RegisterRuntimeName(runtimeName);
-                    return true;
-                }
+                if (_resolveErrorLogged.Add(requested))
+                    _bot.Print($"[RESOLVER][ERROR] Symbol not found: {requested}");
             }
             catch
             {

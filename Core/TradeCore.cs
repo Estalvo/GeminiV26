@@ -2589,8 +2589,11 @@ namespace GeminiV26.Core
                     continue;
                 }
 
-                _bot.Print(
-                    $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount} usable={isUsable}");
+                if (MarketMemoryEngine.DebugMemory)
+                {
+                    _bot.Print(
+                        $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount} usable={isUsable}");
+                }
             }
 
             _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
@@ -2618,6 +2621,10 @@ namespace GeminiV26.Core
                 if (isStartupWindow)
                     _bot.Print($"[RESOLVER][CRITICAL] symbol={symbol} missing_after_startup");
             }
+
+            _bot.Print($"[RESOLVER][VALIDATION] resolved={resolved}/{total}");
+            if (resolved < total)
+                _bot.Print($"[RESOLVER][ERROR] validation_failed resolved={resolved}/{total}");
 
             _bot.Print($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
         }
