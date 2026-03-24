@@ -271,6 +271,8 @@ namespace GeminiV26.Core
         private static readonly TimeSpan ContextPruneInterval = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan ContextMaxAge = TimeSpan.FromMinutes(30);
         private bool _isMemoryReady;
+        private bool _startupCoverageLogged;
+        private const bool DebugStartupTrace = false;
 
         public TradeCore(Robot bot)
         {
@@ -721,7 +723,6 @@ namespace GeminiV26.Core
         public void OnBar()
         {
             EnsureRuntimeResolverInitialized();
-            _bot.Print("🔥 TRACE: CORE ENTRY (OnBar)");
             string rawSym = _bot.SymbolName;
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
 
@@ -1931,21 +1932,20 @@ namespace GeminiV26.Core
         private void EnsureStartupMemoryReady()
         {
             if (_isMemoryReady)
-            {
-                _bot.Print("BLOCK: startup memory already ready");
                 return;
-            }
 
-            _bot.Print("STEP 1: before symbol loop");
             var symbols = GetTrackedCanonicalSymbols();
 
             foreach (var symbol in symbols)
             {
-                _bot.Print($"STEP 2: inside symbol loop symbol={symbol}");
-                _bot.Print($"STEP 3: before ResolveSymbol symbol={symbol}");
+                if (DebugStartupTrace)
+                    _bot.Print($"[STARTUP][TRACE] before_resolve symbol={symbol}");
+
                 var runtimeSymbol = ResolveSymbol(symbol);
-                _bot.Print($"STEP 4: after ResolveSymbol symbol={symbol} resolved={(runtimeSymbol != null)}");
-                _bot.Print("STEP 5: before tradable check");
+
+                if (DebugStartupTrace)
+                    _bot.Print($"[STARTUP][TRACE] after_resolve symbol={symbol} resolved={(runtimeSymbol != null)}");
+
                 if (!IsTradable(runtimeSymbol))
                 {
                     _bot.Print("BLOCK: not tradable");
@@ -1953,15 +1953,15 @@ namespace GeminiV26.Core
                     continue;
                 }
 
-                _bot.Print($"STEP 6: before Entry/Exit logic symbol={symbol}");
+                if (DebugStartupTrace)
+                    _bot.Print($"[STARTUP][TRACE] initialize_memory symbol={symbol}");
+
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
             }
 
             _isMemoryReady = true;
-            _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
-            _bot.Print($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
-            _bot.Print($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
+            EmitStartupCoverageLogs(symbols);
             _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
         }
 
@@ -2219,7 +2219,6 @@ namespace GeminiV26.Core
             EnsureRuntimeResolverInitialized();
             try
             {
-                _bot.Print("🔥 TRACE: CORE ENTRY (OnTick)");
                 // =====================================================
                 // HARD LOSS GUARD – GLOBAL SAFETY
                 // =====================================================
@@ -2651,9 +2650,18 @@ namespace GeminiV26.Core
                 }
             }
 
+            EmitStartupCoverageLogs(symbols);
+        }
+
+        private void EmitStartupCoverageLogs(List<string> symbols)
+        {
+            if (_startupCoverageLogged)
+                return;
+
             _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
             _bot.Print($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
             _bot.Print($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
+            _startupCoverageLogged = true;
         }
 
         private void AuditResolverCoverage()
