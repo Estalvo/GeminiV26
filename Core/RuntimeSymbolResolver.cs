@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using cAlgo.API;
 using cAlgo.API.Internals;
 
@@ -11,10 +10,18 @@ namespace GeminiV26.Core
     /// </summary>
     public sealed class RuntimeSymbolResolver
     {
+        private static readonly Dictionary<string, string> CanonicalSymbolMap = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["AUDUSD"] = "AUDUSD",
+            ["EURUSD"] = "EURUSD",
+            ["XAUUSD"] = "XAUUSD",
+            ["NAS100"] = "US TECH 100",
+            ["US30"] = "US 30",
+            ["GER40"] = "GERMANY 40"
+        };
+
         private readonly Robot _bot;
         private readonly Dictionary<string, Symbol> _cache = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> _resolverOkLogged = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> _resolverErrorLogged = new(StringComparer.OrdinalIgnoreCase);
 
         public RuntimeSymbolResolver(Robot bot)
         {
@@ -25,11 +32,6 @@ namespace GeminiV26.Core
         public void Refresh()
         {
             _cache.Clear();
-            _resolverOkLogged.Clear();
-            _resolverErrorLogged.Clear();
-
-            if (IsUsableSymbol(_bot.Symbol))
-                _cache[_bot.Symbol.Name] = _bot.Symbol;
         }
 
         public bool TryResolveRuntimeName(string symbolReference, out string runtimeName)
@@ -43,9 +45,15 @@ namespace GeminiV26.Core
             symbol = null;
 
             if (string.IsNullOrWhiteSpace(symbolReference))
+            {
+                _bot.Print("[RESOLVER][INPUT] input=");
+                _bot.Print("[RESOLVER][FATAL] symbol=");
+                _bot.Print("[CORE][BLOCK] symbol resolution failed");
                 return false;
+            }
 
-            string requested = symbolReference.Trim();
+            string requested = symbolReference.Trim().ToUpperInvariant();
+            _bot.Print($"[RESOLVER][INPUT] input={requested}");
 
             if (_cache.ContainsKey(requested))
             {
@@ -53,58 +61,28 @@ namespace GeminiV26.Core
                 return symbol != null;
             }
 
-            if (string.Equals(requested, _bot.Symbol?.Name, StringComparison.OrdinalIgnoreCase))
+            if (!CanonicalSymbolMap.TryGetValue(requested, out string canonical))
             {
-                symbol = _bot.Symbol;
-                if (IsUsableSymbol(symbol))
-                {
-                    CacheAndLogOk(requested, symbol);
-                    return true;
-                }
+                _bot.Print($"[RESOLVER][FATAL] symbol={requested}");
+                _bot.Print("[CORE][BLOCK] symbol resolution failed");
+                return false;
             }
 
-            var symbols = _bot.Symbols;
-            symbol = symbols.GetSymbol(requested);
-            if (IsUsableSymbol(symbol) && IsTradable(symbol))
+            _bot.Print($"[RESOLVER][CANONICAL] resolved={canonical}");
+
+            symbol = _bot.Symbols.GetSymbol(canonical);
+            if (!IsUsableSymbol(symbol) || !IsTradable(symbol))
             {
-                CacheAndLogOk(requested, symbol);
-                return true;
+                _bot.Print($"[RESOLVER][FATAL] symbol={canonical}");
+                _bot.Print("[CORE][BLOCK] symbol resolution failed");
+                return false;
             }
 
-            Symbol fallback = null;
-            foreach (var symbolEntry in symbols)
-            {
-                object raw = symbolEntry;
-                string symbolName = raw is Symbol entrySymbol
-                    ? entrySymbol.Name
-                    : raw?.ToString();
-
-                if (string.IsNullOrWhiteSpace(symbolName))
-                    continue;
-
-                var candidate = symbols.GetSymbol(symbolName);
-                if (IsUsableSymbol(candidate) &&
-                    IsTradable(candidate) &&
-                    candidate.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase))
-                {
-                    fallback = candidate;
-                    break;
-                }
-            }
-
-            if (IsUsableSymbol(fallback))
-            {
-                if (_resolverOkLogged.Add($"FALLBACK:{requested}:{fallback.Name}"))
-                    _bot.Print($"[RESOLVER][FALLBACK] {requested} → {fallback.Name}");
-
-                CacheAndLogOk(requested, fallback);
-                return true;
-            }
-
-            if (_resolverErrorLogged.Add(requested))
-                _bot.Print($"[RESOLVER][ERROR] Invalid symbol: {requested}");
-
-            return false;
+            _cache[requested] = symbol;
+            _cache[canonical] = symbol;
+            _cache[symbol.Name] = symbol;
+            _bot.Print($"[RESOLVER][SUCCESS] symbol={symbol.Name} tradable=TRUE");
+            return true;
         }
 
         public bool TryGetBars(TimeFrame timeFrame, string symbolReference, out Bars bars)
@@ -151,18 +129,6 @@ namespace GeminiV26.Core
             return TryGetBars(timeFrame, symbolReference, out var bars)
                 ? bars
                 : null;
-        }
-
-        private void CacheAndLogOk(string requested, Symbol symbol)
-        {
-            if (!IsUsableSymbol(symbol))
-                return;
-
-            _cache[requested] = symbol;
-            _cache[symbol.Name] = symbol;
-
-            if (_resolverOkLogged.Add($"OK:{requested}:{symbol.Name}"))
-                _bot.Print($"[RESOLVER][OK] {requested} → {symbol.Name}");
         }
 
         private static bool IsUsableSymbol(Symbol symbol)
