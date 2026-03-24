@@ -1937,7 +1937,7 @@ namespace GeminiV26.Core
             }
 
             _bot.Print("STEP 1: before symbol loop");
-            var symbols = GetBrokerCanonicalSymbols();
+            var symbols = GetTrackedCanonicalSymbols();
 
             foreach (var symbol in symbols)
             {
@@ -2608,7 +2608,7 @@ namespace GeminiV26.Core
 
         private void AuditMemoryCoverage()
         {
-            var symbols = GetBrokerCanonicalSymbols();
+            var symbols = GetTrackedCanonicalSymbols();
             bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
 
             foreach (var symbol in symbols)
@@ -2658,7 +2658,7 @@ namespace GeminiV26.Core
 
         private void AuditResolverCoverage()
         {
-            var symbols = GetBrokerCanonicalSymbols();
+            var symbols = GetTrackedCanonicalSymbols();
             int resolved = 0;
             int total = 0;
             bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
@@ -2684,29 +2684,17 @@ namespace GeminiV26.Core
             _bot.Print($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
         }
 
-        private List<string> GetBrokerCanonicalSymbols()
+        private List<string> GetTrackedCanonicalSymbols()
         {
-            var symbols = _bot.Symbols;
             var canonicalSymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string symbolName = _bot.Symbol?.Name;
+            string chartSymbolName = _bot.SymbolName;
 
-            foreach (var symbolEntry in symbols)
-            {
-                object raw = symbolEntry;
-                string symbolName = raw is Symbol entrySymbol
-                    ? entrySymbol.Name
-                    : raw?.ToString();
+            if (!string.IsNullOrWhiteSpace(symbolName))
+                canonicalSymbols.Add(NormalizeSymbol(symbolName));
 
-                if (string.IsNullOrWhiteSpace(symbolName))
-                    continue;
-
-                var symbol = symbols.GetSymbol(symbolName);
-                if (!IsTradable(symbol))
-                    continue;
-
-                string canonical = NormalizeSymbol(symbol.Name);
-                if (!string.IsNullOrWhiteSpace(canonical))
-                    canonicalSymbols.Add(canonical);
-            }
+            if (!string.IsNullOrWhiteSpace(chartSymbolName))
+                canonicalSymbols.Add(NormalizeSymbol(chartSymbolName));
 
             return canonicalSymbols
                 .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)

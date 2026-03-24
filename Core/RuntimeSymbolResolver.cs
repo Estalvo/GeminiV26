@@ -77,33 +77,14 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            foreach (var symbolEntry in _bot.Symbols)
+            if (TryResolveKnownRuntimeMapping(requested, canonical, out symbol))
             {
-                object raw = symbolEntry;
-                string runtimeName = raw is Symbol runtimeSymbol
-                    ? runtimeSymbol.Name
-                    : raw?.ToString();
-
-                if (string.IsNullOrWhiteSpace(runtimeName))
-                    continue;
-
-                string runtimeCanonical = SymbolRouting.NormalizeSymbol(runtimeName);
-                if (!IsGeminiSupportedCanonical(runtimeCanonical))
-                    continue;
-
-                if (!string.Equals(runtimeCanonical, canonical, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                symbol = _bot.Symbols.GetSymbol(runtimeName);
-                if (!IsUsableSymbol(symbol))
-                    continue;
-
-                CacheAliases(requested, canonical, symbol);
-                _bot.Print($"[RESOLVER][RUNTIME] source=scan runtime={symbol.Name}");
+                _bot.Print($"[RESOLVER][RUNTIME] source=known_map runtime={symbol.Name}");
                 _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
                 return true;
             }
 
+            _bot.Print("[SYMBOL][SKIP] " + canonical);
             _bot.Print($"[RESOLVER][SKIP] reason=runtime_not_found canonical={canonical}");
             return false;
         }
@@ -201,6 +182,29 @@ namespace GeminiV26.Core
 
             return string.Equals(canonical, botCanonicalFromName, StringComparison.OrdinalIgnoreCase)
                    || string.Equals(canonical, botCanonicalFromSymbol, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool TryResolveKnownRuntimeMapping(string requested, string canonical, out Symbol symbol)
+        {
+            symbol = null;
+
+            var candidates = SymbolRouting.GetKnownRuntimeCandidates(canonical);
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                string candidate = candidates[i];
+                if (string.IsNullOrWhiteSpace(candidate))
+                    continue;
+
+                var mapped = _bot.Symbols.GetSymbol(candidate);
+                if (!IsUsableSymbol(mapped))
+                    continue;
+
+                CacheAliases(requested, canonical, mapped);
+                symbol = mapped;
+                return true;
+            }
+
+            return false;
         }
     }
 }
