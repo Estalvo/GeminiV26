@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using cAlgo.API;
 using cAlgo.API.Internals;
 
@@ -8,18 +8,13 @@ namespace GeminiV26.Core
 {
     /// <summary>
     /// Central runtime symbol access layer.
-    ///
-    /// Goals:
-    /// - keep canonical instrument names inside the strategy
-    /// - resolve broker/runtime symbol names from valid live context
-    /// - prevent scattered direct string-based Symbols.GetSymbol / MarketData.GetBars calls
     /// </summary>
     public sealed class RuntimeSymbolResolver
     {
         private readonly Robot _bot;
-        private readonly Dictionary<string, string> _runtimeNamesByCanonical = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, Symbol> _resolvedSymbols = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Symbol> _cache = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _resolverOkLogged = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _resolverErrorLogged = new(StringComparer.OrdinalIgnoreCase);
 
         public RuntimeSymbolResolver(Robot bot)
         {
@@ -29,127 +24,79 @@ namespace GeminiV26.Core
 
         public void Refresh()
         {
-            RegisterRuntimeName(_bot.SymbolName);
-            RegisterRuntimeName(_bot.Symbol?.Name);
+            _cache.Clear();
+            _resolverOkLogged.Clear();
+            _resolverErrorLogged.Clear();
 
-            foreach (var position in _bot.Positions)
-            {
-                RegisterRuntimeName(position?.SymbolName);
-            }
-
-            if (_bot.Symbols is IEnumerable enumerable)
-            {
-                foreach (var item in enumerable)
-                {
-                    if (item is Symbol symbol)
-                    {
-                        RegisterRuntimeName(symbol.Name);
-                    }
-                }
-            }
+            if (_bot.Symbol != null && _bot.Symbol.HasQuotes && !string.IsNullOrWhiteSpace(_bot.Symbol.Name))
+                _cache[_bot.Symbol.Name] = _bot.Symbol;
         }
 
         public bool TryResolveRuntimeName(string symbolReference, out string runtimeName)
         {
             runtimeName = null;
-
-            try
-            {
-                if (string.IsNullOrWhiteSpace(symbolReference))
-                    return false;
-
-                string requested = symbolReference.Trim();
-                string canonical = SymbolRouting.NormalizeSymbol(requested);
-                if (string.IsNullOrWhiteSpace(canonical))
-                    return false;
-
-                if (SymbolRouting.NormalizeSymbol(_bot.SymbolName) == canonical)
-                {
-                    runtimeName = _bot.SymbolName;
-                    return true;
-                }
-
-                if (_runtimeNamesByCanonical.TryGetValue(canonical, out runtimeName) && !string.IsNullOrWhiteSpace(runtimeName))
-                    return true;
-
-                string aliasRuntime = SymbolAliasRegistry.Resolve(_bot.Symbols, canonical, out var aliasResolved, out _);
-                if (!string.IsNullOrWhiteSpace(aliasRuntime))
-                {
-                    if ((_resolverOkLogged.Add(requested) || _resolverOkLogged.Add(canonical)) && aliasResolved)
-                        _bot.Print($"[RESOLVER][OK] {requested} → {aliasRuntime}");
-
-                    var aliasSymbol = _bot.Symbols.GetSymbol(aliasRuntime);
-                    if (aliasSymbol != null)
-                    {
-                        runtimeName = aliasSymbol.Name;
-                        RegisterRuntimeName(runtimeName);
-                        return true;
-                    }
-                }
-            }
-            catch
-            {
-                runtimeName = null;
-                return false;
-            }
-
-            runtimeName = null;
-            return false;
+            return TryResolveSymbol(symbolReference, out var symbol) && (runtimeName = symbol.Name) != null;
         }
 
         public bool TryResolveSymbol(string symbolReference, out Symbol symbol)
         {
             symbol = null;
 
-            try
+            if (string.IsNullOrWhiteSpace(symbolReference))
+                return false;
+
+            string requested = symbolReference.Trim();
+
+            if (_cache.ContainsKey(requested))
             {
-                if (string.IsNullOrWhiteSpace(symbolReference))
-                    return false;
-
-                string requested = symbolReference.Trim();
-                if (_resolvedSymbols.TryGetValue(requested, out symbol) && symbol != null)
-                    return true;
-
-                if (SymbolRouting.NormalizeSymbol(symbolReference) == SymbolRouting.NormalizeSymbol(_bot.SymbolName))
-                {
-                    symbol = _bot.Symbol;
-                    if (symbol != null)
-                        _resolvedSymbols[requested] = symbol;
-                    return symbol != null;
-                }
-
-                if (!TryResolveRuntimeName(symbolReference, out var runtimeName))
-                    return false;
-
-                symbol = _bot.Symbols.GetSymbol(runtimeName);
-                if (symbol != null)
-                    _resolvedSymbols[requested] = symbol;
+                symbol = _cache[requested];
                 return symbol != null;
             }
-            catch
+
+            if (string.Equals(requested, _bot.Symbol?.Name, StringComparison.OrdinalIgnoreCase))
             {
-                symbol = null;
-                return false;
+                symbol = _bot.Symbol;
+                if (symbol != null && symbol.HasQuotes)
+                {
+                    CacheAndLogOk(requested, symbol);
+                    return true;
+                }
             }
+
+            symbol = _bot.Symbols.GetSymbol(requested);
+            if (symbol != null && symbol.HasQuotes)
+            {
+                CacheAndLogOk(requested, symbol);
+                return true;
+            }
+
+            var fallback = _bot.Symbols
+                .FirstOrDefault(s => s != null && s.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase) && s.HasQuotes);
+
+            if (fallback != null)
+            {
+                if (_resolverOkLogged.Add($"FALLBACK:{requested}:{fallback.Name}"))
+                    _bot.Print($"[RESOLVER][FALLBACK] {requested} → {fallback.Name}");
+
+                CacheAndLogOk(requested, fallback);
+                return true;
+            }
+
+            if (_resolverErrorLogged.Add(requested))
+                _bot.Print($"[RESOLVER][ERROR] Invalid symbol: {requested}");
+
+            return false;
         }
 
         public bool TryGetBars(TimeFrame timeFrame, string symbolReference, out Bars bars)
         {
             bars = null;
 
-            try
-            {
-                if (!TryResolveRuntimeName(symbolReference, out var runtimeName))
-                    return false;
-
-                bars = _bot.MarketData.GetBars(timeFrame, runtimeName);
-                return bars != null;
-            }
-            catch
-            {
-                bars = null;
+            if (!TryResolveRuntimeName(symbolReference, out var runtimeName))
                 return false;
-            }
+
+            bars = _bot.MarketData.GetBars(timeFrame, runtimeName);
+            return bars != null;
         }
 
         public bool TryGetPipSize(string symbolReference, out double pipSize)
@@ -187,16 +134,16 @@ namespace GeminiV26.Core
                 : null;
         }
 
-        private void RegisterRuntimeName(string runtimeName)
+        private void CacheAndLogOk(string requested, Symbol symbol)
         {
-            if (string.IsNullOrWhiteSpace(runtimeName))
+            if (symbol == null)
                 return;
 
-            string canonical = SymbolRouting.NormalizeSymbol(runtimeName);
-            if (string.IsNullOrWhiteSpace(canonical))
-                return;
+            _cache[requested] = symbol;
+            _cache[symbol.Name] = symbol;
 
-            _runtimeNamesByCanonical[canonical] = runtimeName;
+            if (_resolverOkLogged.Add($"OK:{requested}:{symbol.Name}"))
+                _bot.Print($"[RESOLVER][OK] {requested} → {symbol.Name}");
         }
     }
 }

@@ -713,7 +713,6 @@ namespace GeminiV26.Core
             _bot.Print($"[ONBAR DBG] raw={rawSym} canonical={sym}");
 
             EnsureStartupMemoryReady();
-            AuditMemoryCoverage();
 
             bool isFx = _fxMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.FX;
 
@@ -1906,6 +1905,15 @@ namespace GeminiV26.Core
 
             foreach (var symbol in symbols)
             {
+                if (!_runtimeSymbols.TryResolveSymbol(symbol, out var runtimeSymbol))
+                    continue;
+
+                if (runtimeSymbol == null)
+                    continue;
+
+                if (!runtimeSymbol.HasQuotes)
+                    continue;
+
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
             }
@@ -2518,6 +2526,7 @@ namespace GeminiV26.Core
         public void RehydrateOpenPositions()
         {
             EnsureStartupMemoryReady();
+            AuditMemoryCoverage();
             AuditResolverCoverage();
 
             if (!_isMemoryReady)
@@ -2631,25 +2640,14 @@ namespace GeminiV26.Core
 
         private List<string> GetAllMemorySymbols()
         {
-            var symbols = new HashSet<string>(RequiredMemorySymbols, StringComparer.OrdinalIgnoreCase)
+            var allowedSymbols = new[]
             {
-                _symbolCanonical,
-                NormalizeSymbol(_bot.SymbolName)
+                "EURUSD", "GBPUSD", "USDJPY", "GBPJPY", "EURJPY",
+                "AUDUSD", "NZDUSD", "AUDNZD", "USDCAD", "USDCHF",
+                "XAUUSD", "BTCUSD", "ETHUSD", "NAS100", "US30", "GER40"
             };
 
-            foreach (var position in _bot.Positions)
-            {
-                if (position == null || string.IsNullOrWhiteSpace(position.SymbolName))
-                    continue;
-
-                symbols.Add(NormalizeSymbol(position.SymbolName));
-            }
-
-            foreach (var memorySymbol in _memoryEngine.States.Keys)
-            {
-                if (!string.IsNullOrWhiteSpace(memorySymbol))
-                    symbols.Add(NormalizeSymbol(memorySymbol));
-            }
+            var symbols = new HashSet<string>(allowedSymbols, StringComparer.OrdinalIgnoreCase);
 
             return symbols
                 .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
