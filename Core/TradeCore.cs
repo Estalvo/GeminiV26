@@ -74,7 +74,7 @@ namespace GeminiV26.Core
     public class TradeCore
     {
         private readonly Robot _bot;
-        private readonly RuntimeSymbolResolver _runtimeSymbols;
+        private RuntimeSymbolResolver _runtimeSymbols;
         private readonly TradeRouter _router;
 
         private readonly EntryRouter _entryRouter;
@@ -275,7 +275,6 @@ namespace GeminiV26.Core
         public TradeCore(Robot bot)
         {
             _bot = bot;
-            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
             _router = new TradeRouter(_bot);
             _symbolCanonical = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
             _instrumentClass = SymbolRouting.ResolveInstrumentClass(_symbolCanonical);
@@ -704,8 +703,24 @@ namespace GeminiV26.Core
             _bot.Positions.Closed += OnPositionClosed;
         }
 
+
+        public void Init()
+        {
+            EnsureRuntimeResolverInitialized();
+        }
+
+        private void EnsureRuntimeResolverInitialized()
+        {
+            if (_runtimeSymbols != null)
+                return;
+
+            _runtimeSymbols = new RuntimeSymbolResolver(_bot);
+            _bot.Print("[RESOLVER][INIT] mode=runtime_only phase=OnStart");
+        }
+
         public void OnBar()
         {
+            EnsureRuntimeResolverInitialized();
             _bot.Print("🔥 TRACE: CORE ENTRY (OnBar)");
             string rawSym = _bot.SymbolName;
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
@@ -2201,6 +2216,7 @@ namespace GeminiV26.Core
         // =========================================================
         public void OnTick()
         {
+            EnsureRuntimeResolverInitialized();
             try
             {
                 _bot.Print("🔥 TRACE: CORE ENTRY (OnTick)");
@@ -2554,6 +2570,7 @@ namespace GeminiV26.Core
 
         public void RehydrateOpenPositions()
         {
+            EnsureRuntimeResolverInitialized();
             EnsureStartupMemoryReady();
             AuditMemoryCoverage();
             AuditResolverCoverage();
