@@ -18,6 +18,8 @@ namespace GeminiV26.Core
     {
         private readonly Robot _bot;
         private readonly Dictionary<string, string> _runtimeNamesByCanonical = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _aliasResolvedLogged = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _aliasFallbackLogged = new(StringComparer.OrdinalIgnoreCase);
 
         public RuntimeSymbolResolver(Robot bot)
         {
@@ -71,6 +73,24 @@ namespace GeminiV26.Core
 
                 if (_runtimeNamesByCanonical.TryGetValue(canonical, out runtimeName) && !string.IsNullOrWhiteSpace(runtimeName))
                     return true;
+
+                string aliasRuntime = SymbolAliasRegistry.Resolve(_bot.Symbols, canonical, out var aliasResolved, out var fallbackUsed);
+                if (!string.IsNullOrWhiteSpace(aliasRuntime))
+                {
+                    if (aliasResolved && _aliasResolvedLogged.Add(canonical))
+                        _bot.Print($"[RESOLVER][ALIAS_RESOLVED] {canonical} → {aliasRuntime}");
+
+                    if (fallbackUsed && _aliasFallbackLogged.Add(canonical))
+                        _bot.Print($"[RESOLVER][ALIAS_FALLBACK] {canonical} → {aliasRuntime} (NOT FOUND)");
+
+                    var aliasSymbol = _bot.Symbols.GetSymbol(aliasRuntime);
+                    if (aliasSymbol != null)
+                    {
+                        runtimeName = aliasSymbol.Name;
+                        RegisterRuntimeName(runtimeName);
+                        return true;
+                    }
+                }
 
                 var directSymbol = _bot.Symbols.GetSymbol(requested);
                 if (directSymbol != null)

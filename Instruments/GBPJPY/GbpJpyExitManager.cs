@@ -285,7 +285,22 @@ namespace GeminiV26.Instruments.GBPJPY
             ctx.Tp1Executed = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
-            ApplyBreakEven(pos, ctx, rDist);
+            var live = _bot.Positions.Find(pos.Label, pos.SymbolName, pos.TradeType);
+            if (live == null)
+            {
+                _bot.Print("[EXIT][POST_TP1_NO_POSITION]");
+                _contexts.Remove(Convert.ToInt64(pos.Id));
+                return;
+            }
+
+            if (live.VolumeInUnits < sym.VolumeInUnitsMin)
+            {
+                _bot.Print("[EXIT][POST_TP1_MIN_VOLUME]");
+                _contexts.Remove(Convert.ToInt64(pos.Id));
+                return;
+            }
+
+            ApplyBreakEven(live, ctx, rDist);
         }
 
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
@@ -382,7 +397,7 @@ namespace GeminiV26.Instruments.GBPJPY
             if (livePos == null)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
-                _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
+                _bot.Print($"[SAFE_MODIFY][SKIP_NO_POSITION] pos={position.Id}");
                 return;
             }
 

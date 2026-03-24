@@ -429,5 +429,9 @@ namespace GeminiV26.Core
         public bool MarketTrend { get; set; }
 
         public double Adx_M5 { get; set; }
+
+        public int LastTvmEvalBar { get; set; } = -1;
+
+        public int LastTvmLogBar { get; set; } = -1;
     }
 }

@@ -39,11 +39,15 @@ namespace GeminiV26.Core
             int barsSinceEntry = ComputeBarsSinceEntryByIndex(ctx, m5, out currentBarIndex, out entryBarIndex);
             ctx.BarsSinceEntryM5 = barsSinceEntry;
 
-            if (barsSinceEntry <= 12)
-            {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
-                    $"[TVM DBG] barsSinceEntry={barsSinceEntry} currentBarIndex={currentBarIndex} entryBarIndex={entryBarIndex}", ctx));
-            }
+            if (ctx.LastTvmEvalBar == currentBarIndex)
+                return false;
+
+            ctx.LastTvmEvalBar = currentBarIndex;
+
+            LogTvmOncePerBar(
+                ctx,
+                currentBarIndex,
+                $"[TVM] barsSinceEntry={barsSinceEntry} currentBarIndex={currentBarIndex} entryBarIndex={entryBarIndex}");
 
             if (barsSinceEntry <= 0)
                 return false;
@@ -155,9 +159,11 @@ namespace GeminiV26.Core
             bool atrShrinking,
             bool marketTrend)
         {
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
                 $"[TVM PHASE] EARLY bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}", ctx));
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}");
 
             if (!ctx.MarketTrend)
             {
@@ -183,11 +189,12 @@ namespace GeminiV26.Core
             bool momentumWeak = ctx.Adx_M5 < 20.0 || atrShrinking;
             bool fastAdverse = ctx.MaeR > 0.25 && barsSinceEntry <= 2;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
                 $"[TVM EARLY] noProgress={noProgress} adverseExpansion={adverseExpansion} " +
-                $"momentumWeak={momentumWeak} atrShrinking={atrShrinking}", ctx));
-            _bot.Print(TradeLogIdentity.WithPositionIds(
-                $"[TVM EARLY] fastAdverse={fastAdverse} maeR={ctx.MaeR:0.00} bars={barsSinceEntry}", ctx));
+                $"momentumWeak={momentumWeak} atrShrinking={atrShrinking} fastAdverse={fastAdverse} " +
+                $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}");
 
             int dangerCount = 0;
             if (noProgress)
@@ -199,16 +206,17 @@ namespace GeminiV26.Core
             if (fastAdverse)
                 dangerCount++;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM DECISION] phase=EARLY dangerCount={dangerCount} threshold=2", ctx));
+            LogTvmOncePerBar(ctx, ctx.LastTvmEvalBar, $"[TVM DECISION] phase=EARLY dangerCount={dangerCount} threshold=2");
 
             if (dangerCount >= 2)
             {
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "EARLY_FAILURE";
 
-                _bot.Print(TradeLogIdentity.WithPositionIds(
-                    $"[TVM EXIT] reason=EARLY_FAILURE mfeR={ctx.MfeR:0.00} " +
-                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}", ctx));
+                LogTvmOncePerBar(
+                    ctx,
+                    ctx.LastTvmEvalBar,
+                    $"[TVM EXIT] reason=EARLY_FAILURE mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} bars={barsSinceEntry}");
 
                 return true;
             }
@@ -223,9 +231,11 @@ namespace GeminiV26.Core
             Bars m5,
             TradeType tradeType)
         {
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
                 $"[TVM PHASE] DEVELOPMENT bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}", ctx));
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}");
 
             if (!ctx.MarketTrend)
             {
@@ -257,24 +267,27 @@ namespace GeminiV26.Core
             bool structureBreak = ctx.MaeR > 0.60 || IsStructureWeakening(tradeType, m5);
             bool noContinuation = barsSinceEntry >= 4 && ctx.MfeR < 0.20;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
-                $"[TVM DEVELOPMENT] momentumDecay={momentumDecay} noContinuation={noContinuation} " +
-                $"structureBreak={structureBreak}", ctx));
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
+                $"[TVM DEVELOPMENT] momentumDecay={momentumDecay} noContinuation={noContinuation} structureBreak={structureBreak}");
 
             bool shouldExit = structureBreak || (momentumDecay && noContinuation);
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
-                $"[TVM DECISION] phase=DEVELOPMENT structureBreak={structureBreak} " +
-                $"combo={(momentumDecay && noContinuation)}", ctx));
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
+                $"[TVM DECISION] phase=DEVELOPMENT structureBreak={structureBreak} combo={(momentumDecay && noContinuation)}");
 
             if (shouldExit)
             {
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "DEVELOPMENT_FAILURE";
 
-                _bot.Print(TradeLogIdentity.WithPositionIds(
-                    $"[TVM EXIT] reason=DEVELOPMENT_FAILURE mfeR={ctx.MfeR:0.00} " +
-                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}", ctx));
+                LogTvmOncePerBar(
+                    ctx,
+                    ctx.LastTvmEvalBar,
+                    $"[TVM EXIT] reason=DEVELOPMENT_FAILURE mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} bars={barsSinceEntry}");
 
                 return true;
             }
@@ -287,9 +300,11 @@ namespace GeminiV26.Core
             int barsSinceEntry,
             bool marketTrend)
         {
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
                 $"[TVM PHASE] MATURE bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
-                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}", ctx));
+                $"adx={ctx.Adx_M5:0.0} trend={marketTrend}");
 
             if (!ctx.MarketTrend)
             {
@@ -301,22 +316,27 @@ namespace GeminiV26.Core
             bool maximumAdverseExcursion = ctx.MaeR > 0.80;
             bool weakDevelopment = barsSinceEntry > 12 && ctx.MfeR < 0.30;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
-                $"[TVM MATURE] maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}", ctx));
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
+                $"[TVM MATURE] maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}");
 
             bool shouldExit = maximumAdverseExcursion || weakDevelopment;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
-                $"[TVM DECISION] phase=MATURE maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}", ctx));
+            LogTvmOncePerBar(
+                ctx,
+                ctx.LastTvmEvalBar,
+                $"[TVM DECISION] phase=MATURE maxAdverse={maximumAdverseExcursion} weakDevelopment={weakDevelopment}");
 
             if (shouldExit)
             {
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "MATURE_FAILURE";
 
-                _bot.Print(TradeLogIdentity.WithPositionIds(
-                    $"[TVM EXIT] reason=MATURE_FAILURE mfeR={ctx.MfeR:0.00} " +
-                    $"maeR={ctx.MaeR:0.00} bars={barsSinceEntry}", ctx));
+                LogTvmOncePerBar(
+                    ctx,
+                    ctx.LastTvmEvalBar,
+                    $"[TVM EXIT] reason=MATURE_FAILURE mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} bars={barsSinceEntry}");
 
                 return true;
             }
@@ -400,6 +420,18 @@ namespace GeminiV26.Core
                 return c0 < c1 && c1 < c2;
 
             return c0 > c1 && c1 > c2;
+        }
+
+        private void LogTvmOncePerBar(PositionContext ctx, int barIndex, string message)
+        {
+            if (ctx == null)
+                return;
+
+            if (ctx.LastTvmLogBar == barIndex)
+                return;
+
+            _bot.Print(TradeLogIdentity.WithPositionIds(message, ctx));
+            ctx.LastTvmLogBar = barIndex;
         }
     }
 }
