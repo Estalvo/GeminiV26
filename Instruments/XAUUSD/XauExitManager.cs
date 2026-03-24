@@ -30,10 +30,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using cAlgo.API.Indicators;
+using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.XAUUSD
 {
-    public class XauExitManager
+    public class XauExitManager : IExitManager
     {
         private readonly Robot _bot;
         private readonly RuntimeSymbolResolver _runtimeSymbols;

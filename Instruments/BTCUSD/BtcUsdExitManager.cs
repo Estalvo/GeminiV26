@@ -7,6 +7,7 @@ using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
+using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.BTCUSD
 {
@@ -16,7 +17,7 @@ namespace GeminiV26.Instruments.BTCUSD
     /// - TP1 előtt nincs trailing
     /// - TP1 után: BE + TTM + adaptive trailing + optional TP2 extension
     /// </summary>
-    public class BtcUsdExitManager
+    public class BtcUsdExitManager : IExitManager
     {
         private readonly Robot _bot;
         private readonly RuntimeSymbolResolver _runtimeSymbols;
