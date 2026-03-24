@@ -45,6 +45,7 @@ namespace GeminiV26
             // 🔹 CORE
             // =========================
             _core = new TradeCore(this);
+            _core.Init();
 
             // =========================
             // 🔹 LOGGERS
