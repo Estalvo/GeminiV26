@@ -706,6 +706,7 @@ namespace GeminiV26.Core
 
         public void OnBar()
         {
+            _bot.Print("🔥 TRACE: CORE ENTRY (OnBar)");
             string rawSym = _bot.SymbolName;
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
 
@@ -775,6 +776,7 @@ namespace GeminiV26.Core
             // =========================
             if (_positionContexts == null)
             {
+                _bot.Print("BLOCK: _positionContexts == null");
                 _bot.Print("[TC] WARN: _positionContexts is NULL (skip exit+entry pipeline this bar)");
                 return;
             }
@@ -862,6 +864,7 @@ namespace GeminiV26.Core
             if (HasOpenGeminiPosition())
             {
                 _bot.Print("[DEBUG] HasOpenGeminiPosition = TRUE");
+                _bot.Print("BLOCK: existing Gemini position open");
                 return;
             }
 
@@ -870,16 +873,19 @@ namespace GeminiV26.Core
             // =========================
             if (_contextBuilder == null)
             {
+                _bot.Print("BLOCK: _contextBuilder == null");
                 _bot.Print("[TC] ERROR: _contextBuilder is NULL (cannot build entry context)");
                 return;
             }
             if (_globalSessionGate == null)
             {
+                _bot.Print("BLOCK: _globalSessionGate == null");
                 _bot.Print("[TC] ERROR: _globalSessionGate is NULL (cannot gate entries)");
                 return;
             }
             if (_entryRouter == null)
             {
+                _bot.Print("BLOCK: _entryRouter == null");
                 _bot.Print("[TC] ERROR: _entryRouter is NULL (cannot evaluate entries)");
                 return;
             }
@@ -892,6 +898,7 @@ namespace GeminiV26.Core
             
             if (_ctx == null || !_ctx.IsReady)
             {
+                _bot.Print("BLOCK: EntryContext not ready");
                 _bot.Print("[TC] BLOCKED: EntryContext not ready");
                 return;
             }
@@ -944,8 +951,10 @@ namespace GeminiV26.Core
             // GLOBAL SESSION GATE + SESSION MATRIX
             // =========================
             SessionDecision sessionDecision = _globalSessionGate.GetDecision(_bot.SymbolName, _bot.TimeFrame);
+            _bot.Print($"[SESSION CHECK] time={_bot.Server.Time:O} symbol={_bot.SymbolName} bucket={sessionDecision.Bucket} allow={sessionDecision.Allow}");
             if (!sessionDecision.Allow)
             {
+                _bot.Print("BLOCK: session gate");
                 _bot.Print("[TC] BLOCKED: Global SessionGate");
                 return;
             }
@@ -1214,6 +1223,7 @@ namespace GeminiV26.Core
 
                 if (selected == null)
                 {
+                    _bot.Print("BLOCK: entry gate");
                     _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
                     return;
                 }
@@ -1274,6 +1284,7 @@ namespace GeminiV26.Core
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
+                    _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
                     return;
                 }
@@ -1283,6 +1294,7 @@ namespace GeminiV26.Core
 
                 if (!ValidateDirectionConsistency(_ctx, selected))
                 {
+                    _bot.Print("BLOCK: direction/entry failed");
                     return;
                 }
 
@@ -1293,18 +1305,22 @@ namespace GeminiV26.Core
                     _bot.Print(TradeLogIdentity.WithTempId($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
 
                 var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
+                _bot.Print("CHECK: direction gate");
+                _bot.Print("CHECK: entry gate");
 
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
             {
                 if (!(_xauSessionGate?.AllowEntry(gateDir) ?? false))
                 {
+                    _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: XAU SessionGate");
                     return;
                 }
 
                 if (!(_xauImpulseGate?.AllowEntry(gateDir) ?? false))
                 {
+                    _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: XAU ImpulseGate");
                     return;
                 }
@@ -1316,12 +1332,14 @@ namespace GeminiV26.Core
             {
                 if (!(_nasSessionGate?.AllowEntry(gateDir) ?? false))
                 {
+                    _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: NAS SessionGate");
                     return;
                 }
 
                 if (!(_nasImpulseGate?.AllowEntry(gateDir) ?? false))
                 {
+                    _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: NAS ImpulseGate");
                     return;
                 }
@@ -1898,19 +1916,29 @@ namespace GeminiV26.Core
         private void EnsureStartupMemoryReady()
         {
             if (_isMemoryReady)
+            {
+                _bot.Print("BLOCK: startup memory already ready");
                 return;
+            }
 
+            _bot.Print("STEP 1: before symbol loop");
             var symbols = GetBrokerCanonicalSymbols();
 
             foreach (var symbol in symbols)
             {
+                _bot.Print($"STEP 2: inside symbol loop symbol={symbol}");
+                _bot.Print($"STEP 3: before ResolveSymbol symbol={symbol}");
                 var runtimeSymbol = ResolveSymbol(symbol);
+                _bot.Print($"STEP 4: after ResolveSymbol symbol={symbol} resolved={(runtimeSymbol != null)}");
+                _bot.Print("STEP 5: before tradable check");
                 if (!IsTradable(runtimeSymbol))
                 {
+                    _bot.Print("BLOCK: not tradable");
                     _bot.Print($"[MEMORY][SKIP] {symbol}");
                     continue;
                 }
 
+                _bot.Print($"STEP 6: before Entry/Exit logic symbol={symbol}");
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
             }
@@ -2175,11 +2203,15 @@ namespace GeminiV26.Core
         {
             try
             {
+                _bot.Print("🔥 TRACE: CORE ENTRY (OnTick)");
                 // =====================================================
                 // HARD LOSS GUARD – GLOBAL SAFETY
                 // =====================================================
                 if (CheckHardLoss())
+                {
+                    _bot.Print("BLOCK: hard loss guard");
                     return;
+                }
 
                 if (IsSymbol("XAUUSD"))
                 {
