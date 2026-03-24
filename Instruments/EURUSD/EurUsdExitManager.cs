@@ -6,10 +6,11 @@ using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
+using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.EURUSD
 {
-    public class EurUsdExitManager
+    public class EurUsdExitManager : IExitManager
     {
         private readonly Robot _bot;
         private readonly RuntimeSymbolResolver _runtimeSymbols;

@@ -6,10 +6,11 @@ using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
+using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.EURJPY
 {
-    public class EurJpyExitManager
+    public class EurJpyExitManager : IExitManager
     {
         private readonly Robot _bot;
         private readonly RuntimeSymbolResolver _runtimeSymbols;

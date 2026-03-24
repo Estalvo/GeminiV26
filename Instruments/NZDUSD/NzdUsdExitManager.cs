@@ -6,10 +6,11 @@ using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.TradeManagement;
+using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.NZDUSD
 {
-    public class NzdUsdExitManager
+    public class NzdUsdExitManager : IExitManager
     {
         private readonly Robot _bot;
         private readonly RuntimeSymbolResolver _runtimeSymbols;

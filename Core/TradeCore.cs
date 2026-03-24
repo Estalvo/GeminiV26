@@ -2637,11 +2637,29 @@ namespace GeminiV26.Core
 
         private List<string> GetBrokerCanonicalSymbols()
         {
-            return _bot.Symbols
-                .Where(s => s != null && s.HasQuotes)
-                .Select(s => NormalizeSymbol(s.Name))
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+            var symbols = _bot.Symbols;
+            var canonicalSymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var symbolEntry in symbols)
+            {
+                object raw = symbolEntry;
+                string symbolName = raw is Symbol entrySymbol
+                    ? entrySymbol.Name
+                    : raw?.ToString();
+
+                if (string.IsNullOrWhiteSpace(symbolName))
+                    continue;
+
+                var symbol = symbols.GetSymbol(symbolName);
+                if (!IsTradable(symbol))
+                    continue;
+
+                string canonical = NormalizeSymbol(symbol.Name);
+                if (!string.IsNullOrWhiteSpace(canonical))
+                    canonicalSymbols.Add(canonical);
+            }
+
+            return canonicalSymbols
                 .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
@@ -2696,7 +2714,7 @@ namespace GeminiV26.Core
 
         private static bool IsTradable(Symbol symbol)
         {
-            return symbol != null && symbol.HasQuotes;
+            return symbol != null && symbol.Bid != 0 && symbol.Ask != 0;
         }
 
         // =================================================

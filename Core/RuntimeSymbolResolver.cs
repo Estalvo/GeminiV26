@@ -63,21 +63,34 @@ namespace GeminiV26.Core
                 }
             }
 
-            symbol = _bot.Symbols.FirstOrDefault(s =>
-                s != null &&
-                s.HasQuotes &&
-                string.Equals(s.Name, requested, StringComparison.OrdinalIgnoreCase));
-            if (IsUsableSymbol(symbol))
+            var symbols = _bot.Symbols;
+            symbol = symbols.GetSymbol(requested);
+            if (IsUsableSymbol(symbol) && IsTradable(symbol))
             {
                 CacheAndLogOk(requested, symbol);
                 return true;
             }
 
-            var fallback = _bot.Symbols.FirstOrDefault(s =>
-                s != null &&
-                s.HasQuotes &&
-                !string.IsNullOrWhiteSpace(s.Name) &&
-                s.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase));
+            Symbol fallback = null;
+            foreach (var symbolEntry in symbols)
+            {
+                object raw = symbolEntry;
+                string symbolName = raw is Symbol entrySymbol
+                    ? entrySymbol.Name
+                    : raw?.ToString();
+
+                if (string.IsNullOrWhiteSpace(symbolName))
+                    continue;
+
+                var candidate = symbols.GetSymbol(symbolName);
+                if (IsUsableSymbol(candidate) &&
+                    IsTradable(candidate) &&
+                    candidate.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase))
+                {
+                    fallback = candidate;
+                    break;
+                }
+            }
 
             if (IsUsableSymbol(fallback))
             {
@@ -155,6 +168,11 @@ namespace GeminiV26.Core
         private static bool IsUsableSymbol(Symbol symbol)
         {
             return symbol != null && !string.IsNullOrWhiteSpace(symbol.Name);
+        }
+
+        private static bool IsTradable(Symbol symbol)
+        {
+            return symbol != null && symbol.Bid != 0 && symbol.Ask != 0;
         }
     }
 }
