@@ -6,6 +6,7 @@ namespace Gemini.Memory
 {
     public sealed class MarketMemoryEngine
     {
+        public static bool DebugMemory = false;
         private const int StaleImpulseThresholdBars = 8;
         private const int ChaseRiskThresholdBars = 4;
         private readonly Action<string> _log;
@@ -92,7 +93,8 @@ namespace Gemini.Memory
             {
                 state.IsBuilt = true;
                 RecomputeUsable(state);
-                _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} bars=0 reason=no_history");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} bars=0 reason=no_history");
                 _log?.Invoke($"[MEMORY][DONE] symbol={state.Symbol} mode={state.BuildMode} phase={state.MovePhase} age={state.MoveAgeBars}");
                 return;
             }
@@ -223,12 +225,14 @@ namespace Gemini.Memory
         {
             state.MoveAgeBars++;
             state.BarsSinceImpulse++;
-            _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
+            if (DebugMemory)
+                _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
 
             if (IsStrongMove(bar))
             {
                 ApplyImpulse(state, bar, "new_impulse");
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
                 return;
             }
 
@@ -238,7 +242,8 @@ namespace Gemini.Memory
                 state.MovePhase = MovePhase.Decay;
                 state.BarsSinceImpulse = 0;
                 state.HasActiveImpulse = false;
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
             else if (HasContinuation(state, bar))
             {
@@ -246,25 +251,29 @@ namespace Gemini.Memory
                 state.MovePhase = MovePhase.Continuation;
                 state.IsImpulseDecay = false;
                 state.IsStaleImpulse = false;
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
             else if (IsEligiblePullback(state, bar))
             {
                 IncrementPullback(state, "retrace_without_new_extreme");
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase} pullbacks={state.PullbackCount}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase} pullbacks={state.PullbackCount}");
             }
             else if (state.BarsSinceImpulse > 1)
             {
                 state.MovePhase = MovePhase.Decay;
                 state.IsImpulseDecay = true;
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
 
             if (state.BarsSinceImpulse > StaleImpulseThresholdBars)
             {
                 state.IsStaleImpulse = true;
                 state.MovePhase = MovePhase.Stale;
-                _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
+                if (DebugMemory)
+                    _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
         }
 
@@ -312,13 +321,15 @@ namespace Gemini.Memory
             state.PullbackCount = Math.Min(5, state.PullbackCount + 1);
             state.MovePhase = MovePhase.Pullback;
             state.IsImpulseDecay = false;
-            _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
+            if (DebugMemory)
+                _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
         }
 
         private void ResetPullback(SymbolMemoryState state, string reason)
         {
             state.PullbackCount = 0;
-            _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
+            if (DebugMemory)
+                _log?.Invoke($"[MEMORY][PULLBACK] symbol={state.Symbol} count={state.PullbackCount} reason={reason}");
         }
 
         private static bool IsEligiblePullback(SymbolMemoryState state, Bar bar)
