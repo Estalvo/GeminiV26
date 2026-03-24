@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace GeminiV26.Core
 {
@@ -12,6 +13,16 @@ namespace GeminiV26.Core
 
     public static class SymbolRouting
     {
+        private static readonly Dictionary<string, string[]> KnownRuntimeSymbolMap = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["NAS100"] = new[] { "NAS100", "US100", "USTECH100", "USTECH" },
+            ["GER40"] = new[] { "GER40", "DE40", "DAX40", "DAX", "GERMANY40", "GER" },
+            ["US30"] = new[] { "US30", "DJ30", "DOW" },
+            ["BTCUSD"] = new[] { "BTCUSD", "XBTUSD" },
+            ["XAUUSD"] = new[] { "XAUUSD", "GOLD" },
+            ["XAGUSD"] = new[] { "XAGUSD", "SILVER" }
+        };
+
         public static string NormalizeSymbol(string symbol)
         {
             var s = (symbol ?? string.Empty)
@@ -50,6 +61,15 @@ namespace GeminiV26.Core
                 return InstrumentClass.INDEX;
 
             return InstrumentClass.FX;
+        }
+
+        public static IReadOnlyList<string> GetKnownRuntimeCandidates(string canonical)
+        {
+            var normalized = NormalizeSymbol(canonical);
+            if (KnownRuntimeSymbolMap.TryGetValue(normalized, out var known))
+                return known;
+
+            return new[] { normalized };
         }
     }
 }
