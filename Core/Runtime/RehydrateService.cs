@@ -444,6 +444,19 @@ namespace GeminiV26.Core.Runtime
             string normalizedSymbol = SymbolRouting.NormalizeSymbol(symbolName);
             SymbolMemoryState memoryState = _memoryEngine.GetState(normalizedSymbol);
 
+            if (memoryState == null || memoryState.BuildMode == MemoryBuildMode.Default || !memoryState.IsBuilt)
+            {
+                if (TryRebuildMemoryState(normalizedSymbol))
+                {
+                    _bot.Print($"[MEMORY][RECOVER] symbol={normalizedSymbol} source=rehydrate");
+                    memoryState = _memoryEngine.GetState(normalizedSymbol);
+                }
+                else
+                {
+                    _bot.Print($"[MEMORY][CRITICAL_MISSING] symbol={normalizedSymbol} source=rehydrate");
+                }
+            }
+
             if (memoryState != null && memoryState.BuildMode != MemoryBuildMode.Default)
             {
                 ctx.MovePhase = memoryState.MovePhase;
@@ -459,6 +472,23 @@ namespace GeminiV26.Core.Runtime
             ctx.ContextTrust = MemoryTrustLevel.Low;
             defaultedLifecycleFields = true;
             _bot.Print($"[REHYDRATE][NO_MEMORY] symbol={normalizedSymbol}");
+        }
+
+        private bool TryRebuildMemoryState(string normalizedSymbol)
+        {
+            if (!_runtimeSymbols.TryGetBars(TimeFrame.Minute5, normalizedSymbol, out Bars bars) || bars == null)
+                return false;
+
+            var history = new List<Bar>();
+            int closedCount = Math.Max(0, bars.Count - 1);
+            for (int i = 0; i < closedCount; i++)
+                history.Add(bars[i]);
+
+            _memoryEngine.MarkResolved(normalizedSymbol);
+            _memoryEngine.BuildFromHistory(normalizedSymbol, history);
+
+            SymbolMemoryState rebuilt = _memoryEngine.GetState(normalizedSymbol);
+            return rebuilt != null && rebuilt.IsBuilt;
         }
 
         private void RebuildTradeExcursions(PositionContext ctx, Position position)
