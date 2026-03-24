@@ -65,6 +65,7 @@ using GeminiV26.Core.HtfBias;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Analytics;
+using GeminiV26.Core.Memory;
 using GeminiV26.Core.Runtime;
 using System.Linq;
 
@@ -88,6 +89,8 @@ namespace GeminiV26.Core
         private readonly Dictionary<string, ArmedSetup> _armedSetups = new();
         private readonly TradeMetaStore _tradeMetaStore = new();
         private readonly TradeStatsTracker _statsTracker;
+        private readonly TradeMemoryStore _tradeMemoryStore;
+        private readonly MemoryLogger _memoryLogger;
         private readonly MarketMemoryEngine _memoryEngine;
         private readonly string _symbolCanonical;
         private readonly InstrumentClass _instrumentClass;
@@ -294,6 +297,8 @@ namespace GeminiV26.Core
             _router = new TradeRouter(_bot);
             _symbolCanonical = SymbolRouting.NormalizeSymbol(_bot.SymbolName);
             _instrumentClass = SymbolRouting.ResolveInstrumentClass(_symbolCanonical);
+            _tradeMemoryStore = new TradeMemoryStore();
+            _memoryLogger = new MemoryLogger(_bot);
             var symbol = _symbolCanonical;
 
             // =========================
@@ -2451,6 +2456,27 @@ namespace GeminiV26.Core
                         ? entryCtx.Transition?.QualityScore ?? 0.0
                         : 0.0
                 });
+
+            var memoryRecord = new TradeMemoryRecord
+            {
+                Instrument = pos.SymbolName ?? string.Empty,
+                EntryType = meta?.EntryType ?? ctx?.EntryType ?? string.Empty,
+                SetupType = ResolveSetupType(meta?.EntryType ?? ctx?.EntryType),
+                Direction = pos.TradeType == TradeType.Buy ? "Long" : "Short",
+                RMultiple = ComputeRMultiple(pos, ctx, sym.PipSize),
+                MFE = ctx?.MfeR ?? 0.0,
+                MAE = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
+                MarketRegime = ResolveMarketRegime(entryCtx),
+                TransitionQuality = entryCtx?.TransitionValid == true
+                    ? entryCtx.Transition?.QualityScore ?? 0.0
+                    : 0.0,
+                Confidence = ctx?.FinalConfidence ?? meta?.Confidence ?? 0.0,
+                EntryTime = ctx?.EntryTime ?? pos.EntryTime,
+                ExitTime = _bot.Server.Time
+            };
+
+            _tradeMemoryStore.AddRecord(memoryRecord);
+            _memoryLogger.LogWrite(memoryRecord);
 
             _positionContexts.Remove(pos.Id);
             _contextRegistry.RemovePosition(pos.Id);
