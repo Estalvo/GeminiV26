@@ -63,16 +63,21 @@ namespace GeminiV26.Core
                 }
             }
 
-            symbol = _bot.Symbols.GetSymbol(requested);
+            symbol = _bot.Symbols.FirstOrDefault(s =>
+                s != null &&
+                s.HasQuotes &&
+                string.Equals(s.Name, requested, StringComparison.OrdinalIgnoreCase));
             if (IsUsableSymbol(symbol))
             {
                 CacheAndLogOk(requested, symbol);
                 return true;
             }
 
-            string fallbackName = _bot.Symbols
-                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s) && s.StartsWith(requested, StringComparison.OrdinalIgnoreCase));
-            var fallback = string.IsNullOrWhiteSpace(fallbackName) ? null : _bot.Symbols.GetSymbol(fallbackName);
+            var fallback = _bot.Symbols.FirstOrDefault(s =>
+                s != null &&
+                s.HasQuotes &&
+                !string.IsNullOrWhiteSpace(s.Name) &&
+                s.Name.StartsWith(requested, StringComparison.OrdinalIgnoreCase));
 
             if (IsUsableSymbol(fallback))
             {

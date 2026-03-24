@@ -92,6 +92,7 @@ namespace GeminiV26.Core
         private readonly TradeMemoryStore _tradeMemoryStore;
         private readonly MemoryLogger _memoryLogger;
         private readonly MarketMemoryEngine _memoryEngine;
+        private readonly Dictionary<string, IExitManager> _exitManagersByCanonical = new(StringComparer.OrdinalIgnoreCase);
         private readonly string _symbolCanonical;
         private readonly InstrumentClass _instrumentClass;
        
@@ -270,25 +271,6 @@ namespace GeminiV26.Core
         private static readonly TimeSpan ContextPruneInterval = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan ContextMaxAge = TimeSpan.FromMinutes(30);
         private bool _isMemoryReady;
-        private static readonly string[] RequiredMemorySymbols =
-        {
-            "EURUSD",
-            "USDJPY",
-            "GBPUSD",
-            "AUDUSD",
-            "AUDNZD",
-            "EURJPY",
-            "GBPJPY",
-            "NZDUSD",
-            "USDCAD",
-            "USDCHF",
-            "XAUUSD",
-            "NAS100",
-            "US30",
-            "GER40",
-            "BTCUSD",
-            "ETHUSD"
-        };
 
         public TradeCore(Robot bot)
         {
@@ -646,6 +628,23 @@ namespace GeminiV26.Core
                 _cryptoMarketStateDetector,
                 _positionContexts,
                 BotLabel);
+
+            RegisterExitManager("XAUUSD", _xauExitManager);
+            RegisterExitManager("NAS100", _nasExitManager);
+            RegisterExitManager("US30", _us30ExitManager);
+            RegisterExitManager("GER40", _ger40ExitManager);
+            RegisterExitManager("EURUSD", _eurUsdExitManager);
+            RegisterExitManager("USDJPY", _usdJpyExitManager);
+            RegisterExitManager("GBPUSD", _gbpUsdExitManager);
+            RegisterExitManager("AUDUSD", _audUsdExitManager);
+            RegisterExitManager("AUDNZD", _audNzdExitManager);
+            RegisterExitManager("EURJPY", _eurJpyExitManager);
+            RegisterExitManager("GBPJPY", _gbpJpyExitManager);
+            RegisterExitManager("NZDUSD", _nzdUsdExitManager);
+            RegisterExitManager("USDCAD", _usdCadExitManager);
+            RegisterExitManager("USDCHF", _usdChfExitManager);
+            RegisterExitManager("BTCUSD", _btcUsdExitManager);
+            RegisterExitManager("ETHUSD", _ethUsdExitManager);
 
             _bot.Positions.Opened += args =>
             {
@@ -1901,15 +1900,16 @@ namespace GeminiV26.Core
             if (_isMemoryReady)
                 return;
 
-            var symbols = GetAllMemorySymbols();
+            var symbols = GetBrokerCanonicalSymbols();
 
             foreach (var symbol in symbols)
             {
-                if (!_runtimeSymbols.TryResolveSymbol(symbol, out var runtimeSymbol))
+                var runtimeSymbol = ResolveSymbol(symbol);
+                if (!IsTradable(runtimeSymbol))
+                {
+                    _bot.Print($"[MEMORY][SKIP] {symbol}");
                     continue;
-
-                if (runtimeSymbol == null)
-                    continue;
+                }
 
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
@@ -2559,7 +2559,7 @@ namespace GeminiV26.Core
 
         private void AuditMemoryCoverage()
         {
-            var symbols = GetAllMemorySymbols();
+            var symbols = GetBrokerCanonicalSymbols();
             bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
 
             foreach (var symbol in symbols)
@@ -2609,7 +2609,7 @@ namespace GeminiV26.Core
 
         private void AuditResolverCoverage()
         {
-            var symbols = GetAllMemorySymbols();
+            var symbols = GetBrokerCanonicalSymbols();
             int resolved = 0;
             int total = 0;
             bool isStartupWindow = BotRestartState.BarsSinceStart <= 5;
@@ -2635,20 +2635,14 @@ namespace GeminiV26.Core
             _bot.Print($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
         }
 
-        private List<string> GetAllMemorySymbols()
+        private List<string> GetBrokerCanonicalSymbols()
         {
-            var allowedSymbols = new[]
-            {
-                "EURUSD", "GBPUSD", "USDJPY", "GBPJPY", "EURJPY",
-                "AUDUSD", "NZDUSD", "AUDNZD", "USDCAD", "USDCHF",
-                "XAUUSD", "BTCUSD", "ETHUSD", "NAS100", "US30", "GER40"
-            };
-
-            var symbols = new HashSet<string>(allowedSymbols, StringComparer.OrdinalIgnoreCase);
-
-            return symbols
-                .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
-                .OrderBy(symbol => symbol, StringComparer.OrdinalIgnoreCase)
+            return _bot.Symbols
+                .Where(s => s != null && s.HasQuotes)
+                .Select(s => NormalizeSymbol(s.Name))
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
 
@@ -2657,106 +2651,52 @@ namespace GeminiV26.Core
             if (ctx == null)
                 return false;
 
-            string symbol = NormalizeSymbol(ctx.Symbol);
-
-            if (symbol == "XAUUSD")
+            string canonical = NormalizeSymbol(ctx.Symbol);
+            var symbol = ResolveSymbol(canonical);
+            if (!IsTradable(symbol))
             {
-                _xauExitManager?.RegisterContext(ctx);
-                return _xauExitManager != null;
+                _bot.Print($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=symbol_not_tradable");
+                return false;
             }
 
-            if (symbol == "NAS100")
+            var manager = GetExitManager(canonical);
+            if (manager != null)
             {
-                _nasExitManager?.RegisterContext(ctx);
-                return _nasExitManager != null;
-            }
-
-            if (symbol == "US30")
-            {
-                _us30ExitManager?.RegisterContext(ctx);
-                return _us30ExitManager != null;
-            }
-
-            if (symbol == "GER40")
-            {
-                _ger40ExitManager?.RegisterContext(ctx);
-                return _ger40ExitManager != null;
-            }
-
-            if (symbol == "EURUSD")
-            {
-                _eurUsdExitManager?.RegisterContext(ctx);
-                return _eurUsdExitManager != null;
-            }
-
-            if (symbol == "USDJPY")
-            {
-                _usdJpyExitManager?.RegisterContext(ctx);
-                return _usdJpyExitManager != null;
-            }
-
-            if (symbol == "GBPUSD")
-            {
-                _gbpUsdExitManager?.RegisterContext(ctx);
-                return _gbpUsdExitManager != null;
-            }
-
-            if (symbol == "AUDUSD")
-            {
-                _audUsdExitManager?.RegisterContext(ctx);
-                return _audUsdExitManager != null;
-            }
-
-            if (symbol == "AUDNZD")
-            {
-                _audNzdExitManager?.RegisterContext(ctx);
-                return _audNzdExitManager != null;
-            }
-
-            if (symbol == "EURJPY")
-            {
-                _eurJpyExitManager?.RegisterContext(ctx);
-                return _eurJpyExitManager != null;
-            }
-
-            if (symbol == "GBPJPY")
-            {
-                _gbpJpyExitManager?.RegisterContext(ctx);
-                return _gbpJpyExitManager != null;
-            }
-
-            if (symbol == "NZDUSD")
-            {
-                _nzdUsdExitManager?.RegisterContext(ctx);
-                return _nzdUsdExitManager != null;
-            }
-
-            if (symbol == "USDCAD")
-            {
-                _usdCadExitManager?.RegisterContext(ctx);
-                return _usdCadExitManager != null;
-            }
-
-            if (symbol == "USDCHF")
-            {
-                _usdChfExitManager?.RegisterContext(ctx);
-                return _usdChfExitManager != null;
-            }
-
-            if (symbol == "BTCUSD")
-            {
-                _btcUsdExitManager?.RegisterContext(ctx);
-                return _btcUsdExitManager != null;
-            }
-
-            if (symbol == "ETHUSD")
-            {
-                _ethUsdExitManager?.RegisterContext(ctx);
-                return _ethUsdExitManager != null;
+                manager.RegisterContext(ctx);
+                return true;
             }
 
             _bot.Print($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=no_exit_manager_for_symbol");
             return false;
+        }
+
+        private void RegisterExitManager(string canonical, IExitManager manager)
+        {
+            if (string.IsNullOrWhiteSpace(canonical) || manager == null)
+                return;
+
+            _exitManagersByCanonical[NormalizeSymbol(canonical)] = manager;
+        }
+
+        private IExitManager GetExitManager(string canonical)
+        {
+            if (string.IsNullOrWhiteSpace(canonical))
+                return null;
+
+            _exitManagersByCanonical.TryGetValue(NormalizeSymbol(canonical), out var manager);
+            return manager;
+        }
+
+        private Symbol ResolveSymbol(string canonical)
+        {
+            return string.IsNullOrWhiteSpace(canonical)
+                ? null
+                : _runtimeSymbols.ResolveSymbol(NormalizeSymbol(canonical));
+        }
+
+        private static bool IsTradable(Symbol symbol)
+        {
+            return symbol != null && symbol.HasQuotes;
         }
 
         // =================================================

@@ -31,8 +31,6 @@ namespace GeminiV26.Core
                 "GERMANY40" => "GER40",
                 "DJ30" => "US30",
                 "DOW" => "US30",
-                "GOLD" => "XAUUSD",
-                "XAU" => "XAUUSD",
                 "XBTUSD" => "BTCUSD",
                 _ => s
             };
