@@ -714,7 +714,6 @@ namespace GeminiV26.Core
 
             EnsureStartupMemoryReady();
             AuditMemoryCoverage();
-            AuditResolverCoverage();
 
             bool isFx = _fxMarketStateDetector != null && SymbolRouting.ResolveInstrumentClass(sym) == InstrumentClass.FX;
 
@@ -2519,6 +2518,7 @@ namespace GeminiV26.Core
         public void RehydrateOpenPositions()
         {
             EnsureStartupMemoryReady();
+            AuditResolverCoverage();
 
             if (!_isMemoryReady)
             {
