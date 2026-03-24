@@ -2509,7 +2509,12 @@ namespace GeminiV26.Core
                 RegisterRehydratedContextWithExitManager,
                 _memoryEngine);
 
-            service.Run();
+            var summary = service.Run();
+            int openCount = summary?.TotalOpenPositionsSeen ?? 0;
+            int restored = summary?.SuccessfullyRehydrated ?? 0;
+            int skipped = summary?.Skipped ?? 0;
+            int failed = summary?.Failed ?? 0;
+            _bot.Print($"[BOOT][REHYDRATE_DONE] restored={restored} skipped={skipped} failed={failed} openPositions={openCount}");
         }
 
         // =================================================

@@ -372,7 +372,22 @@ namespace GeminiV26.Instruments.XAUUSD
                 Math.Max(0, pos.VolumeInUnits - closeVolume);
 
             // BE (profilból)
-            ApplyBreakEven(pos, ctx, rDist);
+            var live = _bot.Positions.Find(pos.Label, pos.SymbolName, pos.TradeType);
+            if (live == null)
+            {
+                _bot.Print("[EXIT][POST_TP1_NO_POSITION]");
+                _contexts.Remove(Convert.ToInt64(pos.Id));
+                return;
+            }
+
+            if (live.VolumeInUnits < sym.VolumeInUnitsMin)
+            {
+                _bot.Print("[EXIT][POST_TP1_MIN_VOLUME]");
+                _contexts.Remove(Convert.ToInt64(pos.Id));
+                return;
+            }
+
+            ApplyBreakEven(live, ctx, rDist);
 
             // Log TP1 event (nem loss!)
             _eventLogger.Log(new EventRecord
@@ -633,7 +648,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (livePos == null)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
-                _bot.Print($"[SAFE_MODIFY][SKIP] Position not found: {position.Id}");
+                _bot.Print($"[SAFE_MODIFY][SKIP_NO_POSITION] pos={position.Id}");
                 return;
             }
 
