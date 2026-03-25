@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 
@@ -12,6 +13,15 @@ namespace GeminiV26.EntryTypes
 
     internal static class EntryDirectionQuality
     {
+        private sealed class QualityTrace
+        {
+            public int PreQualityScore { get; init; }
+            public int PostQualityScore { get; init; }
+            public int PostCapScore { get; init; }
+        }
+
+        private static readonly ConcurrentDictionary<string, QualityTrace> ScoreTrace = new ConcurrentDictionary<string, QualityTrace>();
+
         public static int Apply(
             EntryContext ctx,
             TradeDirection direction,
@@ -21,6 +31,7 @@ namespace GeminiV26.EntryTypes
             if (ctx == null)
                 return score;
 
+            int preQualityScore = score;
             ResolveHtf(ctx, out var instrumentClass, out var htfDirection, out var htfConfidence);
 
             bool breakoutConfirmed = HasDirectionalBreakout(ctx, direction);
@@ -202,7 +213,7 @@ namespace GeminiV26.EntryTypes
             afterAdxFlow = flowScore;
 
             score = (int)Math.Round(flowScore);
-            int finalScoreBeforeCap = score;
+            int postQualityScore = score;
 
             if (ctx.MarketState != null)
             {
@@ -215,6 +226,7 @@ namespace GeminiV26.EntryTypes
                 if (ctx.MarketState.IsLowVol || !ctx.IsAtrExpanding_M5)
                     score = Math.Min(score, 60);
             }
+            int postCapScore = score;
 
             string structure =
                 breakoutConfirmed ? "BreakoutConfirmed" :
@@ -232,8 +244,15 @@ namespace GeminiV26.EntryTypes
                 $"[ENTRY SCORE FLOW] type={request.TypeTag} side={direction} " +
                 $"baseScore={baseScoreFlow:F1} afterAdditive={afterAdditiveFlow:F1} " +
                 $"afterTrendScaling={afterTrendFlow:F1} afterMomentumScaling={afterMomentumFlow:F1} " +
-                $"afterCombo={afterComboFlow:F1} afterADX={afterAdxFlow:F1} finalScore={finalScoreBeforeCap} finalCappedScore={score} " +
+                $"afterCombo={afterComboFlow:F1} afterADX={afterAdxFlow:F1} preQualityScore={preQualityScore} postQualityScore={postQualityScore} postCapScore={postCapScore} " +
                 $"trendScale={trendScaling:F2} momentumScale={momentumScaling:F2} comboScale={comboScaling:F2} adxScale={adxScaling:F2}");
+
+            ScoreTrace[BuildTraceKey(ctx, request?.TypeTag, direction)] = new QualityTrace
+            {
+                PreQualityScore = preQualityScore,
+                PostQualityScore = postQualityScore,
+                PostCapScore = postCapScore
+            };
 
             return score;
         }
@@ -241,9 +260,22 @@ namespace GeminiV26.EntryTypes
         public static void LogDecision(EntryContext ctx, string typeTag, EntryEvaluation longEval, EntryEvaluation shortEval, TradeDirection selected)
         {
             var eval = longEval ?? shortEval;
+            if (eval != null && TryGetScoreTrace(ctx, typeTag, eval.Direction, out var trace))
+            {
+                eval.PreQualityScore = trace.PreQualityScore;
+                eval.PostQualityScore = trace.PostQualityScore;
+                eval.PostCapScore = trace.PostCapScore;
+                eval.HasQualityScoreTrace = true;
+            }
             ctx?.Log?.Invoke(
                 $"[DIR FLOW] type={typeTag} logicBias={ctx?.LogicBiasDirection ?? TradeDirection.None} evalDir={eval?.Direction ?? TradeDirection.None} score={eval?.Score ?? 0}");
         }
+
+        private static string BuildTraceKey(EntryContext ctx, string typeTag, TradeDirection direction)
+            => $"{ctx?.EntryAttemptId ?? "NA"}|{ctx?.Symbol ?? "NA"}|{typeTag ?? "NA"}|{direction}";
+
+        private static bool TryGetScoreTrace(EntryContext ctx, string typeTag, TradeDirection direction, out QualityTrace trace)
+            => ScoreTrace.TryGetValue(BuildTraceKey(ctx, typeTag, direction), out trace);
 
         private static void ResolveHtf(
             EntryContext ctx,

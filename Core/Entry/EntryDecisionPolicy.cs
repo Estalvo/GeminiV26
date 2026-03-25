@@ -85,6 +85,8 @@ namespace GeminiV26.Core.Entry
             if (eval == null)
                 return null;
 
+            eval.RawValid = eval.IsValid;
+            eval.FinalValid = eval.IsValid;
             eval.Score = Math.Max(0, Math.Min(100, eval.Score));
             eval.LogicConfidence = PositionContext.ClampRiskConfidence(eval.LogicConfidence);
             eval.State = ResolveState(eval);
