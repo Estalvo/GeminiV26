@@ -149,7 +149,7 @@ namespace GeminiV26.Core
             return ctx.BreakoutDirection == direction
                 || ctx.RangeBreakDirection == direction
                 || ctx.ImpulseDirection == direction
-                || (direction == TradeDirection.Buy ? ctx.HasFlagLong_M5 || ctx.HasPullbackLong_M5 : ctx.HasFlagShort_M5 || ctx.HasPullbackShort_M5);
+                || (direction == TradeDirection.Long ? ctx.HasFlagLong_M5 || ctx.HasPullbackLong_M5 : ctx.HasFlagShort_M5 || ctx.HasPullbackShort_M5);
         }
 
         private static bool IsMomentumAligned(EntryContext ctx, TradeDirection direction)
