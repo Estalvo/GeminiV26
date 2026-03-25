@@ -69,18 +69,19 @@ namespace GeminiV26.Core.Entry
                 Log = message => _bot.Print(message)
             };
 
-            _bot.Print($"[MEMORY][CTX_ATTACH][START] symbol={symbol}");
-            var memory = _memoryEngine.GetState(symbol);
+            string canonicalSymbol = SymbolRouting.NormalizeSymbol(symbol);
+            _bot.Print($"[MEMORY][CTX_ATTACH][START] symbol={canonicalSymbol}");
+            var memory = _memoryEngine.GetState(canonicalSymbol);
 
             if (memory == null)
             {
                 ctx.Memory = null;
-                _bot.Print($"[MEMORY][MISSING] symbol={symbol}");
+                _bot.Print($"[MEMORY][MISSING] symbol={canonicalSymbol}");
             }
             else
             {
                 ctx.Memory = memory;
-                _bot.Print($"[MEMORY][CTX_ATTACH] symbol={symbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
+                _bot.Print($"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
             }
 
             // -------------------------
