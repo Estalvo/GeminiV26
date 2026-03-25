@@ -7,6 +7,7 @@ using GeminiV26.Instruments.METAL;
 using GeminiV26.Core.HtfBias;
 using GeminiV26.EntryTypes.METAL;
 using GeminiV26.Core;
+using Gemini.Memory;
 
 namespace GeminiV26.Core.Entry
 {
@@ -18,8 +19,9 @@ namespace GeminiV26.Core.Entry
         private readonly FxHtfBiasEngine _fxHtf;
         private readonly IndexHtfBiasEngine _indexHtf;
         private readonly MetalHtfBiasEngine _metalHtf;
+        private readonly MarketMemoryEngine _memoryEngine;
 
-        public EntryContextBuilder(Robot bot)
+        public EntryContextBuilder(Robot bot, MarketMemoryEngine memoryEngine)
         {
             _bot = bot;
             _runtimeSymbols = new RuntimeSymbolResolver(_bot);
@@ -27,6 +29,7 @@ namespace GeminiV26.Core.Entry
             _fxHtf = new FxHtfBiasEngine(_bot);
             _indexHtf = new IndexHtfBiasEngine(_bot);
             _metalHtf = new MetalHtfBiasEngine(_bot);
+            _memoryEngine = memoryEngine;
         }
 
         public static bool GetHasEarlyPullback_M5(EntryContext ctx)
@@ -66,6 +69,20 @@ namespace GeminiV26.Core.Entry
                 Log = message => _bot.Print(message)
             };
 
+            _bot.Print($"[MEMORY][CTX_ATTACH][START] symbol={symbol}");
+            var memory = _memoryEngine.GetState(symbol);
+
+            if (memory == null)
+            {
+                ctx.Memory = null;
+                _bot.Print($"[MEMORY][MISSING] symbol={symbol}");
+            }
+            else
+            {
+                ctx.Memory = memory;
+                _bot.Print($"[MEMORY][CTX_ATTACH] symbol={symbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
+            }
+
             // -------------------------
             // BAR DATA
             // -------------------------
@@ -74,6 +91,8 @@ namespace GeminiV26.Core.Entry
                 !_runtimeSymbols.TryGetBars(TimeFrame.Minute15, symbol, out var m15))
             {
                 _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 return ctx;
             }
 
@@ -83,7 +102,11 @@ namespace GeminiV26.Core.Entry
             ctx.RuntimeResolved = true;
 
             if (ctx.M1.Count < 10 || ctx.M5.Count < 30 || ctx.M15.Count < 30)
+            {
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 return ctx;
+            }
 
             int m1Idx = ctx.M1.Count - 2;
             int m5Idx = ctx.M5.Count - 2;
@@ -114,6 +137,8 @@ namespace GeminiV26.Core.Entry
             {
                 ctx.RuntimeResolved = false;
                 _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 return ctx;
             }
 
@@ -752,6 +777,7 @@ namespace GeminiV26.Core.Entry
             }
 
             ctx.IsReady = true;
+            _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
             return ctx;
         }
 
