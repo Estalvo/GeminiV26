@@ -134,7 +134,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 !ctx.IsAtrExpanding_M5;
 
             if (chopZone)
-                score -= 6;
+                score -= 8;
 
             // =====================================================
             // ATR sanity (matrix driven)

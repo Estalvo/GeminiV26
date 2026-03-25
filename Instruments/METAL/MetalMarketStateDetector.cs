@@ -73,6 +73,7 @@ namespace GeminiV26.Instruments.METAL
             bool lowVol = atrPips < _minAtrPips;
             bool trend = adx > 30;
             bool compression = emaDistATR < 0.5;
+            bool momentum = atrRaw > 0 && body >= atrRaw * 0.7 && !compression;
             bool hardRange = compression && adx < 25;
             bool isSpike = upperWick > body * 2 || lowerWick > body * 2;
 
@@ -80,12 +81,13 @@ namespace GeminiV26.Instruments.METAL
                 hardRange = false;
 
             _bot.Print(
-                "[XAU MSD] atrPips={0:F1} adx={1:F1} emaDistATR={2:F2} lowVol={3} trend={4} compression={5} hardRange={6} spike={7}",
+                "[XAU MSD] atrPips={0:F1} adx={1:F1} emaDistATR={2:F2} lowVol={3} trend={4} momentum={5} compression={6} hardRange={7} spike={8}",
                 atrPips,
                 adx,
                 emaDistATR,
                 lowVol,
                 trend,
+                momentum,
                 compression,
                 hardRange,
                 isSpike);
@@ -96,6 +98,7 @@ namespace GeminiV26.Instruments.METAL
                 Adx = adx,
                 IsLowVol = lowVol,
                 IsTrend = trend,
+                IsMomentum = momentum,
                 IsCompression = compression,
                 IsHardRange = hardRange,
                 IsRange = lowVol && !trend,

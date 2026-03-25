@@ -93,12 +93,14 @@ namespace GeminiV26.Instruments.FX
             bool isLowVol = atrPips < _profile.MinAtrPips;
             bool isTrend = adx >= _profile.MinAdxTrend;
             bool isCompression = emaDistAtr < 0.4;
+            double body = Math.Abs(_bars.ClosePrices[i] - _bars.OpenPrices[i]);
+            bool isMomentum = atrRaw > 0 && body >= atrRaw * 0.55 && !isCompression;
 
             // === DEBUG (szándékosan marad) ===
             _bot.Print(
                 $"[FX MSD] {_bot.SymbolName} | " +
                 $"atrPips={atrPips:F2} adx={adx:F1} | " +
-                $"lowVol={isLowVol} trend={isTrend} compression={isCompression}");
+                $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} compression={isCompression}");
 
             return new FxMarketState
             {
@@ -106,6 +108,7 @@ namespace GeminiV26.Instruments.FX
                 Adx = adx,
                 IsLowVol = isLowVol,
                 IsTrend = isTrend,
+                IsMomentum = isMomentum,
                 IsCompression = isCompression
             };
         }

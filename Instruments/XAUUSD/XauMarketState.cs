@@ -2,7 +2,8 @@ namespace GeminiV26.Instruments.XAUUSD
 {
     public sealed class XauMarketState
     {
-        // === ÚJ MODELL (MEGMARAD) ===
+        public bool IsMomentum { get; set; }
+        // === ÃšJ MODELL (MEGMARAD) ===
         public double AtrPips { get; set; }
         public double Adx { get; set; }
 
@@ -15,20 +16,20 @@ namespace GeminiV26.Instruments.XAUUSD
         public double WickRatioNow { get; set; }
         public bool IsChop { get; set; }
 
-        // === KOMPATIBILITÁSI ALIASOK (TRADECORE MIATT) ===
+        // === KOMPATIBILITÃSI ALIASOK (TRADECORE MIATT) ===
 
-        // régi ATR
+        // rÃ©gi ATR
         public double Atr => AtrPips;
 
-        // régi range logika
+        // rÃ©gi range logika
         public bool IsRange => IsHardRange;
         public bool IsSoftRange => IsLowVol;
         public bool IsBreakout => IsTrend;
-        public bool IsPostBreakout => false; // XAU-nál nincs klasszikus postBO
+        public bool IsPostBreakout => false; // XAU-nÃ¡l nincs klasszikus postBO
 
         public double RangeWidth => RangeWidthAtr;
 
-        // volume proxy (XAU-nál nincs tick volume)
+        // volume proxy (XAU-nÃ¡l nincs tick volume)
         public double VolumeNorm => WickRatioNow;
     }
 }
