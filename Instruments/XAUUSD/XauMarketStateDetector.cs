@@ -106,10 +106,11 @@ namespace GeminiV26.Instruments.XAUUSD
                 || isCompression;
 
             bool isChop = wickRatio >= _p.MaxWickRatio;
+            bool isMomentum = atrRaw > 0 && body >= atrRaw * 0.7 && !isChop;
 
             _bot.Print(
                 $"[XAU MSD] emaDistATR={emaDistAtr:F2} atrPips={atrPips:F1} adx={adx:F1} widthATR={widthAtr:F2} " +
-                $"lowVol={isLowVol} trend={isTrend} hardRange={isHardRange} wickRatio={wickRatio:F2} chop={isChop}"
+                $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} hardRange={isHardRange} wickRatio={wickRatio:F2} chop={isChop}"
             );
 
             return new XauMarketState
@@ -119,6 +120,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                 IsLowVol = hasEnoughData ? isLowVol : true,
                 IsTrend = hasEnoughData ? isTrend : false,
+                IsMomentum = hasEnoughData ? isMomentum : false,
                 RangeWidthAtr = widthAtr,
                 IsHardRange = hasEnoughData ? isHardRange : false,
 
