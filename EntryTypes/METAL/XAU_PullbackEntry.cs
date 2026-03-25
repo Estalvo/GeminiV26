@@ -264,7 +264,9 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // FINAL
             // =========================
+            int scoreBeforeTriggerModel = score;
             score = TriggerScoreModel.Apply(ctx, $"XAU_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+            bool earlyWeakness = score < scoreBeforeTriggerModel;
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += (int)Math.Round(matrix.EntryScoreModifier);
@@ -272,6 +274,19 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (setupScore <= 0)
                 score = Math.Min(score, minScore - 10);
+
+            bool noMomentum = !(ctx.MarketState?.IsMomentum ?? false);
+            if (ctx.Symbol == "XAUUSD"
+                && ctx.MarketState != null
+                && ctx.MarketState.IsTrend
+                && noMomentum
+                && earlyWeakness)
+            {
+                int scoreBeforeCompression = score;
+                score = (int)Math.Round(score * 0.65);
+                ctx.Log?.Invoke(
+                    $"[XAU CONTINUATION FILTER] score {scoreBeforeCompression}->{score} momentum={ctx.MarketState.IsMomentum} earlyWeakness={earlyWeakness}");
+            }
 
             bool valid = score >= minScore;
 
