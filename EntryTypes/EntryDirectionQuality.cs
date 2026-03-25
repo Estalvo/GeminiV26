@@ -34,6 +34,7 @@ namespace GeminiV26.EntryTypes
 
             int penalty = 0;
             int bonus = 0;
+            int marketStatePenalty = 0;
 
             if (structureAligned)
             {
@@ -91,6 +92,56 @@ namespace GeminiV26.EntryTypes
             if (!regimeCompatible)
                 penalty += 20;
 
+            if (ctx.MarketState != null)
+            {
+                var style = ResolveStyle(request?.TypeTag);
+                bool noTrend = !ctx.MarketState.IsTrend;
+                bool noMomentum = !ctx.MarketState.IsMomentum;
+
+                int noTrendPenalty = style switch
+                {
+                    EntryStyle.Breakout => 7,
+                    EntryStyle.Pullback => 8,
+                    EntryStyle.Flag => 9,
+                    EntryStyle.Reversal => 4,
+                    EntryStyle.Range => 3,
+                    _ => 8
+                };
+
+                int noMomentumPenalty = style switch
+                {
+                    EntryStyle.Breakout => 9,
+                    EntryStyle.Pullback => 7,
+                    EntryStyle.Flag => 9,
+                    EntryStyle.Reversal => 6,
+                    EntryStyle.Range => 4,
+                    _ => 8
+                };
+
+                int comboPenalty = style switch
+                {
+                    EntryStyle.Reversal => 5,
+                    EntryStyle.Range => 4,
+                    _ => 10
+                };
+
+                if (noTrend)
+                    marketStatePenalty += noTrendPenalty;
+
+                if (noMomentum)
+                    marketStatePenalty += noMomentumPenalty;
+
+                if (noTrend && noMomentum)
+                    marketStatePenalty += comboPenalty;
+
+                if (marketStatePenalty > 0)
+                {
+                    ctx.Log?.Invoke(
+                        $"[ENTRY STATE SCORE] type={request.TypeTag} side={direction} trend={ctx.MarketState.IsTrend} momentum={ctx.MarketState.IsMomentum} " +
+                        $"lowVol={ctx.MarketState.IsLowVol} adx={ctx.MarketState.Adx:F1} penalty={marketStatePenalty}");
+                }
+            }
+
             if (instrumentClass == InstrumentClass.INDEX &&
                 htfDirection != TradeDirection.None &&
                 htfConfidence >= 0.70 &&
@@ -112,6 +163,7 @@ namespace GeminiV26.EntryTypes
 
             score += bonus;
             score -= penalty;
+            score -= marketStatePenalty;
 
             string structure =
                 breakoutConfirmed ? "BreakoutConfirmed" :
@@ -123,7 +175,7 @@ namespace GeminiV26.EntryTypes
             ctx.Log?.Invoke(
                 $"[DIR QUALITY] type={request.TypeTag} side={direction} structure={structure} " +
                 $"logicBias={logicBias} logicConf={logicConfidence} htfDir={htfDirection} htfConf={htfConfidence:F2} " +
-                $"regime={regime} penalty={penalty} bonus={bonus} finalScore={score}");
+                $"regime={regime} penalty={penalty} marketStatePenalty={marketStatePenalty} bonus={bonus} finalScore={score}");
 
             return score;
         }
@@ -266,5 +318,35 @@ namespace GeminiV26.EntryTypes
                 TradeDirection.Short => TradeDirection.Long,
                 _ => TradeDirection.None
             };
+
+        private static EntryStyle ResolveStyle(string typeTag)
+        {
+            if (string.IsNullOrWhiteSpace(typeTag))
+                return EntryStyle.Other;
+
+            string t = typeTag.ToUpperInvariant();
+            if (t.Contains("REVERSAL"))
+                return EntryStyle.Reversal;
+            if (t.Contains("RANGE"))
+                return EntryStyle.Range;
+            if (t.Contains("FLAG"))
+                return EntryStyle.Flag;
+            if (t.Contains("PULLBACK"))
+                return EntryStyle.Pullback;
+            if (t.Contains("BREAKOUT") || t.Contains("IMPULSE") || t.Contains("CONTINUATION"))
+                return EntryStyle.Breakout;
+
+            return EntryStyle.Other;
+        }
+
+        private enum EntryStyle
+        {
+            Other,
+            Breakout,
+            Pullback,
+            Flag,
+            Reversal,
+            Range
+        }
     }
 }

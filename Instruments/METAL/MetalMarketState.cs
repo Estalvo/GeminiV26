@@ -14,6 +14,7 @@ namespace GeminiV26.Instruments.METAL
 
         public bool IsLowVol { get; set; }
         public bool IsTrend { get; set; }
+        public bool IsMomentum { get; set; }
         public bool IsCompression { get; set; }
         public bool IsHardRange { get; set; }
         public bool IsRange { get; set; }

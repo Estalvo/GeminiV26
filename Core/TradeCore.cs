@@ -762,25 +762,25 @@ namespace GeminiV26.Core
             {
                 fxState = _fxMarketStateDetector.Evaluate();
                 if (fxState != null)
-                    _bot.Print($"[FX MarketState] {rawSym} Trend={fxState.IsTrend}");
+                    _bot.Print($"[FX MarketState] {rawSym} Trend={fxState.IsTrend} Momentum={fxState.IsMomentum} LowVol={fxState.IsLowVol} ADX={fxState.Adx:F1}");
             }
             else if (isCrypto)
             {
                 cryptoState = _cryptoMarketStateDetector.Evaluate();
                 if (cryptoState != null)
-                    _bot.Print($"[CRYPTO MarketState] {rawSym} Trend={cryptoState.IsTrend}");
+                    _bot.Print($"[CRYPTO MarketState] {rawSym} Trend={cryptoState.IsTrend} Momentum={cryptoState.IsMomentum} LowVol={cryptoState.IsLowVol} ADX={cryptoState.Adx:F1}");
             }
             else if (isMetal)
             {
                 xauState = _xauMarketStateDetector.Evaluate();
                 if (xauState != null)
-                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange} Trend={xauState.IsTrend} ADX={xauState.Adx:F1} HardRange={xauState.IsHardRange}");
+                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange} Trend={xauState.IsTrend} Momentum={xauState.IsMomentum} ADX={xauState.Adx:F1} HardRange={xauState.IsHardRange}");
             }
             else if (isIndex)
             {
                 indexState = _indexMarketStateDetector.Evaluate();
                 if (indexState != null)
-                    _bot.Print($"[INDEX MarketState] {rawSym} Trend={indexState.IsTrend}");
+                    _bot.Print($"[INDEX MarketState] {rawSym} Trend={indexState.IsTrend} Momentum={indexState.IsMomentum} LowVol={indexState.IsLowVol} ADX={indexState.Adx:F1}");
             }
             else
             {
@@ -926,30 +926,19 @@ namespace GeminiV26.Core
             {
                 if (xauState == null && _xauMarketStateDetector != null)
                     xauState = _xauMarketStateDetector.Evaluate();
+            }
 
-                if (xauState != null)
-                {
-                    _ctx.MarketState = new IndexMarketState
-                    {
-                        AtrPoints = xauState.AtrPips,
-                        Adx = xauState.Adx,
-                        IsLowVol = xauState.IsLowVol,
-                        IsTrend = xauState.IsTrend,
-                        IsRange = xauState.IsRange,
-                        RangePoints = xauState.RangeWidth
-                    };
-
-                    _bot.Print(
-                        "[XAU STATE ASSIGN] trend={0} adx={1:F1} range={2} hardRange={3}",
-                        xauState.IsTrend,
-                        xauState.Adx,
-                        xauState.IsRange,
-                        xauState.IsHardRange);
-                }
-                else
-                {
-                    _bot.Print("[XAU STATE ASSIGN] trend= adx= range= hardRange=");
-                }
+            _ctx.MarketState = BuildEntryMarketState(fxState, cryptoState, xauState, indexState);
+            if (_ctx.MarketState != null)
+            {
+                _bot.Print(
+                    "[ENTRY MARKETSTATE ASSIGN] sym={0} trend={1} momentum={2} lowVol={3} adx={4:F1} atrPts={5:F2}",
+                    rawSym,
+                    _ctx.MarketState.IsTrend,
+                    _ctx.MarketState.IsMomentum,
+                    _ctx.MarketState.IsLowVol,
+                    _ctx.MarketState.Adx,
+                    _ctx.MarketState.AtrPoints);
             }
 
             _ctx.LastUpdateUtc = DateTime.UtcNow;
@@ -2952,6 +2941,58 @@ namespace GeminiV26.Core
                 return "Trend";
 
             return entryCtx.IsAtrExpanding_M5 ? "HighVol" : "LowVol";
+        }
+
+        private IndexMarketState BuildEntryMarketState(
+            FxMarketState fxState,
+            CryptoMarketState cryptoState,
+            XauMarketState xauState,
+            IndexMarketState indexState)
+        {
+            if (indexState != null)
+                return indexState;
+
+            if (fxState != null)
+            {
+                return new IndexMarketState
+                {
+                    IsTrend = fxState.IsTrend,
+                    IsMomentum = fxState.IsMomentum,
+                    IsLowVol = fxState.IsLowVol,
+                    IsRange = fxState.IsCompression,
+                    Adx = fxState.Adx,
+                    AtrPoints = fxState.AtrPips
+                };
+            }
+
+            if (cryptoState != null)
+            {
+                return new IndexMarketState
+                {
+                    IsTrend = cryptoState.IsTrend,
+                    IsMomentum = cryptoState.IsMomentum,
+                    IsLowVol = cryptoState.IsLowVol,
+                    IsRange = !cryptoState.IsTrend && !cryptoState.IsExpansion,
+                    Adx = cryptoState.Adx,
+                    AtrPoints = cryptoState.AtrPips
+                };
+            }
+
+            if (xauState != null)
+            {
+                return new IndexMarketState
+                {
+                    IsTrend = xauState.IsTrend,
+                    IsMomentum = xauState.IsMomentum,
+                    IsLowVol = xauState.IsLowVol,
+                    IsRange = xauState.IsRange,
+                    Adx = xauState.Adx,
+                    AtrPoints = xauState.AtrPips,
+                    RangePoints = xauState.RangeWidth
+                };
+            }
+
+            return null;
         }
 
         private static double ComputeRMultiple(Position pos, PositionContext? ctx, double pipSize)

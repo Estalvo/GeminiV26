@@ -18,6 +18,7 @@
         // === Értelmezett állapotjelzők ===
         public bool IsLowVol { get; init; }
         public bool IsTrend { get; init; }
+        public bool IsMomentum { get; init; }
         public bool IsCompression { get; init; }
     }
 }
