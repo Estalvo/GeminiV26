@@ -94,11 +94,16 @@ namespace GeminiV26.Instruments.XAUUSD
             long key = Convert.ToInt64(ctx.PositionId);
             bool hasExisting = _contexts.TryGetValue(key, out var existingCtx) && existingCtx != null;
             bool suppressRehydrateRegistrationLog =
-                ctx.IsRehydrated && hasExisting && existingCtx.IsRehydrated;
+                ctx.RequiresRehydrateRecovery && hasExisting && existingCtx.RequiresRehydrateRecovery;
+            bool suppressPostEntryRegistrationLog =
+                hasExisting && existingCtx.PostEntryInitializationCompleted && ctx.PostEntryInitializationCompleted;
 
             _contexts[key] = ctx;
 
-            if (suppressRehydrateRegistrationLog)
+            if (!ctx.PostEntryInitializationCompleted)
+                ctx.PostEntryInitializationCompleted = true;
+
+            if (suppressRehydrateRegistrationLog || suppressPostEntryRegistrationLog)
                 return;
 
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
@@ -118,7 +123,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return false;
             }
 
-            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool isRehydratedContext = ctx?.RequiresRehydrateRecovery == true;
             bool suppressRepeatedRehydrateResolverLog = false;
             if (isRehydratedContext)
             {
@@ -130,6 +135,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (symbol != null)
                     {
                         _rehydratedResolverSkipLogged.Remove(key);
+                        ctx.RehydrateRecoveryCompleted = true;
                         _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
                         return true;
                     }
@@ -141,13 +147,19 @@ namespace GeminiV26.Instruments.XAUUSD
             if (_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol) && symbol != null)
             {
                 if (isRehydratedContext)
+                {
                     _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
+                    ctx.RehydrateRecoveryCompleted = true;
+                }
                 return true;
             }
 
             symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (symbol != null)
             {
+                if (isRehydratedContext)
+                    ctx.RehydrateRecoveryCompleted = true;
+
                 _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
                 return true;
             }
@@ -162,7 +174,7 @@ namespace GeminiV26.Instruments.XAUUSD
         private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars, PositionContext ctx = null)
         {
             bars = null;
-            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool isRehydratedContext = ctx?.RequiresRehydrateRecovery == true;
             bool suppressRepeatedRehydrateResolverLog = false;
             if (isRehydratedContext)
             {
@@ -182,7 +194,10 @@ namespace GeminiV26.Instruments.XAUUSD
             }
 
             if (isRehydratedContext)
+            {
                 _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
+                ctx.RehydrateRecoveryCompleted = true;
+            }
 
             return bars != null;
         }
