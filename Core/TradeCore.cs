@@ -1823,12 +1823,24 @@ namespace GeminiV26.Core
             if (ctx == null || selected == null)
                 return;
 
+            int normalizedEntryScore = PositionContext.ClampRiskConfidence(selected.Score);
             int logicConfidence = Math.Max(0, ctx.LogicBiasConfidence);
-            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(selected.Score, logicConfidence);
+            int normalizedLogicConfidence = PositionContext.ClampRiskConfidence(logicConfidence);
+            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(normalizedEntryScore, normalizedLogicConfidence);
             int riskFinal = PositionContext.ClampRiskConfidence(finalConfidence);
 
             _bot.Print(TradeLogIdentity.WithTempId(
-                TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected, logicConfidence, finalConfidence, 0, riskFinal),
+                $"[SCORE][PRODUCER] source=EntryScore raw={selected.Score} normalized={normalizedEntryScore}",
+                ctx));
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[SCORE][PRODUCER] source=LogicConfidence raw={logicConfidence} normalized={normalizedLogicConfidence}",
+                ctx));
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[SCORE][BLEND] entry={normalizedEntryScore} logic={normalizedLogicConfidence} final={finalConfidence}",
+                ctx));
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected, normalizedLogicConfidence, finalConfidence, 0, riskFinal),
                 ctx));
             _bot.Print(TradeLogIdentity.WithTempId(
                 TradeAuditLog.BuildDirectionSnapshot(ctx, selected),

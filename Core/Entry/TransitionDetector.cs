@@ -367,14 +367,19 @@ namespace GeminiV26.Core.Entry
 
             if (hasImpulse)
             {
-                qualityScore =
+                double qualityScore01 =
                     (impulseStrength * 0.4) +
                     (compressionScore * 0.3) +
                     (pullbackQuality * 0.3);
 
+                qualityScore = Math.Max(0.0, Math.Min(100.0, qualityScore01 * 100.0));
+
                 bonus = isTradable
-                    ? Clamp((int)(qualityScore * 10.0), 5, 18)
+                    ? Clamp((int)(qualityScore01 * 10.0), 5, 18)
                     : 0;
+
+                ctx.Log?.Invoke(
+                    $"[SCORE][TRANSITION] raw={qualityScore01:0.0000} normalized={qualityScore:0.00}");
             }
 
             string reason = BuildReason(
