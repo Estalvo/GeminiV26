@@ -298,6 +298,8 @@ namespace GeminiV26.Core.Entry
             bool hasFlag = false;
             bool flagStructureBroken = false;
             bool relaxedContinuation = false;
+            bool decelerationPresent = false;
+            bool compressionPresent = false;
 
             if (hasImpulse && hasPullback)
             {
@@ -336,6 +338,86 @@ namespace GeminiV26.Core.Entry
             }
 
             // =========================================================
+            // CONTINUATION QUALITY GATE (deceleration + compression mandatory)
+            // =========================================================
+            int postImpulseStart = hasImpulse ? impulseIndex + 1 : -1;
+            int postImpulseBars = (hasImpulse && postImpulseStart <= last)
+                ? (last - postImpulseStart + 1)
+                : 0;
+
+            double impulseBody = hasImpulse
+                ? Math.Abs(ctx.M5.ClosePrices[impulseIndex] - ctx.M5.OpenPrices[impulseIndex])
+                : 0.0;
+            double avgPostRange = 0.0;
+            double avgPostBody = 0.0;
+            double avgPostDirectionalBody = 0.0;
+            int compressionBars = Math.Max(0, flagBars);
+            double compressionRange = 0.0;
+            bool noOpposingExpansion = true;
+
+            if (postImpulseBars >= 1)
+            {
+                double sumRange = 0.0;
+                double sumBody = 0.0;
+                double sumDirectionalBody = 0.0;
+                double compHigh = double.MinValue;
+                double compLow = double.MaxValue;
+
+                for (int i = postImpulseStart; i <= last; i++)
+                {
+                    double barRange = ctx.M5.HighPrices[i] - ctx.M5.LowPrices[i];
+                    double barBody = Math.Abs(ctx.M5.ClosePrices[i] - ctx.M5.OpenPrices[i]);
+                    sumRange += barRange;
+                    sumBody += barBody;
+
+                    bool inContinuationDirection =
+                        (direction == TradeDirection.Long && ctx.M5.ClosePrices[i] > ctx.M5.OpenPrices[i]) ||
+                        (direction == TradeDirection.Short && ctx.M5.ClosePrices[i] < ctx.M5.OpenPrices[i]);
+
+                    if (inContinuationDirection)
+                        sumDirectionalBody += barBody;
+
+                    if (!inContinuationDirection &&
+                        barRange >= impulseRange * 0.70 &&
+                        barBody >= Math.Max(impulseBody * 0.70, 0.0))
+                    {
+                        noOpposingExpansion = false;
+                    }
+
+                    compHigh = Math.Max(compHigh, ctx.M5.HighPrices[i]);
+                    compLow = Math.Min(compLow, ctx.M5.LowPrices[i]);
+                }
+
+                avgPostRange = sumRange / postImpulseBars;
+                avgPostBody = sumBody / postImpulseBars;
+                avgPostDirectionalBody = sumDirectionalBody / postImpulseBars;
+                compressionRange = (compHigh > compLow) ? (compHigh - compLow) : 0.0;
+                compressionBars = Math.Max(compressionBars, postImpulseBars);
+            }
+
+            bool rangeDeceleration = impulseRange > 0 && avgPostRange <= impulseRange * 0.75;
+            bool bodyDeceleration = impulseBody > 0 && avgPostBody <= impulseBody * 0.75;
+            bool aggressionDeceleration = impulseBody > 0 && avgPostDirectionalBody <= impulseBody * 0.60;
+
+            decelerationPresent =
+                postImpulseBars >= 2 &&
+                (rangeDeceleration || bodyDeceleration || aggressionDeceleration);
+
+            bool compressionTightVsImpulse = impulseRange > 0 && compressionRange < impulseRange;
+            bool compressionTightVsAtr = ctx.AtrM5 > 0 && compressionRange <= ctx.AtrM5 * 0.90;
+            bool pullbackControlled =
+                hasPullback &&
+                !pullbackDeep &&
+                pullbackDepthR <= rules.MaxPullbackDepthR;
+
+            compressionPresent =
+                compressionBars >= 2 &&
+                compressionTightVsImpulse &&
+                compressionTightVsAtr &&
+                pullbackControlled &&
+                noOpposingExpansion;
+
+            // =========================================================
             // EARLY CONTINUATION / PHASE
             // =========================================================
             bool earlyContinuation =
@@ -358,9 +440,32 @@ namespace GeminiV26.Core.Entry
             // =========================================================
             // TRADABLE STATE (leíró, nem agresszív detector döntés)
             // =========================================================
+            bool continuationCandidate =
+                hasImpulse &&
+                hasPullback &&
+                (hasFlag || relaxedContinuation);
+
+            if (continuationCandidate)
+            {
+                ctx.Log?.Invoke(
+                    $"[SETUP][CONT] impulseRange={impulseRange:0.00000} avgPostRange={avgPostRange:0.00000} avgPostBody={avgPostBody:0.00000} decel={decelerationPresent.ToString().ToLowerInvariant()}");
+                ctx.Log?.Invoke(
+                    $"[SETUP][CONT] compressionBars={compressionBars} compressionRange={compressionRange:0.00000} atr={ctx.AtrM5:0.00000} tight={compressionPresent.ToString().ToLowerInvariant()}");
+            }
+
             bool isTradable =
-                (hasImpulse && hasPullback && (hasFlag || relaxedContinuation))
-                || earlyContinuation;
+                continuationCandidate &&
+                decelerationPresent &&
+                compressionPresent;
+
+            if (continuationCandidate && !decelerationPresent)
+                ctx.Log?.Invoke("[SETUP][CONT][REJECT] reason=NO_DECEL");
+
+            if (continuationCandidate && !compressionPresent)
+                ctx.Log?.Invoke("[SETUP][CONT][REJECT] reason=NO_COMPRESSION");
+
+            if (continuationCandidate && decelerationPresent && compressionPresent)
+                ctx.Log?.Invoke("[SETUP][CONT][ACCEPT] reason=DECEL+COMPRESSION_OK");
 
             double qualityScore = 0.0;
             int bonus = 0;
