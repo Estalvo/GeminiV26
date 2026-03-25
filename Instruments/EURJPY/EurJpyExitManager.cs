@@ -20,6 +20,7 @@ namespace GeminiV26.Instruments.EURJPY
         private readonly StructureTracker _structureTracker;
 
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly HashSet<long> _rehydratedResolverSkipLogged = new();
 
         private const double BeOffsetR = 0.10;
 
@@ -49,12 +50,21 @@ namespace GeminiV26.Instruments.EURJPY
                 return;
             }
 
-            _contexts[Convert.ToInt64(ctx.PositionId)] = ctx;
+            long key = Convert.ToInt64(ctx.PositionId);
+            bool hasExisting = _contexts.TryGetValue(key, out var existingCtx) && existingCtx != null;
+            bool suppressRehydrateRegistrationLog =
+                ctx.IsRehydrated && hasExisting && existingCtx.IsRehydrated;
+
+            _contexts[key] = ctx;
+
+            if (suppressRehydrateRegistrationLog)
+                return;
+
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
 
-        private bool TryResolveExitSymbol(Position pos, out Symbol symbol)
+        private bool TryResolveExitSymbol(Position pos, out Symbol symbol, PositionContext ctx = null)
         {
             symbol = null;
 
@@ -64,8 +74,32 @@ namespace GeminiV26.Instruments.EURJPY
                 return false;
             }
 
+            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool suppressRepeatedRehydrateResolverLog = false;
+            if (isRehydratedContext)
+            {
+                long key = Convert.ToInt64(ctx.PositionId);
+                suppressRepeatedRehydrateResolverLog = _rehydratedResolverSkipLogged.Contains(key);
+                if (suppressRepeatedRehydrateResolverLog)
+                {
+                    symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
+                    if (symbol != null)
+                    {
+                        _rehydratedResolverSkipLogged.Remove(key);
+                        _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
             if (_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol) && symbol != null)
+            {
+                if (isRehydratedContext)
+                    _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
                 return true;
+            }
 
             symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (symbol != null)
@@ -74,18 +108,37 @@ namespace GeminiV26.Instruments.EURJPY
                 return true;
             }
 
+            if (isRehydratedContext)
+                _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
+
             _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos.SymbolName} positionId={pos.Id} reason=unresolved_runtime_symbol");
             return false;
         }
 
-        private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars)
+        private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars, PositionContext ctx = null)
         {
             bars = null;
+            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool suppressRepeatedRehydrateResolverLog = false;
+            if (isRehydratedContext)
+            {
+                long key = Convert.ToInt64(ctx.PositionId);
+                suppressRepeatedRehydrateResolverLog = _rehydratedResolverSkipLogged.Contains(key);
+            }
+
             if (pos == null || !_runtimeSymbols.TryGetBars(timeFrame, pos.SymbolName, out bars))
             {
-                _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                if (isRehydratedContext)
+                    _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
+
+                if (!suppressRepeatedRehydrateResolverLog)
+                    _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+
                 return false;
             }
+
+            if (isRehydratedContext)
+                _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
 
             return bars != null;
         }
@@ -102,7 +155,7 @@ namespace GeminiV26.Instruments.EURJPY
 
             ctx.BarsSinceEntryM5++;
 
-            if (TryResolveExitSymbol(position, out var stateSymbol))
+            if (TryResolveExitSymbol(position, out var stateSymbol, ctx))
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
                 if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
@@ -134,13 +187,14 @@ namespace GeminiV26.Instruments.EURJPY
 
                     _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
                     _contexts.Remove(key);
+                    _rehydratedResolverSkipLogged.Remove(key);
                     continue;
                 }
 
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                if (!TryResolveExitSymbol(pos, out var sym))
+                if (!TryResolveExitSymbol(pos, out var sym, ctx))
                     continue;
 
                 double rDist = GetRiskDistance(pos, ctx);
@@ -184,7 +238,7 @@ namespace GeminiV26.Instruments.EURJPY
 
                     if (!reached)
                     {
-                        if (TryGetExitBars(pos, TimeFrame.Minute, out var m1) && m1.Count > 0)
+                        if (TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) && m1.Count > 0)
                         {
                             var m1Bar = m1.LastBar;
                             reached = IsLong(ctx)
@@ -204,8 +258,8 @@ namespace GeminiV26.Instruments.EURJPY
                     const int MinBarsBeforeTvm = 4;
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
-                        if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5) ||
-                            !TryGetExitBars(pos, TimeFrame.Minute15, out var m15))
+                        if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5, ctx) ||
+                            !TryGetExitBars(pos, TimeFrame.Minute15, out var m15, ctx))
                         {
                             continue;
                         }
@@ -226,6 +280,7 @@ namespace GeminiV26.Instruments.EURJPY
                             ctx.IsFullyClosing = true;
                             _bot.ClosePosition(pos);
                             _contexts.Remove(key);
+                    _rehydratedResolverSkipLogged.Remove(key);
                             continue;
                         }
                     }
@@ -251,7 +306,7 @@ namespace GeminiV26.Instruments.EURJPY
 
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            if (!TryResolveExitSymbol(pos, out var sym))
+            if (!TryResolveExitSymbol(pos, out var sym, ctx))
                 return;
 
             double frac = ctx.Tp1CloseFraction;

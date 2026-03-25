@@ -51,6 +51,7 @@ namespace GeminiV26.Instruments.XAUUSD
         private readonly StructureTracker _structureTracker;
         // PositionId → Context
         private readonly Dictionary<long, PositionContext> _contexts = new();
+        private readonly HashSet<long> _rehydratedResolverSkipLogged = new();
 
         public XauExitManager(Robot bot)
         {
@@ -90,7 +91,16 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
             }
 
-            _contexts[ctx.PositionId] = ctx;
+            long key = Convert.ToInt64(ctx.PositionId);
+            bool hasExisting = _contexts.TryGetValue(key, out var existingCtx) && existingCtx != null;
+            bool suppressRehydrateRegistrationLog =
+                ctx.IsRehydrated && hasExisting && existingCtx.IsRehydrated;
+
+            _contexts[key] = ctx;
+
+            if (suppressRehydrateRegistrationLog)
+                return;
+
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
             _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
@@ -98,7 +108,7 @@ namespace GeminiV26.Instruments.XAUUSD
         // =====================================================
         // BAR-LEVEL EXIT (jelenleg csak early exit placeholder)
         // =====================================================
-        private bool TryResolveExitSymbol(Position pos, out Symbol symbol)
+        private bool TryResolveExitSymbol(Position pos, out Symbol symbol, PositionContext ctx = null)
         {
             symbol = null;
 
@@ -108,8 +118,32 @@ namespace GeminiV26.Instruments.XAUUSD
                 return false;
             }
 
+            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool suppressRepeatedRehydrateResolverLog = false;
+            if (isRehydratedContext)
+            {
+                long key = Convert.ToInt64(ctx.PositionId);
+                suppressRepeatedRehydrateResolverLog = _rehydratedResolverSkipLogged.Contains(key);
+                if (suppressRepeatedRehydrateResolverLog)
+                {
+                    symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
+                    if (symbol != null)
+                    {
+                        _rehydratedResolverSkipLogged.Remove(key);
+                        _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
             if (_runtimeSymbols.TryGetSymbolMeta(pos.SymbolName, out symbol) && symbol != null)
+            {
+                if (isRehydratedContext)
+                    _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
                 return true;
+            }
 
             symbol = _bot.Symbols.GetSymbol(pos.SymbolName);
             if (symbol != null)
@@ -118,18 +152,37 @@ namespace GeminiV26.Instruments.XAUUSD
                 return true;
             }
 
+            if (isRehydratedContext)
+                _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
+
             _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos.SymbolName} positionId={pos.Id} reason=unresolved_runtime_symbol");
             return false;
         }
 
-        private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars)
+        private bool TryGetExitBars(Position pos, TimeFrame timeFrame, out Bars bars, PositionContext ctx = null)
         {
             bars = null;
+            bool isRehydratedContext = ctx?.IsRehydrated == true;
+            bool suppressRepeatedRehydrateResolverLog = false;
+            if (isRehydratedContext)
+            {
+                long key = Convert.ToInt64(ctx.PositionId);
+                suppressRepeatedRehydrateResolverLog = _rehydratedResolverSkipLogged.Contains(key);
+            }
+
             if (pos == null || !_runtimeSymbols.TryGetBars(timeFrame, pos.SymbolName, out bars))
             {
-                _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                if (isRehydratedContext)
+                    _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
+
+                if (!suppressRepeatedRehydrateResolverLog)
+                    _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+
                 return false;
             }
+
+            if (isRehydratedContext)
+                _rehydratedResolverSkipLogged.Remove(Convert.ToInt64(ctx.PositionId));
 
             return bars != null;
         }
@@ -144,7 +197,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             ctx.BarsSinceEntryM5++;
 
-            if (TryResolveExitSymbol(pos, out var stateSymbol))
+            if (TryResolveExitSymbol(pos, out var stateSymbol, ctx))
             {
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
                 if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
@@ -191,13 +244,14 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
                     _contexts.Remove(key);
+                    _rehydratedResolverSkipLogged.Remove(key);
                     continue;
                 }
 
                 if (!pos.StopLoss.HasValue)
                     continue;
 
-                if (!TryResolveExitSymbol(pos, out var sym))
+                if (!TryResolveExitSymbol(pos, out var sym, ctx))
                     continue;
 
                 double rDist = GetRiskDistance(pos, ctx);
@@ -249,7 +303,7 @@ namespace GeminiV26.Instruments.XAUUSD
                                         
                     if (!hit)
                     {
-                        if (TryGetExitBars(pos, TimeFrame.Minute, out var m1) && m1.Count > 0)
+                        if (TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) && m1.Count > 0)
                         {
                             var bar = m1.LastBar;
 
@@ -271,8 +325,8 @@ namespace GeminiV26.Instruments.XAUUSD
                     
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
-                        if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5) ||
-                            !TryGetExitBars(pos, TimeFrame.Minute15, out var m15))
+                        if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5, ctx) ||
+                            !TryGetExitBars(pos, TimeFrame.Minute15, out var m15, ctx))
                         {
                             continue;
                         }
@@ -334,7 +388,7 @@ namespace GeminiV26.Instruments.XAUUSD
         // =====================================================
         private void ExecuteTp1(Position pos, PositionContext ctx, double rDist)
         {
-            if (!TryResolveExitSymbol(pos, out var sym))
+            if (!TryResolveExitSymbol(pos, out var sym, ctx))
                 return;
 
             // Partial close fraction: ctx-ből (executor beállította)
@@ -406,7 +460,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
         private void ApplyBreakEven(Position pos, PositionContext ctx, double rDist)
         {
-            if (!TryResolveExitSymbol(pos, out var sym))
+            if (!TryResolveExitSymbol(pos, out var sym, ctx))
                 return;
 
             double beOffsetR = _profile.BeOffsetR;
@@ -443,7 +497,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (!pos.StopLoss.HasValue)
                 return;
 
-            if (!TryResolveExitSymbol(pos, out var sym))
+            if (!TryResolveExitSymbol(pos, out var sym, ctx))
                 return;
 
             // ===== ATR (előre inicializált indikátor!) =====
@@ -599,7 +653,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
 
             double? currentPrice = null;
-            if (TryResolveExitSymbol(pos, out var sym))
+            if (TryResolveExitSymbol(pos, out var sym, ctx))
                 currentPrice = IsLong(ctx) ? sym.Bid : sym.Ask;
 
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
