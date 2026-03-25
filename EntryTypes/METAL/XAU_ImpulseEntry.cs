@@ -183,7 +183,9 @@ namespace GeminiV26.EntryTypes.METAL
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = hasConfirmation;
 
+            int scoreBeforeTriggerModel = score;
             score = TriggerScoreModel.Apply(ctx, $"XAU_IMPULSE_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_IMPULSE_TRIGGER");
+            bool earlyWeakness = score < scoreBeforeTriggerModel;
 
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
@@ -196,6 +198,19 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (setupScore <= 0)
                 score = System.Math.Min(score, MinScore - 10);
+
+            bool noMomentum = !(ctx.MarketState?.IsMomentum ?? false);
+            if (ctx.Symbol == "XAUUSD"
+                && ctx.MarketState != null
+                && ctx.MarketState.IsTrend
+                && noMomentum
+                && earlyWeakness)
+            {
+                int scoreBeforeCompression = score;
+                score = (int)System.Math.Round(score * 0.65);
+                ctx.Log?.Invoke(
+                    $"[XAU CONTINUATION FILTER] score {scoreBeforeCompression}->{score} momentum={ctx.MarketState.IsMomentum} earlyWeakness={earlyWeakness}");
+            }
 
 
             string note =
