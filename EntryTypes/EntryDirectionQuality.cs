@@ -34,7 +34,17 @@ namespace GeminiV26.EntryTypes
 
             int penalty = 0;
             int bonus = 0;
-            int marketStatePenalty = 0;
+            int marketStateAdditivePenalty = 0;
+            double trendScaling = 1.0;
+            double momentumScaling = 1.0;
+            double comboScaling = 1.0;
+            double adxScaling = 1.0;
+            double baseScoreFlow = score;
+            double afterAdditiveFlow = score;
+            double afterTrendFlow = score;
+            double afterMomentumFlow = score;
+            double afterComboFlow = score;
+            double afterAdxFlow = score;
 
             if (structureAligned)
             {
@@ -97,49 +107,60 @@ namespace GeminiV26.EntryTypes
                 var style = ResolveStyle(request?.TypeTag);
                 bool noTrend = !ctx.MarketState.IsTrend;
                 bool noMomentum = !ctx.MarketState.IsMomentum;
-
-                int noTrendPenalty = style switch
-                {
-                    EntryStyle.Breakout => 7,
-                    EntryStyle.Pullback => 8,
-                    EntryStyle.Flag => 9,
-                    EntryStyle.Reversal => 4,
-                    EntryStyle.Range => 3,
-                    _ => 8
-                };
-
-                int noMomentumPenalty = style switch
-                {
-                    EntryStyle.Breakout => 9,
-                    EntryStyle.Pullback => 7,
-                    EntryStyle.Flag => 9,
-                    EntryStyle.Reversal => 6,
-                    EntryStyle.Range => 4,
-                    _ => 8
-                };
-
-                int comboPenalty = style switch
-                {
-                    EntryStyle.Reversal => 5,
-                    EntryStyle.Range => 4,
-                    _ => 10
-                };
+                bool lowEnergy = ctx.MarketState.IsLowVol || !ctx.IsAtrExpanding_M5;
 
                 if (noTrend)
-                    marketStatePenalty += noTrendPenalty;
+                    marketStateAdditivePenalty += style == EntryStyle.Range ? 1 : 3;
 
                 if (noMomentum)
-                    marketStatePenalty += noMomentumPenalty;
+                    marketStateAdditivePenalty += style == EntryStyle.Range ? 1 : 4;
+
+                if (lowEnergy)
+                    marketStateAdditivePenalty += 2;
+
+                if (marketStateAdditivePenalty > 4)
+                    marketStateAdditivePenalty = 4;
+
+                switch (style)
+                {
+                    case EntryStyle.Breakout:
+                        trendScaling = noTrend ? 0.90 : 1.00;
+                        momentumScaling = noMomentum ? 0.75 : 1.00;
+                        break;
+                    case EntryStyle.Pullback:
+                        trendScaling = noTrend ? 0.75 : 1.00;
+                        momentumScaling = noMomentum ? 0.90 : 1.00;
+                        break;
+                    case EntryStyle.Flag:
+                        trendScaling = noTrend ? 0.80 : 1.00;
+                        momentumScaling = noMomentum ? 0.80 : 1.00;
+                        break;
+                    case EntryStyle.Reversal:
+                        trendScaling = noTrend ? 0.95 : 1.00;
+                        momentumScaling = noMomentum ? 0.88 : 1.00;
+                        break;
+                    case EntryStyle.Range:
+                        trendScaling = noTrend ? 0.98 : 1.00;
+                        momentumScaling = noMomentum ? 0.95 : 1.00;
+                        break;
+                    default:
+                        trendScaling = noTrend ? 0.85 : 1.00;
+                        momentumScaling = noMomentum ? 0.85 : 1.00;
+                        break;
+                }
 
                 if (noTrend && noMomentum)
-                    marketStatePenalty += comboPenalty;
+                    comboScaling = (style == EntryStyle.Reversal || style == EntryStyle.Range) ? 0.80 : 0.60;
 
-                if (marketStatePenalty > 0)
+                double minAdx = instrumentClass switch
                 {
-                    ctx.Log?.Invoke(
-                        $"[ENTRY STATE SCORE] type={request.TypeTag} side={direction} trend={ctx.MarketState.IsTrend} momentum={ctx.MarketState.IsMomentum} " +
-                        $"lowVol={ctx.MarketState.IsLowVol} adx={ctx.MarketState.Adx:F1} penalty={marketStatePenalty}");
-                }
+                    InstrumentClass.INDEX => 20.0,
+                    InstrumentClass.CRYPTO => 20.0,
+                    InstrumentClass.FX => 18.0,
+                    _ => 18.0
+                };
+
+                adxScaling = Math.Clamp(ctx.Adx_M5 / minAdx, 0.65, 1.10);
             }
 
             if (instrumentClass == InstrumentClass.INDEX &&
@@ -163,7 +184,24 @@ namespace GeminiV26.EntryTypes
 
             score += bonus;
             score -= penalty;
-            score -= marketStatePenalty;
+
+            baseScoreFlow = score;
+            double flowScore = score - marketStateAdditivePenalty;
+            afterAdditiveFlow = flowScore;
+
+            flowScore *= trendScaling;
+            afterTrendFlow = flowScore;
+
+            flowScore *= momentumScaling;
+            afterMomentumFlow = flowScore;
+
+            flowScore *= comboScaling;
+            afterComboFlow = flowScore;
+
+            flowScore *= adxScaling;
+            afterAdxFlow = flowScore;
+
+            score = (int)Math.Round(flowScore);
 
             string structure =
                 breakoutConfirmed ? "BreakoutConfirmed" :
@@ -175,7 +213,14 @@ namespace GeminiV26.EntryTypes
             ctx.Log?.Invoke(
                 $"[DIR QUALITY] type={request.TypeTag} side={direction} structure={structure} " +
                 $"logicBias={logicBias} logicConf={logicConfidence} htfDir={htfDirection} htfConf={htfConfidence:F2} " +
-                $"regime={regime} penalty={penalty} marketStatePenalty={marketStatePenalty} bonus={bonus} finalScore={score}");
+                $"regime={regime} penalty={penalty} marketStatePenalty={marketStateAdditivePenalty} bonus={bonus} finalScore={score}");
+
+            ctx.Log?.Invoke(
+                $"[ENTRY SCORE FLOW] type={request.TypeTag} side={direction} " +
+                $"baseScore={baseScoreFlow:F1} afterAdditive={afterAdditiveFlow:F1} " +
+                $"afterTrendScaling={afterTrendFlow:F1} afterMomentumScaling={afterMomentumFlow:F1} " +
+                $"afterCombo={afterComboFlow:F1} afterADX={afterAdxFlow:F1} finalScore={score} " +
+                $"trendScale={trendScaling:F2} momentumScale={momentumScaling:F2} comboScale={comboScaling:F2} adxScale={adxScaling:F2}");
 
             return score;
         }
