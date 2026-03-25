@@ -140,8 +140,10 @@ namespace GeminiV26.EntryTypes.FX
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = continuationSignal || (ctx.LastClosedBarInTrendDirection && ctx.HasReactionCandle_M5);
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"FX_IMPULSE_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_CONTINUATION_SIGNAL");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += setupScore;
 
             if (setupScore <= 0)

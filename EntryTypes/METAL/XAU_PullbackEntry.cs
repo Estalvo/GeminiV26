@@ -264,8 +264,9 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // FINAL
             // =========================
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"XAU_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score += setupScore;
 

@@ -871,8 +871,9 @@ namespace GeminiV26.EntryTypes.Crypto
                 (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
             bool strongCandle = ctx.LastClosedBarInTrendDirection;
             bool followThrough = continuationSignal || validPullbackReaction;
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"BTC_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += setupScore;
 
             if (setupScore <= 0)

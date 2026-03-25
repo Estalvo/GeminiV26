@@ -139,8 +139,10 @@ namespace GeminiV26.EntryTypes.FX
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = ctx.M1ReversalTrigger || ctx.HasReactionCandle_M5;
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"FX_REV_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
 
             if (setupScore <= 0)

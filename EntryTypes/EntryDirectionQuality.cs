@@ -202,6 +202,19 @@ namespace GeminiV26.EntryTypes
             afterAdxFlow = flowScore;
 
             score = (int)Math.Round(flowScore);
+            int finalScoreBeforeCap = score;
+
+            if (ctx.MarketState != null)
+            {
+                bool noTrend = !ctx.MarketState.IsTrend;
+                bool noMomentum = !ctx.MarketState.IsMomentum;
+
+                if (noTrend && noMomentum)
+                    score = Math.Min(score, 55);
+
+                if (ctx.MarketState.IsLowVol || !ctx.IsAtrExpanding_M5)
+                    score = Math.Min(score, 60);
+            }
 
             string structure =
                 breakoutConfirmed ? "BreakoutConfirmed" :
@@ -219,7 +232,7 @@ namespace GeminiV26.EntryTypes
                 $"[ENTRY SCORE FLOW] type={request.TypeTag} side={direction} " +
                 $"baseScore={baseScoreFlow:F1} afterAdditive={afterAdditiveFlow:F1} " +
                 $"afterTrendScaling={afterTrendFlow:F1} afterMomentumScaling={afterMomentumFlow:F1} " +
-                $"afterCombo={afterComboFlow:F1} afterADX={afterAdxFlow:F1} finalScore={score} " +
+                $"afterCombo={afterComboFlow:F1} afterADX={afterAdxFlow:F1} finalScore={finalScoreBeforeCap} finalCappedScore={score} " +
                 $"trendScale={trendScaling:F2} momentumScale={momentumScaling:F2} comboScale={comboScaling:F2} adxScale={adxScaling:F2}");
 
             return score;

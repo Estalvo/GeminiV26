@@ -21,8 +21,7 @@ namespace GeminiV26.EntryTypes.FX
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             ctx?.Log?.Invoke("[FX_FLAG][STUB_DISABLE]");
-
-            return new EntryEvaluation
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.FX_Flag,
@@ -31,6 +30,16 @@ namespace GeminiV26.EntryTypes.FX
                 IsValid = false,
                 Reason = "FX_FlagEntry disabled"
             };
+            eval.Score = EntryDirectionQuality.Apply(
+                ctx,
+                eval.Direction,
+                eval.Score,
+                new DirectionQualityRequest
+                {
+                    TypeTag = "FX_FlagEntry",
+                    ApplyTrendRegimePenalty = true
+                });
+            return eval;
         }
     }
 }

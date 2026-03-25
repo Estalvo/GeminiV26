@@ -23,75 +23,31 @@ namespace GeminiV26.EntryTypes.FX
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowBreakout)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    IsValid = false,
-                    Reason = "SESSION_MATRIX_BREAKOUT_DISABLED"
-                };
+                return Invalid(ctx, "SESSION_MATRIX_BREAKOUT_DISABLED");
             }
             if (ctx == null || !ctx.IsReady)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    IsValid = false,
-                    Reason = "CTX_NOT_READY;"
-                };
+                return Invalid(ctx, "CTX_NOT_READY;");
             }
 
             if (ctx.LogicBias == TradeDirection.None)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NO_LOGIC_BIAS"
-                };
+                return Invalid(ctx, "NO_LOGIC_BIAS");
             }
 
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NoRange;"
-                };
+                return Invalid(ctx, "NoRange;");
             }
 
             if (Math.Abs(ctx.Ema21Slope_M5) > MaxSlopeForRange)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "Trending;"
-                };
+                return Invalid(ctx, "Trending;");
             }
 
             if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "FX_LOW_CONF_HTF_CONFLICT"
-                };
+                return Invalid(ctx, "FX_LOW_CONF_HTF_CONFLICT");
             }
 
             if (ctx.LogicBias == TradeDirection.Long)
@@ -107,15 +63,7 @@ namespace GeminiV26.EntryTypes.FX
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                Score = 0,
-                IsValid = false,
-                Reason = "NO_LOGIC_BIAS"
-            };
+            return Invalid(ctx, "NO_LOGIC_BIAS");
         }
 
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
@@ -156,8 +104,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.RangeBreakDirection != dir && ctx.RangeBreakDirection != TradeDirection.None)
                 score -= 10;
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"FX_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             eval.Score = score;
 
             if (score < MIN_SCORE)
@@ -185,6 +135,17 @@ namespace GeminiV26.EntryTypes.FX
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
         }
+
+        private EntryEvaluation Invalid(EntryContext ctx, string reason)
+            => new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = ApplyMandatoryEntryAdjustments(ctx, TradeDirection.None, 0, false),
+                IsValid = false,
+                Reason = reason
+            };
 
     }
 }
