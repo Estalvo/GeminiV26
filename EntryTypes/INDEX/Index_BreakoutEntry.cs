@@ -202,8 +202,10 @@ namespace GeminiV26.EntryTypes.INDEX
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = continuationSignal || (ctx.IsAtrExpanding_M5 && freshImpulse);
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"IDX_BREAKOUT_{dir}", score, breakoutConfirmed, strongCandle, followThrough, "NO_BREAKOUT_M1");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
 
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score += setupScore;

@@ -35,51 +35,19 @@ namespace GeminiV26.EntryTypes
             DirectionDebug.LogOnce(ctx);
             if (ctx == null || !ctx.IsReady)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "CTX_NOT_READY;"
-                };
+                return CreateInvalid(ctx, "CTX_NOT_READY;");
             }
 
             if (ctx.LogicBias == TradeDirection.None)
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NO_LOGIC_BIAS"
-                };
+                return CreateInvalid(ctx, "NO_LOGIC_BIAS");
 
             if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = $"WeakEvidence({ctx.ReversalEvidenceScore});"
-                };
+                return CreateInvalid(ctx, $"WeakEvidence({ctx.ReversalEvidenceScore});");
             }
 
             if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "HTF_MISMATCH"
-                };
+                return CreateInvalid(ctx, "HTF_MISMATCH");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
@@ -94,15 +62,7 @@ namespace GeminiV26.EntryTypes
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                Score = 0,
-                IsValid = false,
-                Reason = "NO_LOGIC_BIAS"
-            };
+            return CreateInvalid(ctx, "NO_LOGIC_BIAS");
         }
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
@@ -249,12 +209,13 @@ namespace GeminiV26.EntryTypes
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"TR_REV_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
+
             score += setupScore;
 
             if (setupScore <= 0)
                 score = Math.Min(score, MIN_SCORE - 10);
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
 
             eval.Score = score;
             eval.IsValid = score >= MIN_SCORE;
@@ -276,6 +237,19 @@ namespace GeminiV26.EntryTypes
                     TypeTag = "TR_ReversalEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private EntryEvaluation CreateInvalid(EntryContext ctx, string reason)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = ApplyMandatoryEntryAdjustments(ctx, TradeDirection.None, 0, false),
+                IsValid = false,
+                Reason = reason
+            };
         }
 
     }

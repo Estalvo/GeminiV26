@@ -68,8 +68,10 @@ namespace GeminiV26.EntryTypes.Crypto
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = breakoutDetected || (ctx.IsAtrExpanding_M5 && (directionalImpulse || directionalTrend));
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"CRYPTO_IMPULSE_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_IMPULSE_TRIGGER");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
 
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE_{dir}_{score}", dir, score);

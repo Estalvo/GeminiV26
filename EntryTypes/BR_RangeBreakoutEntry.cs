@@ -35,54 +35,22 @@ namespace GeminiV26.EntryTypes
             DirectionDebug.LogOnce(ctx);
             if (ctx == null || !ctx.IsReady)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "CTX_NOT_READY;"
-                };
+                return CreateInvalid(ctx, "CTX_NOT_READY;");
             }
 
             if (ctx.LogicBias == TradeDirection.None)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NO_LOGIC_BIAS"
-                };
+                return CreateInvalid(ctx, "NO_LOGIC_BIAS");
             }
 
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MinRangeBars)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NoRange;"
-                };
+                return CreateInvalid(ctx, "NoRange;");
             }
 
             if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "HTF_MISMATCH"
-                };
+                return CreateInvalid(ctx, "HTF_MISMATCH");
             }
 
             if (ctx.LogicBias == TradeDirection.Long)
@@ -98,15 +66,7 @@ namespace GeminiV26.EntryTypes
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                Score = 0,
-                IsValid = false,
-                Reason = "NO_LOGIC_BIAS"
-            };
+            return CreateInvalid(ctx, "NO_LOGIC_BIAS");
         }
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
@@ -157,6 +117,7 @@ namespace GeminiV26.EntryTypes
             if (!rangeLongEnough && !flatEma)
             {
                 eval.Reason += "WeakRangeQuality;";
+                eval.Score = ApplyMandatoryEntryAdjustments(ctx, dir, eval.Score, false);
                 return eval;
             }
 
@@ -319,7 +280,6 @@ namespace GeminiV26.EntryTypes
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"BR_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
 
             // =========================================================
@@ -329,6 +289,7 @@ namespace GeminiV26.EntryTypes
 
             if (setupScore <= 0)
                 score = Math.Min(score, MIN_SCORE - 10);
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
 
             eval.Score = score;
             eval.IsValid = score >= MIN_SCORE;
@@ -350,6 +311,19 @@ namespace GeminiV26.EntryTypes
                     TypeTag = "BR_RangeBreakoutEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private EntryEvaluation CreateInvalid(EntryContext ctx, string reason)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = ApplyMandatoryEntryAdjustments(ctx, TradeDirection.None, 0, false),
+                IsValid = false,
+                Reason = reason
+            };
         }
 
     }

@@ -122,8 +122,10 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.IsRange_M5)
                 score -= 10;
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"FX_FLAG_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_M1_CONFIRM");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += setupScore;
 
             if (setupScore <= 0)

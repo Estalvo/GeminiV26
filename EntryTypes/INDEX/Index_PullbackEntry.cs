@@ -279,8 +279,9 @@ namespace GeminiV26.EntryTypes.INDEX
             bool breakoutDetected = breakoutConfirmed || ctx.RangeBreakDirection == dir;
             bool strongCandle = lastBarInDir;
             bool followThrough = continuationSignal || ctx.HasReactionCandle_M5;
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score = TriggerScoreModel.Apply(ctx, $"IDX_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += setupScore;
 
             if (setupScore <= 0)

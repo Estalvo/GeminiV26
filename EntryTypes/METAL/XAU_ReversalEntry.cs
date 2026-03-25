@@ -138,8 +138,10 @@ namespace GeminiV26.EntryTypes.METAL
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = hasConfirmation;
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"XAU_REV_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_REVERSAL_TRIGGER");
+
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
 
             if (setupScore <= 0)

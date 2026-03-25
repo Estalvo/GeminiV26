@@ -125,8 +125,9 @@ namespace GeminiV26.EntryTypes.Crypto
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
             bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score = TriggerScoreModel.Apply(ctx, $"BTC_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
 
             if (setupScore <= 0)

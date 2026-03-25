@@ -31,41 +31,17 @@ namespace GeminiV26.EntryTypes
             DirectionDebug.LogOnce(ctx);
             if (ctx == null || !ctx.IsReady)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "CTX_NOT_READY;"
-                };
+                return CreateInvalid(ctx, "CTX_NOT_READY;");
             }
 
             if (ctx.LogicBias == TradeDirection.None)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "NO_LOGIC_BIAS"
-                };
+                return CreateInvalid(ctx, "NO_LOGIC_BIAS");
             }
 
             if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
             {
-                return new EntryEvaluation
-                {
-                    Symbol = ctx.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "HTF_MISMATCH"
-                };
+                return CreateInvalid(ctx, "HTF_MISMATCH");
             }
 
             if (ctx.LogicBias == TradeDirection.Long)
@@ -81,15 +57,7 @@ namespace GeminiV26.EntryTypes
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
-            return new EntryEvaluation
-            {
-                Symbol = ctx.Symbol,
-                Type = Type,
-                Direction = TradeDirection.None,
-                Score = 0,
-                IsValid = false,
-                Reason = "NO_LOGIC_BIAS"
-            };
+            return CreateInvalid(ctx, "NO_LOGIC_BIAS");
         }
         private EntryEvaluation EvaluateDirectional(EntryContext ctx, TradeDirection forcedDirection)
         {
@@ -102,6 +70,11 @@ namespace GeminiV26.EntryTypes
                 IsValid = false,
                 Reason = ""
             };
+            EntryEvaluation FinalizeEval(bool applyTrendRegimePenalty = true)
+            {
+                eval.Score = ApplyMandatoryEntryAdjustments(ctx, eval.Direction, eval.Score, applyTrendRegimePenalty);
+                return eval;
+            }
 
             int score = 0;
             int setupScore = 0;
@@ -118,7 +91,7 @@ namespace GeminiV26.EntryTypes
             if (bars == null || bars.Count < 2)
             {
                 eval.Reason += "NoM5Bars;";
-                return eval;
+                return FinalizeEval();
             }
 
             int i = bars.Count - 1;
@@ -204,7 +177,7 @@ namespace GeminiV26.EntryTypes
                 if (!ctx.IsAtrExpanding_M5 && emaCompressed)
                 {
                     eval.Reason += "XAU_LowEnergy_Block;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 // 2️⃣ SOFT ENTRY – SCORE BASED (NEM HARD RETURN)
@@ -230,7 +203,7 @@ namespace GeminiV26.EntryTypes
                 if (!validPullback)
                 {
                     eval.Reason += "XAU_PullbackInvalid;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 // =====================================================
@@ -239,7 +212,7 @@ namespace GeminiV26.EntryTypes
                 if (wickRatio < 0.45)
                 {
                     eval.Reason += "XAU_WickExhaustion;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 // =====================================================
@@ -251,7 +224,7 @@ namespace GeminiV26.EntryTypes
                 )
                 {
                     eval.Reason += "XAU_LongTrendBroken;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 if (
@@ -260,7 +233,7 @@ namespace GeminiV26.EntryTypes
                 )
                 {
                     eval.Reason += "XAU_ShortTrendBroken;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 // ✔️ Ha idáig eljutott → PROFITABLE XAU SETUP
@@ -305,7 +278,7 @@ namespace GeminiV26.EntryTypes
                 )
                 {
                     eval.Reason += "IDX_LateImpulseFade;";
-                    return eval;
+                    return FinalizeEval();
                 }
             }
 
@@ -315,7 +288,7 @@ namespace GeminiV26.EntryTypes
                 if (ctx.IsRange_M5)
                 {
                     eval.Reason += "EUR_RangeBlocked;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 // EMA zone pullback elfogadása EURUSD-n (nem hard return)
@@ -349,13 +322,13 @@ namespace GeminiV26.EntryTypes
                 if (ctx.IsRange_M5)
                 {
                     eval.Reason += "GBP_RangeBlocked;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 if (wickRatio < 0.45)
                 {
                     eval.Reason += "GBP_WickDominance;";
-                    return eval;
+                    return FinalizeEval();
                 }
             }
 
@@ -367,13 +340,13 @@ namespace GeminiV26.EntryTypes
                 if (ctx.IsRange_M5)
                 {
                     eval.Reason += "JPY_RangeBlocked;";
-                    return eval;
+                    return FinalizeEval();
                 }
 
                 if (wickRatio < 0.40 && ctx.HasImpulse_M5)
                 {
                     eval.Reason += "JPY_WickRejection;";
-                    return eval;
+                    return FinalizeEval();
                 }
             }
 
@@ -469,7 +442,6 @@ namespace GeminiV26.EntryTypes
                 (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
             bool strongCandle = ctx.LastClosedBarInTrendDirection;
             bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
-            score = ApplyMandatoryEntryAdjustments(ctx, eval.Direction, score, true);
             score = TriggerScoreModel.Apply(ctx, $"TC_PULLBACK_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
             score += setupScore;
 
@@ -487,7 +459,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             WriteAuditCsvSafe(ctx, eval, wickRatio);
 
-            return eval;
+            return FinalizeEval();
         }
 
         // =========================================================
@@ -573,6 +545,19 @@ namespace GeminiV26.EntryTypes
                     TypeTag = "TC_PullbackEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private EntryEvaluation CreateInvalid(EntryContext ctx, string reason)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                Score = ApplyMandatoryEntryAdjustments(ctx, TradeDirection.None, 0, true),
+                IsValid = false,
+                Reason = reason
+            };
         }
 
     }
