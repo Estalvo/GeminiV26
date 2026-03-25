@@ -1796,7 +1796,7 @@ namespace GeminiV26.Core
                     continue;
 
                 const int softPenalty = 20;
-                int originalScore = candidate.Score;
+                int originalSoftScore = candidate.Score;
                 candidate.Score = Math.Max(0, candidate.Score - softPenalty);
                 candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                     ? $"[RESTART_SOFT_{restartReason}]"
@@ -1805,7 +1805,7 @@ namespace GeminiV26.Core
 
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[RESTART SOFT] penalty applied symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
-                    $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                    $"dir={candidate.Direction} score={originalSoftScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                     ctx));
             }
         }
