@@ -60,7 +60,6 @@ using GeminiV26.Instruments.CRYPTO;
 using GeminiV26.Instruments.METAL;
 using System;
 using System.Collections.Generic;
-using GeminiV26.Core;
 using GeminiV26.Core.HtfBias;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Context;
