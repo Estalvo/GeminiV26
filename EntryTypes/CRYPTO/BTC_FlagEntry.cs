@@ -10,7 +10,7 @@ namespace GeminiV26.EntryTypes.Crypto
     {
         public EntryType Type => EntryType.Crypto_Flag;
 
-        private const int MaxBarsSinceImpulse = 14;
+        private const int MaxBarsSinceImpulse = 18;
         private const int MinFlagBars = 3;
         private const int MaxFlagBars = 7;
 
@@ -32,10 +32,19 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.AtrM5 <= 0)
                 return Invalid(ctx, "ATR_ZERO");
 
-            if (!ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 > 12)
+            int directionalBarsSinceImpulse = ctx.LogicBias switch
+            {
+                TradeDirection.Long => ctx.BarsSinceImpulseLong_M5,
+                TradeDirection.Short => ctx.BarsSinceImpulseShort_M5,
+                _ => ctx.BarsSinceImpulse_M5
+            };
+
+            bool hasDirectionalImpulse = directionalBarsSinceImpulse <= MaxBarsSinceImpulse;
+
+            if (!ctx.HasImpulse_M5 && !hasDirectionalImpulse && ctx.BarsSinceImpulse_M5 > 14)
                 return Invalid(ctx, "NO_RECENT_IMPULSE");
 
-            if (ctx.BarsSinceImpulse_M5 > MaxBarsSinceImpulse)
+            if (directionalBarsSinceImpulse > MaxBarsSinceImpulse)
                 return Invalid(ctx, "LATE_FLAG");
 
             var bars = ctx.M5;

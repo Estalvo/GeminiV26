@@ -602,12 +602,13 @@ namespace GeminiV26.EntryTypes.Crypto
             // ======================================
             bool isPullbackSetup = Type == EntryType.Crypto_Pullback;
 
-            // 1) Minimum confidence (only for pullback)
+            // 1) Minimum confidence (soft penalty for crypto pullback)
             if (isPullbackSetup && score < MIN_SCORE)
             {
-                Console.WriteLine($"[BTC FILTER] rejected: pullback low confidence {score}");
-                ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback low confidence {score}");
-                return Block(ctx, "BTC_FILTER_PULLBACK_LOW_CONFIDENCE", score, dir);
+                int prePenalty = score;
+                score = Math.Max(42, score - 6);
+                Console.WriteLine($"[CRYPTO FILTER] pullback low confidence soft-penalty {prePenalty}->{score}");
+                ctx.Log?.Invoke($"[CRYPTO FILTER] pullback low confidence soft-penalty {prePenalty}->{score}");
             }
 
             // 2) Pullback requires impulse reclaim

@@ -272,6 +272,7 @@ namespace GeminiV26.Core
         private bool _isMemoryReady;
         private bool _startupCoverageLogged;
         private const bool DebugStartupTrace = false;
+        private const int CryptoSurvivableScoreFloor = 20;
 
         public TradeCore(Robot bot)
         {
@@ -1753,15 +1754,40 @@ namespace GeminiV26.Core
 
                 if (BotRestartState.IsHardProtectionPhase)
                 {
-                    candidate.IsValid = false;
+                    bool isCryptoCandidate = IsCryptoCandidate(candidate.Type);
+                    bool freshDirectionalContinuation =
+                        isCryptoCandidate &&
+                        ctx.BarsSinceStart <= 1 &&
+                        candidate.Direction != TradeDirection.None &&
+                        restartReason != "StaleImpulse" &&
+                        (ctx.GetBarsSinceImpulse(candidate.Direction) <= 2 || ctx.HasDirectionalPullback(candidate.Direction));
+
+                    if (!freshDirectionalContinuation)
+                    {
+                        candidate.IsValid = false;
+                        candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                            ? "[RESTART_DECAY_AFTER_RESTART]"
+                            : $"{candidate.Reason} [RESTART_DECAY_AFTER_RESTART]";
+                        EntryDecisionPolicy.Normalize(candidate);
+
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                            $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                            ctx));
+                        continue;
+                    }
+
+                    int hardPhaseCryptoPenalty = 12;
+                    int originalScore = candidate.Score;
+                    candidate.Score = Math.Max(CryptoSurvivableScoreFloor, candidate.Score - hardPhaseCryptoPenalty);
                     candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
-                        ? "[RESTART_DECAY_AFTER_RESTART]"
-                        : $"{candidate.Reason} [RESTART_DECAY_AFTER_RESTART]";
+                        ? $"[RESTART_SOFT_AFTER_RESTART_{restartReason}]"
+                        : $"{candidate.Reason} [RESTART_SOFT_AFTER_RESTART_{restartReason}]";
                     EntryDecisionPolicy.Normalize(candidate);
 
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
-                        $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                        $"[RESTART SOFT-HARDPHASE] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
+                        $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                         ctx));
                     continue;
                 }
@@ -1770,7 +1796,7 @@ namespace GeminiV26.Core
                     continue;
 
                 const int softPenalty = 20;
-                int originalScore = candidate.Score;
+                int originalSoftScore = candidate.Score;
                 candidate.Score = Math.Max(0, candidate.Score - softPenalty);
                 candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                     ? $"[RESTART_SOFT_{restartReason}]"
@@ -1779,7 +1805,7 @@ namespace GeminiV26.Core
 
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[RESTART SOFT] penalty applied symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
-                    $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                    $"dir={candidate.Direction} score={originalSoftScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                     ctx));
             }
         }
@@ -2035,7 +2061,16 @@ namespace GeminiV26.Core
                 if (barsSinceBreak == 0)
                 {
                     int originalScore = candidate.Score;
-                    candidate.Score = Math.Max(0, candidate.Score - 15);
+                    int earlyBreakPenalty = 15;
+                    int floor = 0;
+                    if (IsCryptoCandidate(candidate.Type) &&
+                        candidate.IsValid &&
+                        candidate.Score > 0)
+                    {
+                        floor = CryptoSurvivableScoreFloor;
+                    }
+
+                    candidate.Score = Math.Max(floor, candidate.Score - earlyBreakPenalty);
                     candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
                     _bot.Print($"[ENTRY][EARLY_PROTECT] symbol={candidate.Symbol} type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}");
                 }
@@ -2170,6 +2205,20 @@ namespace GeminiV26.Core
                 : direction == TradeDirection.Short
                     ? ctx.BarsSinceLowBreak_M5
                     : int.MaxValue;
+        }
+
+        private static bool IsCryptoCandidate(EntryType type)
+        {
+            switch (type)
+            {
+                case EntryType.Crypto_Flag:
+                case EntryType.Crypto_Pullback:
+                case EntryType.Crypto_RangeBreakout:
+                case EntryType.Crypto_Impulse:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private void UpsertArmedSetup(EntryEvaluation candidate, int barsSinceBreak)
