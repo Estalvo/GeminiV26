@@ -374,6 +374,7 @@ namespace GeminiV26.Core
         
 
             _entryRouter = new EntryRouter(_entryTypes);
+            _contextBuilder = new EntryContextBuilder(bot);
             _transitionDetector = new TransitionDetector();
             Action<string> safePrint = msg => _bot.BeginInvokeOnMainThread(() => _bot.Print(msg));
             _flagBreakoutDetector = new FlagBreakoutDetector(safePrint);
@@ -383,7 +384,6 @@ namespace GeminiV26.Core
                 new CsvAnalyticsLogger(_logWriter, safePrint));
             _statsTracker = new TradeStatsTracker(safePrint);
             _memoryEngine = new MarketMemoryEngine(safePrint);
-            _contextBuilder = new EntryContextBuilder(bot, _memoryEngine);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 

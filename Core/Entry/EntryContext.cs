@@ -280,8 +280,6 @@ namespace GeminiV26.Core.Entry
         public bool RuntimeResolved { get; set; }
         public bool MemoryResolved { get; set; }
         public bool MemoryUsable { get; set; }
-        public SymbolMemoryState Memory { get; set; }
-        public bool HasMemory => Memory != null;
         public SymbolMemoryState MemoryState { get; set; }
         public MemoryAssessment MemoryAssessment { get; set; }
 
