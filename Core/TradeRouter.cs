@@ -86,6 +86,9 @@ namespace GeminiV26.Core
                     }
                 }
 
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[SCORE][DECISION_INPUT] entry={candidate.Score} logic={entryContext?.LogicBiasConfidence ?? 0} final={PositionContext.ComputeFinalConfidenceValue(candidate.Score, entryContext?.LogicBiasConfidence ?? 0)} threshold={EntryDecisionPolicy.MinScoreThreshold}",
+                    entryContext));
                 _bot.Print(TradeLogIdentity.WithTempId($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}", entryContext));
             }
 
