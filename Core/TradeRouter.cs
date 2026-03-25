@@ -62,9 +62,10 @@ namespace GeminiV26.Core
             foreach (var candidate in signals.Where(e => e != null))
             {
                 string decision;
-                _bot.Print($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.IsValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
+                candidate.FinalValid = candidate.IsValid;
+                _bot.Print($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.FinalValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
 
-                if (!candidate.IsValid)
+                if (!candidate.FinalValid)
                 {
                     decision = "REJECT";
                     _bot.Print(TradeLogIdentity.WithTempId($"[BLOCK] type={candidate.Type} dir={candidate.Direction} score={candidate.Score} reason=invalid_candidate", entryContext));
@@ -89,7 +90,27 @@ namespace GeminiV26.Core
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[SCORE][DECISION_INPUT] entry={candidate.Score} logic={entryContext?.LogicBiasConfidence ?? 0} final={PositionContext.ComputeFinalConfidenceValue(candidate.Score, entryContext?.LogicBiasConfidence ?? 0)} threshold={EntryDecisionPolicy.MinScoreThreshold}",
                     entryContext));
-                _bot.Print(TradeLogIdentity.WithTempId($"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} score={candidate.Score} threshold={EntryDecisionPolicy.MinScoreThreshold} valid={candidate.IsValid.ToString().ToLowerInvariant()} state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}", entryContext));
+
+                candidate.RejectReason = ResolveRejectReason(candidate, EntryDecisionPolicy.MinScoreThreshold);
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
+                    $"rawValid={candidate.RawValid.ToString().ToLowerInvariant()} finalValid={candidate.FinalValid.ToString().ToLowerInvariant()} " +
+                    $"preScore={(candidate.HasQualityScoreTrace ? candidate.PreQualityScore : candidate.Score)} " +
+                    $"postScore={(candidate.HasQualityScoreTrace ? candidate.PostQualityScore : candidate.Score)} " +
+                    $"cappedScore={(candidate.HasQualityScoreTrace ? candidate.PostCapScore : candidate.Score)} " +
+                    $"threshold={EntryDecisionPolicy.MinScoreThreshold} reason={candidate.RejectReason} " +
+                    $"state={candidate.State} trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} → {decision}",
+                    entryContext));
+
+                if (candidate.RejectReason != "ACCEPTED")
+                {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY REJECT DETAIL] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
+                        $"reason={candidate.RejectReason} structureAligned={IsStructureAligned(entryContext, candidate.Direction).ToString().ToLowerInvariant()} " +
+                        $"momentumAligned={IsMomentumAligned(entryContext, candidate.Direction).ToString().ToLowerInvariant()} " +
+                        $"trend={(entryContext?.TrendDirection ?? TradeDirection.None)} adx={(entryContext?.Adx_M5 ?? 0.0):F1}",
+                        entryContext));
+                }
             }
 
             if (winner == null)
@@ -101,6 +122,45 @@ namespace GeminiV26.Core
             _bot.Print(TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
             _bot.Print(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
+        }
+
+        private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
+        {
+            if (candidate == null)
+                return "INVALID_STRUCTURE";
+
+            if (!candidate.RawValid)
+                return "INVALID_STRUCTURE";
+
+            if (candidate.Score < threshold)
+                return "BELOW_THRESHOLD";
+
+            if (candidate.Score >= threshold && !candidate.FinalValid)
+                return "INVALID_POST_EVAL";
+
+            return "ACCEPTED";
+        }
+
+        private static bool IsStructureAligned(EntryContext ctx, TradeDirection direction)
+        {
+            if (ctx == null || direction == TradeDirection.None)
+                return false;
+
+            return ctx.BreakoutDirection == direction
+                || ctx.RangeBreakDirection == direction
+                || ctx.ImpulseDirection == direction
+                || (direction == TradeDirection.Long ? ctx.HasFlagLong_M5 || ctx.HasPullbackLong_M5 : ctx.HasFlagShort_M5 || ctx.HasPullbackShort_M5);
+        }
+
+        private static bool IsMomentumAligned(EntryContext ctx, TradeDirection direction)
+        {
+            if (ctx == null || direction == TradeDirection.None)
+                return false;
+
+            return ctx.BreakoutDirection == direction
+                || ctx.RangeBreakDirection == direction
+                || ctx.ImpulseDirection == direction
+                || (ctx.TrendDirection == direction && ctx.LastClosedBarInTrendDirection);
         }
 
 
