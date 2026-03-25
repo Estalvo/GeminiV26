@@ -381,6 +381,24 @@ namespace GeminiV26.Core
         public string RehydrateSource { get; set; } = string.Empty;
 
         /// <summary>
+        /// Post-entry lifecycle initialization has been completed for this position.
+        /// Guards one-time post-entry setup/logging in exit lifecycle registration.
+        /// </summary>
+        public bool PostEntryInitializationCompleted { get; set; }
+
+        /// <summary>
+        /// Rehydrate-specific recovery path completed.
+        /// Once true, rehydrate resolver/recovery flow must not re-run on normal ticks.
+        /// </summary>
+        public bool RehydrateRecoveryCompleted { get; set; }
+
+        /// <summary>
+        /// Indicates whether the position still requires rehydrate recovery handling.
+        /// </summary>
+        public bool RequiresRehydrateRecovery => IsRehydrated && !RehydrateRecoveryCompleted;
+
+
+        /// <summary>
         /// Utolsó ismert SL ár (pozíció az igazság).
         /// Trailing restore előkészítés.
         /// </summary>
