@@ -8,6 +8,34 @@
 //  4) TrendDirection remains SOFT bias only (reward/penalty/risk context), not direction of the entry
 // =========================================================
 
+using cAlgo.API;
+using GeminiV26.Core;
+using GeminiV26.Core.Entry;
+
+namespace GeminiV26.EntryTypes.FX
+{
+    public sealed class FX_FlagEntry : IEntryType
+    {
+        public EntryType Type => EntryType.FX_Flag;
+
+        public EntryEvaluation Evaluate(EntryContext ctx)
+        {
+            ctx?.Log?.Invoke("[FX_FLAG][STUB_DISABLE]");
+
+            return new EntryEvaluation
+            {
+                Symbol = ctx?.Symbol,
+                Type = EntryType.FX_Flag,
+                Direction = TradeDirection.None,
+                Score = 0,
+                IsValid = false,
+                Reason = "FX_FlagEntry disabled"
+            };
+        }
+    }
+}
+/*
+
 using System;
 using cAlgo.API;
 using GeminiV26.Core;
@@ -16,8 +44,6 @@ using GeminiV26.EntryTypes;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Instruments.FX;
 
-namespace GeminiV26.EntryTypes.FX
-{
     public sealed class FX_FlagEntry : IEntryType
     {
         public EntryType Type => EntryType.FX_Flag;
@@ -1195,3 +1221,4 @@ namespace GeminiV26.EntryTypes.FX
 
     }
 }
+*/
