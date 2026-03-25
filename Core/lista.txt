@@ -1,16 +1,12 @@
-C:\Users\orken\Downloads\GeminiV26\Core\BeMode.cs
-C:\Users\orken\Downloads\GeminiV26\Core\ConfidenceTradeModel.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry
-C:\Users\orken\Downloads\GeminiV26\Core\lista.txt
-C:\Users\orken\Downloads\GeminiV26\Core\PositionContext.cs
-C:\Users\orken\Downloads\GeminiV26\Core\RiskManager.cs
-C:\Users\orken\Downloads\GeminiV26\Core\TradeCore.cs
-C:\Users\orken\Downloads\GeminiV26\Core\TradeRouter.cs
-C:\Users\orken\Downloads\GeminiV26\Core\TradeViabilityMonitor.cs
-C:\Users\orken\Downloads\GeminiV26\Core\TrailingMode.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryContext.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryContextBuilder.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryEvaluation.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryRouter.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\EntryType.cs
-C:\Users\orken\Downloads\GeminiV26\Core\Entry\TradeDirection.cs
+DEPRECATED
+==========
+
+This file intentionally no longer contains source-file paths.
+
+Reason:
+- Legacy local build flows could read this list and also perform recursive .cs discovery,
+  which resulted in duplicate compilation units (for example duplicate `TradeCore`
+  definitions).
+
+If you maintain external tooling, do not combine explicit path lists with wildcard
+source scanning for the same tree.
