@@ -2075,20 +2075,15 @@ namespace GeminiV26.Core
             int originalScore = candidate.Score;
             const int earlyBreakPenalty = 15;
             bool continuationAuthority = HasContinuationAuthority(ctx, candidate);
-            int floor = 0;
+            int appliedPenalty = earlyBreakPenalty;
 
             if (continuationAuthority)
             {
-                floor = EntryDecisionPolicy.MinScoreThreshold;
-            }
-            else if (IsCryptoCandidate(candidate.Type) &&
-                     candidate.IsValid &&
-                     candidate.Score > 0)
-            {
-                floor = CryptoSurvivableScoreFloor;
+                const int continuationPenaltyCap = 10;
+                appliedPenalty = Math.Min(appliedPenalty, continuationPenaltyCap);
             }
 
-            candidate.Score = Math.Max(floor, candidate.Score - earlyBreakPenalty);
+            candidate.Score = Math.Max(0, candidate.Score - appliedPenalty);
             candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
 
             _bot.Print(TradeLogIdentity.WithTempId(
@@ -2098,17 +2093,16 @@ namespace GeminiV26.Core
 
             if (continuationAuthority)
             {
-                candidate.IsValid = true;
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
-                    $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}",
+                    $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} penalty={appliedPenalty} barsSinceBreak={barsSinceBreak}",
                     ctx));
                 return;
             }
 
             _bot.Print(TradeLogIdentity.WithTempId(
                 $"[ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
-                $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}",
+                $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} penalty={appliedPenalty} barsSinceBreak={barsSinceBreak}",
                 ctx));
         }
 

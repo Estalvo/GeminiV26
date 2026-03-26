@@ -386,7 +386,8 @@ namespace GeminiV26.EntryTypes.INDEX
             return
                 ctx.TrendDirection == dir &&
                 ctx.HasImpulse_M5 &&
-                ctx.IsAtrExpanding_M5;
+                ctx.IsAtrExpanding_M5 &&
+                ctx.MarketState?.IsTrend == true;
         }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
