@@ -59,7 +59,7 @@ namespace GeminiV26.Core
 
             if (barsSinceEntry <= 3)
             {
-                return EvaluateEarlyPhase(ctx, barsSinceEntry, atrShrinking, marketTrend);
+                return EvaluateEarlyPhase(ctx, barsSinceEntry, atrShrinking, marketTrend, m5, pos.TradeType);
             }
 
             if (barsSinceEntry <= 10)
@@ -157,7 +157,9 @@ namespace GeminiV26.Core
             PositionContext ctx,
             int barsSinceEntry,
             bool atrShrinking,
-            bool marketTrend)
+            bool marketTrend,
+            Bars m5,
+            TradeType tradeType)
         {
             LogTvmOncePerBar(
                 ctx,
@@ -210,8 +212,17 @@ namespace GeminiV26.Core
 
             if (dangerCount >= 2)
             {
+                bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                if (persistenceAlive)
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    return false;
+                }
+
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "EARLY_FAILURE";
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=EARLY_FAILURE", ctx));
 
                 LogTvmOncePerBar(
                     ctx,
@@ -258,8 +269,17 @@ namespace GeminiV26.Core
 
             if (barsSinceEntry >= 4 && ctx.MfeR <= 0.05)
             {
+                bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                if (persistenceAlive)
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    return false;
+                }
+
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "NO_PROGRESS";
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=NO_PROGRESS", ctx));
                 return true;
             }
 
@@ -281,8 +301,17 @@ namespace GeminiV26.Core
 
             if (shouldExit)
             {
+                bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
+                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                if (persistenceAlive && !structureBreak)
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    return false;
+                }
+
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "DEVELOPMENT_FAILURE";
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=DEVELOPMENT_FAILURE", ctx));
 
                 LogTvmOncePerBar(
                     ctx,
@@ -420,6 +449,21 @@ namespace GeminiV26.Core
                 return c0 < c1 && c1 < c2;
 
             return c0 > c1 && c1 > c2;
+        }
+
+        private bool TrendPersistenceAlive(PositionContext ctx, Bars m5, TradeType tradeType)
+        {
+            if (ctx == null || m5 == null || m5.Count < 4)
+                return false;
+
+            if (!ctx.MarketTrend)
+                return false;
+
+            bool adxHealthy = ctx.Adx_M5 >= 20.0;
+            bool volatilitySupport = ctx.MfeR >= 0.20 || ctx.MaeR <= 0.35;
+            bool structureIntact = !IsStructureWeakening(tradeType, m5);
+
+            return adxHealthy && volatilitySupport && structureIntact;
         }
 
         private void LogTvmOncePerBar(PositionContext ctx, int barIndex, string message)

@@ -1744,6 +1744,10 @@ namespace GeminiV26.Core
                 if (BotRestartState.IsHardProtectionPhase)
                 {
                     bool isCryptoCandidate = IsCryptoCandidate(candidate.Type);
+                    bool continuationAuthority = HasContinuationAuthority(ctx, candidate);
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY][AUTH] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction} authority={continuationAuthority}",
+                        ctx));
                     bool freshDirectionalContinuation =
                         isCryptoCandidate &&
                         ctx.BarsSinceStart <= 1 &&
@@ -1753,12 +1757,34 @@ namespace GeminiV26.Core
 
                     if (!freshDirectionalContinuation)
                     {
+                        if (continuationAuthority)
+                        {
+                            int protectedPenalty = 14;
+                            int protectedOriginalScore = candidate.Score;
+                            candidate.Score = Math.Max(EntryDecisionPolicy.MinScoreThreshold, candidate.Score - protectedPenalty);
+                            candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                                ? "[RESTART_PROTECT_SUPPRESSED_CONTINUATION_AUTH]"
+                                : $"{candidate.Reason} [RESTART_PROTECT_SUPPRESSED_CONTINUATION_AUTH]";
+                            candidate.IsValid = true;
+                            EntryDecisionPolicy.Normalize(candidate);
+
+                            _bot.Print(TradeLogIdentity.WithTempId(
+                                $"[ENTRY][PROTECT_SUPPRESSED] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                                $"type={candidate.Type} dir={candidate.Direction} score={protectedOriginalScore}->{candidate.Score} state={restartReason}",
+                                ctx));
+                            continue;
+                        }
+
                         candidate.IsValid = false;
                         candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                             ? "[RESTART_DECAY_AFTER_RESTART]"
                             : $"{candidate.Reason} [RESTART_DECAY_AFTER_RESTART]";
                         EntryDecisionPolicy.Normalize(candidate);
 
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[ENTRY][PROTECT] source=RESTART_PROTECT action=HARD_BLOCK symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                            $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
+                            ctx));
                         _bot.Print(TradeLogIdentity.WithTempId(
                             $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
                             $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
@@ -1774,6 +1800,10 @@ namespace GeminiV26.Core
                         : $"{candidate.Reason} [RESTART_SOFT_AFTER_RESTART_{restartReason}]";
                     EntryDecisionPolicy.Normalize(candidate);
 
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY][PROTECT] source=RESTART_PROTECT action=SOFT_PENALTY symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                        $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} state={restartReason}",
+                        ctx));
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[RESTART SOFT-HARDPHASE] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
                         $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
@@ -2024,6 +2054,64 @@ namespace GeminiV26.Core
             return false;
         }
 
+        private bool HasContinuationAuthority(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (ctx == null || candidate == null || candidate.Direction == TradeDirection.None)
+                return false;
+
+            bool trendAligned = ctx.TrendDirection == candidate.Direction;
+            bool impulseAligned = ctx.HasImpulse_M5;
+            bool atrAligned = ctx.IsAtrExpanding_M5;
+            bool trendStateOk = ctx.MarketState?.IsTrend == true;
+
+            return trendAligned && impulseAligned && atrAligned && trendStateOk;
+        }
+
+        private void ApplyManagedEarlyBreakTriggers(EntryContext ctx, EntryEvaluation candidate, int barsSinceBreak)
+        {
+            if (ctx == null || candidate == null)
+                return;
+
+            int originalScore = candidate.Score;
+            const int earlyBreakPenalty = 15;
+            bool continuationAuthority = HasContinuationAuthority(ctx, candidate);
+            int floor = 0;
+
+            if (continuationAuthority)
+            {
+                floor = EntryDecisionPolicy.MinScoreThreshold;
+            }
+            else if (IsCryptoCandidate(candidate.Type) &&
+                     candidate.IsValid &&
+                     candidate.Score > 0)
+            {
+                floor = CryptoSurvivableScoreFloor;
+            }
+
+            candidate.Score = Math.Max(floor, candidate.Score - earlyBreakPenalty);
+            candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                $"type={candidate.Type} dir={candidate.Direction} authority={continuationAuthority}",
+                ctx));
+
+            if (continuationAuthority)
+            {
+                candidate.IsValid = true;
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                    $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}",
+                    ctx));
+                return;
+            }
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}",
+                ctx));
+        }
+
         private void UpdateExecutionStateMachine(EntryContext ctx, List<EntryEvaluation> symbolSignals)
         {
             if (ctx == null || symbolSignals == null)
@@ -2048,21 +2136,7 @@ namespace GeminiV26.Core
 
                 int barsSinceBreak = GetBarsSinceBreak(ctx, candidate.Direction);
                 if (barsSinceBreak == 0)
-                {
-                    int originalScore = candidate.Score;
-                    int earlyBreakPenalty = 15;
-                    int floor = 0;
-                    if (IsCryptoCandidate(candidate.Type) &&
-                        candidate.IsValid &&
-                        candidate.Score > 0)
-                    {
-                        floor = CryptoSurvivableScoreFloor;
-                    }
-
-                    candidate.Score = Math.Max(floor, candidate.Score - earlyBreakPenalty);
-                    candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
-                    _bot.Print($"[ENTRY][EARLY_PROTECT] symbol={candidate.Symbol} type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceBreak={barsSinceBreak}");
-                }
+                    ApplyManagedEarlyBreakTriggers(ctx, candidate, barsSinceBreak);
 
                 if (candidate.Score < EntryDecisionPolicy.MinScoreThreshold)
                 {
