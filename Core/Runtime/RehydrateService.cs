@@ -5,6 +5,7 @@ using Gemini.Memory;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Entry;
 using GeminiV26.Core.Logging;
+using static GeminiV26.Core.SymbolRouting;
 
 namespace GeminiV26.Core.Runtime
 {
@@ -105,6 +106,20 @@ namespace GeminiV26.Core.Runtime
                         $"label={position.Label} reason=ownership_ambiguous");
                 }
 
+                return;
+            }
+
+            string botCanonical = NormalizeSymbol(_bot.Symbol?.Name ?? _bot.SymbolName);
+            string positionCanonical = NormalizeSymbol(position.SymbolName);
+
+            if (!string.IsNullOrWhiteSpace(botCanonical) &&
+                !string.IsNullOrWhiteSpace(positionCanonical) &&
+                !string.Equals(botCanonical, positionCanonical, StringComparison.OrdinalIgnoreCase))
+            {
+                summary.Skipped++;
+                _bot.Print(
+                    $"[REHYDRATE_SKIP] pos={Convert.ToInt64(position.Id)} symbol={position.SymbolName} " +
+                    $"reason=symbol_mismatch_bot_scope botCanonical={botCanonical} positionCanonical={positionCanonical}");
                 return;
             }
 
