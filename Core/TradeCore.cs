@@ -723,6 +723,7 @@ namespace GeminiV26.Core
         public void OnBar()
         {
             EnsureRuntimeResolverInitialized();
+            _runtimeSymbols.BeginExecutionCycle();
             string rawSym = _bot.SymbolName;
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
 
@@ -2372,6 +2373,7 @@ namespace GeminiV26.Core
         public void OnTick()
         {
             EnsureRuntimeResolverInitialized();
+            _runtimeSymbols.BeginExecutionCycle();
             try
             {
                 // =====================================================

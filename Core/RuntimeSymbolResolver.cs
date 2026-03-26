@@ -12,6 +12,7 @@ namespace GeminiV26.Core
     {
         private readonly Robot _bot;
         private readonly Dictionary<string, Symbol> _cache = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Symbol> _cycleCache = new(StringComparer.OrdinalIgnoreCase);
 
         public RuntimeSymbolResolver(Robot bot)
         {
@@ -22,6 +23,12 @@ namespace GeminiV26.Core
         public void Refresh()
         {
             _cache.Clear();
+            _cycleCache.Clear();
+        }
+
+        public void BeginExecutionCycle()
+        {
+            _cycleCache.Clear();
         }
 
         public bool TryResolveRuntimeName(string symbolReference, out string runtimeName)
@@ -42,6 +49,9 @@ namespace GeminiV26.Core
             }
 
             string requested = symbolReference.Trim();
+            if (_cycleCache.TryGetValue(requested, out symbol))
+                return IsUsableSymbol(symbol);
+
             _bot.Print($"[RESOLVER][INPUT] input={requested}");
 
             string canonical = SymbolRouting.NormalizeSymbol(requested);
@@ -52,12 +62,14 @@ namespace GeminiV26.Core
                 CacheAliases(requested, canonical, symbol);
                 _bot.Print($"[RESOLVER][RUNTIME] source=current_bot runtime={symbol.Name}");
                 _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                _cycleCache[requested] = symbol;
                 return true;
             }
 
             if (!IsGeminiSupportedCanonical(canonical))
             {
                 _bot.Print($"[RESOLVER][SKIP] reason=unsupported_canonical canonical={canonical}");
+                _cycleCache[requested] = null;
                 return false;
             }
 
@@ -65,6 +77,7 @@ namespace GeminiV26.Core
             {
                 _bot.Print($"[RESOLVER][RUNTIME] source=cache runtime={symbol.Name}");
                 _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                _cycleCache[requested] = symbol;
                 return true;
             }
 
@@ -74,6 +87,7 @@ namespace GeminiV26.Core
                 CacheAliases(requested, canonical, symbol);
                 _bot.Print($"[RESOLVER][RUNTIME] source=direct runtime={symbol.Name}");
                 _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                _cycleCache[requested] = symbol;
                 return true;
             }
 
@@ -81,11 +95,13 @@ namespace GeminiV26.Core
             {
                 _bot.Print($"[RESOLVER][RUNTIME] source=known_map runtime={symbol.Name}");
                 _bot.Print($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                _cycleCache[requested] = symbol;
                 return true;
             }
 
             _bot.Print("[SYMBOL][SKIP] " + canonical);
             _bot.Print($"[RESOLVER][SKIP] reason=runtime_not_found canonical={canonical}");
+            _cycleCache[requested] = null;
             return false;
         }
 
