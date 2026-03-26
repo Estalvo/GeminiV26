@@ -505,13 +505,49 @@ namespace GeminiV26.Core.Entry
             // 1) COMPRESSION
             // ============================
 
+            double atrForFlag = ctx.AtrM5;
+
+            double impulseRange = 0.0;
+            int impulseIdx = m5Idx - ctx.BarsSinceImpulse_M5;
+
+            if (ctx.HasImpulse_M5 && m5Idx >= 0)
+            {
+                impulseRange = Math.Abs(ctx.M5.HighPrices[m5Idx] - ctx.M5.LowPrices[m5Idx]);
+            }
+            else if (ctx.BarsSinceImpulse_M5 >= 0 && ctx.BarsSinceImpulse_M5 <= 3 && impulseIdx >= 0)
+            {
+                impulseRange = Math.Abs(ctx.M5.HighPrices[impulseIdx] - ctx.M5.LowPrices[impulseIdx]);
+            }
+
+            bool hasValidImpulseRange =
+                impulseRange > 0 &&
+                !double.IsNaN(impulseRange) &&
+                !double.IsInfinity(impulseRange);
+
+            double maxCompression =
+                hasValidImpulseRange
+                    ? Math.Min(0.8 * atrForFlag, 0.35 * impulseRange)
+                    : 0.8 * atrForFlag;
+
+            double maxRetrace =
+                hasValidImpulseRange
+                    ? Math.Min(0.6 * atrForFlag, 0.5 * impulseRange)
+                    : 0.5 * atrForFlag;
+
+            double retraceAmount =
+                atrForFlag > 0
+                    ? ctx.PullbackDepthAtr_M5 * atrForFlag
+                    : 0.0;
+
             bool isTight =
-                ctx.AtrM5 > 0 &&
+                atrForFlag > 0 &&
                 flagRange > 0 &&
-                flagRange < ctx.AtrM5 * 0.8;
+                flagRange <= maxCompression;
 
             bool validRetrace =
-                ctx.PullbackDepthAtr_M5 <= 0.5;
+                atrForFlag > 0
+                    ? retraceAmount <= maxRetrace
+                    : ctx.PullbackDepthAtr_M5 <= 0.5;
 
             // ============================
             // 2) MICRO STRUCTURE
@@ -607,7 +643,8 @@ namespace GeminiV26.Core.Entry
             _bot.Print(
                 $"[FLAG FIX] recentImpulse={hasRecentImpulse} bars={flagBars} retraceOk={validRetrace} " +
                 $"tight={isTight} decel={ctx.IsPullbackDecelerating_M5} " +
-                $"long={ctx.HasFlagLong_M5} short={ctx.HasFlagShort_M5}"
+                $"long={ctx.HasFlagLong_M5} short={ctx.HasFlagShort_M5} " +
+                $"impulse={impulseRange:F2} comp={flagRange:F2}/{maxCompression:F2} retr={retraceAmount:F2}/{maxRetrace:F2}"
             );
 
             // ATR-normalizált méret
