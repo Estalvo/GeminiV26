@@ -73,8 +73,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"minAdx={minAdxTrend:F1} chopAdx={chopAdxThreshold:F1} fatigueTh={fatigueThreshold} scoreMult={scoreMultiplier:F2}"
             );
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
-                return Reject(ctx, "HTF_MISMATCH", 0, TradeDirection.None);
+            bool hasHtfMismatch = ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias;
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
@@ -92,7 +91,8 @@ namespace GeminiV26.EntryTypes.INDEX
                     chopDiDiff,
                     fatigueThreshold,
                     fatigueAdxLevel,
-                    scoreMultiplier);
+                    scoreMultiplier,
+                    hasHtfMismatch);
                 eval.Score += (int)Math.Round(matrix.EntryScoreModifier);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
@@ -113,7 +113,8 @@ namespace GeminiV26.EntryTypes.INDEX
                     chopDiDiff,
                     fatigueThreshold,
                     fatigueAdxLevel,
-                    scoreMultiplier);
+                    scoreMultiplier,
+                    hasHtfMismatch);
                 eval.Score += (int)Math.Round(matrix.EntryScoreModifier);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
@@ -135,13 +136,28 @@ namespace GeminiV26.EntryTypes.INDEX
             double chopDiDiff,
             int fatigueThreshold,
             double fatigueAdxLevel,
-            double scoreMultiplier)
+            double scoreMultiplier,
+            bool hasHtfMismatch)
         {
             int score = BaseScore;
             int setupScore = 0;
             int penaltyBudget = 0;
             double triggerScore = 0;
             const int maxPenalty = 22;
+            bool continuationAuthority = HasContinuationAuthority(ctx, dir);
+
+            if (hasHtfMismatch)
+            {
+                if (continuationAuthority)
+                {
+                    ApplyPenalty(8);
+                    ctx.Log?.Invoke($"[IDX_FLAG][SOFT_PENALTY] reason=HTF_MISMATCH penalty=8 dir={dir}");
+                }
+                else
+                {
+                    return Reject(ctx, "HTF_MISMATCH", score, dir);
+                }
+            }
 
             void ApplyPenalty(int p)
             {
@@ -241,7 +257,18 @@ namespace GeminiV26.EntryTypes.INDEX
             if (lateImpulse) fatigueCount++;
 
             if (fatigueCount >= fatigueThreshold)
-                return Reject(ctx, $"IDX_TREND_FATIGUE({fatigueCount}/{fatigueThreshold})", score, dir);
+            {
+                if (continuationAuthority)
+                {
+                    ApplyPenalty(10);
+                    ctx.Log?.Invoke(
+                        $"[IDX_FLAG][SOFT_PENALTY] reason=IDX_TREND_FATIGUE({fatigueCount}/{fatigueThreshold}) penalty=10 dir={dir}");
+                }
+                else
+                {
+                    return Reject(ctx, $"IDX_TREND_FATIGUE({fatigueCount}/{fatigueThreshold})", score, dir);
+                }
+            }
 
             // =====================================================
             // FLAG RANGE
@@ -325,10 +352,21 @@ namespace GeminiV26.EntryTypes.INDEX
             double distFromEmaAtr = Math.Abs(close - ctx.Ema21_M5) / ctx.AtrM5;
 
             if (distFromEmaAtr > maxDistFromEmaAtr)
-                return Reject(ctx,
-                    $"OVEREXTENDED_EMA({distFromEmaAtr:F2}>{maxDistFromEmaAtr:F2})",
-                    score,
-                    dir);
+            {
+                if (continuationAuthority)
+                {
+                    ApplyPenalty(10);
+                    ctx.Log?.Invoke(
+                        $"[IDX_FLAG][SOFT_PENALTY] reason=OVEREXTENDED_EMA({distFromEmaAtr:F2}>{maxDistFromEmaAtr:F2}) penalty=10 dir={dir}");
+                }
+                else
+                {
+                    return Reject(ctx,
+                        $"OVEREXTENDED_EMA({distFromEmaAtr:F2}>{maxDistFromEmaAtr:F2})",
+                        score,
+                        dir);
+                }
+            }
 
             if (dir == TradeDirection.Long && close < ctx.Ema21_M5)
                 return Reject(ctx, "EMA_BIAS_MISMATCH_LONG", score, dir);
@@ -658,6 +696,17 @@ namespace GeminiV26.EntryTypes.INDEX
                     TypeTag = "Index_FlagEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private static bool HasContinuationAuthority(EntryContext ctx, TradeDirection dir)
+        {
+            if (ctx == null || dir == TradeDirection.None)
+                return false;
+
+            return
+                ctx.TrendDirection == dir &&
+                ctx.HasImpulse_M5 &&
+                ctx.IsAtrExpanding_M5;
         }
 
     }

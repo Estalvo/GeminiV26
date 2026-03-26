@@ -136,8 +136,20 @@ namespace GeminiV26.EntryTypes.INDEX
             if (diConverging) fatigueCount++;
             if (impulseStale) fatigueCount++;
 
+            bool continuationAuthority = HasContinuationAuthority(ctx, dir);
             if (fatigueCount >= 3 && !strongBreakoutNow)
-                return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
+            {
+                if (continuationAuthority)
+                {
+                    score -= 12;
+                    ctx.Log?.Invoke(
+                        $"[IDX_BREAKOUT][SOFT_PENALTY] reason=IDX_TREND_FATIGUE_ULTRASOUND penalty=12 dir={dir} score={score}");
+                }
+                else
+                {
+                    return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
+                }
+            }
 
             if (fatigueCount >= 3 && strongBreakoutNow)
                 score -= 6;
@@ -381,6 +393,17 @@ namespace GeminiV26.EntryTypes.INDEX
                     TypeTag = "Index_BreakoutEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private static bool HasContinuationAuthority(EntryContext ctx, TradeDirection dir)
+        {
+            if (ctx == null || dir == TradeDirection.None)
+                return false;
+
+            return
+                ctx.TrendDirection == dir &&
+                ctx.HasImpulse_M5 &&
+                ctx.IsAtrExpanding_M5;
         }
     }
 }

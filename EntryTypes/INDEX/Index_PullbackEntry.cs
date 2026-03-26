@@ -34,18 +34,17 @@ namespace GeminiV26.EntryTypes.INDEX
             if (p == null)
                 return Reject(ctx, TradeDirection.None, 0, "NO_INDEX_PROFILE");
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
-                return Reject(ctx, TradeDirection.None, 0, "HTF_MISMATCH");
+            bool hasHtfMismatch = ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias;
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
+                var eval = EvaluateSide(ctx, p, matrix, TradeDirection.Long, hasHtfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(ctx, p, matrix, TradeDirection.Short);
+                var eval = EvaluateSide(ctx, p, matrix, TradeDirection.Short, hasHtfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -56,7 +55,8 @@ namespace GeminiV26.EntryTypes.INDEX
             EntryContext ctx,
             dynamic p,
             SessionMatrixConfig matrix,
-            TradeDirection dir)
+            TradeDirection dir,
+            bool hasHtfMismatch)
         {
             // =============================
             // MATRIX DRIVEN THRESHOLDS
@@ -78,6 +78,20 @@ namespace GeminiV26.EntryTypes.INDEX
                 MaxPullbackBars;
 
             int score = BaseScore;
+            bool continuationAuthority = HasContinuationAuthority(ctx, dir);
+
+            if (hasHtfMismatch)
+            {
+                if (continuationAuthority)
+                {
+                    score -= 8;
+                    ctx.Log?.Invoke($"[IDX_PULLBACK][SOFT_PENALTY] reason=HTF_MISMATCH penalty=8 dir={dir} score={score}");
+                }
+                else
+                {
+                    return Reject(ctx, dir, score, "HTF_MISMATCH");
+                }
+            }
 
             var bars = ctx.M5;
             int lastClosed = bars.Count - 2;
@@ -223,7 +237,18 @@ namespace GeminiV26.EntryTypes.INDEX
 
             if (pullbackDepthAtr <= 0 ||
                 pullbackDepthAtr > maxPullbackDepthAtr)
-                return Reject(ctx, dir, score, "PULLBACK_DEPTH_INVALID");
+            {
+                if (continuationAuthority)
+                {
+                    score -= 12;
+                    ctx.Log?.Invoke(
+                        $"[IDX_PULLBACK][SOFT_PENALTY] reason=PULLBACK_DEPTH_INVALID penalty=12 dir={dir} pbATR={pullbackDepthAtr:F2} score={score}");
+                }
+                else
+                {
+                    return Reject(ctx, dir, score, "PULLBACK_DEPTH_INVALID");
+                }
+            }
 
             if (ctx.PullbackBars_M5 > maxPullbackBars)
                 return Reject(ctx, dir, score, "PULLBACK_BARS_TOO_LONG");
@@ -351,6 +376,17 @@ namespace GeminiV26.EntryTypes.INDEX
                 return last.Close < last.Open && last.Close < prev.Low;
 
             return false;
+        }
+
+        private static bool HasContinuationAuthority(EntryContext ctx, TradeDirection dir)
+        {
+            if (ctx == null || dir == TradeDirection.None)
+                return false;
+
+            return
+                ctx.TrendDirection == dir &&
+                ctx.HasImpulse_M5 &&
+                ctx.IsAtrExpanding_M5;
         }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
