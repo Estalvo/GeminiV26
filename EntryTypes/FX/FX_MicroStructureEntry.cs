@@ -16,6 +16,7 @@ namespace GeminiV26.EntryTypes.FX
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             FxDirectionValidation.LogDirectionDebug(ctx);
+
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 30)
                 return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY", 0);
 
@@ -53,7 +54,7 @@ namespace GeminiV26.EntryTypes.FX
             dynamic fx,
             TradeDirection dir)
         {
-            int score = 54;   // base score aligned with FlagEntry universe
+            int score = 54;
             int setupScore = 0;
             double triggerScore = 0;
 
@@ -65,8 +66,8 @@ namespace GeminiV26.EntryTypes.FX
 
             int barsSinceBreak =
                 dir == TradeDirection.Long
-                ? ctx.BarsSinceHighBreak_M5
-                : ctx.BarsSinceLowBreak_M5;
+                    ? ctx.BarsSinceHighBreak_M5
+                    : ctx.BarsSinceLowBreak_M5;
 
             double pullbackDepthR =
                 dir == TradeDirection.Long
@@ -74,18 +75,16 @@ namespace GeminiV26.EntryTypes.FX
                     : ctx.PullbackDepthRShort_M5;
 
             ctx.Log?.Invoke($"[FX_MICRO STRUCT] barsSinceBreak={barsSinceBreak}");
-            
+
             // -----------------------------------------------------
             // MARKET STATE FILTER
             // -----------------------------------------------------
-
             if (ctx.MarketState != null && ctx.MarketState.IsLowVol)
                 return Invalid(ctx, dir, "LOW_VOL_BLOCK", score);
-                
+
             // -----------------------------------------------------
             // MICRO COMPRESSION DETECTION
             // -----------------------------------------------------
-
             if (!TryComputeCompression(ctx, 4, out double hi, out double lo, out double rAtr))
                 return Invalid(ctx, dir, "COMPRESSION_FAIL", score);
 
@@ -101,7 +100,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // IMPULSE CONTEXT
             // -----------------------------------------------------
-
             if (ctx.HasImpulse_M5)
                 score += 3;
             else
@@ -113,7 +111,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // HTF ALIGNMENT (soft)
             // -----------------------------------------------------
-
             if (ctx.FxHtfAllowedDirection == dir)
             {
                 score += 5;
@@ -126,7 +123,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // BREAKOUT TRIGGER
             // -----------------------------------------------------
-
             bool breakout = false;
 
             if (ctx.HasBreakout_M1 &&
@@ -139,8 +135,7 @@ namespace GeminiV26.EntryTypes.FX
 
             bool continuationSignal = breakout;
 
-            bool hasStructure =
-                pullbackDepthR >= MinPullbackAtr;
+            bool hasStructure = pullbackDepthR >= MinPullbackAtr;
 
             if (!hasStructure)
                 setupScore -= 35;
@@ -151,6 +146,7 @@ namespace GeminiV26.EntryTypes.FX
             bool hasNoCompression = rAtr > 1.2;
             bool hasWeakPullbackStructure = !hasStructure;
             var entryType = EntryType.FX_MicroStructure;
+
             bool isWeakFxMicro =
                 entryType == EntryType.FX_MicroStructure &&
                 ctx.LogicConfidence <= 55 &&
@@ -165,8 +161,7 @@ namespace GeminiV26.EntryTypes.FX
                 return Invalid(ctx, dir, "FX_MICRO_WEAK_FILTER_BLOCK", score);
             }
 
-            bool hasContinuation =
-                continuationSignal;
+            bool hasContinuation = continuationSignal;
 
             if (hasContinuation)
                 setupScore += 20;
@@ -176,7 +171,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // ENTRY BAR QUALITY
             // -----------------------------------------------------
-
             int lastClosed = ctx.M5.Count - 2;
             if (lastClosed < 0)
                 return Invalid(ctx, dir, "NO_LAST_BAR", score);
@@ -185,7 +179,16 @@ namespace GeminiV26.EntryTypes.FX
 
             double body = Math.Abs(last.Close - last.Open);
             double range = last.High - last.Low;
-            bool strongCandle = range > 0 && body / range > 0.55;
+
+            bool directionalBody =
+                (dir == TradeDirection.Long && last.Close > last.Open) ||
+                (dir == TradeDirection.Short && last.Close < last.Open);
+
+            bool strongCandle =
+                range > 0 &&
+                directionalBody &&
+                body / range > 0.55;
+
             bool followThrough = continuationSignal;
 
             if (strongCandle)
@@ -203,7 +206,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // STRUCTURE FRESHNESS
             // -----------------------------------------------------
-
             if (barsSinceBreak > 3)
                 score -= 3;
 
@@ -213,7 +215,6 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // ADX ENERGY CHECK
             // -----------------------------------------------------
-
             if (TryGetDouble(ctx, "Adx_M5", out var adx))
             {
                 if (adx < 14)
@@ -226,12 +227,10 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // FINAL SCORE GATE
             // -----------------------------------------------------
-
             int minScore = EntryDecisionPolicy.MinScoreThreshold;
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
-
             score += (int)Math.Round(triggerScore * 5);
 
             if (triggerScore == 0)
@@ -241,23 +240,27 @@ namespace GeminiV26.EntryTypes.FX
             if (!minimalTrigger)
                 score -= 10;
 
+            bool triggerDominance =
+                minimalTrigger &&
+                followThrough &&
+                score >= minScore;
+
             ctx.Log?.Invoke(
                 $"[TRIGGER SCORE] breakout={(breakout ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
-            if (setupScore <= 0)
+            if (setupScore <= 0 && !triggerDominance)
                 score = Math.Min(score, minScore - 10);
 
-            ctx.Log?.Invoke($"[FX_MICRO FINAL] dir={dir} score={score} min={minScore}");
+            ctx.Log?.Invoke(
+                $"[FX_MICRO FINAL] dir={dir} score={score} min={minScore} " +
+                $"setupScore={setupScore} breakout={breakout} strong={strongCandle} " +
+                $"follow={followThrough} triggerDominance={triggerDominance}");
 
             if (score < minScore)
                 return Invalid(ctx, dir, $"LOW_SCORE {score}<{minScore}", score);
 
             return Valid(ctx, dir, score, rAtr, hi, lo);
         }
-
-        // -----------------------------------------------------
-        // COMPRESSION DETECTOR
-        // -----------------------------------------------------
 
         private static bool TryComputeCompression(
             EntryContext ctx,
@@ -281,19 +284,13 @@ namespace GeminiV26.EntryTypes.FX
             for (int i = first; i <= lastClosed; i++)
             {
                 var bar = ctx.M5[i];
-
                 hi = Math.Max(hi, bar.High);
                 lo = Math.Min(lo, bar.Low);
             }
 
             rangeAtr = (hi - lo) / ctx.AtrM5;
-
             return hi > lo;
         }
-
-        // -----------------------------------------------------
-        // RESULT HELPERS
-        // -----------------------------------------------------
 
         private static EntryEvaluation Valid(
             EntryContext ctx,
@@ -391,6 +388,5 @@ namespace GeminiV26.EntryTypes.FX
 
             return "Range";
         }
-
     }
 }
