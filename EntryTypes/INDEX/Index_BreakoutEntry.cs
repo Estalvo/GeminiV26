@@ -1,4 +1,4 @@
-using cAlgo.API;
+﻿using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.EntryTypes;
@@ -19,6 +19,7 @@ namespace GeminiV26.EntryTypes.INDEX
         {
             DirectionDebug.LogOnce(ctx);
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+
             if (!matrix.AllowBreakout)
                 return Reject(ctx, "SESSION_MATRIX_ALLOWBREAKOUT_DISABLED", 0, TradeDirection.None);
 
@@ -30,8 +31,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
-                return Reject(ctx, "HTF_MISMATCH", 0, TradeDirection.None);
+            // ❌ HTF HARD REJECT ELTÁVOLÍTVA
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
@@ -48,27 +48,54 @@ namespace GeminiV26.EntryTypes.INDEX
 
             return Reject(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
         }
+
         private EntryEvaluation EvaluateSide(
             EntryContext ctx,
             dynamic p,
             SessionMatrixConfig matrix,
             TradeDirection dir)
         {
-            int score = 0;
+            int score = BaseScore;
             int setupScore = 0;
-            score = BaseScore;
 
             // =============================
-            // MATRIX DRIVEN THRESHOLDS
+            // MATRIX THRESHOLDS
             // =============================
             double minAdxTrend = p.MinAdxTrend > 0 ? p.MinAdxTrend : 20;
             minAdxTrend = Math.Max(minAdxTrend, matrix.MinAdx);
             int maxBarsSinceImpulse = p.MaxBarsSinceImpulse_M5 > 0 ? p.MaxBarsSinceImpulse_M5 : 3;
             double minAtrPoints = p.MinAtrPoints > 0 ? p.MinAtrPoints : 0;
 
-            // =====================================================
-            // Chop / Range SOFT (matrix driven)
-            // =====================================================
+            // =============================
+            // HTF SOFT HANDLING (NEW)
+            // =============================
+            bool htfStrongMismatch =
+                ctx.HtfConfidence >= 0.6 &&
+                ctx.HtfDirection != TradeDirection.None &&
+                ctx.HtfDirection != dir;
+
+            bool htfWeakMismatch =
+                ctx.HtfConfidence >= 0.35 &&
+                ctx.HtfConfidence < 0.6 &&
+                ctx.HtfDirection != TradeDirection.None &&
+                ctx.HtfDirection != dir;
+
+            bool htfAligned =
+                ctx.HtfDirection == dir &&
+                ctx.HtfDirection != TradeDirection.None;
+
+            if (htfStrongMismatch)
+                score -= 18;
+            else if (htfWeakMismatch)
+                score -= 8;
+            else if (htfAligned && ctx.HtfConfidence >= 0.6)
+                score += 6;
+            else if (htfAligned && ctx.HtfConfidence >= 0.35)
+                score += 3;
+
+            // =============================
+            // CHOP
+            // =============================
             bool chopZone =
                 ctx.Adx_M5 < minAdxTrend &&
                 Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 8 &&
@@ -77,15 +104,15 @@ namespace GeminiV26.EntryTypes.INDEX
             if (chopZone)
                 score -= 8;
 
-            // =====================================================
-            // ATR minimum guard (soft)
-            // =====================================================
+            // =============================
+            // ATR GUARD
+            // =============================
             if (minAtrPoints > 0 && ctx.AtrM5 < minAtrPoints)
                 score -= 6;
 
-            // =====================================================
-            // Trend Fatigue Ultrasound (HARD REJECT)
-            // =====================================================
+            // =============================
+            // TREND FATIGUE (HARD)
+            // =============================
             bool adxExhausted = ctx.Adx_M5 > 40 && ctx.AdxSlope_M5 <= 0;
             bool atrContracting = ctx.AtrSlope_M5 <= 0;
             bool diConverging = Math.Abs(ctx.PlusDI_M5 - ctx.MinusDI_M5) < 7;
@@ -102,9 +129,9 @@ namespace GeminiV26.EntryTypes.INDEX
             if (fatigueCount >= 3)
                 return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
 
-            // =====================================================
-            // Fresh impulse preference (SOFT, matrix driven)
-            // =====================================================
+            // =============================
+            // IMPULSE QUALITY
+            // =============================
             bool freshImpulse =
                 ctx.HasImpulse_M5 &&
                 ctx.BarsSinceImpulse_M5 <= maxBarsSinceImpulse;
@@ -115,10 +142,7 @@ namespace GeminiV26.EntryTypes.INDEX
             if (!ctx.IsAtrExpanding_M5)
                 score -= 10;
 
-            bool hasImpulseSetup =
-                ctx.HasImpulse_M5;
-
-            if (!hasImpulseSetup)
+            if (!ctx.HasImpulse_M5)
                 setupScore -= 40;
             else
                 setupScore += 15;
@@ -129,6 +153,9 @@ namespace GeminiV26.EntryTypes.INDEX
             if (hasStructure)
                 setupScore += 10;
 
+            // =============================
+            // BREAKOUT LOGIC
+            // =============================
             bool continuationSignal =
                 ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir;
 
@@ -136,8 +163,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 continuationSignal ||
                 ctx.RangeBreakDirection == dir;
 
-            bool hasContinuation =
-                continuationSignal || breakoutConfirmed;
+            bool hasContinuation = breakoutConfirmed;
 
             if (hasContinuation)
                 setupScore += 20;
@@ -152,9 +178,9 @@ namespace GeminiV26.EntryTypes.INDEX
             else if (ctx.RangeBreakDirection != TradeDirection.None)
                 score -= 6;
 
-            // =====================================================
-            // Core breakout scoring
-            // =====================================================
+            // =============================
+            // CORE TREND
+            // =============================
             if (ctx.Adx_M5 < minAdxTrend)
                 score -= 8;
 
@@ -173,7 +199,6 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx.MarketState?.IsLowVol == true)
                 score -= 8;
 
-            // Strong aligned momentum bonus
             if (ctx.TrendDirection == dir &&
                 ctx.HasImpulse_M5 &&
                 ctx.IsAtrExpanding_M5)
@@ -181,9 +206,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 score += 3;
             }
 
-            // =====================================================
-            // Profile soft bias (matrix based)
-            // =====================================================
+            // =============================
+            // PROFILE
+            // =============================
             if (p.SessionBias == IndexSessionBias.NewYork)
                 score += 1;
 
@@ -198,9 +223,9 @@ namespace GeminiV26.EntryTypes.INDEX
             int lastClosed = ctx.M5.Count - 2;
             var bar = ctx.M5[lastClosed];
 
-            // =====================================================
-            // POST-BREAKOUT MOMENTUM VALIDATION (quality filter only)
-            // =====================================================
+            // =============================
+            // MOMENTUM FILTER
+            // =============================
             const double strongBodyRatioThreshold = 0.60;
             const double closeNearExtremeThreshold = 0.20;
             const double velocityAtrThreshold = 0.25;
@@ -256,20 +281,24 @@ namespace GeminiV26.EntryTypes.INDEX
             else if (immediateVelocity) momentumType = "velocity";
 
             if (momentumType == null)
-            {
-                Console.WriteLine($"[BREAKOUT][REJECT][NO_MOMENTUM] symbol={ctx.Symbol} dir={dir} reason=dead_breakout");
                 return Reject(ctx, "IDX_NO_MOMENTUM_DEAD_BREAKOUT", score, dir);
-            }
-
-            Console.WriteLine($"[BREAKOUT][MOMENTUM_OK] symbol={ctx.Symbol} dir={dir} type={momentumType}");
 
             bool strongCandle =
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
-            bool followThrough = continuationSignal || (ctx.IsAtrExpanding_M5 && freshImpulse);
 
-            score = TriggerScoreModel.Apply(ctx, $"IDX_BREAKOUT_{dir}", score, breakoutConfirmed, strongCandle, followThrough, "NO_BREAKOUT_M1");
+            bool followThrough =
+                continuationSignal ||
+                (ctx.IsAtrExpanding_M5 && freshImpulse);
 
+            score = TriggerScoreModel.Apply(
+                ctx,
+                $"IDX_BREAKOUT_{dir}",
+                score,
+                breakoutConfirmed,
+                strongCandle,
+                followThrough,
+                "NO_BREAKOUT_M1");
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
 
@@ -305,15 +334,7 @@ namespace GeminiV26.EntryTypes.INDEX
             TradeDirection dir)
         {
             Console.WriteLine(
-                $"[IDX_BREAKOUT][REJECT] {reason} | " +
-                $"score={score} | " +
-                $"dir={dir} | " +
-                $"Impulse={ctx?.HasImpulse_M5} | " +
-                $"BarsSinceImp={ctx?.BarsSinceImpulse_M5} | " +
-                $"ATRexp={ctx?.IsAtrExpanding_M5} | " +
-                $"ADX={ctx?.Adx_M5:F1} | " +
-                $"DIΔ={Math.Abs((ctx?.PlusDI_M5 ?? 0) - (ctx?.MinusDI_M5 ?? 0)):F1}"
-            );
+                $"[IDX_BREAKOUT][REJECT] {reason} | score={score} | dir={dir}");
 
             return new EntryEvaluation
             {
@@ -326,7 +347,11 @@ namespace GeminiV26.EntryTypes.INDEX
             };
         }
 
-        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
+        private static int ApplyMandatoryEntryAdjustments(
+            EntryContext ctx,
+            TradeDirection direction,
+            int score,
+            bool applyTrendRegimePenalty)
         {
             return EntryDirectionQuality.Apply(
                 ctx,
@@ -338,6 +363,5 @@ namespace GeminiV26.EntryTypes.INDEX
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
         }
-
     }
 }
