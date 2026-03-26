@@ -120,15 +120,22 @@ namespace GeminiV26.EntryTypes.INDEX
                 !ctx.HasImpulse_M5 ||
                 ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse;
 
+            bool earlyBreakout =
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir) ||
+                (ctx.RangeBreakDirection == dir);
+                
             int fatigueCount = 0;
             if (adxExhausted) fatigueCount++;
             if (atrContracting) fatigueCount++;
             if (diConverging) fatigueCount++;
             if (impulseStale) fatigueCount++;
 
-            if (fatigueCount >= 3)
+            if (fatigueCount >= 3 && !earlyBreakout)
                 return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
 
+            if (fatigueCount >= 3 && earlyBreakout)
+                score -= 8; // early breakout kap esélyt, de büntetve
+                
             // =============================
             // IMPULSE QUALITY
             // =============================
