@@ -71,7 +71,12 @@ namespace GeminiV26.EntryTypes.METAL
                     : ctx.HasImpulseShort_M5;
 
             if (!hasImpulse)
-                return InvalidDir(ctx, dir, "NO_IMPULSE", score);
+            {
+                if (ctx.MarketState?.IsTrend == true)
+                    score -= 8;
+                else
+                    return InvalidDir(ctx, dir, "NO_IMPULSE", score);
+            }
 
             int barsSinceImpulse =
                 dir == TradeDirection.Long
@@ -83,7 +88,15 @@ namespace GeminiV26.EntryTypes.METAL
 
             if (barsSinceImpulse == 0)
             {
-                return InvalidDir(ctx, dir, "IMPULSE_TOO_FRESH", score);
+                if (ctx.MarketState?.IsTrend == true)
+                {
+                    score -= 4;
+                    reasons.Add("IMPULSE_TOO_FRESH_SOFT");
+                }
+                else
+                {
+                    return InvalidDir(ctx, dir, "IMPULSE_TOO_FRESH", score);
+                }
             }
 
             // =========================
