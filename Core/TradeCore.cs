@@ -1745,6 +1745,9 @@ namespace GeminiV26.Core
                 {
                     bool isCryptoCandidate = IsCryptoCandidate(candidate.Type);
                     bool continuationAuthority = HasContinuationAuthority(ctx, candidate);
+                    bool midTrend =
+                        ctx.TrendDirection == candidate.Direction &&
+                        ctx.MarketState?.IsTrend == true;
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[ENTRY][AUTH] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction} authority={continuationAuthority}",
                         ctx));
@@ -1771,6 +1774,27 @@ namespace GeminiV26.Core
                             _bot.Print(TradeLogIdentity.WithTempId(
                                 $"[ENTRY][PROTECT_SUPPRESSED] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                                 $"type={candidate.Type} dir={candidate.Direction} score={protectedOriginalScore}->{candidate.Score} state={restartReason}",
+                                ctx));
+                            continue;
+                        }
+                        else if (midTrend)
+                        {
+                            int restartPenalty = 14;
+                            restartPenalty = Math.Min(restartPenalty, 8);
+                            int midTrendOriginalScore = candidate.Score;
+                            candidate.Score = Math.Max(EntryDecisionPolicy.MinScoreThreshold, candidate.Score - restartPenalty);
+                            candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                                ? $"[RESTART_MID_TREND_SOFT_{restartReason}]"
+                                : $"{candidate.Reason} [RESTART_MID_TREND_SOFT_{restartReason}]";
+                            candidate.IsValid = true;
+                            EntryDecisionPolicy.Normalize(candidate);
+
+                            _bot.Print(TradeLogIdentity.WithTempId(
+                                $"[ENTRY][MID_TREND] active=true restartPenalty={restartPenalty} earlyBreakPenalty=0 symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction}",
+                                ctx));
+                            _bot.Print(TradeLogIdentity.WithTempId(
+                                $"[ENTRY][PROTECT] source=RESTART_PROTECT action=MID_TREND_SOFT symbol={candidate.Symbol ?? _bot.SymbolName} " +
+                                $"type={candidate.Type} dir={candidate.Direction} score={midTrendOriginalScore}->{candidate.Score} state={restartReason}",
                                 ctx));
                             continue;
                         }
@@ -2073,8 +2097,22 @@ namespace GeminiV26.Core
                 return;
 
             int originalScore = candidate.Score;
-            const int earlyBreakPenalty = 15;
+            int earlyBreakPenalty = 15;
             bool continuationAuthority = HasContinuationAuthority(ctx, candidate);
+            bool midTrend =
+                ctx.TrendDirection == candidate.Direction &&
+                ctx.MarketState?.IsTrend == true;
+            bool hasRestartPenalty = ContainsAny(candidate.Reason, "RESTART_");
+            bool hasEarlyBreakPenalty = earlyBreakPenalty > 0;
+
+            if (!continuationAuthority && midTrend && hasRestartPenalty && hasEarlyBreakPenalty)
+            {
+                earlyBreakPenalty = (int)(earlyBreakPenalty * 0.5);
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY][MID_TREND] active=true restartPenalty=carried earlyBreakPenalty={earlyBreakPenalty} symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction}",
+                    ctx));
+            }
+
             int appliedPenalty = earlyBreakPenalty;
 
             if (continuationAuthority)
