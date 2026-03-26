@@ -1242,7 +1242,7 @@ namespace GeminiV26.Core
                 {
                     xauState = _xauMarketStateDetector.Evaluate();
 
-                    if (xauState != null && xauState.IsRange)
+                    if (xauState != null && xauState.IsRange && !xauState.IsTrend)
                     {
                         _bot.Print(
                             $"[TC] ENTRY BLOCKED: XAU RANGE REGIME" +
