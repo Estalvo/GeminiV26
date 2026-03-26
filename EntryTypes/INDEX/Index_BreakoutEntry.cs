@@ -197,6 +197,72 @@ namespace GeminiV26.EntryTypes.INDEX
 
             int lastClosed = ctx.M5.Count - 2;
             var bar = ctx.M5[lastClosed];
+
+            // =====================================================
+            // POST-BREAKOUT MOMENTUM VALIDATION (quality filter only)
+            // =====================================================
+            const double strongBodyRatioThreshold = 0.60;
+            const double closeNearExtremeThreshold = 0.20;
+            const double velocityAtrThreshold = 0.25;
+
+            double barRange = Math.Max(0, bar.High - bar.Low);
+            double barBody = Math.Abs(bar.Close - bar.Open);
+            double bodyRatio = barRange > 0 ? barBody / barRange : 0;
+
+            bool closeNearExtreme =
+                dir == TradeDirection.Long
+                    ? (barRange > 0 && (bar.High - bar.Close) <= barRange * closeNearExtremeThreshold)
+                    : (barRange > 0 && (bar.Close - bar.Low) <= barRange * closeNearExtremeThreshold);
+
+            bool breakoutBodyDirectionOk =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+
+            bool strongBreakoutCandle =
+                breakoutBodyDirectionOk &&
+                bodyRatio >= strongBodyRatioThreshold &&
+                closeNearExtreme;
+
+            bool rangeExpansion = false;
+            if (lastClosed >= 3)
+            {
+                double prevRange1 = Math.Max(0, ctx.M5[lastClosed - 1].High - ctx.M5[lastClosed - 1].Low);
+                double prevRange2 = Math.Max(0, ctx.M5[lastClosed - 2].High - ctx.M5[lastClosed - 2].Low);
+                double prevRange3 = Math.Max(0, ctx.M5[lastClosed - 3].High - ctx.M5[lastClosed - 3].Low);
+                double avgPrevRange = (prevRange1 + prevRange2 + prevRange3) / 3.0;
+                rangeExpansion = barRange > avgPrevRange;
+            }
+
+            bool immediateVelocity = false;
+            if (ctx.AtrM5 > 0 && lastClosed >= 2)
+            {
+                double velocityNow =
+                    dir == TradeDirection.Long
+                        ? (ctx.M5[lastClosed].Close - ctx.M5[lastClosed - 1].Close)
+                        : (ctx.M5[lastClosed - 1].Close - ctx.M5[lastClosed].Close);
+
+                double velocityPrev =
+                    dir == TradeDirection.Long
+                        ? (ctx.M5[lastClosed - 1].Close - ctx.M5[lastClosed - 2].Close)
+                        : (ctx.M5[lastClosed - 2].Close - ctx.M5[lastClosed - 1].Close);
+
+                double bestVelocity = Math.Max(velocityNow, velocityPrev);
+                immediateVelocity = bestVelocity >= (ctx.AtrM5 * velocityAtrThreshold);
+            }
+
+            string momentumType = null;
+            if (strongBreakoutCandle) momentumType = "body";
+            else if (rangeExpansion) momentumType = "range";
+            else if (immediateVelocity) momentumType = "velocity";
+
+            if (momentumType == null)
+            {
+                Console.WriteLine($"[BREAKOUT][REJECT][NO_MOMENTUM] symbol={ctx.Symbol} dir={dir} reason=dead_breakout");
+                return Reject(ctx, "IDX_NO_MOMENTUM_DEAD_BREAKOUT", score, dir);
+            }
+
+            Console.WriteLine($"[BREAKOUT][MOMENTUM_OK] symbol={ctx.Symbol} dir={dir} type={momentumType}");
+
             bool strongCandle =
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
