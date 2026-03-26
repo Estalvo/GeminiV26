@@ -147,6 +147,23 @@ namespace GeminiV26.EntryTypes.FX
             else
                 setupScore += 15;
 
+            bool isRangeRegime = IsRangeOrSoftRangeRegime(ctx);
+            bool hasNoCompression = rAtr > 1.2;
+            bool hasWeakPullbackStructure = !hasStructure;
+            bool isWeakFxMicro =
+                Type == EntryType.FX_MicroStructure &&
+                ctx.LogicConfidence <= 55 &&
+                isRangeRegime &&
+                (hasNoCompression || hasWeakPullbackStructure);
+
+            if (isWeakFxMicro)
+            {
+                string regimeLabel = ResolveRegimeLabel(ctx, isRangeRegime);
+                ctx.Log?.Invoke(
+                    $"[FX_MICRO_WEAK_FILTER] dir={dir} logicConf={ctx.LogicConfidence} regime={regimeLabel} noCompression={hasNoCompression.ToString().ToLowerInvariant()} weakPB={hasWeakPullbackStructure.ToString().ToLowerInvariant()} -> BLOCKED");
+                return Invalid(ctx, dir, "FX_MICRO_WEAK_FILTER_BLOCK", score);
+            }
+
             bool hasContinuation =
                 continuationSignal;
 
@@ -343,6 +360,35 @@ namespace GeminiV26.EntryTypes.FX
                     TypeTag = "FX_MicroStructureEntry",
                     ApplyTrendRegimePenalty = applyTrendRegimePenalty
                 });
+        }
+
+        private static bool IsRangeOrSoftRangeRegime(EntryContext ctx)
+        {
+            if (ctx == null)
+                return false;
+
+            if (ctx.IsRange_M5)
+                return true;
+
+            if (ctx.MarketState == null)
+                return false;
+
+            bool softRangeProxy =
+                !ctx.MarketState.IsTrend &&
+                (ctx.MarketState.IsLowVol || !ctx.IsAtrExpanding_M5);
+
+            return ctx.MarketState.IsRange || softRangeProxy;
+        }
+
+        private static string ResolveRegimeLabel(EntryContext ctx, bool isRangeRegime)
+        {
+            if (!isRangeRegime)
+                return "Trend";
+
+            if (ctx?.MarketState != null && !ctx.MarketState.IsRange)
+                return "SoftRange";
+
+            return "Range";
         }
 
     }
