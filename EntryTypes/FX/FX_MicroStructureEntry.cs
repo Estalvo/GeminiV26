@@ -149,7 +149,7 @@ namespace GeminiV26.EntryTypes.FX
 
             bool isWeakFxMicro =
                 entryType == EntryType.FX_MicroStructure &&
-                ctx.LogicConfidence <= 55 &&
+                ctx.LogicConfidence <= 45 &&
                 isRangeRegime &&
                 (hasNoCompression || hasWeakPullbackStructure);
 
@@ -241,14 +241,16 @@ namespace GeminiV26.EntryTypes.FX
                 score -= 10;
 
             bool triggerDominance =
-                minimalTrigger &&
-                followThrough &&
-                score >= minScore;
+                score >= minScore &&
+                (
+                    breakout ||
+                    (strongCandle && ctx.HasImpulse_M5)
+                );
 
             ctx.Log?.Invoke(
                 $"[TRIGGER SCORE] breakout={(breakout ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
-            if (setupScore <= 0 && !triggerDominance)
+            if (setupScore <= -20 && !triggerDominance)
                 score = Math.Min(score, minScore - 10);
 
             ctx.Log?.Invoke(
