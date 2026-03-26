@@ -150,8 +150,9 @@ namespace GeminiV26.EntryTypes.FX
             bool isRangeRegime = IsRangeOrSoftRangeRegime(ctx);
             bool hasNoCompression = rAtr > 1.2;
             bool hasWeakPullbackStructure = !hasStructure;
+            var entryType = EntryType.FX_MicroStructure;
             bool isWeakFxMicro =
-                Type == EntryType.FX_MicroStructure &&
+                entryType == EntryType.FX_MicroStructure &&
                 ctx.LogicConfidence <= 55 &&
                 isRangeRegime &&
                 (hasNoCompression || hasWeakPullbackStructure);
