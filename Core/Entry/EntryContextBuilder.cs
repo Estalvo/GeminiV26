@@ -490,7 +490,16 @@ namespace GeminiV26.Core.Entry
                 flagLo = Math.Min(flagLo, ctx.M5.LowPrices[i]);
             }
 
+            int flagBars = m5Idx - start + 1;
             double flagRange = flagHi - flagLo;
+
+            bool hasRecentImpulse =
+                ctx.HasImpulse_M5 ||
+                ctx.BarsSinceImpulse_M5 <= 3;
+
+            bool validFlagBars =
+                flagBars >= 2 &&
+                flagBars <= 5;
 
             // ============================
             // 1) COMPRESSION
@@ -499,7 +508,10 @@ namespace GeminiV26.Core.Entry
             bool isTight =
                 ctx.AtrM5 > 0 &&
                 flagRange > 0 &&
-                flagRange < ctx.AtrM5 * 1.5;
+                flagRange < ctx.AtrM5 * 0.8;
+
+            bool validRetrace =
+                ctx.PullbackDepthAtr_M5 <= 0.5;
 
             // ============================
             // 2) MICRO STRUCTURE
@@ -527,26 +539,27 @@ namespace GeminiV26.Core.Entry
             // 3) DECELERATION (MÁR KISZÁMOLT)
             // ============================
 
-            bool decelerating =
-                ctx.IsPullbackDecelerating_M5 ||
-                (ctx.HasEarlyPullback_M5 && ctx.PullbackBars_M5 <= 2);
-            bool allowWithoutDecel =
-                ctx.HasEarlyPullback_M5 &&
-                ctx.PullbackBars_M5 <= 2;
+            bool decelerating = ctx.IsPullbackDecelerating_M5;
 
             // ============================
             // 4) FINAL FLAG DECISION
             // ============================
 
             bool shortFlag =
+                hasRecentImpulse &&
+                validFlagBars &&
                 isTight &&
+                validRetrace &&
                 hasLowerHighs &&
-                (decelerating || allowWithoutDecel);
+                decelerating;
 
             bool longFlag =
+                hasRecentImpulse &&
+                validFlagBars &&
                 isTight &&
+                validRetrace &&
                 hasHigherLows &&
-                (decelerating || allowWithoutDecel);
+                decelerating;
 
             // ============================
             // 5) ASSIGN
@@ -573,6 +586,30 @@ namespace GeminiV26.Core.Entry
                 ctx.HasFlagLong_M5 = false;
             }
 
+            if (!hasRecentImpulse)
+            {
+                ctx.HasFlagLong_M5 = false;
+                ctx.HasFlagShort_M5 = false;
+            }
+
+            if (!validFlagBars)
+            {
+                ctx.HasFlagLong_M5 = false;
+                ctx.HasFlagShort_M5 = false;
+            }
+
+            if (!validRetrace)
+            {
+                ctx.HasFlagLong_M5 = false;
+                ctx.HasFlagShort_M5 = false;
+            }
+
+            _bot.Print(
+                $"[FLAG FIX] recentImpulse={hasRecentImpulse} bars={flagBars} retraceOk={validRetrace} " +
+                $"tight={isTight} decel={ctx.IsPullbackDecelerating_M5} " +
+                $"long={ctx.HasFlagLong_M5} short={ctx.HasFlagShort_M5}"
+            );
+
             // ATR-normalizált méret
             ctx.FlagAtr_M5 = flagRange;
 
@@ -595,7 +632,7 @@ namespace GeminiV26.Core.Entry
             // ============================
 
             _bot.Print(
-                $"[FLAG V2.22] tight={isTight} decel={decelerating} allowNoDecel={allowWithoutDecel} " +
+                $"[FLAG V2.22] tight={isTight} decel={decelerating} allowNoDecel=false " +
                 $"LH={hasLowerHighs} HL={hasHigherLows} " +
                 $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
                 $"range={flagRange} atr={ctx.AtrM5}"
