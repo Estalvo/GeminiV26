@@ -462,6 +462,10 @@ namespace GeminiV26.Core
             bool adxHealthy = ctx.Adx_M5 >= 20.0;
             bool volatilitySupport = ctx.MfeR >= 0.20 || ctx.MaeR <= 0.35;
             bool structureIntact = !IsStructureWeakening(tradeType, m5);
+            bool adxStrong = ctx.Adx_M5 >= 35.0;
+            bool earlyWindow = ctx.BarsSinceEntryM5 <= 4;
+            if (!structureIntact && adxStrong && earlyWindow && ctx.MaeR <= 0.20)
+                structureIntact = true;
 
             return adxHealthy && volatilitySupport && structureIntact;
         }
