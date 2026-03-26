@@ -31,8 +31,6 @@ namespace GeminiV26.EntryTypes.INDEX
 
             var p = IndexInstrumentMatrix.Get(ctx.Symbol);
 
-            // ❌ HTF HARD REJECT ELTÁVOLÍTVA
-
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, p, matrix, TradeDirection.Long);
@@ -67,7 +65,7 @@ namespace GeminiV26.EntryTypes.INDEX
             double minAtrPoints = p.MinAtrPoints > 0 ? p.MinAtrPoints : 0;
 
             // =============================
-            // HTF SOFT HANDLING (NEW)
+            // HTF SOFT HANDLING
             // =============================
             bool htfStrongMismatch =
                 ctx.HtfConfidence >= 0.6 &&
@@ -111,7 +109,19 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 6;
 
             // =============================
-            // TREND FATIGUE (HARD)
+            // BREAKOUT CONTEXT FLAGS
+            // =============================
+            bool earlyBreakout =
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir) ||
+                (ctx.RangeBreakDirection == dir);
+
+            bool strongBreakoutNow =
+                ctx.HasBreakout_M1 &&
+                ctx.BreakoutDirection == dir &&
+                ctx.IsAtrExpanding_M5;
+
+            // =============================
+            // TREND FATIGUE
             // =============================
             bool adxExhausted = ctx.Adx_M5 > 40 && ctx.AdxSlope_M5 <= 0;
             bool atrContracting = ctx.AtrSlope_M5 <= 0;
@@ -120,22 +130,18 @@ namespace GeminiV26.EntryTypes.INDEX
                 !ctx.HasImpulse_M5 ||
                 ctx.BarsSinceImpulse_M5 > maxBarsSinceImpulse;
 
-            bool earlyBreakout =
-                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir) ||
-                (ctx.RangeBreakDirection == dir);
-                
             int fatigueCount = 0;
             if (adxExhausted) fatigueCount++;
             if (atrContracting) fatigueCount++;
             if (diConverging) fatigueCount++;
             if (impulseStale) fatigueCount++;
 
-            if (fatigueCount >= 3 && !earlyBreakout)
+            if (fatigueCount >= 3 && !strongBreakoutNow)
                 return Reject(ctx, "IDX_TREND_FATIGUE_ULTRASOUND", score, dir);
 
-            if (fatigueCount >= 3 && earlyBreakout)
-                score -= 8; // early breakout kap esélyt, de büntetve
-                
+            if (fatigueCount >= 3 && strongBreakoutNow)
+                score -= 6;
+
             // =============================
             // IMPULSE QUALITY
             // =============================
@@ -149,7 +155,7 @@ namespace GeminiV26.EntryTypes.INDEX
             if (!ctx.IsAtrExpanding_M5)
                 score -= 10;
 
-            if (!ctx.HasImpulse_M5)
+            if (!ctx.HasImpulse_M5 && !strongBreakoutNow)
                 setupScore -= 40;
             else
                 setupScore += 15;
@@ -228,6 +234,9 @@ namespace GeminiV26.EntryTypes.INDEX
                 score -= 4;
 
             int lastClosed = ctx.M5.Count - 2;
+            if (lastClosed < 0)
+                return Reject(ctx, "NO_LAST_BAR", score, dir);
+
             var bar = ctx.M5[lastClosed];
 
             // =============================
@@ -290,6 +299,9 @@ namespace GeminiV26.EntryTypes.INDEX
             if (momentumType == null)
                 return Reject(ctx, "IDX_NO_MOMENTUM_DEAD_BREAKOUT", score, dir);
 
+            if (strongBreakoutCandle && ctx.IsAtrExpanding_M5)
+                score += 12;
+
             bool strongCandle =
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
                 (dir == TradeDirection.Short && bar.Close < bar.Open);
@@ -312,7 +324,7 @@ namespace GeminiV26.EntryTypes.INDEX
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score += setupScore;
 
-            if (setupScore <= 0)
+            if (setupScore <= 0 && !earlyBreakout && !strongBreakoutNow)
                 score = Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
