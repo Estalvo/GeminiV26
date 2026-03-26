@@ -167,6 +167,11 @@ namespace GeminiV26.Core
         private bool ApplyFxAcceptanceFilters(EntryEvaluation eval, EntryContext entryContext)
         {
             const int HtfMismatchPenalty = 10;
+            bool continuationAuthority =
+                entryContext?.MarketState?.IsTrend == true &&
+                eval?.Direction == entryContext.TrendDirection &&
+                entryContext.HasImpulse_M5 &&
+                entryContext.IsAtrExpanding_M5;
 
             if (eval == null || !eval.IsValid)
                 return false;
@@ -191,7 +196,10 @@ namespace GeminiV26.Core
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[HTF][BLOCK] strong opposite HTF + weak LTF type={eval.Type} dir={eval.Direction} " +
                         $"score={eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
-                    return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK", entryContext);
+                    if (!continuationAuthority)
+                        return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK", entryContext);
+
+                    eval.Score -= 8;
                 }
 
                 int originalScore = eval.Score;
@@ -209,7 +217,8 @@ namespace GeminiV26.Core
                 if (eval.State == EntryState.SETUP_DETECTED)
                     return RejectFxCandidate(eval, decisionScore, "FX_EARLY_BLOCK", entryContext);
 
-                return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED", entryContext);
+                if (!continuationAuthority)
+                    return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED", entryContext);
             }
 
             if (decisionScore < 45)
