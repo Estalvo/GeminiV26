@@ -476,13 +476,21 @@ namespace GeminiV26.Core.Entry
             ctx.FlagAtr_M5 = 0;
 
             // ---- lookback (adaptive alap később lehet instrument szerint)
-            int lookback = 6;
+            int lookback = 5;
 
             double flagHi = double.MinValue;
             double flagLo = double.MaxValue;
 
             // safety (index ne menjen ki)
-            int start = Math.Max(0, m5Idx - lookback + 1);
+            int flagLength = Math.Max(2, Math.Min(ctx.PullbackBars_M5, 5));
+
+            if (flagLength < 2)
+            {
+                ctx.HasFlagLong_M5 = false;
+                ctx.HasFlagShort_M5 = false;
+            }
+
+            int start = Math.Max(0, m5Idx - flagLength + 1);
 
             for (int i = start; i <= m5Idx; i++)
             {
@@ -508,16 +516,19 @@ namespace GeminiV26.Core.Entry
             double atrForFlag = ctx.AtrM5;
 
             double impulseRange = 0.0;
+
             int impulseIdx = m5Idx - ctx.BarsSinceImpulse_M5;
 
-            if (ctx.HasImpulse_M5 && m5Idx >= 0)
+            if (ctx.BarsSinceImpulse_M5 >= 0 &&
+                ctx.BarsSinceImpulse_M5 <= 3 &&
+                ctx.BarsSinceImpulse_M5 < 999 &&
+                impulseIdx >= 0)
             {
-                impulseRange = Math.Abs(ctx.M5.HighPrices[m5Idx] - ctx.M5.LowPrices[m5Idx]);
+                impulseRange =
+                    Math.Abs(ctx.M5.HighPrices[impulseIdx] - ctx.M5.LowPrices[impulseIdx]);
             }
-            else if (ctx.BarsSinceImpulse_M5 >= 0 && ctx.BarsSinceImpulse_M5 <= 3 && impulseIdx >= 0)
-            {
-                impulseRange = Math.Abs(ctx.M5.HighPrices[impulseIdx] - ctx.M5.LowPrices[impulseIdx]);
-            }
+
+            _bot.Print($"[IMPULSE SRC] idx={impulseIdx} barsSince={ctx.BarsSinceImpulse_M5} range={impulseRange:F2}");
 
             bool hasValidImpulseRange =
                 impulseRange > 0 &&
