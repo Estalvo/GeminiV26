@@ -2330,55 +2330,54 @@ namespace GeminiV26.Core
             if (ctx == null || eval == null)
                 return false;
 
+            string symbol = ctx.Symbol ?? _bot.SymbolName;
             bool isLong = eval.Direction == TradeDirection.Long;
             bool isShort = eval.Direction == TradeDirection.Short;
-            bool isOverextended =
-                (isLong && ctx.IsOverextendedLong) ||
-                (isShort && ctx.IsOverextendedShort);
 
-            if (isOverextended)
+            if ((isLong && ctx.IsOverextendedLong) ||
+                (isShort && ctx.IsOverextendedShort))
             {
                 _bot.Print(TradeLogIdentity.WithTempId(
-                    $"[FINAL][REJECT][OVEREXT] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                    $"[FINAL][REJECT][OVEREXT] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
             }
 
             bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
-            bool isLateContinuation =
-                (isLong && ctx.HasLateContinuationLong) ||
-                (isShort && ctx.HasLateContinuationShort);
-            if (isLateContinuation && weakSetup)
+            if ((isLong && ctx.HasLateContinuationLong) ||
+                (isShort && ctx.HasLateContinuationShort))
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
-                    $"[FINAL][REJECT][LATE] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
-                    ctx));
-                return false;
+                if (weakSetup)
+                {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[FINAL][REJECT][LATE] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
+                        ctx));
+                    return false;
+                }
             }
 
-            bool isTrend = ctx.MarketState?.IsTrend == true;
-            if (isTrend &&
+            if (ctx.MarketState?.IsTrend == true &&
                 ctx.LogicBiasConfidence >= 60 &&
                 ctx.TrendDirection != TradeDirection.None &&
                 eval.Direction != ctx.TrendDirection)
             {
                 _bot.Print(TradeLogIdentity.WithTempId(
-                    $"[FINAL][REJECT][TREND] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score} trendDirection={ctx.TrendDirection} logicBiasConfidence={ctx.LogicBiasConfidence}",
+                    $"[FINAL][REJECT][TREND] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
             }
 
-            int weakBorderlineCutoff = EntryDecisionPolicy.MinScoreThreshold + 1;
-            if (weakSetup && eval.Score <= weakBorderlineCutoff)
+            if (weakSetup &&
+                eval.Score < EntryDecisionPolicy.MinScoreThreshold + 2)
             {
                 _bot.Print(TradeLogIdentity.WithTempId(
-                    $"[FINAL][REJECT][WEAK] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                    $"[FINAL][REJECT][WEAK] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
             }
 
             _bot.Print(TradeLogIdentity.WithTempId(
-                $"[FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                $"[FINAL][PASS] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                 ctx));
             return true;
         }
