@@ -283,6 +283,8 @@ namespace GeminiV26.Core.Entry
         public SymbolMemoryState Memory { get; set; }
         public bool HasMemory => Memory != null;
         public SymbolMemoryState MemoryState { get; set; }
+        public MovePhase MovePhase => MemoryState?.MovePhase ?? MovePhase.Unknown;
+        public int BarsSinceFirstPullback => MemoryState?.BarsSinceFirstPullback ?? -1;
         public MemoryAssessment MemoryAssessment { get; set; }
         public ContinuationWindowState MemoryContinuationWindow { get; set; } = ContinuationWindowState.Unknown;
         public MoveExtensionState MemoryMoveExtension { get; set; } = MoveExtensionState.Unknown;
