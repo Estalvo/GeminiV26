@@ -1748,6 +1748,14 @@ namespace GeminiV26.Core
                 if (!TryGetRestartDecayState(ctx, candidate, out string restartReason))
                     continue;
 
+                if (!candidate.IsValid)
+                {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[INTEGRITY] SKIP restart protect on invalid candidate: {candidate.Type}",
+                        ctx));
+                    continue;
+                }
+
                 if (BotRestartState.IsHardProtectionPhase)
                 {
                     bool isCryptoCandidate = IsCryptoCandidate(candidate.Type);
@@ -1775,7 +1783,6 @@ namespace GeminiV26.Core
                             candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                                 ? "[RESTART_PROTECT_SUPPRESSED_CONTINUATION_AUTH]"
                                 : $"{candidate.Reason} [RESTART_PROTECT_SUPPRESSED_CONTINUATION_AUTH]";
-                            candidate.IsValid = true;
                             EntryDecisionPolicy.Normalize(candidate);
 
                             _bot.Print(TradeLogIdentity.WithTempId(
@@ -1793,7 +1800,6 @@ namespace GeminiV26.Core
                             candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                                 ? $"[RESTART_MID_TREND_SOFT_{restartReason}]"
                                 : $"{candidate.Reason} [RESTART_MID_TREND_SOFT_{restartReason}]";
-                            candidate.IsValid = true;
                             EntryDecisionPolicy.Normalize(candidate);
 
                             _bot.Print(TradeLogIdentity.WithTempId(
@@ -2401,6 +2407,23 @@ namespace GeminiV26.Core
         {
             if (ctx == null || eval == null)
                 return false;
+
+            int recommendedTimingPenalty = ctx.MemoryAssessment?.RecommendedTimingPenalty ?? ctx.MemoryTimingPenalty;
+            if (recommendedTimingPenalty <= -10)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[TIMING BLOCK] penalty={recommendedTimingPenalty}",
+                    ctx));
+                return false;
+            }
+
+            if (BotRestartState.IsHardProtectionPhase && eval.Score < 60)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    "[RESTART BLOCK] HARD phase requires higher confidence",
+                    ctx));
+                return false;
+            }
 
             string symbol = ctx.Symbol ?? _bot.SymbolName;
             bool isLong = eval.Direction == TradeDirection.Long;
