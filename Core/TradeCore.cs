@@ -2220,24 +2220,37 @@ namespace GeminiV26.Core
                     continue;
                 }
 
+                _bot.Print($"[TRIGGER] type={candidate.Type} confirmed={trigger.TriggerConfirmed}");
+                candidate.TriggerConfirmed = trigger.TriggerConfirmed;
+                _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
+
+                if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
+                {
+                    _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
+                }
+
                 if (!trigger.IsManaged)
                 {
-                    candidate.TriggerConfirmed = true;
                     candidate.State = EntryState.TRIGGERED;
                     continue;
                 }
 
-                candidate.TriggerConfirmed = true;
-                candidate.State = EntryState.TRIGGERED;
-
                 if (!trigger.TriggerConfirmed)
                 {
+                    candidate.TriggerConfirmed = false;
+                    _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
+                    if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
+                    {
+                        _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
+                    }
+                    candidate.State = EntryState.ARMED;
                     UpsertArmedSetup(candidate, barsSinceBreak);
                     _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
                     _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
                 }
                 else
                 {
+                    candidate.State = EntryState.TRIGGERED;
                     UpsertArmedSetup(candidate, barsSinceBreak);
                     _bot.Print($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
                 }
