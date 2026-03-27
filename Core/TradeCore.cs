@@ -2221,9 +2221,6 @@ namespace GeminiV26.Core
                 }
 
                 _bot.Print($"[TRIGGER] type={candidate.Type} confirmed={trigger.TriggerConfirmed}");
-                candidate.TriggerConfirmed = trigger.TriggerConfirmed;
-                _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
-
                 if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
                 {
                     _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
@@ -2231,8 +2228,13 @@ namespace GeminiV26.Core
                     // HARD FIX – enforce trigger truth
                     candidate.TriggerConfirmed = trigger.TriggerConfirmed;
 
-                    _bot.Print($"[TRIGGER STATE FIX] candidate trigger restored to {candidate.TriggerConfirmed} | type={candidate.Type}");
+                    _bot.Print($"[TRIGGER STATE FIX] type={candidate.Type} enforcedTrigger={candidate.TriggerConfirmed}");
                 }
+                else
+                {
+                    candidate.TriggerConfirmed = trigger.TriggerConfirmed;
+                }
+                _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
 
                 if (!trigger.IsManaged)
                 {
@@ -2249,22 +2251,13 @@ namespace GeminiV26.Core
                     {
                         _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
                     }
+
+                    _bot.Print($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
                     continue;
                 }
 
                 if (!trigger.TriggerConfirmed)
                 {
-                    candidate.TriggerConfirmed = false;
-                    _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
-                    if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
-                    {
-                        _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
-
-                        // HARD FIX – enforce trigger truth
-                        candidate.TriggerConfirmed = trigger.TriggerConfirmed;
-
-                        _bot.Print($"[TRIGGER STATE FIX] candidate trigger restored to {candidate.TriggerConfirmed} | type={candidate.Type}");
-                    }
                     UpsertArmedSetup(candidate, barsSinceBreak);
                     _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
                     _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
@@ -2288,6 +2281,8 @@ namespace GeminiV26.Core
                 {
                     _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
                 }
+
+                _bot.Print($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
             }
         }
 
