@@ -404,13 +404,40 @@ namespace GeminiV26.Core.Entry
         {
             return direction switch
             {
-                TradeDirection.Long => HasPullbackLong_M5,
-                TradeDirection.Short => HasPullbackShort_M5,
-                _ => HasPullbackLong_M5 || HasPullbackShort_M5 || PullbackTouchedEma21_M5
+                TradeDirection.Long => HasPullbackActiveSide_M5(direction),
+                TradeDirection.Short => HasPullbackActiveSide_M5(direction),
+                _ => GetCrossSidePullbackFallback()
             };
         }
 
+        public bool HasPullbackActiveSide_M5(TradeDirection dir)
+            => dir == TradeDirection.Long
+                ? HasPullbackLong_M5
+                : HasPullbackShort_M5;
+
+        public bool HasPullbackInactiveSide_M5(TradeDirection dir)
+            => dir == TradeDirection.Long
+                ? HasPullbackShort_M5
+                : HasPullbackLong_M5;
+
         public bool IsValidFlagStructure_M5 =>
             HasFlagLong_M5 || HasFlagShort_M5;
+
+        public bool IsValidFlagStructureSide_M5(TradeDirection dir)
+        {
+            return dir == TradeDirection.Long
+                ? HasFlagLong_M5
+                : HasFlagShort_M5;
+        }
+
+        private bool GetCrossSidePullbackFallback()
+        {
+            Print("[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
+
+            bool hasAnySidePullback = HasPullbackLong_M5;
+            hasAnySidePullback |= HasPullbackShort_M5;
+
+            return hasAnySidePullback || PullbackTouchedEma21_M5;
+        }
     }
 }
