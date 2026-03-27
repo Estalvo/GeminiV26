@@ -60,16 +60,32 @@ namespace GeminiV26.Core
             double unrealizedR = ComputeUnrealizedR(pos, risk);
             string momentumState = IsMomentumDecaying(m5, 4) ? "DECAYING" : "STABLE";
             bool structureBreakDetected = IsStructuredBreak(pos.TradeType, m5, ctx);
-            bool htfConflict = IsHtfConflict(pos.TradeType, m15);
+            bool strongOppositeImpulseDetected = IsStrongOppositeImpulse(pos.TradeType, m5);
+            bool strongHtfConflictDetected = IsStrongHtfConflict(pos.TradeType, m15);
+            bool noRecoveryInWindow = !RecentRecoveryDetected(pos.TradeType, m5, TVM_RecoveryLookbackBars);
+            bool stillValid =
+                !structureBreakDetected &&
+                !strongOppositeImpulseDetected &&
+                !strongHtfConflictDetected;
+            bool slowSetup = IsSlowDevelopmentSetup(ctx?.EntryType);
+            bool breakoutSetup = IsBreakoutSetup(ctx?.EntryType);
 
             _bot.Print(TradeLogIdentity.WithPositionIds(
                 $"[TVM][EVAL] BarsSinceEntry={barsSinceEntry} UnrealizedR={unrealizedR:0.00} MomentumState={momentumState} " +
-                $"StructureState={(structureBreakDetected ? "BROKEN" : "INTACT")} HtfState={(htfConflict ? "CONFLICT" : "ALIGNED")}", ctx));
+                $"StructureState={(structureBreakDetected ? "BROKEN" : "INTACT")} OppImpulse={(strongOppositeImpulseDetected ? "YES" : "NO")} " +
+                $"HtfState={(strongHtfConflictDetected ? "STRONG_CONFLICT" : "ALIGNED")} SetupType={ctx?.EntryType}", ctx));
 
             if (barsSinceEntry < TVM_MinBarsBeforeEvaluation)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds(
                     $"[TVM][SKIP_REASON] GRACE barsSinceEntry={barsSinceEntry} minBars={TVM_MinBarsBeforeEvaluation}", ctx));
+                return false;
+            }
+
+            if (Math.Abs(unrealizedR) < 0.30)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds(
+                    $"[TVM][SKIP_REASON] NO_MOVE_ZONE unrealizedR={unrealizedR:0.00} threshold=0.30", ctx));
                 return false;
             }
 
@@ -80,7 +96,14 @@ namespace GeminiV26.Core
                 return false;
             }
 
-            if (RecentRecoveryDetected(pos.TradeType, m5, TVM_RecoveryLookbackBars))
+            if (stillValid)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds(
+                    "[TVM][SKIP_REASON] STILL_VALID", ctx));
+                return false;
+            }
+
+            if (!noRecoveryInWindow)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds(
                     "[TVM][SKIP_REASON] RECOVERY", ctx));
@@ -94,15 +117,47 @@ namespace GeminiV26.Core
 
             if (barsSinceEntry <= 3)
             {
-                return EvaluateEarlyPhase(ctx, barsSinceEntry, atrShrinking, marketTrend, m5, pos.TradeType);
+                return EvaluateEarlyPhase(
+                    ctx,
+                    barsSinceEntry,
+                    atrShrinking,
+                    marketTrend,
+                    m5,
+                    pos.TradeType,
+                    structureBreakDetected,
+                    strongOppositeImpulseDetected,
+                    strongHtfConflictDetected,
+                    noRecoveryInWindow,
+                    slowSetup,
+                    breakoutSetup);
             }
 
             if (barsSinceEntry <= 10)
             {
-                return EvaluateDevelopmentPhase(ctx, barsSinceEntry, marketTrend, m5, pos.TradeType, m15);
+                return EvaluateDevelopmentPhase(
+                    ctx,
+                    barsSinceEntry,
+                    marketTrend,
+                    m5,
+                    pos.TradeType,
+                    structureBreakDetected,
+                    strongOppositeImpulseDetected,
+                    strongHtfConflictDetected,
+                    noRecoveryInWindow,
+                    slowSetup,
+                    breakoutSetup);
             }
 
-            return EvaluateMaturePhase(ctx, barsSinceEntry, marketTrend, m5, pos.TradeType, m15);
+            return EvaluateMaturePhase(
+                ctx,
+                barsSinceEntry,
+                marketTrend,
+                m5,
+                pos.TradeType,
+                structureBreakDetected,
+                strongOppositeImpulseDetected,
+                strongHtfConflictDetected,
+                noRecoveryInWindow);
         }
 
         private int ComputeBarsSinceEntryByIndex(
@@ -194,7 +249,13 @@ namespace GeminiV26.Core
             bool atrShrinking,
             bool marketTrend,
             Bars m5,
-            TradeType tradeType)
+            TradeType tradeType,
+            bool structureBreak,
+            bool strongOppositeImpulse,
+            bool strongHtfConflict,
+            bool noRecoveryInWindow,
+            bool slowSetup,
+            bool breakoutSetup)
         {
             LogTvmOncePerBar(
                 ctx,
@@ -233,9 +294,10 @@ namespace GeminiV26.Core
             }
 
             bool noFollowThrough =
+                !slowSetup &&
                 barsSinceEntry >= 4 &&
-                ctx.MfeR < 0.15 &&
-                ctx.MaeR > 0.25;
+                ctx.MfeR < (breakoutSetup ? 0.20 : 0.15) &&
+                ctx.MaeR > (breakoutSetup ? 0.20 : 0.25);
 
             if (noFollowThrough)
             {
@@ -244,10 +306,16 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            bool noProgress = barsSinceEntry >= 3 && ctx.MfeR < 0.10;
+            bool noProgress = !slowSetup && barsSinceEntry >= 3 && ctx.MfeR < (breakoutSetup ? 0.12 : 0.10);
             bool adverseExpansion = ctx.MaeR > 0.35;
             bool momentumWeak = ctx.Adx_M5 < 20.0 || atrShrinking;
             bool fastAdverse = ctx.MaeR > 0.35 && barsSinceEntry <= 2;
+            bool htfFail = strongHtfConflict && strongOppositeImpulse && noRecoveryInWindow;
+
+            if (strongHtfConflict && !htfFail)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+            }
 
             LogTvmOncePerBar(
                 ctx,
@@ -290,6 +358,14 @@ namespace GeminiV26.Core
                 return true;
             }
 
+            if (htfFail)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "HTF_FAIL";
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=HTF_FAIL", ctx));
+                return true;
+            }
+
             return false;
         }
 
@@ -299,7 +375,12 @@ namespace GeminiV26.Core
             bool marketTrend,
             Bars m5,
             TradeType tradeType,
-            Bars m15)
+            bool structureBreak,
+            bool strongOppositeImpulse,
+            bool strongHtfConflict,
+            bool noRecoveryInWindow,
+            bool slowSetup,
+            bool breakoutSetup)
         {
             LogTvmOncePerBar(
                 ctx,
@@ -315,9 +396,10 @@ namespace GeminiV26.Core
             }
 
             bool noFollowThrough =
+                !slowSetup &&
                 barsSinceEntry >= 3 &&
-                ctx.MfeR < 0.15 &&
-                ctx.MaeR > 0.25;
+                ctx.MfeR < (breakoutSetup ? 0.20 : 0.15) &&
+                ctx.MaeR > (breakoutSetup ? 0.20 : 0.25);
 
             if (noFollowThrough)
             {
@@ -326,7 +408,7 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            if (barsSinceEntry >= 4 && ctx.MfeR <= 0.05)
+            if (!slowSetup && barsSinceEntry >= 4 && ctx.MfeR <= (breakoutSetup ? 0.10 : 0.05))
             {
                 bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
@@ -343,27 +425,29 @@ namespace GeminiV26.Core
             }
 
             bool momentumDecay = IsMomentumDecaying(m5, 4);
-            bool structureBreak = IsStructuredBreak(tradeType, m5, ctx);
-            bool strongOppositeImpulse = IsStrongOppositeImpulse(tradeType, m5);
-            bool htfConflict = IsHtfConflict(tradeType, m15);
-            bool noRecoveryAfterNbars = !RecentRecoveryDetected(tradeType, m5, TVM_RecoveryLookbackBars);
+            bool htfFail = strongHtfConflict && strongOppositeImpulse && noRecoveryInWindow;
 
             LogTvmOncePerBar(
                 ctx,
                 ctx.LastTvmEvalBar,
                 $"[TVM DEVELOPMENT] momentumDecay={momentumDecay} structureBreak={structureBreak} " +
-                $"strongOppositeImpulse={strongOppositeImpulse} htfConflict={htfConflict} noRecovery={noRecoveryAfterNbars}");
+                $"strongOppositeImpulse={strongOppositeImpulse} strongHtfConflict={strongHtfConflict} noRecovery={noRecoveryInWindow} htfFail={htfFail}");
 
             bool shouldExit =
                 structureBreak ||
                 strongOppositeImpulse ||
-                (htfConflict && noRecoveryAfterNbars);
+                htfFail;
+
+            if (strongHtfConflict && !htfFail)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+            }
 
             LogTvmOncePerBar(
                 ctx,
                 ctx.LastTvmEvalBar,
                 $"[TVM DECISION] phase=DEVELOPMENT invalidation={shouldExit} structureBreak={structureBreak} " +
-                $"oppositeImpulse={strongOppositeImpulse} htfFail={(htfConflict && noRecoveryAfterNbars)} momentumDecay={momentumDecay}");
+                $"oppositeImpulse={strongOppositeImpulse} htfFail={htfFail} momentumDecay={momentumDecay}");
 
             if (shouldExit)
             {
@@ -378,10 +462,10 @@ namespace GeminiV26.Core
                 ctx.IsDeadTrade = true;
                 if (structureBreak)
                     ctx.DeadTradeReason = "STRUCTURE_BREAK";
+                else if (htfFail)
+                    ctx.DeadTradeReason = "HTF_FAIL";
                 else if (strongOppositeImpulse)
                     ctx.DeadTradeReason = "IMPULSE_REVERSAL";
-                else
-                    ctx.DeadTradeReason = "HTF_FAIL";
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][ALLOW_EXIT] reason={ctx.DeadTradeReason}", ctx));
 
@@ -402,7 +486,10 @@ namespace GeminiV26.Core
             bool marketTrend,
             Bars m5,
             TradeType tradeType,
-            Bars m15)
+            bool structureBreak,
+            bool strongOppositeImpulse,
+            bool strongHtfConflict,
+            bool noRecoveryInWindow)
         {
             LogTvmOncePerBar(
                 ctx,
@@ -417,37 +504,39 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            bool structureBreak = IsStructuredBreak(tradeType, m5, ctx);
-            bool strongOppositeImpulse = IsStrongOppositeImpulse(tradeType, m5);
-            bool htfConflict = IsHtfConflict(tradeType, m15);
-            bool noRecoveryAfterNbars = !RecentRecoveryDetected(tradeType, m5, TVM_RecoveryLookbackBars);
+            bool htfFail = strongHtfConflict && strongOppositeImpulse && noRecoveryInWindow;
 
             LogTvmOncePerBar(
                 ctx,
                 ctx.LastTvmEvalBar,
                 $"[TVM MATURE] structureBreak={structureBreak} strongOppositeImpulse={strongOppositeImpulse} " +
-                $"htfConflict={htfConflict} noRecovery={noRecoveryAfterNbars}");
+                $"strongHtfConflict={strongHtfConflict} noRecovery={noRecoveryInWindow} htfFail={htfFail}");
 
             bool shouldExit =
                 structureBreak ||
                 strongOppositeImpulse ||
-                (htfConflict && noRecoveryAfterNbars);
+                htfFail;
+
+            if (strongHtfConflict && !htfFail)
+            {
+                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+            }
 
             LogTvmOncePerBar(
                 ctx,
                 ctx.LastTvmEvalBar,
                 $"[TVM DECISION] phase=MATURE invalidation={shouldExit} structureBreak={structureBreak} " +
-                $"oppositeImpulse={strongOppositeImpulse} htfFail={(htfConflict && noRecoveryAfterNbars)}");
+                $"oppositeImpulse={strongOppositeImpulse} htfFail={htfFail}");
 
             if (shouldExit)
             {
                 ctx.IsDeadTrade = true;
                 if (structureBreak)
                     ctx.DeadTradeReason = "STRUCTURE_BREAK";
+                else if (htfFail)
+                    ctx.DeadTradeReason = "HTF_FAIL";
                 else if (strongOppositeImpulse)
                     ctx.DeadTradeReason = "IMPULSE_REVERSAL";
-                else
-                    ctx.DeadTradeReason = "HTF_FAIL";
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
 
                 LogTvmOncePerBar(
@@ -629,6 +718,44 @@ namespace GeminiV26.Core
                 return c0 < c1 && c1 < c2;
 
             return c0 > c1 && c1 > c2;
+        }
+
+        private bool IsStrongHtfConflict(TradeType tradeType, Bars m15)
+        {
+            if (m15 == null || m15.Count < 4)
+                return false;
+
+            if (!IsHtfConflict(tradeType, m15))
+                return false;
+
+            double c0 = m15.ClosePrices.Last(0);
+            double c3 = m15.ClosePrices.Last(3);
+            double c1 = m15.ClosePrices.Last(1);
+            double c2 = m15.ClosePrices.Last(2);
+            double step1 = Math.Abs(c0 - c1);
+            double step2 = Math.Abs(c1 - c2);
+            double trendLeg = Math.Abs(c0 - c3);
+
+            return trendLeg > 0 && (step1 + step2) > 0 && trendLeg >= ((step1 + step2) * 0.8);
+        }
+
+        private bool IsSlowDevelopmentSetup(string entryType)
+        {
+            if (string.IsNullOrWhiteSpace(entryType))
+                return false;
+
+            return entryType.IndexOf("FLAG", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   entryType.IndexOf("PULLBACK", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool IsBreakoutSetup(string entryType)
+        {
+            if (string.IsNullOrWhiteSpace(entryType))
+                return false;
+
+            return entryType.IndexOf("BREAKOUT", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   entryType.IndexOf("RANGEBREAKOUT", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   entryType.StartsWith("BR_", StringComparison.OrdinalIgnoreCase);
         }
 
         private bool RecentRecoveryDetected(TradeType tradeType, Bars m5, int lookbackBars)
