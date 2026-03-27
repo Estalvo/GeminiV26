@@ -2189,14 +2189,27 @@ namespace GeminiV26.Core
 
                 if (ShouldRejectEarlyNoStructure(ctx, candidate, candidate.HasStrongTrigger))
                 {
-                    MovePhase movePhase = ctx.MemoryState?.MovePhase ?? MovePhase.Unknown;
+                    MovePhase movePhase;
+                    bool phaseFromCtx = ctx.MovePhase != MovePhase.Unknown;
+                    if (phaseFromCtx)
+                    {
+                        movePhase = ctx.MovePhase;
+                    }
+                    else if (ctx.MemoryState != null)
+                    {
+                        movePhase = ctx.MemoryState.MovePhase;
+                    }
+                    else
+                    {
+                        movePhase = MovePhase.Unknown;
+                    }
                     candidate.IsValid = false;
                     candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                         ? "[EARLY_NO_STRUCTURE]"
                         : $"{candidate.Reason} [EARLY_NO_STRUCTURE]";
                     ClearArmedSetup(candidate);
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} phase={movePhase} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
+                        $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} phase={movePhase} source={(phaseFromCtx ? "CTX" : "MEM")} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
                         ctx));
                     continue;
                 }
@@ -2327,7 +2340,20 @@ namespace GeminiV26.Core
             bool isEarly =
                 (candidate.Direction == TradeDirection.Long && ctx.HasEarlyContinuationLong) ||
                 (candidate.Direction == TradeDirection.Short && ctx.HasEarlyContinuationShort);
-            bool isImpulsePhase = (ctx.MemoryState?.MovePhase ?? MovePhase.Unknown) == MovePhase.Impulse;
+            MovePhase movePhase;
+            if (ctx.MovePhase != MovePhase.Unknown)
+            {
+                movePhase = ctx.MovePhase;
+            }
+            else if (ctx.MemoryState != null)
+            {
+                movePhase = ctx.MemoryState.MovePhase;
+            }
+            else
+            {
+                movePhase = MovePhase.Unknown;
+            }
+            bool isImpulsePhase = movePhase == MovePhase.Impulse;
 
             bool hasPullback = ctx.BarsSinceFirstPullback >= 0;
             bool hasMinimalStructure = hasPullback;
