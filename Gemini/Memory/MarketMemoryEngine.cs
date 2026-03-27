@@ -457,7 +457,7 @@ namespace Gemini.Memory
 
             double atr = Math.Max(0.0000001, Math.Abs(state.LastImpulseHigh - state.LastImpulseLow));
             double anchor = ResolveFastStructureAnchor(state);
-            double close = bar?.Close ?? anchor;
+            double close = bar.Close;
             state.DistanceFromFastStructureAtr = atr > 0 ? Math.Abs(close - anchor) / atr : 0;
             state.MoveExtensionState = ResolveMoveExtensionState(state.DistanceFromFastStructureAtr);
             state.ImpulseFreshnessScore = Clamp01(1.0 - (state.BarsSinceImpulse / 10.0) - (state.MoveAgeBars / 24.0) - ExtensionPenalty(state.MoveExtensionState));
