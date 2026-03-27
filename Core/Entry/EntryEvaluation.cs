@@ -42,6 +42,10 @@
             set => TriggerConfirmed = value;
         }
 
+        // Diagnostic-only final acceptance flags (no score impact).
+        public bool HasStrongTrigger { get; set; }
+        public bool HasStrongStructure { get; set; }
+
         public bool IsHTFMisaligned;
         public bool IgnoreHTFForDecision;
         public double HtfConfidence01;
