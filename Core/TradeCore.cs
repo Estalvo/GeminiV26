@@ -2189,13 +2189,14 @@ namespace GeminiV26.Core
 
                 if (ShouldRejectEarlyNoStructure(ctx, candidate, candidate.HasStrongTrigger))
                 {
+                    MovePhase movePhase = ctx.MemoryState?.MovePhase ?? MovePhase.Unknown;
                     candidate.IsValid = false;
                     candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
                         ? "[EARLY_NO_STRUCTURE]"
                         : $"{candidate.Reason} [EARLY_NO_STRUCTURE]";
                     ClearArmedSetup(candidate);
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
+                        $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} phase={movePhase} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
                         ctx));
                     continue;
                 }
@@ -2326,11 +2327,13 @@ namespace GeminiV26.Core
             bool isEarly =
                 (candidate.Direction == TradeDirection.Long && ctx.HasEarlyContinuationLong) ||
                 (candidate.Direction == TradeDirection.Short && ctx.HasEarlyContinuationShort);
+            bool isImpulsePhase = (ctx.MemoryState?.MovePhase ?? MovePhase.Unknown) == MovePhase.Impulse;
 
             bool hasPullback = ctx.BarsSinceFirstPullback >= 0;
             bool hasMinimalStructure = hasPullback;
 
             return isEarly &&
+                   isImpulsePhase &&
                    !hasMinimalStructure &&
                    !hasStrongTrigger;
         }
