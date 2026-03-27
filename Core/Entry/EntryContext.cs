@@ -292,6 +292,37 @@ namespace GeminiV26.Core.Entry
         public int MemoryTimingPenalty { get; set; }
 
         // =========================
+        // SIDE-AWARE TIMING
+        // =========================
+        // CONTINUATION TIMING
+        public bool HasFreshPullbackLong { get; set; }
+        public bool HasFreshPullbackShort { get; set; }
+        public bool HasEarlyContinuationLong { get; set; }
+        public bool HasEarlyContinuationShort { get; set; }
+        public bool HasLateContinuationLong { get; set; }
+        public bool HasLateContinuationShort { get; set; }
+        public bool IsOverextendedLong { get; set; }
+        public bool IsOverextendedShort { get; set; }
+
+        // STRUCTURE AGE
+        public int BarsSinceStructureBreakLong { get; set; } = -1;
+        public int BarsSinceStructureBreakShort { get; set; } = -1;
+        public int BarsSinceImpulseLong { get; set; } = -1;
+        public int BarsSinceImpulseShort { get; set; } = -1;
+        public int ContinuationAttemptCountLong { get; set; }
+        public int ContinuationAttemptCountShort { get; set; }
+
+        // DISTANCE
+        public double DistanceFromFastStructureAtrLong { get; set; }
+        public double DistanceFromFastStructureAtrShort { get; set; }
+
+        // QUALITY
+        public double ContinuationFreshnessLong { get; set; }
+        public double ContinuationFreshnessShort { get; set; }
+        public double TriggerLateScoreLong { get; set; }
+        public double TriggerLateScoreShort { get; set; }
+
+        // =========================
         // TEMP BACKWARD COMPAT
         // =========================
         [Obsolete("LEGACY – use LogicBiasDirection")]
