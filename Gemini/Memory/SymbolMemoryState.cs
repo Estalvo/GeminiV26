@@ -13,6 +13,15 @@ namespace Gemini.Memory
         public int ImpulseDirection { get; set; }
         public double LastImpulseHigh { get; set; }
         public double LastImpulseLow { get; set; }
+        public ContinuationWindowState ContinuationWindowState { get; set; } = ContinuationWindowState.Unknown;
+        public MoveExtensionState MoveExtensionState { get; set; } = MoveExtensionState.Unknown;
+        public int ContinuationAttemptCount { get; set; }
+        public int BarsSinceBreak { get; set; } = -1;
+        public int BarsSinceFirstPullback { get; set; } = -1;
+        public double DistanceFromFastStructureAtr { get; set; }
+        public double ImpulseFreshnessScore { get; set; }
+        public double ContinuationFreshnessScore { get; set; }
+        public double TriggerLateScore { get; set; }
         public string SessionName { get; set; } = string.Empty;
         public double SessionFatigueScore { get; set; }
         public MemoryTrustLevel TrustLevel { get; set; } = MemoryTrustLevel.Unknown;
