@@ -24,4 +24,22 @@ namespace Gemini.Memory
         Medium = 2,
         High = 3
     }
+
+    public enum ContinuationWindowState
+    {
+        Unknown = 0,
+        Fresh = 1,
+        Early = 2,
+        Mature = 3,
+        Late = 4,
+        Exhausted = 5
+    }
+
+    public enum MoveExtensionState
+    {
+        Unknown = 0,
+        Normal = 1,
+        Extended = 2,
+        Overextended = 3
+    }
 }

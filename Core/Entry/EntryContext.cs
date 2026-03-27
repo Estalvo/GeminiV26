@@ -284,6 +284,12 @@ namespace GeminiV26.Core.Entry
         public bool HasMemory => Memory != null;
         public SymbolMemoryState MemoryState { get; set; }
         public MemoryAssessment MemoryAssessment { get; set; }
+        public ContinuationWindowState MemoryContinuationWindow { get; set; } = ContinuationWindowState.Unknown;
+        public MoveExtensionState MemoryMoveExtension { get; set; } = MoveExtensionState.Unknown;
+        public double MemoryImpulseFreshnessScore { get; set; }
+        public double MemoryContinuationFreshnessScore { get; set; }
+        public double MemoryTriggerLateScore { get; set; }
+        public int MemoryTimingPenalty { get; set; }
 
         // =========================
         // TEMP BACKWARD COMPAT

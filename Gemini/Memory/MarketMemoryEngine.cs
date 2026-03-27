@@ -8,7 +8,8 @@ namespace Gemini.Memory
     {
         public static bool DebugMemory = false;
         private const int StaleImpulseThresholdBars = 8;
-        private const int ChaseRiskThresholdBars = 4;
+        private const double ExtendedDistanceAtr = 1.20;
+        private const double OverextendedDistanceAtr = 2.00;
         private readonly Action<string> _log;
 
         public Dictionary<string, SymbolMemoryState> States { get; } = new Dictionary<string, SymbolMemoryState>(StringComparer.OrdinalIgnoreCase);
@@ -84,6 +85,15 @@ namespace Gemini.Memory
             state.ImpulseDirection = 0;
             state.LastImpulseHigh = 0;
             state.LastImpulseLow = 0;
+            state.ContinuationWindowState = ContinuationWindowState.Unknown;
+            state.MoveExtensionState = MoveExtensionState.Unknown;
+            state.ContinuationAttemptCount = 0;
+            state.BarsSinceBreak = -1;
+            state.BarsSinceFirstPullback = -1;
+            state.DistanceFromFastStructureAtr = 0;
+            state.ImpulseFreshnessScore = 0;
+            state.ContinuationFreshnessScore = 0;
+            state.TriggerLateScore = 0;
             state.MovePhase = MovePhase.Unknown;
             state.BuildMode = MemoryBuildMode.HistoricalReplay;
             state.TrustLevel = MemoryTrustLevel.Medium;
@@ -127,10 +137,15 @@ namespace Gemini.Memory
 
             state.MoveAgeBars++;
             state.BarsSinceImpulse++;
+            if (state.BarsSinceBreak >= 0)
+                state.BarsSinceBreak++;
+
+            bool timingChanged = false;
 
             if (IsStrongMove(bar))
             {
                 ApplyImpulse(state, bar, "new_impulse");
+                timingChanged = RefreshTimingState(state, bar, "new_impulse");
                 RecomputeUsable(state);
                 _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
                 _log?.Invoke($"[MEMORY][IMPULSE] symbol={state.Symbol} phase={state.MovePhase}");
@@ -146,10 +161,13 @@ namespace Gemini.Memory
             }
             else if (HasContinuation(state, bar))
             {
+                bool wasPullback = state.MovePhase == MovePhase.Pullback;
                 UpdateImpulseExtremes(state, bar);
                 state.MovePhase = MovePhase.Continuation;
                 state.IsImpulseDecay = false;
                 state.IsStaleImpulse = false;
+                if (wasPullback)
+                    state.ContinuationAttemptCount = Math.Min(99, state.ContinuationAttemptCount + 1);
             }
             else if (IsEligiblePullback(state, bar))
             {
@@ -167,8 +185,11 @@ namespace Gemini.Memory
                 state.MovePhase = MovePhase.Stale;
             }
 
+            timingChanged = RefreshTimingState(state, bar, "on_bar") || timingChanged;
             RecomputeUsable(state);
             _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
+            if (!timingChanged && DebugMemory)
+                LogTimingState(state, "on_bar");
         }
 
         public string GetCoverageRatio(IEnumerable<string> symbols)
@@ -203,12 +224,27 @@ namespace Gemini.Memory
         public MemoryAssessment GetAssessment(string symbol)
         {
             var state = GetState(symbol);
+            bool isLateContinuation = state.ContinuationWindowState == ContinuationWindowState.Late;
+            bool isExhaustedContinuation = state.ContinuationWindowState == ContinuationWindowState.Exhausted;
+            bool isOverextendedMove = state.MoveExtensionState == MoveExtensionState.Overextended;
+            bool isFirstPullbackWindow = state.PullbackCount > 0 && state.BarsSinceFirstPullback >= 0 && state.BarsSinceFirstPullback <= 2;
+            bool isEarlyContinuationWindow = state.ContinuationWindowState == ContinuationWindowState.Early || state.ContinuationWindowState == ContinuationWindowState.Fresh;
+            bool isMatureContinuationWindow = state.ContinuationWindowState == ContinuationWindowState.Mature;
+            bool isChaseRisk = state.TriggerLateScore >= 0.60 || state.DistanceFromFastStructureAtr >= ExtendedDistanceAtr;
+
             var assessment = new MemoryAssessment
             {
-                IsLateMove = state.PullbackCount > 2 || state.IsStaleImpulse,
-                IsChaseRisk = state.BarsSinceImpulse > ChaseRiskThresholdBars,
+                IsLateMove = isLateContinuation || isExhaustedContinuation || state.IsStaleImpulse,
+                IsLateContinuation = isLateContinuation,
+                IsExhaustedContinuation = isExhaustedContinuation,
+                IsOverextendedMove = isOverextendedMove,
+                IsFirstPullbackWindow = isFirstPullbackWindow,
+                IsEarlyContinuationWindow = isEarlyContinuationWindow,
+                IsMatureContinuationWindow = isMatureContinuationWindow,
+                IsChaseRisk = isChaseRisk,
                 ContextTrustScore = state.IsUsable ? ResolveContextTrustScore(state.BuildMode) : 0.0,
-                RecommendedPenalty = 0
+                RecommendedPenalty = 0,
+                RecommendedTimingPenalty = 0
             };
 
             if (assessment.IsLateMove)
@@ -217,7 +253,16 @@ namespace Gemini.Memory
             if (assessment.IsChaseRisk)
                 assessment.RecommendedPenalty -= 15;
 
-            _log?.Invoke($"[MEMORY][ASSESSMENT] symbol={state.Symbol} late={assessment.IsLateMove} chase={assessment.IsChaseRisk} trust={assessment.ContextTrustScore:0.##} penalty={assessment.RecommendedPenalty}");
+            int timingPenalty = (int)Math.Round(-100.0 * state.TriggerLateScore, MidpointRounding.AwayFromZero);
+            if (assessment.IsOverextendedMove)
+                timingPenalty -= 10;
+            if (assessment.IsExhaustedContinuation)
+                timingPenalty -= 10;
+
+            assessment.RecommendedTimingPenalty = Math.Min(0, timingPenalty);
+            assessment.RecommendedPenalty += assessment.RecommendedTimingPenalty;
+
+            _log?.Invoke($"[MEMORY][ASSESSMENT] symbol={state.Symbol} firstPullback={assessment.IsFirstPullbackWindow} late={assessment.IsLateContinuation} exhausted={assessment.IsExhaustedContinuation} chase={assessment.IsChaseRisk} timingPenalty={assessment.RecommendedTimingPenalty} trust={assessment.ContextTrustScore:0.##}");
             return assessment;
         }
 
@@ -225,12 +270,15 @@ namespace Gemini.Memory
         {
             state.MoveAgeBars++;
             state.BarsSinceImpulse++;
+            if (state.BarsSinceBreak >= 0)
+                state.BarsSinceBreak++;
             if (DebugMemory)
                 _log?.Invoke($"[MEMORY][REPLAY] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
 
             if (IsStrongMove(bar))
             {
                 ApplyImpulse(state, bar, "new_impulse");
+                RefreshTimingState(state, bar, "replay_impulse");
                 if (DebugMemory)
                     _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
                 return;
@@ -247,10 +295,13 @@ namespace Gemini.Memory
             }
             else if (HasContinuation(state, bar))
             {
+                bool wasPullback = state.MovePhase == MovePhase.Pullback;
                 UpdateImpulseExtremes(state, bar);
                 state.MovePhase = MovePhase.Continuation;
                 state.IsImpulseDecay = false;
                 state.IsStaleImpulse = false;
+                if (wasPullback)
+                    state.ContinuationAttemptCount = Math.Min(99, state.ContinuationAttemptCount + 1);
                 if (DebugMemory)
                     _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
@@ -275,6 +326,8 @@ namespace Gemini.Memory
                 if (DebugMemory)
                     _log?.Invoke($"[MEMORY][PHASE] symbol={state.Symbol} phase={state.MovePhase}");
             }
+
+            RefreshTimingState(state, bar, "replay");
         }
 
         private static bool IsStrongMove(Bar bar)
@@ -309,6 +362,9 @@ namespace Gemini.Memory
             state.MovePhase = MovePhase.Impulse;
             state.MoveAgeBars = 1;
             state.BarsSinceImpulse = 0;
+            state.BarsSinceBreak = 0;
+            state.BarsSinceFirstPullback = -1;
+            state.ContinuationAttemptCount = 0;
             state.IsStaleImpulse = false;
             state.IsImpulseDecay = false;
             state.HasActiveImpulse = true;
@@ -319,6 +375,8 @@ namespace Gemini.Memory
         private void IncrementPullback(SymbolMemoryState state, string reason)
         {
             state.PullbackCount = Math.Min(5, state.PullbackCount + 1);
+            if (state.BarsSinceFirstPullback < 0)
+                state.BarsSinceFirstPullback = 0;
             state.MovePhase = MovePhase.Pullback;
             state.IsImpulseDecay = false;
             if (DebugMemory)
@@ -384,6 +442,122 @@ namespace Gemini.Memory
                 return -1;
 
             return 0;
+        }
+
+        private bool RefreshTimingState(SymbolMemoryState state, Bar bar, string source)
+        {
+            if (state == null)
+                return false;
+
+            var previousWindow = state.ContinuationWindowState;
+            var previousExtension = state.MoveExtensionState;
+
+            if (state.BarsSinceFirstPullback >= 0 && state.MovePhase != MovePhase.Impulse && state.MovePhase != MovePhase.Pullback)
+                state.BarsSinceFirstPullback++;
+
+            double atr = Math.Max(0.0000001, Math.Abs(state.LastImpulseHigh - state.LastImpulseLow));
+            double anchor = ResolveFastStructureAnchor(state);
+            double close = bar.Close;
+            state.DistanceFromFastStructureAtr = atr > 0 ? Math.Abs(close - anchor) / atr : 0;
+            state.MoveExtensionState = ResolveMoveExtensionState(state.DistanceFromFastStructureAtr);
+            state.ImpulseFreshnessScore = Clamp01(1.0 - (state.BarsSinceImpulse / 10.0) - (state.MoveAgeBars / 24.0) - ExtensionPenalty(state.MoveExtensionState));
+            state.ContinuationFreshnessScore = Clamp01(
+                1.0
+                - (state.ContinuationAttemptCount * 0.20)
+                - (Math.Max(0, state.BarsSinceFirstPullback) * 0.10)
+                - ExtensionPenalty(state.MoveExtensionState)
+                - Math.Max(0, state.DistanceFromFastStructureAtr - 0.60) * 0.15);
+
+            state.TriggerLateScore = Clamp01(
+                (Math.Max(0, state.BarsSinceBreak) / 12.0) * 0.35
+                + (state.ContinuationAttemptCount / 4.0) * 0.25
+                + Math.Min(1.0, state.DistanceFromFastStructureAtr / 2.0) * 0.30
+                + ExtensionPenalty(state.MoveExtensionState) * 0.35
+                + (state.IsStaleImpulse ? 0.15 : 0.0));
+
+            state.ContinuationWindowState = ResolveContinuationWindowState(state);
+
+            bool changed = previousWindow != state.ContinuationWindowState || previousExtension != state.MoveExtensionState;
+            if (changed || DebugMemory)
+                LogTimingState(state, source);
+
+            return changed;
+        }
+
+        private void LogTimingState(SymbolMemoryState state, string source)
+        {
+            _log?.Invoke(
+                $"[MEMORY][TIMING] symbol={state.Symbol} source={source} movePhase={state.MovePhase} continuationWindow={state.ContinuationWindowState} extensionState={state.MoveExtensionState} barsSinceBreak={state.BarsSinceBreak} barsSinceFirstPullback={state.BarsSinceFirstPullback} continuationAttempts={state.ContinuationAttemptCount} impulseFreshness={state.ImpulseFreshnessScore:0.00} continuationFreshness={state.ContinuationFreshnessScore:0.00} triggerLateScore={state.TriggerLateScore:0.00} distanceAtr={state.DistanceFromFastStructureAtr:0.00}");
+        }
+
+        private static double ResolveFastStructureAnchor(SymbolMemoryState state)
+        {
+            if (state == null)
+                return 0;
+
+            return state.ImpulseDirection switch
+            {
+                > 0 => state.LastImpulseLow,
+                < 0 => state.LastImpulseHigh,
+                _ => (state.LastImpulseHigh + state.LastImpulseLow) * 0.5
+            };
+        }
+
+        private static MoveExtensionState ResolveMoveExtensionState(double distanceAtr)
+        {
+            if (distanceAtr >= OverextendedDistanceAtr)
+                return MoveExtensionState.Overextended;
+
+            if (distanceAtr >= ExtendedDistanceAtr)
+                return MoveExtensionState.Extended;
+
+            return MoveExtensionState.Normal;
+        }
+
+        private static ContinuationWindowState ResolveContinuationWindowState(SymbolMemoryState state)
+        {
+            if (state == null)
+                return ContinuationWindowState.Unknown;
+
+            if (state.IsStaleImpulse || state.TriggerLateScore >= 0.85 || state.ContinuationAttemptCount >= 4 || state.MoveExtensionState == MoveExtensionState.Overextended || state.BarsSinceBreak > 16)
+                return ContinuationWindowState.Exhausted;
+
+            if (state.TriggerLateScore >= 0.65 || state.ContinuationAttemptCount >= 3 || state.BarsSinceBreak > 10 || state.MoveExtensionState == MoveExtensionState.Extended)
+                return ContinuationWindowState.Late;
+
+            if (state.ContinuationAttemptCount >= 2 || state.BarsSinceBreak > 6 || state.BarsSinceFirstPullback > 4)
+                return ContinuationWindowState.Mature;
+
+            if (state.ContinuationAttemptCount <= 1 && state.BarsSinceBreak <= 4 && state.MoveExtensionState == MoveExtensionState.Normal)
+            {
+                if (state.BarsSinceFirstPullback >= 0)
+                    return ContinuationWindowState.Early;
+
+                return state.BarsSinceBreak <= 2 ? ContinuationWindowState.Fresh : ContinuationWindowState.Early;
+            }
+
+            return ContinuationWindowState.Unknown;
+        }
+
+        private static double ExtensionPenalty(MoveExtensionState extensionState)
+        {
+            return extensionState switch
+            {
+                MoveExtensionState.Extended => 0.18,
+                MoveExtensionState.Overextended => 0.35,
+                _ => 0.0
+            };
+        }
+
+        private static double Clamp01(double value)
+        {
+            if (value < 0)
+                return 0;
+
+            if (value > 1)
+                return 1;
+
+            return value;
         }
 
         private int CountStates(Func<SymbolMemoryState, bool> predicate)
