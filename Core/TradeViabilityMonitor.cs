@@ -167,6 +167,29 @@ namespace GeminiV26.Core
                 $"[TVM PHASE] EARLY bars={barsSinceEntry} mfeR={ctx.MfeR:0.00} maeR={ctx.MaeR:0.00} " +
                 $"adx={ctx.Adx_M5:0.0} trend={marketTrend}");
 
+            // =====================================
+            // HARD EARLY PROTECTION (CRITICAL FIX)
+            // =====================================
+            if (barsSinceEntry <= 2)
+            {
+                // csak brutál fail esetén engedünk exitet
+                bool hardFail = ctx.MaeR > 0.60;
+
+                _bot.Print(TradeLogIdentity.WithPositionIds(
+                    $"[TVM][EARLY_PROTECT] bars={barsSinceEntry} maeR={ctx.MaeR:0.00} hardFail={hardFail}", ctx));
+
+                if (!hardFail)
+                {
+                    _bot.Print(TradeLogIdentity.WithPositionIds(
+                        "[TVM][HOLD][EARLY_PROTECTION_ACTIVE]", ctx));
+
+                    return false;
+                }
+
+                _bot.Print(TradeLogIdentity.WithPositionIds(
+                    "[TVM][ALLOW_EXIT][EARLY_HARD_FAIL]", ctx));
+            }
+
             if (!ctx.MarketTrend)
             {
                 ctx.IsDeadTrade = true;
@@ -186,7 +209,7 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            bool noProgress = barsSinceEntry >= 2 && ctx.MfeR < 0.10;
+            bool noProgress = barsSinceEntry >= 3 && ctx.MfeR < 0.10;
             bool adverseExpansion = ctx.MaeR > 0.35;
             bool momentumWeak = ctx.Adx_M5 < 20.0 || atrShrinking;
             bool fastAdverse = ctx.MaeR > 0.25 && barsSinceEntry <= 2;
