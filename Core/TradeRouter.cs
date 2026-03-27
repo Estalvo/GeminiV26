@@ -78,6 +78,28 @@ namespace GeminiV26.Core
                 {
                     decision = candidate.TriggerConfirmed ? "ACCEPT" : "ACCEPT_SCORE_MODEL";
 
+                    if (!candidate.TriggerConfirmed)
+                    {
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[EXEC BLOCK] NOT TRIGGERED → BLOCK execution | {candidate.Type} score={candidate.Score}",
+                            entryContext));
+                    }
+
+                    if (decision == "ACCEPT_SCORE_MODEL")
+                    {
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            "[EXEC BLOCK] SCORE_MODEL cannot execute (no trigger)",
+                            entryContext));
+                    }
+
+                    if (!IsExecutable(candidate))
+                    {
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[EXEC FILTER] candidate not executable | trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} valid={candidate.IsValid.ToString().ToLowerInvariant()}",
+                            entryContext));
+                        continue;
+                    }
+
                     if (winner == null
                         || candidate.Score > winner.Score
                         || (candidate.Score == winner.Score
@@ -122,6 +144,13 @@ namespace GeminiV26.Core
             _bot.Print(TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
             _bot.Print(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
+        }
+
+        private static bool IsExecutable(EntryEvaluation c)
+        {
+            return c != null
+                && c.IsValid
+                && c.TriggerConfirmed;
         }
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
@@ -247,8 +276,15 @@ namespace GeminiV26.Core
                 if (eval.State == EntryState.SETUP_DETECTED)
                     return RejectFxCandidate(eval, decisionScore, "FX_EARLY_BLOCK", entryContext);
 
-                if (!continuationAuthority)
-                    return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED", entryContext);
+                if (continuationAuthority)
+                {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        "[AUTH BLOCK] continuation authority cannot bypass trigger",
+                        entryContext));
+                    return RejectFxCandidate(eval, decisionScore, "AUTH_TRIGGER_BYPASS_BLOCK", entryContext);
+                }
+
+                return RejectFxCandidate(eval, decisionScore, "FX_TRIGGER_REQUIRED", entryContext);
             }
 
             if (decisionScore < 45)
