@@ -1284,6 +1284,12 @@ namespace GeminiV26.Core
                 _bot.Print($"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
 
+                if (!PassFinalAcceptance(_ctx, selected))
+                {
+                    _bot.Print("BLOCK: final acceptance gate");
+                    return;
+                }
+
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
@@ -2178,6 +2184,8 @@ namespace GeminiV26.Core
                 }
 
                 var trigger = ResolveTriggerDiagnostics(ctx, candidate);
+                candidate.HasStrongTrigger = trigger.TriggerConfirmed;
+                candidate.HasStrongStructure = HasStrongStructure(ctx, candidate.Direction);
 
                 if (!trigger.IsManaged)
                 {
@@ -2312,6 +2320,86 @@ namespace GeminiV26.Core
                 case EntryType.Crypto_RangeBreakout:
                 case EntryType.Crypto_Impulse:
                     return true;
+                default:
+                    return false;
+            }
+        }
+
+        private bool PassFinalAcceptance(EntryContext ctx, EntryEvaluation eval)
+        {
+            if (ctx == null || eval == null)
+                return false;
+
+            bool isLong = eval.Direction == TradeDirection.Long;
+            bool isShort = eval.Direction == TradeDirection.Short;
+            bool isOverextended =
+                (isLong && ctx.IsOverextendedLong) ||
+                (isShort && ctx.IsOverextendedShort);
+
+            if (isOverextended)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[FINAL][REJECT][OVEREXT] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                    ctx));
+                return false;
+            }
+
+            bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
+            bool isLateContinuation =
+                (isLong && ctx.HasLateContinuationLong) ||
+                (isShort && ctx.HasLateContinuationShort);
+            if (isLateContinuation && weakSetup)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[FINAL][REJECT][LATE] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                    ctx));
+                return false;
+            }
+
+            bool isTrend = ctx.MarketState?.IsTrend == true;
+            if (isTrend &&
+                ctx.LogicBiasConfidence >= 60 &&
+                ctx.TrendDirection != TradeDirection.None &&
+                eval.Direction != ctx.TrendDirection)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[FINAL][REJECT][TREND] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score} trendDirection={ctx.TrendDirection} logicBiasConfidence={ctx.LogicBiasConfidence}",
+                    ctx));
+                return false;
+            }
+
+            int weakBorderlineCutoff = EntryDecisionPolicy.MinScoreThreshold + 1;
+            if (weakSetup && eval.Score <= weakBorderlineCutoff)
+            {
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[FINAL][REJECT][WEAK] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                    ctx));
+                return false;
+            }
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} type={eval.Type} direction={eval.Direction} score={eval.Score}",
+                ctx));
+            return true;
+        }
+
+        private static bool HasStrongStructure(EntryContext ctx, TradeDirection direction)
+        {
+            if (ctx == null)
+                return false;
+
+            switch (direction)
+            {
+                case TradeDirection.Long:
+                    return ctx.BrokeLastSwingHigh_M5 ||
+                           ctx.FlagBreakoutUpConfirmed ||
+                           (ctx.HasBreakout_M1 && ctx.BreakoutDirection == TradeDirection.Long);
+
+                case TradeDirection.Short:
+                    return ctx.BrokeLastSwingLow_M5 ||
+                           ctx.FlagBreakoutDownConfirmed ||
+                           (ctx.HasBreakout_M1 && ctx.BreakoutDirection == TradeDirection.Short);
+
                 default:
                     return false;
             }
