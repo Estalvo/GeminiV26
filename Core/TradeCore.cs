@@ -2187,6 +2187,19 @@ namespace GeminiV26.Core
                 candidate.HasStrongTrigger = trigger.TriggerConfirmed;
                 candidate.HasStrongStructure = HasStrongStructure(ctx, candidate.Direction);
 
+                if (ShouldRejectEarlyNoStructure(ctx, candidate, candidate.HasStrongTrigger))
+                {
+                    candidate.IsValid = false;
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[EARLY_NO_STRUCTURE]"
+                        : $"{candidate.Reason} [EARLY_NO_STRUCTURE]";
+                    ClearArmedSetup(candidate);
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
+                        ctx));
+                    continue;
+                }
+
                 if (!trigger.IsManaged)
                 {
                     candidate.TriggerConfirmed = true;
@@ -2297,6 +2310,36 @@ namespace GeminiV26.Core
                 default:
                     return false;
             }
+        }
+
+        private static bool ShouldRejectEarlyNoStructure(
+            EntryContext ctx,
+            EntryEvaluation candidate,
+            bool hasStrongTrigger)
+        {
+            if (ctx == null || candidate == null || candidate.Direction == TradeDirection.None)
+                return false;
+
+            if (!IsContinuationEarlyValidityType(candidate.Type))
+                return false;
+
+            bool isEarly =
+                (candidate.Direction == TradeDirection.Long && ctx.HasEarlyContinuationLong) ||
+                (candidate.Direction == TradeDirection.Short && ctx.HasEarlyContinuationShort);
+
+            bool hasPullback = ctx.BarsSinceFirstPullback >= 0;
+            bool hasMinimalStructure = hasPullback;
+
+            return isEarly &&
+                   !hasMinimalStructure &&
+                   !hasStrongTrigger;
+        }
+
+        private static bool IsContinuationEarlyValidityType(EntryType type)
+        {
+            string typeName = type.ToString();
+            return typeName.IndexOf("Continuation", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   typeName.IndexOf("MicroStructure", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static int GetBarsSinceBreak(EntryContext ctx, TradeDirection direction)
