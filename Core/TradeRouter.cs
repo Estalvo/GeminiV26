@@ -167,6 +167,10 @@ namespace GeminiV26.Core
         private bool ApplyFxAcceptanceFilters(EntryEvaluation eval, EntryContext entryContext)
         {
             const int HtfMismatchPenalty = 10;
+            const int TimingEarlyScoreBoost = 2;
+            const int TimingLateScorePenalty = 2;
+            const int TimingEarlyThresholdRelax = 1;
+            const int TimingLateThresholdTighten = 1;
             bool continuationAuthority =
                 entryContext?.MarketState?.IsTrend == true &&
                 eval?.Direction == entryContext.TrendDirection &&
@@ -188,7 +192,33 @@ namespace GeminiV26.Core
                 && eval.Direction != TradeDirection.None
                 && eval.Direction != entryContext.FxHtfAllowedDirection;
 
+            int scoreBeforeTimingBias = eval.Score;
+            int thresholdBias = 0;
+
+            if (entryContext != null && IsContinuationSetup(eval.Type))
+            {
+                bool isLong = eval.Direction == TradeDirection.Long;
+                bool hasEarlyContinuation = isLong ? entryContext.HasEarlyContinuationLong : entryContext.HasEarlyContinuationShort;
+                bool hasLateContinuation = isLong ? entryContext.HasLateContinuationLong : entryContext.HasLateContinuationShort;
+
+                if (hasEarlyContinuation && !hasLateContinuation)
+                {
+                    eval.Score = Math.Max(0, eval.Score + TimingEarlyScoreBoost);
+                    thresholdBias = -TimingEarlyThresholdRelax;
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[TIMING][EARLY_BIAS] symbol={symbol} type={eval.Type} score={scoreBeforeTimingBias}->{eval.Score}", entryContext));
+                }
+                else if (hasLateContinuation && !hasEarlyContinuation)
+                {
+                    eval.Score = Math.Max(0, eval.Score - TimingLateScorePenalty);
+                    thresholdBias = TimingLateThresholdTighten;
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[TIMING][LATE_BIAS] symbol={symbol} type={eval.Type} score={scoreBeforeTimingBias}->{eval.Score}", entryContext));
+                }
+            }
+
             int decisionScore = eval.Score;
+            int effectiveMinThreshold = EntryDecisionPolicy.MinScoreThreshold + thresholdBias;
             if (eval.IsHTFMisaligned)
             {
                 if (eval.HtfConfidence01 >= 0.80 && entryContext?.LogicBiasConfidence < 60)
@@ -209,7 +239,7 @@ namespace GeminiV26.Core
                     $"score={originalScore}->{eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
             }
 
-            if (decisionScore < EntryDecisionPolicy.MinScoreThreshold)
+            if (decisionScore < effectiveMinThreshold)
                 return RejectFxCandidate(eval, decisionScore, "FX_SCORE_BELOW_THRESHOLD", entryContext);
 
             if (!eval.HasTrigger)
@@ -225,6 +255,31 @@ namespace GeminiV26.Core
                 return RejectFxCandidate(eval, decisionScore, "FX_MIN_QUALITY_BLOCK", entryContext);
 
             return true;
+        }
+
+        private static bool IsContinuationSetup(EntryType type)
+        {
+            switch (type)
+            {
+                case EntryType.XAU_Pullback:
+                case EntryType.XAU_Flag:
+                case EntryType.FX_Pullback:
+                case EntryType.FX_Flag:
+                case EntryType.FX_RangeBreakout:
+                case EntryType.FX_FlagContinuation:
+                case EntryType.FX_MicroContinuation:
+                case EntryType.FX_MicroStructure:
+                case EntryType.FX_ImpulseContinuation:
+                case EntryType.Index_Breakout:
+                case EntryType.Index_Pullback:
+                case EntryType.Index_Flag:
+                case EntryType.Crypto_Flag:
+                case EntryType.Crypto_Pullback:
+                case EntryType.Crypto_RangeBreakout:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private bool RejectFxCandidate(EntryEvaluation eval, int decisionScore, string reasonToken, EntryContext entryContext)
