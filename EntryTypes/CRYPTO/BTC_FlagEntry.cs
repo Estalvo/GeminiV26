@@ -326,7 +326,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (score < MinScore)
                 return Invalid(ctx, dir, $"LOW_SCORE({score})", score);
 
-            return new EntryEvaluation
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = EntryType.Crypto_Flag,
@@ -335,20 +335,16 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = true,
                 Reason = $"CR_FLAG_V2 dir={dir} score={score} rangeATR={rangeAtr:F2} rangeState={(hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN")} flagState={flagState}"
             };
+            ApplyCryptoSourceTrace(ctx, eval, dir);
+            return eval;
         }
 
-        private static EntryEvaluation Invalid(EntryContext ctx, string reason) =>
-            new EntryEvaluation
-            {
-                Symbol = ctx?.Symbol,
-                Type = EntryType.Crypto_Flag,
-                Direction = TradeDirection.None,
-                IsValid = false,
-                Reason = reason
-            };
+        private static EntryEvaluation Invalid(EntryContext ctx, string reason)
+            => Invalid(ctx, TradeDirection.None, reason, 0);
 
-        private static EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score) =>
-            new EntryEvaluation
+        private static EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
+        {
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.Crypto_Flag,
@@ -357,6 +353,24 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = false,
                 Reason = reason
             };
+            ApplyCryptoSourceTrace(ctx, eval, dir);
+            return eval;
+        }
+
+        private static void ApplyCryptoSourceTrace(EntryContext ctx, EntryEvaluation evaluation, TradeDirection candidateDirection)
+        {
+            if (evaluation == null)
+                return;
+
+            var sourceAllowedDirection = ctx?.CryptoHtfAllowedDirection ?? TradeDirection.None;
+            evaluation.HtfTraceSourceStage = "SOURCE";
+            evaluation.HtfTraceSourceModule = "CRYPTO_ENTRY";
+            evaluation.HtfTraceSourceState = ctx?.CryptoHtfReason ?? "N/A";
+            evaluation.HtfTraceSourceAllowedDirection = sourceAllowedDirection;
+            evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
+            evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
+            evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
+        }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
         {
