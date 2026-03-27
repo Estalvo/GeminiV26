@@ -303,6 +303,8 @@ namespace GeminiV26.Core.Entry
         public bool HasLateContinuationShort { get; set; }
         public bool IsOverextendedLong { get; set; }
         public bool IsOverextendedShort { get; set; }
+        public bool IsTimingLongActive { get; set; }
+        public bool IsTimingShortActive { get; set; }
 
         // STRUCTURE AGE
         public int BarsSinceStructureBreakLong { get; set; } = -1;
