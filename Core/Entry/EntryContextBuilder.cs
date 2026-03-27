@@ -84,6 +84,8 @@ namespace GeminiV26.Core.Entry
                 _bot.Print($"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
             }
 
+            AttachMemorySnapshot(ctx, canonicalSymbol);
+
             // -------------------------
             // BAR DATA
             // -------------------------
@@ -94,6 +96,7 @@ namespace GeminiV26.Core.Entry
                 _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
                 _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
                 _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
 
@@ -106,6 +109,7 @@ namespace GeminiV26.Core.Entry
             {
                 _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
                 _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
 
@@ -140,6 +144,7 @@ namespace GeminiV26.Core.Entry
                 _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
                 _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
                 _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
 
@@ -864,7 +869,35 @@ namespace GeminiV26.Core.Entry
 
             ctx.IsReady = true;
             _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+            LogEntryMemorySnapshot(ctx, symbol);
             return ctx;
+        }
+
+        private void AttachMemorySnapshot(EntryContext ctx, string canonicalSymbol)
+        {
+            if (ctx == null)
+                return;
+
+            var state = _memoryEngine.GetState(canonicalSymbol);
+            var assessment = _memoryEngine.GetAssessment(canonicalSymbol);
+
+            ctx.MemoryState = state;
+            ctx.MemoryResolved = state?.IsResolved == true;
+            ctx.MemoryUsable = state?.IsUsable == true;
+            ctx.MemoryAssessment = assessment;
+
+            ctx.MemoryContinuationWindow = state?.ContinuationWindowState ?? ContinuationWindowState.Unknown;
+            ctx.MemoryMoveExtension = state?.MoveExtensionState ?? MoveExtensionState.Unknown;
+            ctx.MemoryImpulseFreshnessScore = state?.ImpulseFreshnessScore ?? 0;
+            ctx.MemoryContinuationFreshnessScore = state?.ContinuationFreshnessScore ?? 0;
+            ctx.MemoryTriggerLateScore = state?.TriggerLateScore ?? 0;
+            ctx.MemoryTimingPenalty = assessment?.RecommendedTimingPenalty ?? 0;
+        }
+
+        private void LogEntryMemorySnapshot(EntryContext ctx, string symbol)
+        {
+            _bot.Print(
+                $"[ENTRY][SNAPSHOT] symbol={symbol} movePhase={ctx?.MemoryState?.MovePhase ?? MovePhase.Unknown} continuationWindow={ctx?.MemoryContinuationWindow ?? ContinuationWindowState.Unknown} extensionState={ctx?.MemoryMoveExtension ?? MoveExtensionState.Unknown} impulseFreshness={ctx?.MemoryImpulseFreshnessScore ?? 0:0.00} continuationFreshness={ctx?.MemoryContinuationFreshnessScore ?? 0:0.00} triggerLateScore={ctx?.MemoryTriggerLateScore ?? 0:0.00} chaseRisk={ctx?.MemoryAssessment?.IsChaseRisk ?? false} timingPenalty={ctx?.MemoryTimingPenalty ?? 0}");
         }
 
         private string CreateEntryAttemptId(string symbol)
