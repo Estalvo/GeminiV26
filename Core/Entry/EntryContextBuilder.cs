@@ -895,6 +895,8 @@ namespace GeminiV26.Core.Entry
 
             bool hasLongTiming = state?.ImpulseDirection > 0;
             bool hasShortTiming = state?.ImpulseDirection < 0;
+            ctx.IsTimingLongActive = hasLongTiming;
+            ctx.IsTimingShortActive = hasShortTiming;
 
             // Side-aware timing snapshot from directional memory impulse side.
             ctx.HasFreshPullbackLong = hasLongTiming && (assessment?.IsFirstPullbackWindow ?? false);
@@ -910,8 +912,8 @@ namespace GeminiV26.Core.Entry
             ctx.BarsSinceStructureBreakShort = hasShortTiming ? (state?.BarsSinceBreak ?? -1) : -1;
             ctx.BarsSinceImpulseLong = hasLongTiming ? (state?.BarsSinceImpulse ?? -1) : -1;
             ctx.BarsSinceImpulseShort = hasShortTiming ? (state?.BarsSinceImpulse ?? -1) : -1;
-            ctx.ContinuationAttemptCountLong = hasLongTiming ? (state?.ContinuationAttemptCount ?? 0) : 0;
-            ctx.ContinuationAttemptCountShort = hasShortTiming ? (state?.ContinuationAttemptCount ?? 0) : 0;
+            ctx.ContinuationAttemptCountLong = hasLongTiming ? (state?.ContinuationAttemptCount ?? 0) : -1;
+            ctx.ContinuationAttemptCountShort = hasShortTiming ? (state?.ContinuationAttemptCount ?? 0) : -1;
 
             ctx.DistanceFromFastStructureAtrLong = hasLongTiming ? (state?.DistanceFromFastStructureAtr ?? 0) : 0;
             ctx.DistanceFromFastStructureAtrShort = hasShortTiming ? (state?.DistanceFromFastStructureAtr ?? 0) : 0;
@@ -928,9 +930,9 @@ namespace GeminiV26.Core.Entry
                 $"[ENTRY][SNAPSHOT] symbol={symbol} movePhase={ctx?.MemoryState?.MovePhase ?? MovePhase.Unknown} continuationWindow={ctx?.MemoryContinuationWindow ?? ContinuationWindowState.Unknown} extensionState={ctx?.MemoryMoveExtension ?? MoveExtensionState.Unknown} impulseFreshness={ctx?.MemoryImpulseFreshnessScore ?? 0:0.00} continuationFreshness={ctx?.MemoryContinuationFreshnessScore ?? 0:0.00} triggerLateScore={ctx?.MemoryTriggerLateScore ?? 0:0.00} chaseRisk={ctx?.MemoryAssessment?.IsChaseRisk ?? false} timingPenalty={ctx?.MemoryTimingPenalty ?? 0}");
 
             _bot.Print(
-                $"[CTX][TIMING][SIDE] symbol={symbol} side=LONG early={ctx?.HasEarlyContinuationLong ?? false} late={ctx?.HasLateContinuationLong ?? false} overextended={ctx?.IsOverextendedLong ?? false} freshness={ctx?.ContinuationFreshnessLong ?? 0:0.00}");
+                $"[CTX][TIMING][SIDE] symbol={symbol} side=LONG timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationLong ?? false} late={ctx?.HasLateContinuationLong ?? false} overextended={ctx?.IsOverextendedLong ?? false} freshness={ctx?.ContinuationFreshnessLong ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseLong ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakLong ?? -1} attempts={ctx?.ContinuationAttemptCountLong ?? -1} triggerLate={ctx?.TriggerLateScoreLong ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrLong ?? 0:0.00}");
             _bot.Print(
-                $"[CTX][TIMING][SIDE] symbol={symbol} side=SHORT early={ctx?.HasEarlyContinuationShort ?? false} late={ctx?.HasLateContinuationShort ?? false} overextended={ctx?.IsOverextendedShort ?? false} freshness={ctx?.ContinuationFreshnessShort ?? 0:0.00}");
+                $"[CTX][TIMING][SIDE] symbol={symbol} side=SHORT timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationShort ?? false} late={ctx?.HasLateContinuationShort ?? false} overextended={ctx?.IsOverextendedShort ?? false} freshness={ctx?.ContinuationFreshnessShort ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseShort ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakShort ?? -1} attempts={ctx?.ContinuationAttemptCountShort ?? -1} triggerLate={ctx?.TriggerLateScoreShort ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrShort ?? 0:0.00}");
         }
 
         private string CreateEntryAttemptId(string symbol)
