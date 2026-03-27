@@ -125,6 +125,31 @@ namespace GeminiV26.Core
                     || entryContext.FxHtfAllowedDirection == TradeDirection.None
                     || candidate.Direction == TradeDirection.None
                     || candidate.Direction == entryContext.FxHtfAllowedDirection;
+                TradeDirection routedHtfAllowedDirection = TradeDirection.None;
+                string routedHtfState = "N/A";
+                if (entryContext != null)
+                {
+                    var instrumentClass = SymbolRouting.ResolveInstrumentClass(candidate.Symbol ?? _bot.SymbolName);
+                    switch (instrumentClass)
+                    {
+                        case InstrumentClass.FX:
+                            routedHtfAllowedDirection = entryContext.FxHtfAllowedDirection;
+                            routedHtfState = entryContext.FxHtfReason ?? "N/A";
+                            break;
+                        case InstrumentClass.CRYPTO:
+                            routedHtfAllowedDirection = entryContext.CryptoHtfAllowedDirection;
+                            routedHtfState = entryContext.CryptoHtfReason ?? "N/A";
+                            break;
+                        case InstrumentClass.METAL:
+                            routedHtfAllowedDirection = entryContext.MetalHtfAllowedDirection;
+                            routedHtfState = entryContext.MetalHtfReason ?? "N/A";
+                            break;
+                        case InstrumentClass.INDEX:
+                            routedHtfAllowedDirection = entryContext.IndexHtfAllowedDirection;
+                            routedHtfState = entryContext.IndexHtfReason ?? "N/A";
+                            break;
+                    }
+                }
                 bool continuationValid = !IsContinuationSetup(candidate.Type)
                     || (entryContext?.MarketState?.IsTrend == true && candidate.Direction == entryContext.TrendDirection);
                 bool pullbackValid = candidate.Direction == TradeDirection.Long
@@ -142,6 +167,15 @@ namespace GeminiV26.Core
                     $"continuation={continuationValid} " +
                     $"pullback={pullbackValid} " +
                     $"breakout={breakoutValid}");
+                if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF SOURCE] type={candidate.Type} " +
+                        $"htfAlign={htfAligned} " +
+                        $"biasState={routedHtfState} " +
+                        $"allowedDir={routedHtfAllowedDirection} " +
+                        $"candidateDir={candidate.Direction}");
+                }
 
                 if (!candidate.IsValid)
                 {
@@ -166,6 +200,18 @@ namespace GeminiV26.Core
                     entryContext));
 
                 candidate.RejectReason = ResolveRejectReason(candidate, EntryDecisionPolicy.MinScoreThreshold);
+                if (candidate.Type == EntryType.Index_Flag
+                    && candidate.TriggerConfirmed
+                    && candidate.Reason != null
+                    && candidate.Reason.Contains("HTF_MISMATCH"))
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF ROUTER] type={candidate.Type} " +
+                        $"reason=HTF_MISMATCH " +
+                        $"biasState={routedHtfState} " +
+                        $"allowedDir={routedHtfAllowedDirection} " +
+                        $"candidateDir={candidate.Direction}");
+                }
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
                     $"rawValid={candidate.RawValid.ToString().ToLowerInvariant()} finalValid={candidate.FinalValid.ToString().ToLowerInvariant()} " +
@@ -178,6 +224,16 @@ namespace GeminiV26.Core
 
                 if (candidate.RejectReason != "ACCEPTED")
                 {
+                    if (candidate.Type == EntryType.Index_Flag
+                        && candidate.TriggerConfirmed
+                        && candidate.Reason != null
+                        && candidate.Reason.Contains("HTF_MISMATCH"))
+                    {
+                        _bot.Print(
+                            $"[AUDIT][HTF CONFLICT] type={candidate.Type} " +
+                            $"htfAlign={htfAligned} " +
+                            $"reason={candidate.Reason}");
+                    }
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[ENTRY REJECT DETAIL] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
                         $"reason={candidate.RejectReason} structureAligned={IsStructureAligned(entryContext, candidate.Direction).ToString().ToLowerInvariant()} " +
