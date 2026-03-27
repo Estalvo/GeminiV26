@@ -182,8 +182,9 @@ namespace GeminiV26.EntryTypes
                     setupScore += 15;
 
                 bool hasStructure =
-                    ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5 || ctx.IsValidFlagStructure_M5;
+                    (dir == TradeDirection.Long ? ctx.HasPullbackLong_M5 : ctx.HasPullbackShort_M5) || ctx.IsValidFlagStructure_M5;
                 hasStructureForTiming = hasStructure;
+                ctx.Log?.Invoke("[ENTRY][DIR_FIX] using direction-pure structure selection");
 
                 if (hasStructure)
                     setupScore += 10;
