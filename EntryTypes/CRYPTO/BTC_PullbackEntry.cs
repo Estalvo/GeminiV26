@@ -885,7 +885,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (score < dynamicMinScore)
                 return Block(ctx, $"SCORE_TOO_LOW_{score}_MIN_{dynamicMinScore}", score, dir);
 
-            return new EntryEvaluation
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = EntryType.Crypto_Pullback,
@@ -894,13 +894,15 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = true,
                 Reason = $"BTC_PULLBACK_OK dir={dir} score={score}"
             };
+            ApplyCryptoSourceTrace(ctx, eval, dir);
+            return eval;
         }
 
         private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir = TradeDirection.None)
         {
             Console.WriteLine($"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}");
 
-            return new EntryEvaluation
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
                 Type = EntryType.Crypto_Pullback,
@@ -909,6 +911,23 @@ namespace GeminiV26.EntryTypes.Crypto
                 Score = score,
                 Reason = reason
             };
+            ApplyCryptoSourceTrace(ctx, eval, dir);
+            return eval;
+        }
+
+        private static void ApplyCryptoSourceTrace(EntryContext ctx, EntryEvaluation evaluation, TradeDirection candidateDirection)
+        {
+            if (evaluation == null)
+                return;
+
+            var sourceAllowedDirection = ctx?.CryptoHtfAllowedDirection ?? TradeDirection.None;
+            evaluation.HtfTraceSourceStage = "SOURCE";
+            evaluation.HtfTraceSourceModule = "CRYPTO_ENTRY";
+            evaluation.HtfTraceSourceState = ctx?.CryptoHtfReason ?? "N/A";
+            evaluation.HtfTraceSourceAllowedDirection = sourceAllowedDirection;
+            evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
+            evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
+            evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
         }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)

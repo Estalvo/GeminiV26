@@ -156,10 +156,6 @@ namespace GeminiV26.Core
                     ? false
                     : routedHtfAllowedDirection == TradeDirection.None || candidate.Direction == routedHtfAllowedDirection;
                 string assetClass = SymbolRouting.ResolveInstrumentClass(candidate.Symbol ?? _bot.SymbolName).ToString();
-                bool legacyHtfAlign = entryContext == null
-                    ? false
-                    : candidate.Direction != TradeDirection.None
-                        && (entryContext.HtfDirection == TradeDirection.None || candidate.Direction == entryContext.HtfDirection);
                 bool continuationValid = !IsContinuationSetup(candidate.Type)
                     || (entryContext?.MarketState?.IsTrend == true && candidate.Direction == entryContext.TrendDirection);
                 bool pullbackValid = candidate.Direction == TradeDirection.Long
@@ -181,20 +177,46 @@ namespace GeminiV26.Core
                     $"[AUDIT][HTF FLOW][ROUTER_CONSUME] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                     $"stage={nameof(TradeRouter)} module={nameof(TradeRouter)} htfState={routedHtfState} allowedDirection={routedHtfAllowedDirection} " +
                     $"align={routedHtfAlign} candidateDirection={candidate.Direction}");
+                bool hasSourceSnapshot =
+                    !string.IsNullOrWhiteSpace(candidate.HtfTraceSourceStage)
+                    || !string.IsNullOrWhiteSpace(candidate.HtfTraceSourceModule)
+                    || !string.IsNullOrWhiteSpace(candidate.HtfTraceSourceState);
+                bool divergence = hasSourceSnapshot
+                    && (!string.Equals(candidate.HtfTraceSourceState, routedHtfState, StringComparison.Ordinal)
+                        || candidate.HtfTraceSourceAllowedDirection != routedHtfAllowedDirection
+                        || candidate.HtfTraceSourceAlign != routedHtfAlign);
                 _bot.Print(
                     $"[AUDIT][HTF ROUTER] asset={assetClass} symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                     $"routerHtfState={routedHtfState} routerAllowedDirection={routedHtfAllowedDirection} routerAlign={routedHtfAlign} " +
                     $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} " +
-                    $"sourceAlign={candidate.HtfTraceSourceAlign} divergence={(!string.Equals(candidate.HtfTraceSourceState ?? "N/A", routedHtfState ?? "N/A", StringComparison.Ordinal) || candidate.HtfTraceSourceAllowedDirection != routedHtfAllowedDirection || candidate.HtfTraceSourceAlign != routedHtfAlign)}");
-                if (entryContext != null &&
-                    (entryContext.HtfDirection != routedHtfAllowedDirection
-                     || Math.Abs(entryContext.HtfConfidence - ResolveAssetHtfConfidence(entryContext, assetClass)) > 0.0001))
+                    $"sourceAlign={candidate.HtfTraceSourceAlign} divergence={divergence}");
+                if (assetClass == nameof(InstrumentClass.CRYPTO))
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF ROUTER][CRYPTO] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
+                        $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} sourceAlign={candidate.HtfTraceSourceAlign} " +
+                        $"routedHtfState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign} divergence={divergence}");
+                }
+                if (!hasSourceSnapshot)
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
+                        $"candidateDirection={candidate.Direction} routedState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
+                }
+                else if (divergence)
                 {
                     _bot.Print(
                         $"[AUDIT][HTF CONFLICT][GLOBAL] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
-                        $"stageA=EntryContext.Legacy stageB=EntryContext.AssetSpecific stateA=LEGACY_AGG stateB={routedHtfState} " +
-                        $"allowedDirA={entryContext.HtfDirection} allowedDirB={routedHtfAllowedDirection} " +
-                        $"htfAlignA={legacyHtfAlign} htfAlignB={routedHtfAlign} interpretationMismatch=true");
+                        $"stageA={candidate.HtfTraceSourceStage ?? "SOURCE"} stageB={nameof(TradeRouter)} stateA={candidate.HtfTraceSourceState ?? "N/A"} stateB={routedHtfState} " +
+                        $"allowedDirA={candidate.HtfTraceSourceAllowedDirection} allowedDirB={routedHtfAllowedDirection} " +
+                        $"htfAlignA={candidate.HtfTraceSourceAlign} htfAlignB={routedHtfAlign}");
+                    if (assetClass == nameof(InstrumentClass.CRYPTO))
+                    {
+                        _bot.Print(
+                            $"[AUDIT][HTF CONFLICT][CRYPTO] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
+                            $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} sourceAlign={candidate.HtfTraceSourceAlign} " +
+                            $"routedHtfState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
+                    }
                 }
                 if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
                 {
@@ -318,26 +340,6 @@ namespace GeminiV26.Core
             _bot.Print(TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
             _bot.Print(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
-        }
-
-        private static double ResolveAssetHtfConfidence(EntryContext ctx, string assetClass)
-        {
-            if (ctx == null)
-                return 0.0;
-
-            switch (assetClass)
-            {
-                case nameof(InstrumentClass.FX):
-                    return ctx.FxHtfConfidence01;
-                case nameof(InstrumentClass.CRYPTO):
-                    return ctx.CryptoHtfConfidence01;
-                case nameof(InstrumentClass.METAL):
-                    return ctx.MetalHtfConfidence01;
-                case nameof(InstrumentClass.INDEX):
-                    return ctx.IndexHtfConfidence01;
-                default:
-                    return 0.0;
-            }
         }
 
         private static bool IsExecutable(EntryEvaluation c)
