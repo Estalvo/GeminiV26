@@ -64,6 +64,10 @@ namespace GeminiV26.Core
                 string decision;
                 candidate.FinalValid = candidate.IsValid;
                 _bot.Print($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.FinalValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
+                if (candidate.TriggerConfirmed)
+                {
+                    _bot.Print($"[AUDIT][TRIGGERED] type={candidate.Type} score={candidate.Score} dir={candidate.Direction}");
+                }
 
                 if (!candidate.FinalValid)
                 {
@@ -92,6 +96,12 @@ namespace GeminiV26.Core
                             entryContext));
                     }
 
+                    _bot.Print(
+                        $"[AUDIT][EXEC CHECK] type={candidate.Type} " +
+                        $"trigger={candidate.TriggerConfirmed} " +
+                        $"valid={candidate.IsValid} " +
+                        $"state={candidate.State}");
+
                     if (!IsExecutable(candidate))
                     {
                         _bot.Print(TradeLogIdentity.WithTempId(
@@ -106,6 +116,48 @@ namespace GeminiV26.Core
                             && GetTypePriority(_bot.SymbolName, candidate.Type) < GetTypePriority(_bot.SymbolName, winner.Type)))
                     {
                         winner = candidate;
+                    }
+                }
+
+                bool structureAligned = IsStructureAligned(entryContext, candidate.Direction);
+                bool hasImpulse = entryContext?.HasImpulse_M5 == true;
+                bool htfAligned = entryContext == null
+                    || entryContext.FxHtfAllowedDirection == TradeDirection.None
+                    || candidate.Direction == TradeDirection.None
+                    || candidate.Direction == entryContext.FxHtfAllowedDirection;
+                bool continuationValid = !IsContinuationSetup(candidate.Type)
+                    || (entryContext?.MarketState?.IsTrend == true && candidate.Direction == entryContext.TrendDirection);
+                bool pullbackValid = candidate.Direction == TradeDirection.Long
+                    ? entryContext?.HasPullbackLong_M5 == true
+                    : candidate.Direction == TradeDirection.Short && entryContext?.HasPullbackShort_M5 == true;
+                bool breakoutValid =
+                    entryContext?.BreakoutDirection == candidate.Direction ||
+                    entryContext?.RangeBreakDirection == candidate.Direction;
+
+                _bot.Print(
+                    $"[AUDIT][VALIDITY] type={candidate.Type} " +
+                    $"structure={structureAligned} " +
+                    $"impulse={hasImpulse} " +
+                    $"htfAlign={htfAligned} " +
+                    $"continuation={continuationValid} " +
+                    $"pullback={pullbackValid} " +
+                    $"breakout={breakoutValid}");
+
+                if (!candidate.IsValid)
+                {
+                    _bot.Print(
+                        $"[AUDIT][DEATH] type={candidate.Type} " +
+                        $"score={candidate.Score} " +
+                        $"reason={candidate.Reason} " +
+                        $"trigger={candidate.TriggerConfirmed} " +
+                        $"state={candidate.State}");
+
+                    int nearMissThreshold = Math.Max(60, EntryDecisionPolicy.MinScoreThreshold - 5);
+                    if (candidate.TriggerConfirmed && candidate.Score >= nearMissThreshold)
+                    {
+                        _bot.Print(
+                            $"[AUDIT][NEAR MISS] type={candidate.Type} " +
+                            $"score={candidate.Score} reason={candidate.Reason}");
                     }
                 }
 
