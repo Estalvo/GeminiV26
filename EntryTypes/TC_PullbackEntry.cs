@@ -78,6 +78,16 @@ namespace GeminiV26.EntryTypes
 
             int score = 0;
             int setupScore = 0;
+            int minScore = MIN_SCORE;
+            bool hasStructureForTiming = false;
+            bool strongTriggerForTiming = false;
+
+            var timing = ContinuationTimingGate.Evaluate(ctx, forcedDirection, Type.ToString());
+            if (!timing.IsAllowed)
+            {
+                eval.Reason += $"{timing.Reason};";
+                return FinalizeEval();
+            }
 
             var instrumentClass = SymbolRouting.ResolveInstrumentClass(ctx.Symbol);
             string symbolCanonical = SymbolRouting.NormalizeSymbol(ctx.Symbol);
@@ -161,6 +171,7 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             if (!noM1Trigger) score += 10;
             else eval.Reason += "NoM1Trigger;";
+            strongTriggerForTiming = !noM1Trigger;
 
             // =========================================================
             // 🛑 XAU – PROFIT-ORIENTED HARD CONTROL
@@ -362,6 +373,7 @@ namespace GeminiV26.EntryTypes
                     (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
                     || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
                     || ctx.HasEarlyPullback_M5;
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 40;
@@ -370,6 +382,7 @@ namespace GeminiV26.EntryTypes
 
                 bool hasConfirmation =
                     (!noM1Trigger) || ctx.LastClosedBarInTrendDirection;
+                strongTriggerForTiming = hasConfirmation;
 
                 if (hasConfirmation)
                     setupScore += 20;
@@ -384,12 +397,14 @@ namespace GeminiV26.EntryTypes
 
                 bool hasStructure =
                     ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5;
+                hasStructureForTiming = hasStructure;
 
                 if (hasStructure)
                     setupScore += 10;
 
                 bool continuationSignal = !noM1Trigger;
                 bool breakoutConfirmed = continuationSignal;
+                strongTriggerForTiming = continuationSignal || breakoutConfirmed;
 
                 if (continuationSignal || breakoutConfirmed)
                     setupScore += 20;
@@ -402,6 +417,7 @@ namespace GeminiV26.EntryTypes
                 bool hasStructure =
                     (eval.Direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5)
                     || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 30;
@@ -409,6 +425,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 15;
 
                 bool continuationSignal = !noM1Trigger;
+                strongTriggerForTiming = continuationSignal;
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -422,6 +439,7 @@ namespace GeminiV26.EntryTypes
 
                 bool hasStructure =
                     pullbackDepthR >= 0.15;
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 35;
@@ -429,6 +447,7 @@ namespace GeminiV26.EntryTypes
                     setupScore += 15;
 
                 bool continuationSignal = !noM1Trigger;
+                strongTriggerForTiming = continuationSignal;
 
                 if (continuationSignal)
                     setupScore += 20;
@@ -437,19 +456,33 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // FINAL RULES
             // =========================================================
+            if (timing.RequireStrongStructure && !hasStructureForTiming)
+            {
+                eval.Reason += "TIMING_LATE_NEEDS_STRONG_STRUCTURE;";
+                return FinalizeEval();
+            }
+
+            if (timing.RequireStrongTrigger && !strongTriggerForTiming)
+            {
+                eval.Reason += "TIMING_LATE_NEEDS_STRONG_TRIGGER;";
+                return FinalizeEval();
+            }
+
             bool breakoutDetected =
                 !noM1Trigger ||
                 (ctx.HasBreakout_M1 && ctx.BreakoutDirection == eval.Direction);
             bool strongCandle = ctx.LastClosedBarInTrendDirection;
             bool followThrough = breakoutDetected || ctx.HasReactionCandle_M5;
             score = TriggerScoreModel.Apply(ctx, $"TC_PULLBACK_{eval.Direction}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
             score += setupScore;
 
             if (setupScore <= 0)
-                score = Math.Min(score, MIN_SCORE - 10);
+                score = Math.Min(score, minScore - 10);
 
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = score >= minScore;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";

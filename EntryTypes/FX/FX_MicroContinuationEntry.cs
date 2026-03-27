@@ -59,6 +59,10 @@ namespace GeminiV26.EntryTypes.FX
             int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
 
+            var timing = ContinuationTimingGate.Evaluate(ctx, dir, Type.ToString());
+            if (!timing.IsAllowed)
+                return Invalid(ctx, dir, timing.Reason, 0);
+
             double pullbackDepthR =
                 dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
 
@@ -103,6 +107,12 @@ namespace GeminiV26.EntryTypes.FX
             if (hasContinuation)
                 setupScore += 20;
 
+            if (timing.RequireStrongStructure && pullbackDepthR < 0.35)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_STRUCTURE", 0);
+
+            if (timing.RequireStrongTrigger && !m1Aligned)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_TRIGGER", 0);
+
             int score = 50;
 
             if (!ctx.PullbackTouchedEma21_M5)
@@ -139,6 +149,8 @@ namespace GeminiV26.EntryTypes.FX
 
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
             score += setupScore;
 
             if (setupScore <= 0)
