@@ -57,6 +57,11 @@ namespace GeminiV26.EntryTypes.FX
             int score = 54;
             int setupScore = 0;
             double triggerScore = 0;
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
+
+            var timing = ContinuationTimingGate.Evaluate(ctx, dir, EntryType.FX_MicroStructure.ToString());
+            if (!timing.IsAllowed)
+                return Invalid(ctx, dir, timing.Reason, score);
 
             ctx.Log?.Invoke(
                 $"[FX_MICRO START] sym={ctx.Symbol} dir={dir} " +
@@ -166,6 +171,12 @@ namespace GeminiV26.EntryTypes.FX
             if (hasContinuation)
                 setupScore += 20;
 
+            if (timing.RequireStrongStructure && !(hasStructure && rAtr <= 1.2))
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_STRUCTURE", score);
+
+            if (timing.RequireStrongTrigger && !breakout)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_TRIGGER", score);
+
             score += 6;
 
             // -----------------------------------------------------
@@ -227,9 +238,9 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // FINAL SCORE GATE
             // -----------------------------------------------------
-            int minScore = EntryDecisionPolicy.MinScoreThreshold;
-
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
             score += setupScore;
             score += (int)Math.Round(triggerScore * 5);
 

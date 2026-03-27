@@ -80,8 +80,18 @@ namespace GeminiV26.EntryTypes
                 Reason = ""
             };
 
+            int minScore = MIN_SCORE;
             int score = 0;
             int setupScore = 0;
+            bool hasStructureForTiming = false;
+            bool strongTriggerForTiming = false;
+
+            var timing = ContinuationTimingGate.Evaluate(ctx, dir, Type.ToString());
+            if (!timing.IsAllowed)
+            {
+                eval.Reason += $"{timing.Reason};";
+                return eval;
+            }
 
             // =========================================================
             // 1️⃣ RANGE KÖRNYEZET (HARD + SOFT MINŐSÉG)
@@ -129,6 +139,7 @@ namespace GeminiV26.EntryTypes
                     ctx.IsValidFlagStructure_M5
                     || (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5)
                     || ctx.HasEarlyPullback_M5;
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 40;
@@ -145,6 +156,7 @@ namespace GeminiV26.EntryTypes
 
                 bool hasStructure =
                     ctx.HasPullbackLong_M5 || ctx.HasPullbackShort_M5;
+                hasStructureForTiming = hasStructure;
 
                 if (hasStructure)
                     setupScore += 10;
@@ -157,6 +169,7 @@ namespace GeminiV26.EntryTypes
                 bool hasStructure =
                     ctx.IsValidFlagStructure_M5 ||
                     (ctx.PullbackBars_M5 >= 2 && ctx.IsPullbackDecelerating_M5);
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 30;
@@ -172,6 +185,7 @@ namespace GeminiV26.EntryTypes
 
                 bool hasStructure =
                     pullbackDepthR >= 0.15;
+                hasStructureForTiming = hasStructure;
 
                 if (!hasStructure)
                     setupScore -= 35;
@@ -224,6 +238,7 @@ namespace GeminiV26.EntryTypes
                 score -= 8;
                 eval.Reason += "NoM1Trigger;";
             }
+            strongTriggerForTiming = ctx.M1TriggerInTrendDirection || ctx.RangeBreakDirection == dir;
 
             // =========================================================
             // 5️⃣ KONFIRMÁLÓ PLUSZOK
@@ -285,14 +300,28 @@ namespace GeminiV26.EntryTypes
             // =========================================================
             // MIN SCORE – ENTRYTYPE SZINTEN
             // =========================================================
+            if (timing.RequireStrongStructure && !hasStructureForTiming)
+            {
+                eval.Reason += "TIMING_LATE_NEEDS_STRONG_STRUCTURE;";
+                return eval;
+            }
+
+            if (timing.RequireStrongTrigger && !strongTriggerForTiming)
+            {
+                eval.Reason += "TIMING_LATE_NEEDS_STRONG_TRIGGER;";
+                return eval;
+            }
+
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
             score += setupScore;
 
             if (setupScore <= 0)
-                score = Math.Min(score, MIN_SCORE - 10);
+                score = Math.Min(score, minScore - 10);
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
 
             eval.Score = score;
-            eval.IsValid = score >= MIN_SCORE;
+            eval.IsValid = score >= minScore;
 
             if (!eval.IsValid)
                 eval.Reason += $"ScoreBelowMin({score});";
