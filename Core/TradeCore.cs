@@ -2227,11 +2227,28 @@ namespace GeminiV26.Core
                 if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
                 {
                     _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
+
+                    // HARD FIX – enforce trigger truth
+                    candidate.TriggerConfirmed = trigger.TriggerConfirmed;
+
+                    _bot.Print($"[TRIGGER STATE FIX] candidate trigger restored to {candidate.TriggerConfirmed} | type={candidate.Type}");
                 }
 
                 if (!trigger.IsManaged)
                 {
-                    candidate.State = EntryState.TRIGGERED;
+                    if (candidate.TriggerConfirmed)
+                    {
+                        candidate.State = EntryState.TRIGGERED;
+                    }
+                    else
+                    {
+                        candidate.State = EntryState.ARMED;
+                    }
+
+                    if (!candidate.TriggerConfirmed && candidate.State == EntryState.TRIGGERED)
+                    {
+                        _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
+                    }
                     continue;
                 }
 
@@ -2242,17 +2259,34 @@ namespace GeminiV26.Core
                     if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
                     {
                         _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
+
+                        // HARD FIX – enforce trigger truth
+                        candidate.TriggerConfirmed = trigger.TriggerConfirmed;
+
+                        _bot.Print($"[TRIGGER STATE FIX] candidate trigger restored to {candidate.TriggerConfirmed} | type={candidate.Type}");
                     }
-                    candidate.State = EntryState.ARMED;
                     UpsertArmedSetup(candidate, barsSinceBreak);
                     _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
                     _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
                 }
                 else
                 {
-                    candidate.State = EntryState.TRIGGERED;
                     UpsertArmedSetup(candidate, barsSinceBreak);
                     _bot.Print($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
+                }
+
+                if (candidate.TriggerConfirmed)
+                {
+                    candidate.State = EntryState.TRIGGERED;
+                }
+                else
+                {
+                    candidate.State = EntryState.ARMED;
+                }
+
+                if (!candidate.TriggerConfirmed && candidate.State == EntryState.TRIGGERED)
+                {
+                    _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
                 }
             }
         }
