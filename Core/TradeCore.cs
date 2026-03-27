@@ -1168,6 +1168,7 @@ namespace GeminiV26.Core
             foreach (var e in symbolSignals)
             {
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
+                LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
             }
 
         // =====================================================
@@ -1216,9 +1217,13 @@ namespace GeminiV26.Core
             _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
+                foreach (var e in symbolSignals)
+                    LogHtfFlowStage(_ctx, e, "ENTRY_FILTER", nameof(ApplyHtfBiasScoreOnly));
 
                 UpdateExecutionStateMachine(_ctx, symbolSignals);
                 ApplyRestartProtection(_ctx, symbolSignals);
+                foreach (var e in symbolSignals)
+                    LogHtfFlowStage(_ctx, e, "ENTRY_FILTER", nameof(ApplyRestartProtection));
 
                 // =====================================================
                 // ROUTER
@@ -1226,6 +1231,8 @@ namespace GeminiV26.Core
                 var selected = _router.SelectEntry(symbolSignals, _ctx);
 
                 _bot.Print($"[TRACE] selected is null = {selected == null}");
+                if (selected != null)
+                    LogHtfFlowStage(_ctx, selected, "ROUTER_CONSUME", nameof(TradeRouter.SelectEntry));
 
                 if (selected == null)
                 {
@@ -1286,12 +1293,14 @@ namespace GeminiV26.Core
 
                 if (!PassFinalAcceptance(_ctx, selected))
                 {
+                    LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", nameof(PassFinalAcceptance));
                     _bot.Print("BLOCK: final acceptance gate");
                     return;
                 }
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
+                LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", "DirectionSet");
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
 
                 if (_ctx.FinalDirection == TradeDirection.None)
@@ -2780,6 +2789,66 @@ namespace GeminiV26.Core
             if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfAllowedDirection;
             if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfAllowedDirection;
             return TradeDirection.None;
+        }
+
+        private double ResolveHtfConfidence(EntryContext ctx)
+        {
+            if (ctx == null)
+                return 0.0;
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol));
+            if (instrumentClass == InstrumentClass.FX) return ctx.FxHtfConfidence01;
+            if (instrumentClass == InstrumentClass.CRYPTO) return ctx.CryptoHtfConfidence01;
+            if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfConfidence01;
+            if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfConfidence01;
+            return 0.0;
+        }
+
+        private string ResolveHtfState(EntryContext ctx)
+        {
+            if (ctx == null)
+                return "N/A";
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol));
+            if (instrumentClass == InstrumentClass.FX) return ctx.FxHtfReason ?? "N/A";
+            if (instrumentClass == InstrumentClass.CRYPTO) return ctx.CryptoHtfReason ?? "N/A";
+            if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfReason ?? "N/A";
+            if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfReason ?? "N/A";
+            return "N/A";
+        }
+
+        private void LogHtfFlowStage(EntryContext ctx, EntryEvaluation candidate, string stageName, string module)
+        {
+            if (ctx == null || candidate == null)
+                return;
+
+            var allowed = ResolveHtfAllowedDirection(ctx);
+            string state = ResolveHtfState(ctx);
+            string asset = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol)).ToString();
+            bool align = candidate.Direction != TradeDirection.None && (allowed == TradeDirection.None || allowed == candidate.Direction);
+
+            _bot.Print(
+                $"[AUDIT][HTF FLOW][{stageName}] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} stage={stageName} module={module} " +
+                $"htfState={state} allowedDirection={allowed} align={align} candidateDirection={candidate.Direction}");
+
+            if (ctx.HtfDirection != allowed || Math.Abs(ctx.HtfConfidence - ResolveHtfConfidence(ctx)) > 0.0001)
+            {
+                bool legacyAlign = candidate.Direction != TradeDirection.None && (ctx.HtfDirection == TradeDirection.None || ctx.HtfDirection == candidate.Direction);
+                _bot.Print(
+                    $"[AUDIT][HTF CONFLICT][GLOBAL] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} stageA={stageName}_ASSET stageB={stageName}_LEGACY " +
+                    $"stateA={state} stateB=LEGACY_AGG allowedDirA={allowed} allowedDirB={ctx.HtfDirection} htfAlignA={align} htfAlignB={legacyAlign} interpretationMismatch=true");
+            }
+
+            string reason = $"{candidate.Reason} {candidate.RejectReason}";
+            if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_MISMATCH"))
+            {
+                bool trueDirectionMismatch = allowed != TradeDirection.None
+                    && candidate.Direction != TradeDirection.None
+                    && candidate.Direction != allowed;
+                _bot.Print(
+                    $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
+                    $"htfAllowedDirection={allowed} htfState={state} align={align} rejectModule={module} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")}");
+            }
         }
 
         private static TradeDirection FromTradeType(TradeType tradeType)
