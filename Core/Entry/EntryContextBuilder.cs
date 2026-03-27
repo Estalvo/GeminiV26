@@ -892,12 +892,42 @@ namespace GeminiV26.Core.Entry
             ctx.MemoryContinuationFreshnessScore = state?.ContinuationFreshnessScore ?? 0;
             ctx.MemoryTriggerLateScore = state?.TriggerLateScore ?? 0;
             ctx.MemoryTimingPenalty = assessment?.RecommendedTimingPenalty ?? 0;
+
+            // Side-aware timing snapshot (symmetric mapping until memory is side-specific).
+            ctx.HasFreshPullbackLong = assessment?.IsFirstPullbackWindow ?? false;
+            ctx.HasFreshPullbackShort = assessment?.IsFirstPullbackWindow ?? false;
+            ctx.HasEarlyContinuationLong = assessment?.IsEarlyContinuationWindow ?? false;
+            ctx.HasEarlyContinuationShort = assessment?.IsEarlyContinuationWindow ?? false;
+            ctx.HasLateContinuationLong = assessment?.IsLateContinuation ?? false;
+            ctx.HasLateContinuationShort = assessment?.IsLateContinuation ?? false;
+            ctx.IsOverextendedLong = assessment?.IsOverextendedMove ?? false;
+            ctx.IsOverextendedShort = assessment?.IsOverextendedMove ?? false;
+
+            ctx.BarsSinceStructureBreakLong = state?.BarsSinceBreak ?? -1;
+            ctx.BarsSinceStructureBreakShort = state?.BarsSinceBreak ?? -1;
+            ctx.BarsSinceImpulseLong = state?.BarsSinceImpulse ?? -1;
+            ctx.BarsSinceImpulseShort = state?.BarsSinceImpulse ?? -1;
+            ctx.ContinuationAttemptCountLong = state?.ContinuationAttemptCount ?? 0;
+            ctx.ContinuationAttemptCountShort = state?.ContinuationAttemptCount ?? 0;
+
+            ctx.DistanceFromFastStructureAtrLong = state?.DistanceFromFastStructureAtr ?? 0;
+            ctx.DistanceFromFastStructureAtrShort = state?.DistanceFromFastStructureAtr ?? 0;
+
+            ctx.ContinuationFreshnessLong = state?.ContinuationFreshnessScore ?? 0;
+            ctx.ContinuationFreshnessShort = state?.ContinuationFreshnessScore ?? 0;
+            ctx.TriggerLateScoreLong = state?.TriggerLateScore ?? 0;
+            ctx.TriggerLateScoreShort = state?.TriggerLateScore ?? 0;
         }
 
         private void LogEntryMemorySnapshot(EntryContext ctx, string symbol)
         {
             _bot.Print(
                 $"[ENTRY][SNAPSHOT] symbol={symbol} movePhase={ctx?.MemoryState?.MovePhase ?? MovePhase.Unknown} continuationWindow={ctx?.MemoryContinuationWindow ?? ContinuationWindowState.Unknown} extensionState={ctx?.MemoryMoveExtension ?? MoveExtensionState.Unknown} impulseFreshness={ctx?.MemoryImpulseFreshnessScore ?? 0:0.00} continuationFreshness={ctx?.MemoryContinuationFreshnessScore ?? 0:0.00} triggerLateScore={ctx?.MemoryTriggerLateScore ?? 0:0.00} chaseRisk={ctx?.MemoryAssessment?.IsChaseRisk ?? false} timingPenalty={ctx?.MemoryTimingPenalty ?? 0}");
+
+            _bot.Print(
+                $"[CTX][TIMING][SIDE] symbol={symbol} side=LONG early={ctx?.HasEarlyContinuationLong ?? false} late={ctx?.HasLateContinuationLong ?? false} overextended={ctx?.IsOverextendedLong ?? false} freshness={ctx?.ContinuationFreshnessLong ?? 0:0.00}");
+            _bot.Print(
+                $"[CTX][TIMING][SIDE] symbol={symbol} side=SHORT early={ctx?.HasEarlyContinuationShort ?? false} late={ctx?.HasLateContinuationShort ?? false} overextended={ctx?.IsOverextendedShort ?? false} freshness={ctx?.ContinuationFreshnessShort ?? 0:0.00}");
         }
 
         private string CreateEntryAttemptId(string symbol)
