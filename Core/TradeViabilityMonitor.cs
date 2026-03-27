@@ -198,7 +198,7 @@ namespace GeminiV26.Core
             }
 
             bool noFollowThrough =
-                barsSinceEntry >= 3 &&
+                barsSinceEntry >= 4 &&
                 ctx.MfeR < 0.15 &&
                 ctx.MaeR > 0.25;
 
@@ -212,7 +212,7 @@ namespace GeminiV26.Core
             bool noProgress = barsSinceEntry >= 3 && ctx.MfeR < 0.10;
             bool adverseExpansion = ctx.MaeR > 0.35;
             bool momentumWeak = ctx.Adx_M5 < 20.0 || atrShrinking;
-            bool fastAdverse = ctx.MaeR > 0.25 && barsSinceEntry <= 2;
+            bool fastAdverse = ctx.MaeR > 0.35 && barsSinceEntry <= 2;
 
             LogTvmOncePerBar(
                 ctx,
