@@ -125,6 +125,8 @@ namespace GeminiV26.Core
                     || entryContext.FxHtfAllowedDirection == TradeDirection.None
                     || candidate.Direction == TradeDirection.None
                     || candidate.Direction == entryContext.FxHtfAllowedDirection;
+                TradeDirection consumerAllowedDirection = entryContext?.FxHtfAllowedDirection ?? TradeDirection.None;
+                string consumerHtfState = entryContext?.FxHtfReason ?? "N/A";
                 TradeDirection routedHtfAllowedDirection = TradeDirection.None;
                 string routedHtfState = "N/A";
                 if (entryContext != null)
@@ -150,6 +152,9 @@ namespace GeminiV26.Core
                             break;
                     }
                 }
+                bool routedHtfAlign = candidate.Direction == TradeDirection.None
+                    ? false
+                    : routedHtfAllowedDirection == TradeDirection.None || candidate.Direction == routedHtfAllowedDirection;
                 bool continuationValid = !IsContinuationSetup(candidate.Type)
                     || (entryContext?.MarketState?.IsTrend == true && candidate.Direction == entryContext.TrendDirection);
                 bool pullbackValid = candidate.Direction == TradeDirection.Long
@@ -167,6 +172,26 @@ namespace GeminiV26.Core
                     $"continuation={continuationValid} " +
                     $"pullback={pullbackValid} " +
                     $"breakout={breakoutValid}");
+                if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF TRACE][CONSUMER] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
+                        $"candidateDirection={candidate.Direction} consumedHtfState={consumerHtfState} " +
+                        $"consumedAllowedDirection={consumerAllowedDirection} consumedHtfAlign={htfAligned} module={nameof(TradeRouter)}");
+
+                    if (!string.Equals(candidate.HtfTraceSourceState ?? "N/A", consumerHtfState ?? "N/A", StringComparison.Ordinal)
+                        || candidate.HtfTraceSourceAllowedDirection != consumerAllowedDirection
+                        || candidate.HtfTraceSourceAlign != htfAligned
+                        || !IsDirectionInterpretationMatch(candidate.Direction, candidate.HtfTraceSourceAllowedDirection, consumerAllowedDirection))
+                    {
+                        _bot.Print(
+                            $"[AUDIT][HTF CONFLICT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
+                            $"stageA={candidate.HtfTraceSourceStage ?? "UnknownSource"} stageB={nameof(TradeRouter)} " +
+                            $"stateA={candidate.HtfTraceSourceState ?? "N/A"} stateB={consumerHtfState} " +
+                            $"allowedDirA={candidate.HtfTraceSourceAllowedDirection} allowedDirB={consumerAllowedDirection} " +
+                            $"htfAlignA={candidate.HtfTraceSourceAlign} htfAlignB={htfAligned}");
+                    }
+                }
                 if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
                 {
                     _bot.Print(
@@ -205,6 +230,12 @@ namespace GeminiV26.Core
                     && candidate.Reason != null
                     && candidate.Reason.Contains("HTF_MISMATCH"))
                 {
+                    _bot.Print(
+                        $"[AUDIT][HTF TRACE][REJECT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
+                        $"candidateDirection={candidate.Direction} rejectReason={candidate.Reason} " +
+                        $"currentHtfState={routedHtfState} currentAllowedDirection={routedHtfAllowedDirection} " +
+                        $"currentHtfAlign={routedHtfAlign} module={nameof(TradeRouter)}");
+
                     _bot.Print(
                         $"[AUDIT][HTF ROUTER] type={candidate.Type} " +
                         $"reason=HTF_MISMATCH " +
@@ -259,6 +290,16 @@ namespace GeminiV26.Core
             return c != null
                 && c.IsValid
                 && c.TriggerConfirmed;
+        }
+
+        private static bool IsDirectionInterpretationMatch(
+            TradeDirection candidateDirection,
+            TradeDirection sourceAllowedDirection,
+            TradeDirection consumerAllowedDirection)
+        {
+            bool sourceBlocks = sourceAllowedDirection != TradeDirection.None && sourceAllowedDirection != candidateDirection;
+            bool consumerBlocks = consumerAllowedDirection != TradeDirection.None && consumerAllowedDirection != candidateDirection;
+            return sourceBlocks == consumerBlocks;
         }
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)

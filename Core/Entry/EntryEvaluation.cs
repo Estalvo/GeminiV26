@@ -49,5 +49,13 @@
         public bool IsHTFMisaligned;
         public bool IgnoreHTFForDecision;
         public double HtfConfidence01;
+
+        // AUDIT ONLY: HTF trace snapshot captured at source stage.
+        public string HtfTraceSourceStage;
+        public string HtfTraceSourceModule;
+        public string HtfTraceSourceState;
+        public TradeDirection HtfTraceSourceAllowedDirection;
+        public bool HtfTraceSourceAlign;
+        public TradeDirection HtfTraceSourceCandidateDirection;
     }
 }
