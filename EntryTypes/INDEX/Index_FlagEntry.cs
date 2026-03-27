@@ -145,6 +145,13 @@ namespace GeminiV26.EntryTypes.INDEX
             double triggerScore = 0;
             const int maxPenalty = 22;
             bool continuationAuthority = HasContinuationAuthority(ctx, dir);
+            bool sourceHtfAlign = IsAlignedWithAllowedDirection(ctx?.IndexHtfAllowedDirection ?? TradeDirection.None, dir);
+            string sourceHtfState = ctx?.IndexHtfReason ?? "N/A";
+
+            ctx.Log?.Invoke(
+                $"[AUDIT][HTF TRACE][SOURCE] symbol={ctx?.Symbol} entryType={Type} candidateDirection={dir} " +
+                $"rawHtfState={sourceHtfState} allowedDirection={ctx?.IndexHtfAllowedDirection ?? TradeDirection.None} " +
+                $"htfAlign={sourceHtfAlign} sourceModule=IndexHtfBiasEngine");
 
             if (hasHtfMismatch)
             {
@@ -607,7 +614,13 @@ namespace GeminiV26.EntryTypes.INDEX
                 Reason =
                     $"IDX_FLAG_PRO dir={dir} score={score} mult={scoreMultiplier:F2} " +
                     $"fatigue={fatigueCount}/{fatigueThreshold} flagATR={flagAtr:F2} slopeATR={flagSlopeAtr:F2} " +
-                    $"emaATR={distFromEmaAtr:F2} rangeState={(hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN")}"
+                    $"emaATR={distFromEmaAtr:F2} rangeState={(hasValidRange ? "OK" : "FLAG_RANGE_UNKNOWN")}",
+                HtfTraceSourceStage = "Index_FlagEntry.EvaluateDir",
+                HtfTraceSourceModule = "IndexHtfBiasEngine",
+                HtfTraceSourceState = sourceHtfState,
+                HtfTraceSourceAllowedDirection = ctx?.IndexHtfAllowedDirection ?? TradeDirection.None,
+                HtfTraceSourceAlign = sourceHtfAlign,
+                HtfTraceSourceCandidateDirection = dir
             };
         }
 
@@ -674,6 +687,18 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"ADX={ctx?.Adx_M5:F1} Impulse={hasImpulse} ATR={ctx?.AtrM5:F1}"
             );
 
+            bool sourceHtfAlign = IsAlignedWithAllowedDirection(ctx?.IndexHtfAllowedDirection ?? TradeDirection.None, dir);
+            string sourceHtfState = ctx?.IndexHtfReason ?? "N/A";
+
+            if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_MISMATCH"))
+            {
+                ctx?.Log?.Invoke(
+                    $"[AUDIT][HTF TRACE][REJECT] symbol={ctx?.Symbol} entryType={EntryType.Index_Flag} candidateDirection={dir} " +
+                    $"rejectReason={reason} currentHtfState={sourceHtfState} " +
+                    $"currentAllowedDirection={ctx?.IndexHtfAllowedDirection ?? TradeDirection.None} " +
+                    $"currentHtfAlign={sourceHtfAlign} module=Index_FlagEntry");
+            }
+
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
@@ -681,8 +706,22 @@ namespace GeminiV26.EntryTypes.INDEX
                 Direction = dir,
                 IsValid = false,
                 Score = Math.Max(0, score),
-                Reason = reason
+                Reason = reason,
+                HtfTraceSourceStage = "Index_FlagEntry.EvaluateDir",
+                HtfTraceSourceModule = "IndexHtfBiasEngine",
+                HtfTraceSourceState = sourceHtfState,
+                HtfTraceSourceAllowedDirection = ctx?.IndexHtfAllowedDirection ?? TradeDirection.None,
+                HtfTraceSourceAlign = sourceHtfAlign,
+                HtfTraceSourceCandidateDirection = dir
             };
+        }
+
+        private static bool IsAlignedWithAllowedDirection(TradeDirection allowedDirection, TradeDirection candidateDirection)
+        {
+            if (candidateDirection == TradeDirection.None)
+                return false;
+
+            return allowedDirection == TradeDirection.None || allowedDirection == candidateDirection;
         }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
