@@ -2236,6 +2236,16 @@ namespace GeminiV26.Core
                 }
                 _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
 
+                int currentBarIndex = ctx.M5?.Count - 1 ?? -1;
+                int triggerBarIndex = barsSinceBreak >= 0 ? currentBarIndex - barsSinceBreak : currentBarIndex;
+                int triggerAgeBars = currentBarIndex - triggerBarIndex;
+
+                if (candidate.TriggerConfirmed && triggerAgeBars > 3)
+                {
+                    _bot.Print("[TRIGGER BLOCK] Stale trigger");
+                    candidate.TriggerConfirmed = false;
+                }
+
                 if (!trigger.IsManaged)
                 {
                     if (candidate.TriggerConfirmed)
