@@ -51,6 +51,11 @@ namespace GeminiV26.EntryTypes.FX
         private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
         {
             int setupScore = 0;
+            int minScore = MinScore;
+
+            var timing = ContinuationTimingGate.Evaluate(ctx, dir, Type.ToString());
+            if (!timing.IsAllowed)
+                return Invalid(ctx, dir, timing.Reason, 0);
 
             bool hasImpulse =
                 dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
@@ -124,6 +129,12 @@ namespace GeminiV26.EntryTypes.FX
             if (hasContinuation)
                 setupScore += 20;
 
+            if (timing.RequireStrongStructure && !hasStructure)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_STRUCTURE", 0);
+
+            if (timing.RequireStrongTrigger && !continuationSignal)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_TRIGGER", 0);
+
             int score = 30;
 
             if (continuationSignal)
@@ -144,10 +155,12 @@ namespace GeminiV26.EntryTypes.FX
 
 
             score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
             score += setupScore;
 
             if (setupScore <= 0)
-                score = System.Math.Min(score, MinScore - 10);
+                score = System.Math.Min(score, minScore - 10);
 
             // =====================================================
             // SCORE → DIRECTION

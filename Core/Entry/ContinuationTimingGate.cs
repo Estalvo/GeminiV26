@@ -60,6 +60,9 @@ namespace GeminiV26.Core.Entry
             int barsSinceImpulse = isLong ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             double freshness = isLong ? ctx.ContinuationFreshnessLong : ctx.ContinuationFreshnessShort;
 
+            if (double.IsNaN(freshness) || double.IsInfinity(freshness))
+                freshness = 0.0;
+
             if (!isSideActive)
             {
                 Log(ctx, "LATE_REJECT", direction, entryType, isSideActive, hasFreshPullback, hasEarlyContinuation, hasLateContinuation, continuationAttempts, barsSinceImpulse, freshness, "TIMING_SIDE_INACTIVE");
@@ -84,9 +87,8 @@ namespace GeminiV26.Core.Entry
             if (hasLateContinuation)
             {
                 bool likelyMissed =
-                    continuationAttempts > 1 ||
-                    barsSinceImpulse > MissedLateBarsThreshold ||
-                    freshness < MissedLateFreshnessThreshold;
+                    (continuationAttempts > 1 && freshness < MissedLateFreshnessThreshold) ||
+                    (barsSinceImpulse > MissedLateBarsThreshold && freshness < 0.40);
 
                 if (likelyMissed)
                 {
