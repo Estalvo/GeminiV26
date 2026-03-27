@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using cAlgo.API;
 using cAlgo.API.Internals;
@@ -22,7 +22,7 @@ namespace GeminiV26.Instruments.US30
         private readonly Dictionary<long, PositionContext> _contexts = new();
         private readonly HashSet<long> _rehydratedResolverSkipLogged = new();
 
-        private const double BeOffsetR = 0.05;
+        private const double BeOffsetR = 0.12;
 
         public Us30ExitManager(Robot bot)
         {
