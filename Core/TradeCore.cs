@@ -2136,6 +2136,14 @@ namespace GeminiV26.Core
 
             candidate.Score = Math.Max(0, candidate.Score - appliedPenalty);
             candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
+            if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
+            {
+                _bot.Print(
+                    $"[AUDIT][EARLY BREAK] type={candidate.Type} " +
+                    $"penalty={appliedPenalty} " +
+                    $"scoreBefore={originalScore} " +
+                    $"scoreAfter={candidate.Score}");
+            }
 
             _bot.Print(TradeLogIdentity.WithTempId(
                 $"[ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
