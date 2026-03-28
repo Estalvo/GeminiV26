@@ -25,6 +25,7 @@
         public TradeDirection LogicBiasDirection;
         public int RawLogicConfidence;
         public bool PatternDetected;
+        public bool FallbackDirectionUsed;
         public string SetupType;
         public int BaseScore;
         public int AfterHtfScoreAdjustment;

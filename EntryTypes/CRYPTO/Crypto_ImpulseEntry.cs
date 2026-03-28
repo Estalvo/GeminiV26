@@ -85,7 +85,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = true,
                 Reason = $"CRYPTO_IMPULSE dir={dir} score={score}"
             };
-            ApplyCryptoSourceTrace(ctx, eval, dir);
+            ApplyCryptoSourceTrace(ctx, eval, eval.Direction);
             return eval;
         }
 
@@ -103,7 +103,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = false,
                 Reason = reason
             };
-            ApplyCryptoSourceTrace(ctx, eval, dir);
+            CryptoDirectionFallback.ApplyIfEligible(ctx, eval, reason);
+            ApplyCryptoSourceTrace(ctx, eval, eval.Direction);
             return eval;
         }
 

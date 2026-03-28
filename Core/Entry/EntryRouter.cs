@@ -50,8 +50,18 @@ namespace GeminiV26.Core.Entry
                     {
                         eval.RawDirection = eval.Direction;
                         eval.LogicBiasDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
-                        eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
-                        eval.PatternDetected = eval.Direction != TradeDirection.None;
+                        if (eval.RawLogicConfidence <= 0)
+                            eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
+
+                        if (!eval.PatternDetected)
+                            eval.PatternDetected = CryptoDirectionFallback.DetectPattern(ctx, eval.RawDirection != TradeDirection.None ? eval.RawDirection : eval.LogicBiasDirection);
+
+                        if (eval.RawDirection == TradeDirection.None && eval.LogicBiasDirection != TradeDirection.None)
+                        {
+                            CryptoDirectionFallback.ApplyIfEligible(ctx, eval, eval.Reason);
+                            eval.RawDirection = eval.Direction;
+                        }
+
                         eval.SetupType = eval.Type.ToString();
                         eval.BaseScore = eval.Score;
                         eval.AfterHtfScoreAdjustment = eval.Score;
@@ -69,6 +79,10 @@ namespace GeminiV26.Core.Entry
                             $"[ENTRY_TRACE][LOGIC] symbol={ctx?.Symbol} entryType={eval.Type} stage=LOGIC candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +
                             $"rawDirection={eval.RawDirection} logicBiasDirection={eval.LogicBiasDirection} logicConfidence={eval.RawLogicConfidence} " +
                             $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()} setupType={eval.SetupType}");
+
+                        ctx?.Print(
+                            $"[ENTRY_TRACE][DIRECTION_SOURCE] symbol={ctx?.Symbol} entryType={eval.Type} biasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} " +
+                            $"fallbackUsed={eval.FallbackDirectionUsed.ToString().ToLowerInvariant()} patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()}");
 
                         eval = EntryDecisionPolicy.Normalize(eval);
                         eval.FinalScoreSnapshot = eval.Score;
