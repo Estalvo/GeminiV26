@@ -54,13 +54,26 @@ namespace GeminiV26.Core.Entry
                         if (eval.RawLogicConfidence <= 0)
                             eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
 
-                        if (!eval.PatternDetected)
-                            eval.PatternDetected = CryptoDirectionFallback.DetectPattern(ctx, eval.RawDirection != TradeDirection.None ? eval.RawDirection : eval.LogicBiasDirection);
-
                         if (eval.RawDirection == TradeDirection.None && eval.LogicBiasDirection != TradeDirection.None)
                         {
                             CryptoDirectionFallback.ApplyIfEligible(ctx, eval, eval.Reason);
                             eval.RawDirection = eval.Direction;
+                        }
+
+                        if (!eval.PatternDetected)
+                            eval.PatternDetected = CryptoDirectionFallback.DetectPattern(ctx, eval.RawDirection != TradeDirection.None ? eval.RawDirection : eval.LogicBiasDirection);
+
+                        if (eval.LogicBiasDirection != TradeDirection.None && eval.RawDirection == TradeDirection.None)
+                        {
+                            ctx?.Print(
+                                $"[CRITICAL][DIRECTION_BROKEN] symbol={ctx?.Symbol} entryType={eval.Type} logicBiasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} reason={eval.Reason ?? "NA"}");
+
+                            // Defensive hard guarantee: direction can never remain None when logic bias exists.
+                            eval.Direction = eval.LogicBiasDirection;
+                            eval.RawDirection = eval.LogicBiasDirection;
+                            eval.FallbackDirectionUsed = true;
+                            if (eval.RawLogicConfidence <= 0)
+                                eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
                         }
 
                         eval.SetupType = eval.Type.ToString();
@@ -84,7 +97,8 @@ namespace GeminiV26.Core.Entry
 
                         ctx?.Print(
                             $"[ENTRY_TRACE][DIRECTION_SOURCE] symbol={ctx?.Symbol} entryType={eval.Type} biasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} " +
-                            $"fallbackUsed={eval.FallbackDirectionUsed.ToString().ToLowerInvariant()} patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()}");
+                            $"fallbackUsed={eval.FallbackDirectionUsed.ToString().ToLowerInvariant()} confidence={eval.RawLogicConfidence} stage=POST_LOGIC " +
+                            $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()}");
 
                         eval = EntryDecisionPolicy.Normalize(eval);
                         eval.FinalScoreSnapshot = eval.Score;

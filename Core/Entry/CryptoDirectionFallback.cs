@@ -5,6 +5,8 @@ namespace GeminiV26.Core.Entry
 {
     internal static class CryptoDirectionFallback
     {
+        private static readonly int MinimumFallbackConfidence = (int)Math.Ceiling(EntryDecisionPolicy.MinScoreThreshold * 0.6);
+
         public static bool ApplyIfEligible(EntryContext ctx, EntryEvaluation eval, string reason)
         {
             if (ctx == null || eval == null)
@@ -14,19 +16,14 @@ namespace GeminiV26.Core.Entry
             if (eval.Direction != TradeDirection.None || biasDirection == TradeDirection.None)
                 return false;
 
-            if (IsHardNoDirectionReason(reason))
-                return false;
-
             bool patternDetected = DetectPattern(ctx, biasDirection);
-            bool structurePresent = patternDetected || HasContinuationStructure(ctx, biasDirection);
-            if (!structurePresent)
-                return false;
 
             eval.Direction = biasDirection;
             eval.RawDirection = biasDirection;
             eval.FallbackDirectionUsed = true;
             eval.PatternDetected = patternDetected;
-            eval.RawLogicConfidence = Math.Max(15, Math.Min(35, ctx.LogicBiasConfidence > 0 ? ctx.LogicBiasConfidence : 20));
+            int sourceConfidence = ctx.LogicBiasConfidence > 0 ? ctx.LogicBiasConfidence : MinimumFallbackConfidence;
+            eval.RawLogicConfidence = Math.Max(MinimumFallbackConfidence, Math.Min(100, sourceConfidence));
             eval.LogicConfidence = eval.RawLogicConfidence;
 
             if (eval.Score <= 0)
@@ -62,28 +59,5 @@ namespace GeminiV26.Core.Entry
             return impulseDetected || breakoutDetected || pullbackValid;
         }
 
-        private static bool HasContinuationStructure(EntryContext ctx, TradeDirection direction)
-        {
-            bool hasFlag = direction == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5;
-            bool hasRange = ctx.IsRange_M5 && ctx.RangeBarCount_M5 >= 10;
-            return hasFlag || hasRange;
-        }
-
-        private static bool IsHardNoDirectionReason(string reason)
-        {
-            if (string.IsNullOrWhiteSpace(reason))
-                return false;
-
-            string normalized = reason.ToUpperInvariant();
-            return normalized.Contains("CTX_NOT_READY")
-                || normalized.Contains("NO_LOGIC_BIAS")
-                || normalized.Contains("HTF_MISMATCH")
-                || normalized.Contains("DISABLED")
-                || normalized.Contains("NO_RANGE")
-                || normalized.Contains("NO_FLAG_WINDOW")
-                || normalized.Contains("LATE_FLAG")
-                || normalized.Contains("ATR_ZERO")
-                || normalized.Contains("NO_RECENT_IMPULSE");
-        }
     }
 }
