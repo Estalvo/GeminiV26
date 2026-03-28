@@ -38,9 +38,10 @@ namespace GeminiV26.Core.Entry
 
                 foreach (var entryType in _entryTypes)
                 {
+                    TradeDirection htfAllowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
                     var startClassification = HtfClassificationModel.ComputeHtfClassification(
                         TradeDirection.None,
-                        ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None);
+                        htfAllowedDirection);
                     ctx?.Print(
                         $"[ENTRY_TRACE][START] symbol={ctx?.Symbol} entryType={entryType?.GetType().Name} stage=START candidateDirection={TradeDirection.None} score=NA classification={startClassification}");
 
@@ -71,9 +72,10 @@ namespace GeminiV26.Core.Entry
                         eval.DirectionAfterScore = eval.Direction;
                         eval.DirectionAfterGates = eval.Direction;
                         eval.EntryTraceClassification = "ENTRY_UNKNOWN";
-                        eval.HtfClassification = HtfClassificationModel.ComputeHtfClassification(
-                            eval.RawDirection,
-                            ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None);
+                        HtfClassificationModel.InitializeEntryHtfClassification(
+                            eval,
+                            eval.Direction,
+                            htfAllowedDirection);
 
                         ctx?.Print(
                             $"[ENTRY_TRACE][LOGIC] symbol={ctx?.Symbol} entryType={eval.Type} stage=LOGIC candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +

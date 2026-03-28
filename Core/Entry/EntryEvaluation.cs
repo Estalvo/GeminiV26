@@ -38,6 +38,8 @@
         public string LastDirectionDropModule;
         public string EntryTraceClassification;
         public string HtfClassification;
+        public TradeDirection HtfClassificationCandidateDirection;
+        public TradeDirection HtfClassificationAllowedDirection;
 
         // Score tracing (observability only).
         public int PreQualityScore;
