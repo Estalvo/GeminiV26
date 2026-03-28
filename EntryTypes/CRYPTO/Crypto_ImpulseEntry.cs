@@ -16,22 +16,23 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx == null || !ctx.IsReady)
                 return Invalid(ctx, "CTX_NOT_READY");
 
-            if (ctx.LogicBias == TradeDirection.None)
+            TradeDirection logicBiasDirection = ctx.LogicBiasDirection;
+            if (logicBiasDirection == TradeDirection.None)
                 return Invalid(ctx, "NO_LOGIC_BIAS", TradeDirection.None, 0);
 
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return Invalid(ctx, "HTF_MISMATCH", TradeDirection.None, 0);
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
+                return Invalid(ctx, "HTF_MISMATCH", logicBiasDirection, 0);
 
-            if (ctx.LogicBias == TradeDirection.Long)
+            if (logicBiasDirection == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Long);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
-            else if (ctx.LogicBias == TradeDirection.Short)
+            else if (logicBiasDirection == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Short);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);

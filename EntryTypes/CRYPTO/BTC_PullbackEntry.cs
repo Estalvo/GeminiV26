@@ -21,19 +21,20 @@ namespace GeminiV26.EntryTypes.Crypto
             var originalTrendDirection = ctx.TrendDirection;
             try
             {
-                if (ctx.LogicBias == TradeDirection.None)
+                TradeDirection logicBiasDirection = ctx.LogicBiasDirection;
+                if (logicBiasDirection == TradeDirection.None)
                     return Block(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
 
-                if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                    return Block(ctx, "HTF_MISMATCH", 0, TradeDirection.None);
+                if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
+                    return Block(ctx, "HTF_MISMATCH", 0, logicBiasDirection);
 
-                if (ctx.LogicBias == TradeDirection.Long)
+                if (logicBiasDirection == TradeDirection.Long)
                 {
                     var eval = EvaluateDirectional(ctx, TradeDirection.Long);
                     EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                     return EntryDecisionPolicy.Normalize(eval);
                 }
-                else if (ctx.LogicBias == TradeDirection.Short)
+                else if (logicBiasDirection == TradeDirection.Short)
                 {
                     var eval = EvaluateDirectional(ctx, TradeDirection.Short);
                     EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);

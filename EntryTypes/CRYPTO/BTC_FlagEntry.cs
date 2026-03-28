@@ -26,13 +26,14 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
                 return Invalid(ctx, "CTX_NOT_READY");
 
-            if (ctx.LogicBias == TradeDirection.None)
+            TradeDirection logicBiasDirection = ctx.LogicBiasDirection;
+            if (logicBiasDirection == TradeDirection.None)
                 return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
 
             if (ctx.AtrM5 <= 0)
                 return Invalid(ctx, "ATR_ZERO");
 
-            int directionalBarsSinceImpulse = ctx.LogicBias switch
+            int directionalBarsSinceImpulse = logicBiasDirection switch
             {
                 TradeDirection.Long => ctx.BarsSinceImpulseLong_M5,
                 TradeDirection.Short => ctx.BarsSinceImpulseShort_M5,
@@ -105,16 +106,16 @@ namespace GeminiV26.EntryTypes.Crypto
 
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return Invalid(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
+                return Invalid(ctx, logicBiasDirection, "HTF_MISMATCH", 0);
 
-            if (ctx.LogicBias == TradeDirection.Long)
+            if (logicBiasDirection == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Long, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
-            else if (ctx.LogicBias == TradeDirection.Short)
+            else if (logicBiasDirection == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Short, hi, lo, hasValidRange, rangeAtr, lastClosed, profile?.MaxFlagAtrMult ?? 0);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
