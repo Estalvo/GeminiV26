@@ -2842,13 +2842,35 @@ namespace GeminiV26.Core
             string reason = $"{candidate.Reason} {candidate.RejectReason}";
             if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_MISMATCH"))
             {
-                bool trueDirectionMismatch = allowed != TradeDirection.None
-                    && candidate.Direction != TradeDirection.None
-                    && candidate.Direction != allowed;
+                bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, allowed);
+                bool noDirectionCase = candidate.Direction == TradeDirection.None;
+                string htfClassification = ResolveHtfRejectClassification(align, trueDirectionMismatch, noDirectionCase);
                 _bot.Print(
                     $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
-                    $"htfAllowedDirection={allowed} htfState={state} align={align} rejectModule={module} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")}");
+                    $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")} " +
+                    $"classification={htfClassification} rejectModule={module}");
             }
+        }
+
+        private static bool IsTrueDirectionMismatch(TradeDirection candidateDirection, TradeDirection allowedDirection)
+        {
+            return candidateDirection != TradeDirection.None
+                && allowedDirection != TradeDirection.None
+                && candidateDirection != allowedDirection;
+        }
+
+        private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
+        {
+            if (trueDirectionMismatch)
+                return "HTF_MISMATCH";
+
+            if (noDirectionCase)
+                return "HTF_NO_DIRECTION";
+
+            if (!align)
+                return "HTF_NOT_ALIGNED";
+
+            return "HTF_NOT_ALIGNED";
         }
 
         private static TradeDirection FromTradeType(TradeType tradeType)
