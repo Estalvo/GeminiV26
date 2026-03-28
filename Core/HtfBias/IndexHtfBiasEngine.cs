@@ -83,7 +83,7 @@ namespace GeminiV26.Core.HtfBias
                 return c;
 
             c = new IndexBiasContext();
-            SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "INDEX_HTF INIT NEUTRAL", 0.30);
+            SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "INDEX_HTF NOT_READY INIT", 0.20);
             _ctx[symbolName] = c;
 
             if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H1) ||
@@ -109,11 +109,14 @@ namespace GeminiV26.Core.HtfBias
         private void UpdateIfNeeded(string symbolName, IndexBiasContext c)
         {
             if (c.H1 == null || c.M15 == null || c.Ema21 == null || c.Ema50 == null || c.Ema200 == null || c.AtrH1 == null || c.Dms == null)
+            {
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "INDEX_HTF NOT_READY NULL_INDICATOR", 0.20);
                 return;
+            }
 
             if (c.M15.Count < 10 || c.H1.Count < EmaAnchor + 12)
             {
-                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "INDEX_HTF NEUTRAL (insufficient data)", 0.25);
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "INDEX_HTF NOT_READY INSUFFICIENT_DATA", 0.20);
                 return;
             }
 
@@ -134,7 +137,7 @@ namespace GeminiV26.Core.HtfBias
             int i = c.H1.Count - 2;
             if (i < EmaAnchor + 8)
             {
-                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "INDEX_HTF NEUTRAL (warmup)", 0.25);
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "INDEX_HTF NOT_READY WARMUP", 0.20);
                 return;
             }
 
@@ -410,9 +413,9 @@ namespace GeminiV26.Core.HtfBias
             _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
             return new HtfBiasSnapshot
             {
-                State = HtfBiasState.Neutral,
+                State = HtfBiasState.NotReady,
                 AllowedDirection = TradeDirection.None,
-                Confidence01 = 0.0,
+                Confidence01 = 0.20,
                 Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
             };
         }

@@ -3,6 +3,7 @@ using cAlgo.API.Internals;
 using Gemini.Memory;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
+using GeminiV26.Core;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Logging;
 using System;
@@ -374,6 +375,26 @@ namespace GeminiV26.Core.Entry
 
                 return maxConfidence;
             }
+        }
+
+        public TradeDirection ResolveAssetHtfAllowedDirection()
+        {
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(Symbol));
+            if (instrumentClass == InstrumentClass.FX) return FxHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.CRYPTO) return CryptoHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.METAL) return MetalHtfAllowedDirection;
+            if (instrumentClass == InstrumentClass.INDEX) return IndexHtfAllowedDirection;
+            return TradeDirection.None;
+        }
+
+        public double ResolveAssetHtfConfidence01()
+        {
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(Symbol));
+            if (instrumentClass == InstrumentClass.FX) return FxHtfConfidence01;
+            if (instrumentClass == InstrumentClass.CRYPTO) return CryptoHtfConfidence01;
+            if (instrumentClass == InstrumentClass.METAL) return MetalHtfConfidence01;
+            if (instrumentClass == InstrumentClass.INDEX) return IndexHtfConfidence01;
+            return 0.0;
         }
 
         public string SymbolName => Symbol;

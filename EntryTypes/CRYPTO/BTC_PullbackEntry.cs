@@ -24,7 +24,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (ctx.LogicBias == TradeDirection.None)
                     return Block(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
 
-                if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                     return Block(ctx, "HTF_MISMATCH", 0, TradeDirection.None);
 
                 if (ctx.LogicBias == TradeDirection.Long)

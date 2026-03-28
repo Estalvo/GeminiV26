@@ -73,7 +73,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 $"minAdx={minAdxTrend:F1} chopAdx={chopAdxThreshold:F1} fatigueTh={fatigueThreshold} scoreMult={scoreMultiplier:F2}"
             );
 
-            bool hasHtfMismatch = ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias;
+            bool hasHtfMismatch = ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
 
             if (ctx.LogicBias == TradeDirection.Long)
             {

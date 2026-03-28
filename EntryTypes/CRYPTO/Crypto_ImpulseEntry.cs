@@ -22,7 +22,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                 return Invalid(ctx, "HTF_MISMATCH", TradeDirection.None, 0);
 
             if (ctx.LogicBias == TradeDirection.Long)

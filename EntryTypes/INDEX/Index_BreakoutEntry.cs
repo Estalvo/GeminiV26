@@ -68,27 +68,27 @@ namespace GeminiV26.EntryTypes.INDEX
             // HTF SOFT HANDLING
             // =============================
             bool htfStrongMismatch =
-                ctx.HtfConfidence >= 0.6 &&
-                ctx.HtfDirection != TradeDirection.None &&
-                ctx.HtfDirection != dir;
+                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                ctx.ResolveAssetHtfAllowedDirection() != dir;
 
             bool htfWeakMismatch =
-                ctx.HtfConfidence >= 0.35 &&
-                ctx.HtfConfidence < 0.6 &&
-                ctx.HtfDirection != TradeDirection.None &&
-                ctx.HtfDirection != dir;
+                ctx.ResolveAssetHtfConfidence01() >= 0.35 &&
+                ctx.ResolveAssetHtfConfidence01() < 0.6 &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                ctx.ResolveAssetHtfAllowedDirection() != dir;
 
             bool htfAligned =
-                ctx.HtfDirection == dir &&
-                ctx.HtfDirection != TradeDirection.None;
+                ctx.ResolveAssetHtfAllowedDirection() == dir &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None;
 
             if (htfStrongMismatch)
                 score -= 18;
             else if (htfWeakMismatch)
                 score -= 8;
-            else if (htfAligned && ctx.HtfConfidence >= 0.6)
+            else if (htfAligned && ctx.ResolveAssetHtfConfidence01() >= 0.6)
                 score += 6;
-            else if (htfAligned && ctx.HtfConfidence >= 0.35)
+            else if (htfAligned && ctx.ResolveAssetHtfConfidence01() >= 0.35)
                 score += 3;
 
             // =============================
