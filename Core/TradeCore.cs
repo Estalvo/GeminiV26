@@ -1760,17 +1760,12 @@ namespace GeminiV26.Core
             }
         }
 
-        private bool EvaluateEntryGate(
-            EntryContext ctx,
-            EntryEvaluation candidate,
-            string gateName,
-            TradeDirection beforeDirection,
-            Func<bool> evaluator,
-            string blockedReason)
+        private bool EvaluateEntryGate(EntryContext ctx, EntryEvaluation candidate, string gateName, Func<bool> evaluator, string blockedReason)
         {
             if (candidate == null)
                 return false;
 
+            TradeDirection beforeDirection = candidate.Direction;
             bool allowed = evaluator != null && evaluator();
             bool blocked = !allowed;
             LogEntryTraceGate(ctx, candidate, gateName, beforeDirection, blocked, blocked ? blockedReason : "PASS");
