@@ -1173,9 +1173,10 @@ namespace GeminiV26.Core
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
                 {
+                    EnsureHtfClassification(_ctx, e);
                     e.AfterHtfScoreAdjustment = e.Score;
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY_TRACE][LOGIC] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=LOGIC candidateDirection={e.Direction} score={e.Score} blockReason={e.Reason ?? "NA"} " +
+                        $"[ENTRY_TRACE][LOGIC] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=LOGIC candidateDirection={e.Direction} score={e.Score} classification={e.HtfClassification} " +
                         $"rawDirection={e.RawDirection} logicBiasDirection={e.LogicBiasDirection} logicConfidence={e.RawLogicConfidence} patternDetected={e.PatternDetected.ToString().ToLowerInvariant()} setupType={e.SetupType ?? e.Type.ToString()}",
                         _ctx));
                 }
@@ -1242,7 +1243,7 @@ namespace GeminiV26.Core
                         e.DirectionAfterScore = e.Direction;
                         bool passedThreshold = e.Score >= EntryDecisionPolicy.MinScoreThreshold;
                         _bot.Print(TradeLogIdentity.WithTempId(
-                            $"[ENTRY_TRACE][SCORE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=SCORE candidateDirection={e.Direction} score={e.Score} blockReason={e.Reason ?? "NA"} " +
+                            $"[ENTRY_TRACE][SCORE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=SCORE candidateDirection={e.Direction} score={e.Score} classification={e.HtfClassification} " +
                             $"baseScore={e.BaseScore} afterHtfScoreAdjustment={e.AfterHtfScoreAdjustment} afterPenalty={e.AfterPenaltyScore} finalScore={e.FinalScoreSnapshot} " +
                             $"scoreThreshold={e.ScoreThresholdSnapshot} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}",
                             _ctx));
@@ -1257,7 +1258,7 @@ namespace GeminiV26.Core
                 foreach (var e in symbolSignals.Where(x => x != null))
                 {
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY_TRACE][GATES] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=GATES candidateDirection={e.DirectionAfterGates} score={e.Score} blockReason={e.Reason ?? "NA"}",
+                        $"[ENTRY_TRACE][GATES] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=GATES candidateDirection={e.DirectionAfterGates} score={e.Score} classification={e.HtfClassification}",
                         _ctx));
                     LogCriticalDirectionDrop(_ctx, e);
                 }
@@ -1276,7 +1277,7 @@ namespace GeminiV26.Core
                 if (selected == null)
                 {
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA blockReason=NO_SELECTED_ENTRY " +
+                        $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA classification=HTF_NO_DIRECTION " +
                         $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY",
                         _ctx));
                     _bot.Print("BLOCK: entry gate");
@@ -1286,7 +1287,7 @@ namespace GeminiV26.Core
 
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={selected.Direction} score={selected.Score} " +
-                    $"blockReason={selected.Reason ?? "NA"} finalCandidateDirection={selected.Direction} finalScore={selected.Score} blocked={(!selected.IsValid).ToString().ToLowerInvariant()} finalReason={selected.Reason ?? "NA"}",
+                    $"classification={selected.HtfClassification} finalCandidateDirection={selected.Direction} finalScore={selected.Score} blocked={(!selected.IsValid).ToString().ToLowerInvariant()} finalReason={selected.Reason ?? "NA"}",
                     _ctx));
 
 
@@ -1361,7 +1362,7 @@ namespace GeminiV26.Core
                     selected.DirectionAfterGates = TradeDirection.None;
                     LogCriticalDirectionDrop(_ctx, selected);
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={selected.Direction} score={selected.Score} blockReason={selected.Reason ?? "NA"} finalCandidateDirection={TradeDirection.None} finalScore={selected.Score} blocked=true finalReason=FINAL_DIRECTION_NONE",
+                        $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={selected.Direction} score={selected.Score} classification={selected.HtfClassification} finalCandidateDirection={TradeDirection.None} finalScore={selected.Score} blocked=true finalReason=FINAL_DIRECTION_NONE",
                         _ctx));
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
@@ -1732,6 +1733,18 @@ namespace GeminiV26.Core
             return summary;
         }
 
+        private static void EnsureHtfClassification(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (candidate == null || !string.IsNullOrWhiteSpace(candidate.HtfClassification))
+                return;
+
+            TradeDirection htfAllowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
+            TradeDirection candidateDirection = candidate.RawDirection != TradeDirection.None
+                ? candidate.RawDirection
+                : candidate.Direction;
+            candidate.HtfClassification = HtfClassificationModel.ComputeHtfClassification(candidateDirection, htfAllowedDirection);
+        }
+
         private void LogEntryTraceGate(
             EntryContext ctx,
             EntryEvaluation candidate,
@@ -1743,10 +1756,11 @@ namespace GeminiV26.Core
             if (candidate == null)
                 return;
 
+            EnsureHtfClassification(ctx, candidate);
             TradeDirection afterDirection = candidate.Direction;
             candidate.DirectionAfterGates = afterDirection;
             _bot.Print(TradeLogIdentity.WithTempId(
-                $"[ENTRY_TRACE][GATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=GATE candidateDirection={afterDirection} score={candidate.Score} blockReason={reason ?? "NA"} " +
+                $"[ENTRY_TRACE][GATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=GATE candidateDirection={afterDirection} score={candidate.Score} classification={candidate.HtfClassification ?? "HTF_NO_DIRECTION"} " +
                 $"gateName={gateName} beforeDirection={beforeDirection} afterDirection={afterDirection} blocked={blocked.ToString().ToLowerInvariant()} reason={reason ?? "NA"}",
                 ctx));
 
@@ -1821,7 +1835,7 @@ namespace GeminiV26.Core
 
             candidate.EntryTraceClassification = classification;
             _bot.Print(TradeLogIdentity.WithTempId(
-                $"[ENTRY_TRACE][CLASSIFICATION] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=CLASSIFICATION candidateDirection={candidate.Direction} score={candidate.Score} blockReason={candidate.Reason ?? "NA"} classification={classification}",
+                $"[ENTRY_TRACE][CLASSIFICATION] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=CLASSIFICATION candidateDirection={candidate.Direction} score={candidate.Score} classification={classification}",
                 ctx));
         }
 
@@ -3046,29 +3060,12 @@ namespace GeminiV26.Core
             string reason = $"{candidate.Reason} {candidate.RejectReason}";
             if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_"))
             {
-                string htfClassification = ResolveHtfRejectClassification(candidate.Direction, allowed, align);
+                string htfClassification = HtfClassificationModel.ComputeHtfClassification(candidate.Direction, allowed);
                 _bot.Print(
                     $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
                     $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(candidate.Direction != TradeDirection.None && allowed != TradeDirection.None && candidate.Direction != allowed ? "YES" : "NO")} " +
                     $"classification={htfClassification} rejectModule={module}");
             }
-        }
-
-        private static string ResolveHtfRejectClassification(
-            TradeDirection candidateDirection,
-            TradeDirection htfAllowedDirection,
-            bool align)
-        {
-            if (candidateDirection == TradeDirection.None || htfAllowedDirection == TradeDirection.None)
-                return "HTF_NO_DIRECTION";
-
-            if (candidateDirection != htfAllowedDirection)
-                return "HTF_MISMATCH";
-
-            if (!align)
-                return "HTF_NOT_ALIGNED";
-
-            return "HTF_OK";
         }
 
         private void StampEntrySourceHtfTrace(EntryContext ctx, EntryEvaluation eval)
