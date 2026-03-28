@@ -353,7 +353,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 IsValid = false,
                 Reason = reason
             };
-            ApplyCryptoSourceTrace(ctx, eval, dir);
+            CryptoDirectionFallback.ApplyIfEligible(ctx, eval, reason);
+            ApplyCryptoSourceTrace(ctx, eval, eval.Direction);
             return eval;
         }
 
