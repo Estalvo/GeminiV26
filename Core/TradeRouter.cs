@@ -220,12 +220,30 @@ namespace GeminiV26.Core
                         $"candidateDir={candidate.Direction}");
                 }
 
+                string htfClassification = ResolveHtfRejectClassification(
+                    candidate.Direction,
+                    routedHtfAllowedDirection,
+                    routedHtfAlign);
+
                 if (!candidate.IsValid)
                 {
+                    string deathReason = candidate.Reason;
+                    if (!string.IsNullOrWhiteSpace(candidate.Reason) && candidate.Reason.Contains("HTF_"))
+                    {
+                        string originalReason = deathReason;
+                        deathReason = htfClassification;
+#if DEBUG
+                        if (!string.Equals(originalReason, htfClassification, StringComparison.Ordinal))
+                        {
+                            _bot.Print(
+                                $"[AUDIT][HTF][INCONSISTENT_REASON] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} reason={originalReason} classification={htfClassification}");
+                        }
+#endif
+                    }
                     _bot.Print(
                         $"[AUDIT][DEATH] type={candidate.Type} " +
                         $"score={candidate.Score} " +
-                        $"reason={candidate.Reason} " +
+                        $"reason={deathReason} " +
                         $"trigger={candidate.TriggerConfirmed} " +
                         $"state={candidate.State}");
 
@@ -246,13 +264,8 @@ namespace GeminiV26.Core
                 if (candidate.Type == EntryType.Index_Flag
                     && candidate.TriggerConfirmed
                     && candidate.Reason != null
-                    && candidate.Reason.Contains("HTF_MISMATCH"))
+                    && candidate.Reason.Contains("HTF_"))
                 {
-                    bool hasDirection = candidate.Direction != TradeDirection.None;
-                    bool hasHtf = routedHtfAllowedDirection != TradeDirection.None;
-                    bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
-                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, !hasDirection || !hasHtf);
-
                     _bot.Print(
                         $"[AUDIT][HTF TRACE][REJECT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} rejectReason={candidate.Reason} " +
@@ -267,16 +280,12 @@ namespace GeminiV26.Core
                         $"candidateDir={candidate.Direction}");
                 }
                 string rejectText = $"{candidate.Reason} {candidate.RejectReason}";
-                if (!string.IsNullOrWhiteSpace(rejectText) && rejectText.Contains("HTF_MISMATCH"))
+                if (!string.IsNullOrWhiteSpace(rejectText) && rejectText.Contains("HTF_"))
                 {
-                    bool hasDirection = candidate.Direction != TradeDirection.None;
-                    bool hasHtf = routedHtfAllowedDirection != TradeDirection.None;
-                    bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
-                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, !hasDirection || !hasHtf);
                     _bot.Print(
                         $"[AUDIT][HTF REJECT ANALYSIS] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} htfAllowedDirection={routedHtfAllowedDirection} htfState={routedHtfState} " +
-                        $"align={routedHtfAlign} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")} " +
+                        $"align={routedHtfAlign} trueDirectionMismatch={(candidate.Direction != TradeDirection.None && routedHtfAllowedDirection != TradeDirection.None && candidate.Direction != routedHtfAllowedDirection ? "YES" : "NO")} " +
                         $"classification={htfClassification} rejectModule={nameof(TradeRouter)}");
                 }
                 _bot.Print(TradeLogIdentity.WithTempId(
@@ -294,7 +303,7 @@ namespace GeminiV26.Core
                     if (candidate.Type == EntryType.Index_Flag
                         && candidate.TriggerConfirmed
                         && candidate.Reason != null
-                        && candidate.Reason.Contains("HTF_MISMATCH"))
+                        && candidate.Reason.Contains("HTF_"))
                     {
                         _bot.Print(
                             $"[AUDIT][HTF CONFLICT] type={candidate.Type} " +
@@ -338,19 +347,15 @@ namespace GeminiV26.Core
             return sourceBlocks == consumerBlocks;
         }
 
-        private static bool IsTrueDirectionMismatch(TradeDirection candidateDirection, TradeDirection allowedDirection)
+        private static string ResolveHtfRejectClassification(
+            TradeDirection candidateDirection,
+            TradeDirection htfAllowedDirection,
+            bool align)
         {
-            return candidateDirection != TradeDirection.None
-                && allowedDirection != TradeDirection.None
-                && candidateDirection != allowedDirection;
-        }
-
-        private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
-        {
-            if (noDirectionCase)
+            if (candidateDirection == TradeDirection.None || htfAllowedDirection == TradeDirection.None)
                 return "HTF_NO_DIRECTION";
 
-            if (trueDirectionMismatch)
+            if (candidateDirection != htfAllowedDirection)
                 return "HTF_MISMATCH";
 
             if (!align)
