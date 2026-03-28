@@ -38,12 +38,45 @@ namespace GeminiV26.Core.Entry
 
                 foreach (var entryType in _entryTypes)
                 {
+                    ctx?.Print(
+                        $"[ENTRY_TRACE][START] symbol={ctx?.Symbol} entryType={entryType?.GetType().Name} stage=START candidateDirection={TradeDirection.None} score=NA blockReason=NA");
+
                     var eval = entryType.Evaluate(ctx);
 
                     if (eval != null)
                     {
+                        eval.RawDirection = eval.Direction;
+                        eval.LogicBiasDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
+                        eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
+                        eval.PatternDetected = eval.Direction != TradeDirection.None;
+                        eval.SetupType = eval.Type.ToString();
+                        eval.BaseScore = eval.Score;
+                        eval.AfterHtfScoreAdjustment = eval.Score;
+                        eval.AfterPenaltyScore = eval.Score;
+                        eval.FinalScoreSnapshot = eval.Score;
+                        eval.ScoreThresholdSnapshot = EntryDecisionPolicy.MinScoreThreshold;
+                        eval.DirectionAfterScore = eval.Direction;
+                        eval.DirectionAfterGates = eval.Direction;
+                        eval.EntryTraceClassification = "ENTRY_UNKNOWN";
+
+                        ctx?.Print(
+                            $"[ENTRY_TRACE][LOGIC] symbol={ctx?.Symbol} entryType={eval.Type} stage=LOGIC candidateDirection={eval.Direction} score={eval.Score} blockReason={eval.Reason ?? "NA"} " +
+                            $"rawDirection={eval.RawDirection} logicBiasDirection={eval.LogicBiasDirection} logicConfidence={eval.RawLogicConfidence} " +
+                            $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()} setupType={eval.SetupType}");
+
                         eval = EntryDecisionPolicy.Normalize(eval);
+                        eval.FinalScoreSnapshot = eval.Score;
+                        eval.DirectionAfterScore = eval.Direction;
+                        bool passedThreshold = eval.Score >= EntryDecisionPolicy.MinScoreThreshold;
+                        ctx?.Print(
+                            $"[ENTRY_TRACE][SCORE] symbol={ctx?.Symbol} entryType={eval.Type} stage=SCORE candidateDirection={eval.Direction} score={eval.Score} blockReason={eval.Reason ?? "NA"} " +
+                            $"baseScore={eval.BaseScore} afterHtfScoreAdjustment={eval.AfterHtfScoreAdjustment} afterPenalty={eval.AfterPenaltyScore} finalScore={eval.FinalScoreSnapshot} " +
+                            $"scoreThreshold={EntryDecisionPolicy.MinScoreThreshold} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}");
+
                         eval.Reason = "[ROUTER] " + (eval.Reason ?? "");
+                        ctx?.Print(
+                            $"[ENTRY_TRACE][FINAL] symbol={ctx?.Symbol} entryType={eval.Type} stage=ENTRY_ROUTER candidateDirection={eval.Direction} score={eval.Score} " +
+                            $"blockReason={eval.Reason ?? "NA"} finalCandidateDirection={eval.Direction} finalScore={eval.Score} blocked={(!eval.IsValid).ToString().ToLowerInvariant()} finalReason={eval.Reason ?? "NA"}");
                     }
 
                     // DEBUG – marad

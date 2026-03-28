@@ -94,6 +94,7 @@ namespace GeminiV26.Core
         private readonly Dictionary<string, IExitManager> _exitManagersByCanonical = new(StringComparer.OrdinalIgnoreCase);
         private readonly string _symbolCanonical;
         private readonly InstrumentClass _instrumentClass;
+        private readonly Dictionary<string, EntryTraceSummary> _entryTraceSummaries = new(StringComparer.OrdinalIgnoreCase);
        
         private const string BotLabel = "GeminiV26";
                 
@@ -1170,6 +1171,14 @@ namespace GeminiV26.Core
                 StampEntrySourceHtfTrace(_ctx, e);
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
+                if (e != null)
+                {
+                    e.AfterHtfScoreAdjustment = e.Score;
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY_TRACE][LOGIC] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=LOGIC candidateDirection={e.Direction} score={e.Score} blockReason={e.Reason ?? "NA"} " +
+                        $"rawDirection={e.RawDirection} logicBiasDirection={e.LogicBiasDirection} logicConfidence={e.RawLogicConfidence} patternDetected={e.PatternDetected.ToString().ToLowerInvariant()} setupType={e.SetupType ?? e.Type.ToString()}",
+                        _ctx));
+                }
             }
 
         // =====================================================
@@ -1224,7 +1233,36 @@ namespace GeminiV26.Core
                 UpdateExecutionStateMachine(_ctx, symbolSignals);
                 ApplyRestartProtection(_ctx, symbolSignals);
                 foreach (var e in symbolSignals)
+                {
+                    if (e != null)
+                    {
+                        e.AfterPenaltyScore = e.Score;
+                        e.FinalScoreSnapshot = e.Score;
+                        e.ScoreThresholdSnapshot = EntryDecisionPolicy.MinScoreThreshold;
+                        e.DirectionAfterScore = e.Direction;
+                        bool passedThreshold = e.Score >= EntryDecisionPolicy.MinScoreThreshold;
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[ENTRY_TRACE][SCORE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=SCORE candidateDirection={e.Direction} score={e.Score} blockReason={e.Reason ?? "NA"} " +
+                            $"baseScore={e.BaseScore} afterHtfScoreAdjustment={e.AfterHtfScoreAdjustment} afterPenalty={e.AfterPenaltyScore} finalScore={e.FinalScoreSnapshot} " +
+                            $"scoreThreshold={e.ScoreThresholdSnapshot} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}",
+                            _ctx));
+                    }
+
                     LogHtfFlowStage(_ctx, e, "ENTRY_FILTER", nameof(ApplyRestartProtection));
+                }
+
+                foreach (var e in symbolSignals)
+                    LogEntryTraceClassification(_ctx, e);
+
+                foreach (var e in symbolSignals.Where(x => x != null))
+                {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY_TRACE][GATES] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=GATES candidateDirection={e.DirectionAfterGates} score={e.Score} blockReason={e.Reason ?? "NA"}",
+                        _ctx));
+                    LogCriticalDirectionDrop(_ctx, e);
+                }
+
+                LogEntryTraceSummary(_ctx, symbolSignals);
 
                 // =====================================================
                 // ROUTER
@@ -1237,10 +1275,19 @@ namespace GeminiV26.Core
 
                 if (selected == null)
                 {
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA blockReason=NO_SELECTED_ENTRY " +
+                        $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY",
+                        _ctx));
                     _bot.Print("BLOCK: entry gate");
                     _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
                     return;
                 }
+
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={selected.Direction} score={selected.Score} " +
+                    $"blockReason={selected.Reason ?? "NA"} finalCandidateDirection={selected.Direction} finalScore={selected.Score} blocked={(!selected.IsValid).ToString().ToLowerInvariant()} finalReason={selected.Reason ?? "NA"}",
+                    _ctx));
 
 
                 // =====================================================
@@ -1253,6 +1300,7 @@ namespace GeminiV26.Core
 
                     if (xauState != null && xauState.IsRange && !xauState.IsTrend)
                     {
+                        LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, true, "XAU_RANGE_REGIME");
                         _bot.Print(
                             $"[TC] ENTRY BLOCKED: XAU RANGE REGIME" +
                             $"Width={xauState.RangeWidth:F2} " +
@@ -1261,6 +1309,8 @@ namespace GeminiV26.Core
                         );
                         return;
                     }
+
+                    LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, false, "PASS");
                 }
 
 
@@ -1306,6 +1356,13 @@ namespace GeminiV26.Core
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
+                    selected.LastDirectionDropStage = "FINAL";
+                    selected.LastDirectionDropModule = "DirectionSet";
+                    selected.DirectionAfterGates = TradeDirection.None;
+                    LogCriticalDirectionDrop(_ctx, selected);
+                    _bot.Print(TradeLogIdentity.WithTempId(
+                        $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={selected.Direction} score={selected.Score} blockReason={selected.Reason ?? "NA"} finalCandidateDirection={TradeDirection.None} finalScore={selected.Score} blocked=true finalReason=FINAL_DIRECTION_NONE",
+                        _ctx));
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
                     return;
@@ -1333,14 +1390,14 @@ namespace GeminiV26.Core
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
             {
-                if (!(_xauSessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _xauSessionGate?.AllowEntry(gateDir) ?? false, "XAU SessionGate"))
                 {
                     _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: XAU SessionGate");
                     return;
                 }
 
-                if (!(_xauImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _xauImpulseGate?.AllowEntry(gateDir) ?? false, "XAU ImpulseGate"))
                 {
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: XAU ImpulseGate");
@@ -1352,14 +1409,14 @@ namespace GeminiV26.Core
             }
             else if (IsNasSymbol(_bot.SymbolName))
             {
-                if (!(_nasSessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _nasSessionGate?.AllowEntry(gateDir) ?? false, "NAS SessionGate"))
                 {
                     _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: NAS SessionGate");
                     return;
                 }
 
-                if (!(_nasImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _nasImpulseGate?.AllowEntry(gateDir) ?? false, "NAS ImpulseGate"))
                 {
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: NAS ImpulseGate");
@@ -1371,20 +1428,20 @@ namespace GeminiV26.Core
             }
             else if (IsUs30(_bot.SymbolName))
             {
-                if (!_us30SessionGate.AllowEntry(gateDir)) return;
-                if (!_us30ImpulseGate.AllowEntry(gateDir)) return;
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _us30SessionGate.AllowEntry(gateDir), "US30 SessionGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _us30ImpulseGate.AllowEntry(gateDir), "US30 ImpulseGate")) return;
                 LogEntryExecuted(selected);
                 _us30Executor.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GER40"))
             {
-                if (!(_ger40SessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ger40SessionGate?.AllowEntry(gateDir) ?? false, "GER40 SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GER40 SessionGate");
                     return;
                 }
 
-                if (!(_ger40ImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ger40ImpulseGate?.AllowEntry(gateDir) ?? false, "GER40 ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GER40 ImpulseGate");
                     return;
@@ -1396,13 +1453,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("EURUSD"))
             {
-                if (_eurUsdSessionGate != null && !_eurUsdSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _eurUsdSessionGate == null || _eurUsdSessionGate.AllowEntry(gateDir), "EUR SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EUR SessionGate");
                     return;
                 }
 
-                if (_eurUsdImpulseGate != null && !_eurUsdImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _eurUsdImpulseGate == null || _eurUsdImpulseGate.AllowEntry(gateDir), "EUR ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EUR ImpulseGate");
                     return;
@@ -1414,13 +1471,13 @@ namespace GeminiV26.Core
             }
             else if (IsSymbol("USDJPY"))
             {
-                if (!(_usdJpySessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdJpySessionGate?.AllowEntry(gateDir) ?? false, "USDJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDJPY SessionGate");
                     return;
                 }
 
-                if (!(_usdJpyImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdJpyImpulseGate?.AllowEntry(gateDir) ?? false, "USDJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDJPY ImpulseGate");
                     return;
@@ -1431,13 +1488,13 @@ namespace GeminiV26.Core
             }
             else if (IsSymbol("GBPUSD"))
             {
-                if (!(_gbpUsdSessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _gbpUsdSessionGate?.AllowEntry(gateDir) ?? false, "GBPUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPUSD SessionGate");
                     return;
                 }
 
-                if (!(_gbpUsdImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _gbpUsdImpulseGate?.AllowEntry(gateDir) ?? false, "GBPUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPUSD ImpulseGate");
                     return;
@@ -1449,13 +1506,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("AUDUSD"))
             {
-                if (!_audUsdSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _audUsdSessionGate.AllowEntry(gateDir), "AUDUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDUSD SessionGate");
                     return;
                 }
                 
-                if (!_audUsdImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _audUsdImpulseGate.AllowEntry(gateDir), "AUDUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDUSD ImpulseGate");
                     return;
@@ -1467,13 +1524,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("AUDNZD"))
             {
-                if (!_audNzdSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _audNzdSessionGate.AllowEntry(gateDir), "AUDNZD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDNZD SessionGate");
                     return;
                 }
 
-                if (!_audNzdImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _audNzdImpulseGate.AllowEntry(gateDir), "AUDNZD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDNZD ImpulseGate");
                     return;
@@ -1485,13 +1542,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("EURJPY"))
             {
-                if (!_eurJpySessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _eurJpySessionGate.AllowEntry(gateDir), "EURJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EURJPY SessionGate");
                     return;
                 }
 
-                if (!_eurJpyImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _eurJpyImpulseGate.AllowEntry(gateDir), "EURJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EURJPY ImpulseGate");
                     return;
@@ -1503,13 +1560,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("GBPJPY"))
             {
-                if (!_gbpJpySessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _gbpJpySessionGate.AllowEntry(gateDir), "GBPJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPJPY SessionGate");
                     return;
                 }
 
-                if (!_gbpJpyImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _gbpJpyImpulseGate.AllowEntry(gateDir), "GBPJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPJPY ImpulseGate");
                     return;
@@ -1521,13 +1578,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("NZDUSD"))
             {
-                if (!_nzdUsdSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _nzdUsdSessionGate.AllowEntry(gateDir), "NZDUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: NZDUSD SessionGate");
                     return;
                 }
 
-                if (!_nzdUsdImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _nzdUsdImpulseGate.AllowEntry(gateDir), "NZDUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: NZDUSD ImpulseGate");
                     return;
@@ -1539,13 +1596,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("USDCAD"))
             {
-                if (!_usdCadSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdCadSessionGate.AllowEntry(gateDir), "USDCAD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCAD SessionGate");
                     return;
                 }
 
-                if (!_usdCadImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdCadImpulseGate.AllowEntry(gateDir), "USDCAD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCAD ImpulseGate");
                     return;
@@ -1557,13 +1614,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("USDCHF"))
             {
-                if (!_usdChfSessionGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdChfSessionGate.AllowEntry(gateDir), "USDCHF SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCHF SessionGate");
                     return;
                 }
 
-                if (!_usdChfImpulseGate.AllowEntry(gateDir))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdChfImpulseGate.AllowEntry(gateDir), "USDCHF ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCHF ImpulseGate");
                     return;
@@ -1585,13 +1642,13 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                if (!(_btcUsdSessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _btcUsdSessionGate?.AllowEntry(gateDir) ?? false, "BTC SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: BTC SessionGate");
                     return;
                 }
 
-                if (!(_btcUsdImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _btcUsdImpulseGate?.AllowEntry(gateDir) ?? false, "BTC ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: BTC ImpulseGate");
                     return;
@@ -1614,13 +1671,13 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                if (!(_ethUsdSessionGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ethUsdSessionGate?.AllowEntry(gateDir) ?? false, "ETH SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: ETH SessionGate");
                     return;
                 }
 
-                if (!(_ethUsdImpulseGate?.AllowEntry(gateDir) ?? false))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ethUsdImpulseGate?.AllowEntry(gateDir) ?? false, "ETH ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: ETH ImpulseGate");
                     return;
@@ -1632,8 +1689,8 @@ namespace GeminiV26.Core
             }
             else if (IsGer40(_bot.SymbolName))
             {
-                if (!_ger40SessionGate.AllowEntry(gateDir)) return;
-                if (!_ger40ImpulseGate.AllowEntry(gateDir)) return;
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ger40SessionGate.AllowEntry(gateDir), "GER40 SessionGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ger40ImpulseGate.AllowEntry(gateDir), "GER40 ImpulseGate")) return;
                 LogEntryExecuted(selected);
                 _ger40Executor.ExecuteEntry(selected, _ctx);
             }
@@ -1661,6 +1718,129 @@ namespace GeminiV26.Core
             return ctx != null
                 && ctx.RoutedDirection != TradeDirection.None
                 && ctx.FinalDirection != TradeDirection.None;
+        }
+
+        private EntryTraceSummary GetEntryTraceSummary(string symbol)
+        {
+            string key = string.IsNullOrWhiteSpace(symbol) ? _bot.SymbolName : symbol;
+            if (!_entryTraceSummaries.TryGetValue(key, out var summary))
+            {
+                summary = new EntryTraceSummary();
+                _entryTraceSummaries[key] = summary;
+            }
+
+            return summary;
+        }
+
+        private void LogEntryTraceGate(
+            EntryContext ctx,
+            EntryEvaluation candidate,
+            string gateName,
+            TradeDirection beforeDirection,
+            bool blocked,
+            string reason)
+        {
+            if (candidate == null)
+                return;
+
+            TradeDirection afterDirection = candidate.Direction;
+            candidate.DirectionAfterGates = afterDirection;
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[ENTRY_TRACE][GATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=GATE candidateDirection={afterDirection} score={candidate.Score} blockReason={reason ?? "NA"} " +
+                $"gateName={gateName} beforeDirection={beforeDirection} afterDirection={afterDirection} blocked={blocked.ToString().ToLowerInvariant()} reason={reason ?? "NA"}",
+                ctx));
+
+            if (beforeDirection != TradeDirection.None && afterDirection == TradeDirection.None)
+            {
+                candidate.LastDirectionDropStage = "GATE";
+                candidate.LastDirectionDropModule = gateName;
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY_TRACE][DIRECTION_LOST] gateName={gateName} before={beforeDirection} after={afterDirection}",
+                    ctx));
+            }
+        }
+
+        private bool EvaluateEntryGate(EntryContext ctx, EntryEvaluation candidate, string gateName, Func<bool> evaluator, string blockedReason)
+        {
+            if (candidate == null)
+                return false;
+
+            TradeDirection beforeDirection = candidate.Direction;
+            bool allowed = evaluator != null && evaluator();
+            bool blocked = !allowed;
+            LogEntryTraceGate(ctx, candidate, gateName, beforeDirection, blocked, blocked ? blockedReason : "PASS");
+            if (blocked)
+            {
+                candidate.LastDirectionDropStage = "GATE";
+                candidate.LastDirectionDropModule = gateName;
+            }
+
+            return allowed;
+        }
+
+        private void LogEntryTraceSummary(EntryContext ctx, List<EntryEvaluation> symbolSignals)
+        {
+            if (ctx == null || symbolSignals == null)
+                return;
+
+            var summary = GetEntryTraceSummary(ctx.Symbol);
+            summary.TotalEvaluations += symbolSignals.Count(e => e != null);
+            summary.LogicProducedDirectionCount += symbolSignals.Count(e => e != null && e.RawDirection != TradeDirection.None);
+            summary.NeverHadDirectionCount += symbolSignals.Count(e => e != null && e.RawDirection == TradeDirection.None);
+            summary.LostAfterScoreCount += symbolSignals.Count(e => e != null && e.RawDirection != TradeDirection.None && e.DirectionAfterScore == TradeDirection.None);
+            summary.LostAfterGateCount += symbolSignals.Count(e => e != null && e.DirectionAfterScore != TradeDirection.None && e.DirectionAfterGates == TradeDirection.None);
+
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[ENTRY_TRACE][SUMMARY] symbol={ctx.Symbol} totalEvaluations={summary.TotalEvaluations} logicProducedDirectionCount={summary.LogicProducedDirectionCount} " +
+                $"lostAfterScoreCount={summary.LostAfterScoreCount} lostAfterGateCount={summary.LostAfterGateCount} neverHadDirectionCount={summary.NeverHadDirectionCount}",
+                ctx));
+        }
+
+        private void LogEntryTraceClassification(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (ctx == null || candidate == null)
+                return;
+
+            string classification;
+            if (candidate.RawDirection == TradeDirection.None)
+            {
+                classification = "ENTRY_NO_SIGNAL";
+            }
+            else if (candidate.DirectionAfterScore == TradeDirection.None || candidate.Score < EntryDecisionPolicy.MinScoreThreshold)
+            {
+                classification = "ENTRY_SCORE_FAIL";
+            }
+            else if (candidate.DirectionAfterGates == TradeDirection.None || !candidate.IsValid)
+            {
+                classification = "ENTRY_GATE_BLOCK";
+            }
+            else
+            {
+                classification = "ENTRY_UNKNOWN";
+            }
+
+            candidate.EntryTraceClassification = classification;
+            _bot.Print(TradeLogIdentity.WithTempId(
+                $"[ENTRY_TRACE][CLASSIFICATION] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=CLASSIFICATION candidateDirection={candidate.Direction} score={candidate.Score} blockReason={candidate.Reason ?? "NA"} classification={classification}",
+                ctx));
+        }
+
+        private void LogCriticalDirectionDrop(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (ctx == null || candidate == null)
+                return;
+
+            TradeDirection finalCandidateDirection = candidate.DirectionAfterGates;
+
+            if (candidate.RawDirection != TradeDirection.None && finalCandidateDirection == TradeDirection.None)
+            {
+                string lostAtStage = candidate.LastDirectionDropStage ?? "FINAL";
+                string dropModule = candidate.LastDirectionDropModule ?? "UNKNOWN";
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    $"[ENTRY_TRACE][CRITICAL_DIRECTION_DROP] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
+                    $"lostAtStage={lostAtStage} lastValidDirection={candidate.RawDirection} dropModule={dropModule}",
+                    ctx));
+            }
         }
 
         private void ApplyTransitionScoreBoost(EntryContext ctx, List<EntryEvaluation> symbolSignals)
@@ -1755,14 +1935,20 @@ namespace GeminiV26.Core
                 if (candidate == null || candidate.Direction == TradeDirection.None)
                     continue;
 
+                TradeDirection beforeDirection = candidate.Direction;
+
                 if (!TryGetRestartDecayState(ctx, candidate, out string restartReason))
+                {
+                    LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, "PASS_NO_RESTART_DECAY");
                     continue;
+                }
 
                 if (!candidate.IsValid)
                 {
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[INTEGRITY] SKIP restart protect on invalid candidate: {candidate.Type}",
                         ctx));
+                    LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, true, "SKIP_INVALID_CANDIDATE");
                     continue;
                 }
 
@@ -1799,6 +1985,7 @@ namespace GeminiV26.Core
                                 $"[ENTRY][PROTECT_SUPPRESSED] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                                 $"type={candidate.Type} dir={candidate.Direction} score={protectedOriginalScore}->{candidate.Score} state={restartReason}",
                                 ctx));
+                            LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, $"SOFT_CONTINUATION_AUTH_{restartReason}");
                             continue;
                         }
                         else if (midTrend)
@@ -1819,6 +2006,7 @@ namespace GeminiV26.Core
                                 $"[ENTRY][PROTECT] source=RESTART_PROTECT action=MID_TREND_SOFT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                                 $"type={candidate.Type} dir={candidate.Direction} score={midTrendOriginalScore}->{candidate.Score} state={restartReason}",
                                 ctx));
+                            LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, $"SOFT_MID_TREND_{restartReason}");
                             continue;
                         }
 
@@ -1836,6 +2024,7 @@ namespace GeminiV26.Core
                             $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
                             $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                             ctx));
+                        LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, true, "HARD_BLOCK_DECAY_AFTER_RESTART");
                         continue;
                     }
 
@@ -1855,11 +2044,15 @@ namespace GeminiV26.Core
                         $"[RESTART SOFT-HARDPHASE] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
                         $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                         ctx));
+                    LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, $"SOFT_PENALTY_{restartReason}");
                     continue;
                 }
 
                 if (!BotRestartState.IsSoftProtectionPhase)
+                {
+                    LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, "PASS_NO_SOFT_PHASE");
                     continue;
+                }
 
                 const int softPenalty = 20;
                 int originalSoftScore = candidate.Score;
@@ -1873,6 +2066,7 @@ namespace GeminiV26.Core
                     $"[RESTART SOFT] penalty applied symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
                     $"dir={candidate.Direction} score={originalSoftScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                     ctx));
+                LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, false, $"SOFT_PHASE_PENALTY_{restartReason}");
             }
         }
 
@@ -2617,6 +2811,15 @@ namespace GeminiV26.Core
             public bool StructureBreak { get; set; }
             public bool M1Break { get; set; }
             public string WaitReason { get; set; } = string.Empty;
+        }
+
+        private sealed class EntryTraceSummary
+        {
+            public int TotalEvaluations { get; set; }
+            public int LogicProducedDirectionCount { get; set; }
+            public int LostAfterScoreCount { get; set; }
+            public int LostAfterGateCount { get; set; }
+            public int NeverHadDirectionCount { get; set; }
         }
         
         // =========================================================

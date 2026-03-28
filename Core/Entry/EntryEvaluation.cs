@@ -20,6 +20,23 @@
         // 0–100
         public int Score;
 
+        // Entry trace diagnostics (observability only).
+        public TradeDirection RawDirection;
+        public TradeDirection LogicBiasDirection;
+        public int RawLogicConfidence;
+        public bool PatternDetected;
+        public string SetupType;
+        public int BaseScore;
+        public int AfterHtfScoreAdjustment;
+        public int AfterPenaltyScore;
+        public int FinalScoreSnapshot;
+        public int ScoreThresholdSnapshot;
+        public TradeDirection DirectionAfterScore;
+        public TradeDirection DirectionAfterGates;
+        public string LastDirectionDropStage;
+        public string LastDirectionDropModule;
+        public string EntryTraceClassification;
+
         // Score tracing (observability only).
         public int PreQualityScore;
         public int PostQualityScore;
