@@ -1390,14 +1390,14 @@ namespace GeminiV26.Core
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _xauSessionGate?.AllowEntry(gateDir) ?? false, "XAU SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _xauSessionGate?.AllowEntry(gateDir) ?? false, "XAU SessionGate"))
                 {
                     _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: XAU SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _xauImpulseGate?.AllowEntry(gateDir) ?? false, "XAU ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _xauImpulseGate?.AllowEntry(gateDir) ?? false, "XAU ImpulseGate"))
                 {
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: XAU ImpulseGate");
@@ -1409,14 +1409,14 @@ namespace GeminiV26.Core
             }
             else if (IsNasSymbol(_bot.SymbolName))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _nasSessionGate?.AllowEntry(gateDir) ?? false, "NAS SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _nasSessionGate?.AllowEntry(gateDir) ?? false, "NAS SessionGate"))
                 {
                     _bot.Print("BLOCK: session gate");
                     _bot.Print("[TC] BLOCKED: NAS SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _nasImpulseGate?.AllowEntry(gateDir) ?? false, "NAS ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _nasImpulseGate?.AllowEntry(gateDir) ?? false, "NAS ImpulseGate"))
                 {
                     _bot.Print("BLOCK: direction/entry failed");
                     _bot.Print("[TC] BLOCKED: NAS ImpulseGate");
@@ -1428,20 +1428,20 @@ namespace GeminiV26.Core
             }
             else if (IsUs30(_bot.SymbolName))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _us30SessionGate.AllowEntry(gateDir), "US30 SessionGate")) return;
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _us30ImpulseGate.AllowEntry(gateDir), "US30 ImpulseGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _us30SessionGate.AllowEntry(gateDir), "US30 SessionGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _us30ImpulseGate.AllowEntry(gateDir), "US30 ImpulseGate")) return;
                 LogEntryExecuted(selected);
                 _us30Executor.ExecuteEntry(selected, _ctx);
             }
             else if (IsSymbol("GER40"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ger40SessionGate?.AllowEntry(gateDir) ?? false, "GER40 SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _ger40SessionGate?.AllowEntry(gateDir) ?? false, "GER40 SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GER40 SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ger40ImpulseGate?.AllowEntry(gateDir) ?? false, "GER40 ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _ger40ImpulseGate?.AllowEntry(gateDir) ?? false, "GER40 ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GER40 ImpulseGate");
                     return;
@@ -1453,13 +1453,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("EURUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _eurUsdSessionGate == null || _eurUsdSessionGate.AllowEntry(gateDir), "EUR SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurUsdSessionGate == null || _eurUsdSessionGate.AllowEntry(gateDir), "EUR SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EUR SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _eurUsdImpulseGate == null || _eurUsdImpulseGate.AllowEntry(gateDir), "EUR ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurUsdImpulseGate == null || _eurUsdImpulseGate.AllowEntry(gateDir), "EUR ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EUR ImpulseGate");
                     return;
@@ -1471,13 +1471,13 @@ namespace GeminiV26.Core
             }
             else if (IsSymbol("USDJPY"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdJpySessionGate?.AllowEntry(gateDir) ?? false, "USDJPY SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdJpySessionGate?.AllowEntry(gateDir) ?? false, "USDJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDJPY SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdJpyImpulseGate?.AllowEntry(gateDir) ?? false, "USDJPY ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdJpyImpulseGate?.AllowEntry(gateDir) ?? false, "USDJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDJPY ImpulseGate");
                     return;
@@ -1488,13 +1488,13 @@ namespace GeminiV26.Core
             }
             else if (IsSymbol("GBPUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _gbpUsdSessionGate?.AllowEntry(gateDir) ?? false, "GBPUSD SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _gbpUsdSessionGate?.AllowEntry(gateDir) ?? false, "GBPUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPUSD SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _gbpUsdImpulseGate?.AllowEntry(gateDir) ?? false, "GBPUSD ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _gbpUsdImpulseGate?.AllowEntry(gateDir) ?? false, "GBPUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPUSD ImpulseGate");
                     return;
@@ -1506,13 +1506,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("AUDUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _audUsdSessionGate.AllowEntry(gateDir), "AUDUSD SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _audUsdSessionGate.AllowEntry(gateDir), "AUDUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDUSD SessionGate");
                     return;
                 }
                 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _audUsdImpulseGate.AllowEntry(gateDir), "AUDUSD ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _audUsdImpulseGate.AllowEntry(gateDir), "AUDUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDUSD ImpulseGate");
                     return;
@@ -1524,13 +1524,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("AUDNZD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _audNzdSessionGate.AllowEntry(gateDir), "AUDNZD SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _audNzdSessionGate.AllowEntry(gateDir), "AUDNZD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDNZD SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _audNzdImpulseGate.AllowEntry(gateDir), "AUDNZD ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _audNzdImpulseGate.AllowEntry(gateDir), "AUDNZD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: AUDNZD ImpulseGate");
                     return;
@@ -1542,13 +1542,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("EURJPY"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _eurJpySessionGate.AllowEntry(gateDir), "EURJPY SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurJpySessionGate.AllowEntry(gateDir), "EURJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EURJPY SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _eurJpyImpulseGate.AllowEntry(gateDir), "EURJPY ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurJpyImpulseGate.AllowEntry(gateDir), "EURJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: EURJPY ImpulseGate");
                     return;
@@ -1560,13 +1560,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("GBPJPY"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _gbpJpySessionGate.AllowEntry(gateDir), "GBPJPY SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _gbpJpySessionGate.AllowEntry(gateDir), "GBPJPY SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPJPY SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _gbpJpyImpulseGate.AllowEntry(gateDir), "GBPJPY ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _gbpJpyImpulseGate.AllowEntry(gateDir), "GBPJPY ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: GBPJPY ImpulseGate");
                     return;
@@ -1578,13 +1578,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("NZDUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _nzdUsdSessionGate.AllowEntry(gateDir), "NZDUSD SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _nzdUsdSessionGate.AllowEntry(gateDir), "NZDUSD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: NZDUSD SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _nzdUsdImpulseGate.AllowEntry(gateDir), "NZDUSD ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _nzdUsdImpulseGate.AllowEntry(gateDir), "NZDUSD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: NZDUSD ImpulseGate");
                     return;
@@ -1596,13 +1596,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("USDCAD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdCadSessionGate.AllowEntry(gateDir), "USDCAD SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdCadSessionGate.AllowEntry(gateDir), "USDCAD SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCAD SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdCadImpulseGate.AllowEntry(gateDir), "USDCAD ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdCadImpulseGate.AllowEntry(gateDir), "USDCAD ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCAD ImpulseGate");
                     return;
@@ -1614,13 +1614,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("USDCHF"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _usdChfSessionGate.AllowEntry(gateDir), "USDCHF SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdChfSessionGate.AllowEntry(gateDir), "USDCHF SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCHF SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _usdChfImpulseGate.AllowEntry(gateDir), "USDCHF ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdChfImpulseGate.AllowEntry(gateDir), "USDCHF ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: USDCHF ImpulseGate");
                     return;
@@ -1642,13 +1642,13 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _btcUsdSessionGate?.AllowEntry(gateDir) ?? false, "BTC SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _btcUsdSessionGate?.AllowEntry(gateDir) ?? false, "BTC SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: BTC SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _btcUsdImpulseGate?.AllowEntry(gateDir) ?? false, "BTC ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _btcUsdImpulseGate?.AllowEntry(gateDir) ?? false, "BTC ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: BTC ImpulseGate");
                     return;
@@ -1671,13 +1671,13 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ethUsdSessionGate?.AllowEntry(gateDir) ?? false, "ETH SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _ethUsdSessionGate?.AllowEntry(gateDir) ?? false, "ETH SessionGate"))
                 {
                     _bot.Print("[TC] BLOCKED: ETH SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ethUsdImpulseGate?.AllowEntry(gateDir) ?? false, "ETH ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _ethUsdImpulseGate?.AllowEntry(gateDir) ?? false, "ETH ImpulseGate"))
                 {
                     _bot.Print("[TC] BLOCKED: ETH ImpulseGate");
                     return;
@@ -1689,8 +1689,8 @@ namespace GeminiV26.Core
             }
             else if (IsGer40(_bot.SymbolName))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", selected.Direction, () => _ger40SessionGate.AllowEntry(gateDir), "GER40 SessionGate")) return;
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", selected.Direction, () => _ger40ImpulseGate.AllowEntry(gateDir), "GER40 ImpulseGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _ger40SessionGate.AllowEntry(gateDir), "GER40 SessionGate")) return;
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _ger40ImpulseGate.AllowEntry(gateDir), "GER40 ImpulseGate")) return;
                 LogEntryExecuted(selected);
                 _ger40Executor.ExecuteEntry(selected, _ctx);
             }
