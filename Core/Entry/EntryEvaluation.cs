@@ -36,6 +36,7 @@
         public string LastDirectionDropStage;
         public string LastDirectionDropModule;
         public string EntryTraceClassification;
+        public string HtfClassification;
 
         // Score tracing (observability only).
         public int PreQualityScore;

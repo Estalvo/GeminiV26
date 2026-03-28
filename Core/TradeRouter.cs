@@ -222,8 +222,8 @@ namespace GeminiV26.Core
 
                 string htfClassification = ResolveHtfRejectClassification(
                     candidate.Direction,
-                    routedHtfAllowedDirection,
-                    routedHtfAlign);
+                    routedHtfAllowedDirection);
+                candidate.HtfClassification = htfClassification;
 
                 if (!candidate.IsValid)
                 {
@@ -349,20 +349,8 @@ namespace GeminiV26.Core
 
         private static string ResolveHtfRejectClassification(
             TradeDirection candidateDirection,
-            TradeDirection htfAllowedDirection,
-            bool align)
-        {
-            if (candidateDirection == TradeDirection.None || htfAllowedDirection == TradeDirection.None)
-                return "HTF_NO_DIRECTION";
-
-            if (candidateDirection != htfAllowedDirection)
-                return "HTF_MISMATCH";
-
-            if (!align)
-                return "HTF_NOT_ALIGNED";
-
-            return "HTF_OK";
-        }
+            TradeDirection htfAllowedDirection)
+            => HtfClassificationModel.ComputeHtfClassification(candidateDirection, htfAllowedDirection);
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
         {
