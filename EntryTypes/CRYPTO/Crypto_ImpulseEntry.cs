@@ -23,8 +23,19 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 return Invalid(ctx, "CRYPTO_VOL_DISABLED");
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
-                return Invalid(ctx, "HTF_MISMATCH", logicBiasDirection, 0);
+            double htfConf = ctx.ResolveAssetHtfConfidence01();
+            var htfDir = ctx.ResolveAssetHtfAllowedDirection();
+            bool htfMismatch =
+                htfConf >= 0.6 &&
+                htfDir != TradeDirection.None &&
+                logicBiasDirection != TradeDirection.None &&
+                htfDir != logicBiasDirection;
+
+            if (htfMismatch)
+            {
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][HTF_SOFT] mismatch allowed | dir={logicBiasDirection} htf={htfDir} conf={htfConf:0.00}");
+            }
 
             if (logicBiasDirection == TradeDirection.Long)
             {
@@ -76,6 +87,16 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE_{dir}_{score}", dir, score);
+
+            double htfConf = ctx.ResolveAssetHtfConfidence01();
+            var htfDir = ctx.ResolveAssetHtfAllowedDirection();
+            bool htfMismatch =
+                htfConf >= 0.6 &&
+                htfDir != TradeDirection.None &&
+                dir != TradeDirection.None &&
+                htfDir != dir;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][ENTRY_FINAL] dir={dir} score={score} htfMismatch={htfMismatch}");
 
             var eval = new EntryEvaluation
             {

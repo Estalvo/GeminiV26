@@ -25,8 +25,19 @@ namespace GeminiV26.EntryTypes.Crypto
                 if (logicBiasDirection == TradeDirection.None)
                     return Block(ctx, "NO_LOGIC_BIAS", 0, TradeDirection.None);
 
-                if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
-                    return Block(ctx, "HTF_MISMATCH", 0, logicBiasDirection);
+                double htfConf = ctx.ResolveAssetHtfConfidence01();
+                var htfDir = ctx.ResolveAssetHtfAllowedDirection();
+                bool htfMismatch =
+                    htfConf >= 0.6 &&
+                    htfDir != TradeDirection.None &&
+                    logicBiasDirection != TradeDirection.None &&
+                    htfDir != logicBiasDirection;
+
+                if (htfMismatch)
+                {
+                    ctx.Log?.Invoke(
+                        $"[CRYPTO][HTF_SOFT] mismatch allowed | dir={logicBiasDirection} htf={htfDir} conf={htfConf:0.00}");
+                }
 
                 if (logicBiasDirection == TradeDirection.Long)
                 {
@@ -90,10 +101,8 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (allow != TradeDirection.None && dir != allow)
             {
-                const int SoftConflictPenalty = 4;
-                score -= SoftConflictPenalty;
                 Console.WriteLine(
-                    $"[BTC_PULLBACK][HTF_SOFT_CONFLICT] conf={htfConf:0.00} allow={allow} keepDir={dir} scoreAdj=-{SoftConflictPenalty}"
+                    $"[BTC_PULLBACK][HTF_SOFT_CONFLICT] conf={htfConf:0.00} allow={allow} keepDir={dir}"
                 );
             }
             else if (allow == TradeDirection.None)
@@ -885,6 +894,16 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             if (score < dynamicMinScore)
                 return Block(ctx, $"SCORE_TOO_LOW_{score}_MIN_{dynamicMinScore}", score, dir);
+
+            double finalHtfConf = ctx.ResolveAssetHtfConfidence01();
+            var finalHtfDir = ctx.ResolveAssetHtfAllowedDirection();
+            bool htfMismatch =
+                finalHtfConf >= 0.6 &&
+                finalHtfDir != TradeDirection.None &&
+                dir != TradeDirection.None &&
+                finalHtfDir != dir;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][ENTRY_FINAL] dir={dir} score={score} htfMismatch={htfMismatch}");
 
             var eval = new EntryEvaluation
             {
