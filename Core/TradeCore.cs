@@ -2841,36 +2841,29 @@ namespace GeminiV26.Core
             }
 
             string reason = $"{candidate.Reason} {candidate.RejectReason}";
-            if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_MISMATCH"))
+            if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_"))
             {
-                bool hasDirection = candidate.Direction != TradeDirection.None;
-                bool hasHtf = allowed != TradeDirection.None;
-                bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, allowed);
-                string htfClassification = ResolveHtfRejectClassification(align, trueDirectionMismatch, !hasDirection || !hasHtf);
+                string htfClassification = ResolveHtfRejectClassification(candidate.Direction, allowed, align);
                 _bot.Print(
                     $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
-                    $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")} " +
+                    $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(candidate.Direction != TradeDirection.None && allowed != TradeDirection.None && candidate.Direction != allowed ? "YES" : "NO")} " +
                     $"classification={htfClassification} rejectModule={module}");
             }
         }
 
-        private static bool IsTrueDirectionMismatch(TradeDirection candidateDirection, TradeDirection allowedDirection)
+        private static string ResolveHtfRejectClassification(
+            TradeDirection candidateDirection,
+            TradeDirection htfAllowedDirection,
+            bool align)
         {
-            return candidateDirection != TradeDirection.None
-                && allowedDirection != TradeDirection.None
-                && candidateDirection != allowedDirection;
-        }
+            if (candidateDirection == TradeDirection.None || htfAllowedDirection == TradeDirection.None)
+                return "HTF_NO_DIRECTION";
 
-        private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
-        {
-            if (!align)
-                return "HTF_NOT_ALIGNED";
-
-            if (trueDirectionMismatch)
+            if (candidateDirection != htfAllowedDirection)
                 return "HTF_MISMATCH";
 
-            if (noDirectionCase)
-                return "HTF_NO_DIRECTION";
+            if (!align)
+                return "HTF_NOT_ALIGNED";
 
             return "HTF_OK";
         }
