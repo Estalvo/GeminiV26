@@ -220,10 +220,14 @@ namespace GeminiV26.Core
                         $"candidateDir={candidate.Direction}");
                 }
 
-                string htfClassification = ResolveHtfRejectClassification(
-                    candidate.Direction,
-                    routedHtfAllowedDirection);
-                candidate.HtfClassification = htfClassification;
+                string htfClassification = candidate.HtfClassification;
+                if (string.IsNullOrWhiteSpace(htfClassification))
+                {
+                    _bot.Print(
+                        $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
+                        $"candidateDirection={candidate.Direction} routedState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
+                    htfClassification = "HTF_NO_DIRECTION";
+                }
 
                 if (!candidate.IsValid)
                 {
@@ -346,11 +350,6 @@ namespace GeminiV26.Core
             bool consumerBlocks = consumerAllowedDirection != TradeDirection.None && consumerAllowedDirection != candidateDirection;
             return sourceBlocks == consumerBlocks;
         }
-
-        private static string ResolveHtfRejectClassification(
-            TradeDirection candidateDirection,
-            TradeDirection htfAllowedDirection)
-            => HtfClassificationModel.ComputeHtfClassification(candidateDirection, htfAllowedDirection);
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
         {

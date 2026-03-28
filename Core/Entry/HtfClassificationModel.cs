@@ -14,5 +14,18 @@ namespace GeminiV26.Core.Entry
 
             return "HTF_OK";
         }
+
+        public static void InitializeEntryHtfClassification(
+            EntryEvaluation eval,
+            TradeDirection candidateDirection,
+            TradeDirection htfAllowedDirection)
+        {
+            if (eval == null || !string.IsNullOrWhiteSpace(eval.HtfClassification))
+                return;
+
+            eval.HtfClassificationCandidateDirection = candidateDirection;
+            eval.HtfClassificationAllowedDirection = htfAllowedDirection;
+            eval.HtfClassification = ComputeHtfClassification(candidateDirection, htfAllowedDirection);
+        }
     }
 }
