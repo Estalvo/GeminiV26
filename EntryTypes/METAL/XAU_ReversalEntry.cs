@@ -25,7 +25,7 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.LogicBias == TradeDirection.None)
                 return RejectDecision(ctx, TradeDirection.None, 0, "NO_LOGIC_BIAS", null);
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                 return RejectDecision(ctx, TradeDirection.None, 0, "HTF_MISMATCH", null);
 
             if (ctx.LogicBias == TradeDirection.Long)

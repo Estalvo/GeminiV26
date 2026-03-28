@@ -48,7 +48,7 @@ namespace GeminiV26.EntryTypes
                 return CreateInvalid(ctx, "NoRange;");
             }
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
             {
                 return CreateInvalid(ctx, "HTF_MISMATCH");
             }

@@ -105,7 +105,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             var profile = CryptoInstrumentMatrix.Get(ctx.Symbol);
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                 return Invalid(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)

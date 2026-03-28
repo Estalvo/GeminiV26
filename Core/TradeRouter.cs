@@ -121,40 +121,12 @@ namespace GeminiV26.Core
 
                 bool structureAligned = IsStructureAligned(entryContext, candidate.Direction);
                 bool hasImpulse = entryContext?.HasImpulse_M5 == true;
-                bool htfAligned = entryContext == null
-                    || entryContext.FxHtfAllowedDirection == TradeDirection.None
-                    || candidate.Direction == TradeDirection.None
-                    || candidate.Direction == entryContext.FxHtfAllowedDirection;
-                TradeDirection consumerAllowedDirection = entryContext?.FxHtfAllowedDirection ?? TradeDirection.None;
-                string consumerHtfState = entryContext?.FxHtfReason ?? "N/A";
-                TradeDirection routedHtfAllowedDirection = TradeDirection.None;
-                string routedHtfState = "N/A";
-                if (entryContext != null)
-                {
-                    var instrumentClass = SymbolRouting.ResolveInstrumentClass(candidate.Symbol ?? _bot.SymbolName);
-                    switch (instrumentClass)
-                    {
-                        case InstrumentClass.FX:
-                            routedHtfAllowedDirection = entryContext.FxHtfAllowedDirection;
-                            routedHtfState = entryContext.FxHtfReason ?? "N/A";
-                            break;
-                        case InstrumentClass.CRYPTO:
-                            routedHtfAllowedDirection = entryContext.CryptoHtfAllowedDirection;
-                            routedHtfState = entryContext.CryptoHtfReason ?? "N/A";
-                            break;
-                        case InstrumentClass.METAL:
-                            routedHtfAllowedDirection = entryContext.MetalHtfAllowedDirection;
-                            routedHtfState = entryContext.MetalHtfReason ?? "N/A";
-                            break;
-                        case InstrumentClass.INDEX:
-                            routedHtfAllowedDirection = entryContext.IndexHtfAllowedDirection;
-                            routedHtfState = entryContext.IndexHtfReason ?? "N/A";
-                            break;
-                    }
-                }
-                bool routedHtfAlign = candidate.Direction == TradeDirection.None
-                    ? false
-                    : routedHtfAllowedDirection == TradeDirection.None || candidate.Direction == routedHtfAllowedDirection;
+                TradeDirection routedHtfAllowedDirection = candidate.HtfTraceSourceAllowedDirection;
+                string routedHtfState = candidate.HtfTraceSourceState ?? "N/A";
+                bool routedHtfAlign = candidate.HtfTraceSourceAlign;
+                bool htfAligned = routedHtfAlign;
+                TradeDirection consumerAllowedDirection = routedHtfAllowedDirection;
+                string consumerHtfState = routedHtfState;
                 string assetClass = SymbolRouting.ResolveInstrumentClass(candidate.Symbol ?? _bot.SymbolName).ToString();
                 bool continuationValid = !IsContinuationSetup(candidate.Type)
                     || (entryContext?.MarketState?.IsTrend == true && candidate.Direction == entryContext.TrendDirection);
@@ -276,9 +248,10 @@ namespace GeminiV26.Core
                     && candidate.Reason != null
                     && candidate.Reason.Contains("HTF_MISMATCH"))
                 {
+                    bool hasDirection = candidate.Direction != TradeDirection.None;
+                    bool hasHtf = routedHtfAllowedDirection != TradeDirection.None;
                     bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
-                    bool noDirectionCase = candidate.Direction == TradeDirection.None;
-                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, noDirectionCase);
+                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, !hasDirection || !hasHtf);
 
                     _bot.Print(
                         $"[AUDIT][HTF TRACE][REJECT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
@@ -296,9 +269,10 @@ namespace GeminiV26.Core
                 string rejectText = $"{candidate.Reason} {candidate.RejectReason}";
                 if (!string.IsNullOrWhiteSpace(rejectText) && rejectText.Contains("HTF_MISMATCH"))
                 {
+                    bool hasDirection = candidate.Direction != TradeDirection.None;
+                    bool hasHtf = routedHtfAllowedDirection != TradeDirection.None;
                     bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
-                    bool noDirectionCase = candidate.Direction == TradeDirection.None;
-                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, noDirectionCase);
+                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, !hasDirection || !hasHtf);
                     _bot.Print(
                         $"[AUDIT][HTF REJECT ANALYSIS] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} htfAllowedDirection={routedHtfAllowedDirection} htfState={routedHtfState} " +
@@ -373,16 +347,16 @@ namespace GeminiV26.Core
 
         private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
         {
-            if (trueDirectionMismatch)
-                return "HTF_MISMATCH";
-
             if (noDirectionCase)
                 return "HTF_NO_DIRECTION";
+
+            if (trueDirectionMismatch)
+                return "HTF_MISMATCH";
 
             if (!align)
                 return "HTF_NOT_ALIGNED";
 
-            return "HTF_NOT_ALIGNED";
+            return "HTF_OK";
         }
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
@@ -447,11 +421,16 @@ namespace GeminiV26.Core
                 return true;
 
             eval.IgnoreHTFForDecision = false;
-            eval.HtfConfidence01 = entryContext?.FxHtfConfidence01 ?? 0.0;
-            eval.IsHTFMisaligned = entryContext != null
-                && entryContext.FxHtfAllowedDirection != TradeDirection.None
+            if (string.IsNullOrWhiteSpace(eval.HtfTraceSourceStage))
+            {
+                _bot.Print(
+                    $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={symbol} asset={assetClass} entryType={eval.Type} candidateDirection={eval.Direction}");
+            }
+
+            eval.HtfConfidence01 = Math.Max(0.0, Math.Min(1.0, eval.HtfConfidence01));
+            eval.IsHTFMisaligned = eval.HtfTraceSourceAllowedDirection != TradeDirection.None
                 && eval.Direction != TradeDirection.None
-                && eval.Direction != entryContext.FxHtfAllowedDirection;
+                && eval.Direction != eval.HtfTraceSourceAllowedDirection;
 
             int scoreBeforeTimingBias = eval.Score;
             int thresholdBias = 0;

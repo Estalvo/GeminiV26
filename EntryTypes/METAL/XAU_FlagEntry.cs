@@ -83,7 +83,7 @@ namespace GeminiV26.EntryTypes.METAL
                     return Invalid(ctx, "AMBIGUOUS_SPIKE");
             }
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                 return InvalidDir(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)

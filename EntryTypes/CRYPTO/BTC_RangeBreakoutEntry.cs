@@ -27,7 +27,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MIN_RANGE_BARS)
                 return Invalid(ctx, "NO_RANGE");
 
-            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
                 return Invalid(ctx, "HTF_MISMATCH", TradeDirection.None, 0);
 
             if (ctx.LogicBias == TradeDirection.Long)

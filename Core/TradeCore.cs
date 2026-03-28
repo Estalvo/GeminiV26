@@ -1167,6 +1167,7 @@ namespace GeminiV26.Core
 
             foreach (var e in symbolSignals)
             {
+                StampEntrySourceHtfTrace(_ctx, e);
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
             }
@@ -2842,9 +2843,10 @@ namespace GeminiV26.Core
             string reason = $"{candidate.Reason} {candidate.RejectReason}";
             if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_MISMATCH"))
             {
+                bool hasDirection = candidate.Direction != TradeDirection.None;
+                bool hasHtf = allowed != TradeDirection.None;
                 bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, allowed);
-                bool noDirectionCase = candidate.Direction == TradeDirection.None;
-                string htfClassification = ResolveHtfRejectClassification(align, trueDirectionMismatch, noDirectionCase);
+                string htfClassification = ResolveHtfRejectClassification(align, trueDirectionMismatch, !hasDirection || !hasHtf);
                 _bot.Print(
                     $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
                     $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")} " +
@@ -2861,16 +2863,34 @@ namespace GeminiV26.Core
 
         private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
         {
+            if (!align)
+                return "HTF_NOT_ALIGNED";
+
             if (trueDirectionMismatch)
                 return "HTF_MISMATCH";
 
             if (noDirectionCase)
                 return "HTF_NO_DIRECTION";
 
-            if (!align)
-                return "HTF_NOT_ALIGNED";
+            return "HTF_OK";
+        }
 
-            return "HTF_NOT_ALIGNED";
+        private void StampEntrySourceHtfTrace(EntryContext ctx, EntryEvaluation eval)
+        {
+            if (ctx == null || eval == null)
+                return;
+
+            TradeDirection allowedDirection = ResolveHtfAllowedDirection(ctx);
+            TradeDirection candidateDirection = ctx.LogicBiasDirection;
+            bool align = allowedDirection == candidateDirection;
+
+            eval.HtfTraceSourceStage = "ENTRY_SOURCE";
+            eval.HtfTraceSourceModule = eval.Type.ToString();
+            eval.HtfTraceSourceState = ResolveHtfState(ctx);
+            eval.HtfTraceSourceAllowedDirection = allowedDirection;
+            eval.HtfTraceSourceAlign = align;
+            eval.HtfTraceSourceCandidateDirection = candidateDirection;
+            eval.HtfConfidence01 = ResolveHtfConfidence(ctx);
         }
 
         private static TradeDirection FromTradeType(TradeType tradeType)

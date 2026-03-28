@@ -123,10 +123,16 @@ namespace GeminiV26.Core.HtfBias
             }
 
             if (c.M15 == null || c.H1 == null || c.Ema21 == null || c.Ema55 == null || c.AtrH1 == null || c.Dms == null)
+            {
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "METAL_HTF NOT_READY NULL_INDICATOR", 0.20);
                 return;
+            }
 
             if (c.M15.Count < 10 || c.H1.Count < Math.Max(EmaSlow, 80))
+            {
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "METAL_HTF NOT_READY INSUFFICIENT_DATA", 0.20);
                 return;
+            }
 
             int m15Closed = c.M15.Count - 2;
             if (m15Closed < 1) return;
@@ -256,9 +262,9 @@ namespace GeminiV26.Core.HtfBias
             _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
             return new HtfBiasSnapshot
             {
-                State = HtfBiasState.Neutral,
+                State = HtfBiasState.NotReady,
                 AllowedDirection = TradeDirection.None,
-                Confidence01 = 0.0,
+                Confidence01 = 0.20,
                 Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
             };
         }

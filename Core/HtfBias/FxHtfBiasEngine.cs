@@ -82,7 +82,7 @@ namespace GeminiV26.Core.HtfBias
             {
                 c = new FxBiasContext();
                 _ctx[symbolName] = c;
-                SetState(c.Snapshot, HtfBiasState.Neutral, TradeDirection.None, "FX_HTF INIT NEUTRAL", 0.50);
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "FX_HTF NOT_READY INIT", 0.20);
 
                 if (!_runtimeSymbols.TryGetBars(BiasTf, symbolName, out c.H4) ||
                     !_runtimeSymbols.TryGetBars(UpdateTf, symbolName, out c.H1))
@@ -96,7 +96,10 @@ namespace GeminiV26.Core.HtfBias
                 }
 
                 if (c.H4.Count < EmaSlow + 8 || c.H1.Count < 10)
+                {
+                    SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "FX_HTF NOT_READY INSUFFICIENT_DATA", 0.20);
                     return;
+                }
 
                 c.Ema50 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaFast);
                 c.Ema200 = _bot.Indicators.ExponentialMovingAverage(c.H4.ClosePrices, EmaSlow);
@@ -107,10 +110,16 @@ namespace GeminiV26.Core.HtfBias
             }
 
             if (c.H1 == null || c.H4 == null || c.Ema50 == null || c.Ema200 == null || c.AtrH4 == null || c.Dms == null)
+            {
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "FX_HTF NOT_READY NULL_INDICATOR", 0.20);
                 return;
+            }
 
             if (c.H1.Count < 10 || c.H4.Count < EmaSlow + 8)
+            {
+                SetState(c.Snapshot, HtfBiasState.NotReady, TradeDirection.None, "FX_HTF NOT_READY INSUFFICIENT_DATA", 0.20);
                 return;
+            }
 
             int h1Closed = c.H1.Count - 2;
             if (h1Closed < 1)
@@ -367,9 +376,9 @@ namespace GeminiV26.Core.HtfBias
             _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
             return new HtfBiasSnapshot
             {
-                State = HtfBiasState.Neutral,
+                State = HtfBiasState.NotReady,
                 AllowedDirection = TradeDirection.None,
-                Confidence01 = 0.0,
+                Confidence01 = 0.20,
                 Reason = "HTF_UNAVAILABLE unresolved_runtime_symbol"
             };
         }
