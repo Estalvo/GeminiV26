@@ -28,8 +28,19 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MIN_RANGE_BARS)
                 return Invalid(ctx, "NO_RANGE");
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != logicBiasDirection)
-                return Invalid(ctx, "HTF_MISMATCH", logicBiasDirection, 0);
+            double htfConf = ctx.ResolveAssetHtfConfidence01();
+            var htfDir = ctx.ResolveAssetHtfAllowedDirection();
+            bool htfMismatch =
+                htfConf >= 0.6 &&
+                htfDir != TradeDirection.None &&
+                logicBiasDirection != TradeDirection.None &&
+                htfDir != logicBiasDirection;
+
+            if (htfMismatch)
+            {
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][HTF_SOFT] mismatch allowed | dir={logicBiasDirection} htf={htfDir} conf={htfConf:0.00}");
+            }
 
             if (logicBiasDirection == TradeDirection.Long)
             {
@@ -139,6 +150,18 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (!eval.IsValid)
                 eval.Reason += $"LowScore({score});";
+            else
+            {
+                double htfConf = ctx.ResolveAssetHtfConfidence01();
+                var htfDir = ctx.ResolveAssetHtfAllowedDirection();
+                bool htfMismatch =
+                    htfConf >= 0.6 &&
+                    htfDir != TradeDirection.None &&
+                    dir != TradeDirection.None &&
+                    htfDir != dir;
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][ENTRY_FINAL] dir={dir} score={score} htfMismatch={htfMismatch}");
+            }
 
             return eval;
         }
