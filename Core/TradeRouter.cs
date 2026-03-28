@@ -276,6 +276,10 @@ namespace GeminiV26.Core
                     && candidate.Reason != null
                     && candidate.Reason.Contains("HTF_MISMATCH"))
                 {
+                    bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
+                    bool noDirectionCase = candidate.Direction == TradeDirection.None;
+                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, noDirectionCase);
+
                     _bot.Print(
                         $"[AUDIT][HTF TRACE][REJECT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} rejectReason={candidate.Reason} " +
@@ -284,7 +288,7 @@ namespace GeminiV26.Core
 
                     _bot.Print(
                         $"[AUDIT][HTF ROUTER] type={candidate.Type} " +
-                        $"reason=HTF_MISMATCH " +
+                        $"reason={htfClassification} " +
                         $"biasState={routedHtfState} " +
                         $"allowedDir={routedHtfAllowedDirection} " +
                         $"candidateDir={candidate.Direction}");
@@ -292,13 +296,14 @@ namespace GeminiV26.Core
                 string rejectText = $"{candidate.Reason} {candidate.RejectReason}";
                 if (!string.IsNullOrWhiteSpace(rejectText) && rejectText.Contains("HTF_MISMATCH"))
                 {
-                    bool trueDirectionMismatch = routedHtfAllowedDirection != TradeDirection.None
-                        && candidate.Direction != TradeDirection.None
-                        && candidate.Direction != routedHtfAllowedDirection;
+                    bool trueDirectionMismatch = IsTrueDirectionMismatch(candidate.Direction, routedHtfAllowedDirection);
+                    bool noDirectionCase = candidate.Direction == TradeDirection.None;
+                    string htfClassification = ResolveHtfRejectClassification(routedHtfAlign, trueDirectionMismatch, noDirectionCase);
                     _bot.Print(
                         $"[AUDIT][HTF REJECT ANALYSIS] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} htfAllowedDirection={routedHtfAllowedDirection} htfState={routedHtfState} " +
-                        $"align={routedHtfAlign} rejectModule={nameof(TradeRouter)} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")}");
+                        $"align={routedHtfAlign} trueDirectionMismatch={(trueDirectionMismatch ? "YES" : "NO")} " +
+                        $"classification={htfClassification} rejectModule={nameof(TradeRouter)}");
                 }
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
@@ -357,6 +362,27 @@ namespace GeminiV26.Core
             bool sourceBlocks = sourceAllowedDirection != TradeDirection.None && sourceAllowedDirection != candidateDirection;
             bool consumerBlocks = consumerAllowedDirection != TradeDirection.None && consumerAllowedDirection != candidateDirection;
             return sourceBlocks == consumerBlocks;
+        }
+
+        private static bool IsTrueDirectionMismatch(TradeDirection candidateDirection, TradeDirection allowedDirection)
+        {
+            return candidateDirection != TradeDirection.None
+                && allowedDirection != TradeDirection.None
+                && candidateDirection != allowedDirection;
+        }
+
+        private static string ResolveHtfRejectClassification(bool align, bool trueDirectionMismatch, bool noDirectionCase)
+        {
+            if (trueDirectionMismatch)
+                return "HTF_MISMATCH";
+
+            if (noDirectionCase)
+                return "HTF_NO_DIRECTION";
+
+            if (!align)
+                return "HTF_NOT_ALIGNED";
+
+            return "HTF_NOT_ALIGNED";
         }
 
         private static string ResolveRejectReason(EntryEvaluation candidate, int threshold)
