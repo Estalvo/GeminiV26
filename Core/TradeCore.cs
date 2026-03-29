@@ -2405,6 +2405,10 @@ namespace GeminiV26.Core
                     candidate.State = EntryState.SETUP_DETECTED;
 
                 int barsSinceBreak = GetBarsSinceBreak(ctx, candidate.Direction);
+                bool lateContinuationForCandidate =
+                    (candidate.Direction == TradeDirection.Long && ctx.HasLateContinuationLong) ||
+                    (candidate.Direction == TradeDirection.Short && ctx.HasLateContinuationShort);
+                _bot.Print($"[TIMING][{candidate.Type}] barsSinceBreak={barsSinceBreak} late={lateContinuationForCandidate.ToString().ToLowerInvariant()}");
                 if (barsSinceBreak == 0)
                     ApplyManagedEarlyBreakTriggers(ctx, candidate, barsSinceBreak);
 
