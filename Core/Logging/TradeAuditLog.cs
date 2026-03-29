@@ -21,8 +21,8 @@ namespace GeminiV26.Core.Logging
 
         public static string BuildDirectionSnapshot(EntryContext ctx, EntryEvaluation entry)
         {
-            TradeDirection htfDirection = ResolveHtfDirection(ctx);
-            int htfConfidence = ResolveHtfConfidence(ctx);
+            TradeDirection htfDirection = ctx?.HtfDirection ?? TradeDirection.None;
+            int htfConfidence = (int)Math.Round((ctx?.HtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
 
             return "[DIR]\n" +
                    $"logicBias={ctx?.LogicBiasDirection ?? TradeDirection.None}\n" +
@@ -53,8 +53,8 @@ namespace GeminiV26.Core.Logging
         {
             string symbol = entry?.Symbol ?? ctx?.Symbol ?? bot?.SymbolName ?? "UNKNOWN";
             string attemptId = ctx?.EntryAttemptId ?? string.Empty;
-            TradeDirection htfDirection = ResolveHtfDirection(ctx);
-            int htfConfidence = ResolveHtfConfidence(ctx);
+            TradeDirection htfDirection = ctx?.HtfDirection ?? TradeDirection.None;
+            int htfConfidence = (int)Math.Round((ctx?.HtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
 
             return "[ENTRY SNAPSHOT]\n" +
                    $"symbol={symbol}\n" +
@@ -206,33 +206,6 @@ namespace GeminiV26.Core.Logging
             if (barsSinceStart <= 6)
                 return "SOFT";
             return "NONE";
-        }
-
-        private static TradeDirection ResolveHtfDirection(EntryContext ctx)
-        {
-            if (ctx == null)
-                return TradeDirection.None;
-            if (ctx.FxHtfAllowedDirection != TradeDirection.None)
-                return ctx.FxHtfAllowedDirection;
-            if (ctx.CryptoHtfAllowedDirection != TradeDirection.None)
-                return ctx.CryptoHtfAllowedDirection;
-            if (ctx.IndexHtfAllowedDirection != TradeDirection.None)
-                return ctx.IndexHtfAllowedDirection;
-            if (ctx.MetalHtfAllowedDirection != TradeDirection.None)
-                return ctx.MetalHtfAllowedDirection;
-            return TradeDirection.None;
-        }
-
-        private static int ResolveHtfConfidence(EntryContext ctx)
-        {
-            if (ctx == null)
-                return 0;
-
-            double confidence01 = Math.Max(
-                Math.Max(ctx.FxHtfConfidence01, ctx.CryptoHtfConfidence01),
-                Math.Max(ctx.IndexHtfConfidence01, ctx.MetalHtfConfidence01));
-
-            return (int)Math.Round(confidence01 * 100.0, MidpointRounding.AwayFromZero);
         }
 
         private static string ToLower(bool value) => value ? "true" : "false";

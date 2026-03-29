@@ -1187,44 +1187,27 @@ namespace GeminiV26.Core
         // Handles FX / Crypto / Metals / Index policies without filtering
         // =====================================================
 
-        if (isFxSymbol && _fxBias != null)
+        if (isFxSymbol)
         {
-            var bias = _fxBias.Get(_bot.SymbolName);
-
-            _ctx.FxHtfAllowedDirection = bias.AllowedDirection;
-            _ctx.FxHtfConfidence01 = bias.Confidence01;
-            _ctx.FxHtfReason = bias.Reason;
-
+            var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.FX);
             _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "FX");
         }
-        else if (isCryptoSymbol && _cryptoBias != null)
+        else if (isCryptoSymbol)
         {
-            var bias = _cryptoBias.Get(_bot.SymbolName);
-            _ctx.CryptoHtfAllowedDirection = bias.AllowedDirection;
-            _ctx.CryptoHtfConfidence01 = bias.Confidence01;
-            _ctx.CryptoHtfReason = bias.Reason;
-
+            var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.CRYPTO);
             _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "CRYPTO");
         }
-        else if (isMetalSymbol && _metalBias != null)
+        else if (isMetalSymbol)
         {
-            var bias = _metalBias.Get(_bot.SymbolName);
-            _ctx.MetalHtfAllowedDirection = bias.AllowedDirection;
-            _ctx.MetalHtfConfidence01 = bias.Confidence01;
-            _ctx.MetalHtfReason = bias.Reason;
-
+            var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.METAL);
             _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "XAU");
         }
-        else if (isIndexSymbol && _indexBias != null)
+        else if (isIndexSymbol)
         {
-            var bias = _indexBias.Get(_bot.SymbolName);
-            _ctx.IndexHtfAllowedDirection = bias.AllowedDirection;
-            _ctx.IndexHtfConfidence01 = bias.Confidence01;
-            _ctx.IndexHtfReason = bias.Reason;
-
+            var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.INDEX);
             _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
@@ -1378,6 +1361,9 @@ namespace GeminiV26.Core
                 }
 
                 LogEntrySnapshot(_ctx, selected);
+                _bot.Print(TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.HtfDirection} conf={_ctx.HtfConfidence:F2}", _ctx));
+                if (_ctx.HtfDirection == TradeDirection.None)
+                    _bot.Print(TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
 
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
@@ -3543,6 +3529,46 @@ namespace GeminiV26.Core
                 return "Transition";
 
             return setup;
+        }
+
+        private static HtfBiasSnapshot BuildHtfSnapshotFromContext(EntryContext ctx, InstrumentClass instrumentClass)
+        {
+            var snapshot = new HtfBiasSnapshot();
+            if (ctx == null)
+                return snapshot;
+
+            if (instrumentClass == InstrumentClass.FX)
+            {
+                snapshot.AllowedDirection = ctx.FxHtfAllowedDirection;
+                snapshot.Confidence01 = ctx.FxHtfConfidence01;
+                snapshot.Reason = ctx.FxHtfReason ?? string.Empty;
+                return snapshot;
+            }
+
+            if (instrumentClass == InstrumentClass.CRYPTO)
+            {
+                snapshot.AllowedDirection = ctx.CryptoHtfAllowedDirection;
+                snapshot.Confidence01 = ctx.CryptoHtfConfidence01;
+                snapshot.Reason = ctx.CryptoHtfReason ?? string.Empty;
+                return snapshot;
+            }
+
+            if (instrumentClass == InstrumentClass.METAL)
+            {
+                snapshot.AllowedDirection = ctx.MetalHtfAllowedDirection;
+                snapshot.Confidence01 = ctx.MetalHtfConfidence01;
+                snapshot.Reason = ctx.MetalHtfReason ?? string.Empty;
+                return snapshot;
+            }
+
+            if (instrumentClass == InstrumentClass.INDEX)
+            {
+                snapshot.AllowedDirection = ctx.IndexHtfAllowedDirection;
+                snapshot.Confidence01 = ctx.IndexHtfConfidence01;
+                snapshot.Reason = ctx.IndexHtfReason ?? string.Empty;
+            }
+
+            return snapshot;
         }
 
         private void ApplyHtfBiasScoreOnly(List<EntryEvaluation> symbolSignals, HtfBiasSnapshot bias, string assetTag)
