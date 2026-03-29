@@ -844,6 +844,8 @@ namespace GeminiV26.Core.Entry
                 ctx.CryptoHtfAllowedDirection = htf.AllowedDirection;
                 ctx.CryptoHtfConfidence01 = htf.Confidence01;
                 ctx.CryptoHtfReason = htf.Reason;
+                ctx.ActiveHtfDirection = htf.AllowedDirection;
+                ctx.ActiveHtfConfidence = htf.Confidence01;
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.CRYPTO, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isFx)
@@ -852,6 +854,8 @@ namespace GeminiV26.Core.Entry
                 ctx.FxHtfAllowedDirection = htf.AllowedDirection;
                 ctx.FxHtfConfidence01 = htf.Confidence01;
                 ctx.FxHtfReason = htf.Reason;
+                ctx.ActiveHtfDirection = htf.AllowedDirection;
+                ctx.ActiveHtfConfidence = htf.Confidence01;
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.FX, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isIndex)
@@ -860,6 +864,8 @@ namespace GeminiV26.Core.Entry
                 ctx.IndexHtfAllowedDirection = htf.AllowedDirection;
                 ctx.IndexHtfConfidence01 = htf.Confidence01;
                 ctx.IndexHtfReason = htf.Reason;
+                ctx.ActiveHtfDirection = htf.AllowedDirection;
+                ctx.ActiveHtfConfidence = htf.Confidence01;
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.INDEX, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isMetal)
@@ -868,11 +874,13 @@ namespace GeminiV26.Core.Entry
                 ctx.MetalHtfAllowedDirection = htf.AllowedDirection;
                 ctx.MetalHtfConfidence01 = htf.Confidence01;
                 ctx.MetalHtfReason = htf.Reason;
+                ctx.ActiveHtfDirection = htf.AllowedDirection;
+                ctx.ActiveHtfConfidence = htf.Confidence01;
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.METAL, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
 
-            _bot.Print($"[HTF][SNAPSHOT] dir={ctx.HtfDirection} conf={ctx.HtfConfidence:F2}");
-            if (ctx.HtfDirection == TradeDirection.None)
+            _bot.Print($"[HTF][SNAPSHOT] dir={ctx.ActiveHtfDirection} conf={ctx.ActiveHtfConfidence:F2}");
+            if (ctx.ActiveHtfDirection == TradeDirection.None)
                 _bot.Print("[HTF][WARN] Missing HTF snapshot");
 
             ctx.IsReady = true;
@@ -898,7 +906,7 @@ namespace GeminiV26.Core.Entry
                 $"htfState={htfState} allowedDirection={allowedDirection} align=false candidateDirection=None htfConfidence={confidence01:0.00}");
             _bot.Print(
                 $"[AUDIT][HTF CONTEXT] symbol={symbol} asset={assetClass} allowedDirection={allowedDirection} confidence={confidence01:0.00} reason={reason ?? "N/A"} " +
-                $"legacyDirection={ctx.HtfDirection} legacyConfidence={ctx.HtfConfidence:0.00}");
+                $"activeDirection={ctx.ActiveHtfDirection} activeConfidence={ctx.ActiveHtfConfidence:0.00}");
         }
 
         private void AttachMemorySnapshot(EntryContext ctx, string canonicalSymbol)

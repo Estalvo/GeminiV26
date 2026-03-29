@@ -255,6 +255,10 @@ namespace GeminiV26.Core.Entry
         public double MetalHtfConfidence01 { get; set; } = 0.0;
         public string MetalHtfReason { get; set; }
 
+        // Selected active HTF (single-source runtime fields)
+        public TradeDirection ActiveHtfDirection { get; set; } = TradeDirection.None;
+        public double ActiveHtfConfidence { get; set; } = 0.0;
+
         // =========================
         // DIRECTION FLOW (SSOT)
         // =========================
@@ -264,6 +268,11 @@ namespace GeminiV26.Core.Entry
         public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
         public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
         public bool DirectionDebugLogged { get; set; }
+
+        // Finalized snapshot fields (read-only source for audit snapshot generation)
+        public int EntryScore { get; set; }
+        public int FinalConfidence { get; set; }
+        public int RiskConfidence { get; set; }
 
         public double TotalMoveSinceBreakAtr { get; set; }
 
@@ -336,66 +345,15 @@ namespace GeminiV26.Core.Entry
         [Obsolete("LEGACY – use LogicBiasConfidence")]
         public int LogicConfidence => LogicBiasConfidence;
 
-        [Obsolete("LEGACY – use the instrument-specific *HtfAllowedDirection property")]
-        public TradeDirection HtfDirection
-        {
-            get
-            {
-                if (FxHtfAllowedDirection != TradeDirection.None)
-                    return FxHtfAllowedDirection;
+        [Obsolete("LEGACY – use ActiveHtfDirection")]
+        public TradeDirection HtfDirection => ActiveHtfDirection;
 
-                if (CryptoHtfAllowedDirection != TradeDirection.None)
-                    return CryptoHtfAllowedDirection;
+        [Obsolete("LEGACY – use ActiveHtfConfidence")]
+        public double HtfConfidence => ActiveHtfConfidence;
 
-                if (IndexHtfAllowedDirection != TradeDirection.None)
-                    return IndexHtfAllowedDirection;
+        public TradeDirection ResolveAssetHtfAllowedDirection() => ActiveHtfDirection;
 
-                if (MetalHtfAllowedDirection != TradeDirection.None)
-                    return MetalHtfAllowedDirection;
-
-                return TradeDirection.None;
-            }
-        }
-
-        [Obsolete("LEGACY – use the instrument-specific *HtfConfidence01 property")]
-        public double HtfConfidence
-        {
-            get
-            {
-                double maxConfidence = FxHtfConfidence01;
-
-                if (CryptoHtfConfidence01 > maxConfidence)
-                    maxConfidence = CryptoHtfConfidence01;
-
-                if (IndexHtfConfidence01 > maxConfidence)
-                    maxConfidence = IndexHtfConfidence01;
-
-                if (MetalHtfConfidence01 > maxConfidence)
-                    maxConfidence = MetalHtfConfidence01;
-
-                return maxConfidence;
-            }
-        }
-
-        public TradeDirection ResolveAssetHtfAllowedDirection()
-        {
-            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(Symbol));
-            if (instrumentClass == InstrumentClass.FX) return FxHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.CRYPTO) return CryptoHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.METAL) return MetalHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.INDEX) return IndexHtfAllowedDirection;
-            return TradeDirection.None;
-        }
-
-        public double ResolveAssetHtfConfidence01()
-        {
-            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(Symbol));
-            if (instrumentClass == InstrumentClass.FX) return FxHtfConfidence01;
-            if (instrumentClass == InstrumentClass.CRYPTO) return CryptoHtfConfidence01;
-            if (instrumentClass == InstrumentClass.METAL) return MetalHtfConfidence01;
-            if (instrumentClass == InstrumentClass.INDEX) return IndexHtfConfidence01;
-            return 0.0;
-        }
+        public double ResolveAssetHtfConfidence01() => ActiveHtfConfidence;
 
         public string SymbolName => Symbol;
 
