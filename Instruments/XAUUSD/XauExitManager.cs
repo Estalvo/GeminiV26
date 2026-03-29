@@ -273,6 +273,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     ? sym.Bid
                     : sym.Ask;
                 // Keep MFE/MAE lifecycle tracking independent from TP1/TVM gating.
+                _bot.Print($"[ONTICK] time={_bot.Server.Time:HH:mm:ss.fff}");
                 TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
 
                 double rDist = GetRiskDistance(pos, ctx);
