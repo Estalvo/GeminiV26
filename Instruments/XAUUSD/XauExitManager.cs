@@ -595,8 +595,8 @@ namespace GeminiV26.Instruments.XAUUSD
                 return ctx.Tp1R;
 
             // Profil bucket
-            if (ctx.FinalConfidence >= 85) return _profile.Tp1R_High;
-            if (ctx.FinalConfidence >= 70) return _profile.Tp1R_Normal;
+            if (ctx.AdjustedRiskConfidence >= 85) return _profile.Tp1R_High;
+            if (ctx.AdjustedRiskConfidence >= 70) return _profile.Tp1R_Normal;
             return _profile.Tp1R_Low;
         }
 

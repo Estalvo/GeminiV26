@@ -264,8 +264,8 @@ namespace GeminiV26.Instruments.ETHUSD
             ctx.ComputeFinalConfidence();
 
             ctx.TrailingMode =
-                ctx.FinalConfidence >= 85 ? TrailingMode.Loose :
-                ctx.FinalConfidence >= 75 ? TrailingMode.Normal :
+                adjustedRiskConfidence >= 85 ? TrailingMode.Loose :
+                adjustedRiskConfidence >= 75 ? TrailingMode.Normal :
                                              TrailingMode.Tight;
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
@@ -274,6 +274,7 @@ namespace GeminiV26.Instruments.ETHUSD
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[posId] = ctx;
+            ctx.AdjustedRiskConfidence = adjustedRiskConfidence;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
