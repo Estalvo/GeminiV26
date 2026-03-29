@@ -64,7 +64,7 @@ namespace GeminiV26.Core.Logging
                    $"regime={ResolveRegime(ctx)}\n" +
                    $"setupType={entry?.Type}\n" +
                    $"entryType={entry?.Type}\n" +
-                   $"direction={ctx?.FinalDirection ?? entry?.Direction ?? TradeDirection.None}\n" +
+                   $"direction={ctx.FinalDirection}\n" +
                    $"entryScore={entry?.Score ?? 0}\n" +
                    $"logicConfidence={logicConfidence}\n" +
                    $"finalConfidence={finalConfidence}\n" +
