@@ -594,9 +594,17 @@ namespace GeminiV26.Instruments.XAUUSD
             if (ctx.Tp1R > 0)
                 return ctx.Tp1R;
 
+            int confidence = ctx.AdjustedRiskConfidence;
+
+            if (confidence <= 0)
+            {
+                confidence = ctx.FinalConfidence;
+                ctx.Log?.Invoke("[CONF][EXIT_FALLBACK] using FinalConfidence");
+            }
+
             // Profil bucket
-            if (ctx.AdjustedRiskConfidence >= 85) return _profile.Tp1R_High;
-            if (ctx.AdjustedRiskConfidence >= 70) return _profile.Tp1R_Normal;
+            if (confidence >= 85) return _profile.Tp1R_High;
+            if (confidence >= 70) return _profile.Tp1R_Normal;
             return _profile.Tp1R_Low;
         }
 
