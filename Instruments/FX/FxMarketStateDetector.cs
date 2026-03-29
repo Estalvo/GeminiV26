@@ -32,8 +32,8 @@ namespace GeminiV26.Instruments.FX
             _bot = bot;
             _bars = bot.Bars;
 
-            _bot.Print($"[FX MATRIX DBG] MatrixType = {typeof(FxInstrumentMatrix).Assembly.FullName}");
-            _bot.Print($"[FX MATRIX DBG] Keys = {string.Join(",", FxInstrumentMatrix.DebugKeys())}");
+            GlobalLogger.Log($"[FX MATRIX DBG] MatrixType = {typeof(FxInstrumentMatrix).Assembly.FullName}");
+            GlobalLogger.Log($"[FX MATRIX DBG] Keys = {string.Join(",", FxInstrumentMatrix.DebugKeys())}");
 
             _atr = bot.Indicators.AverageTrueRange(
                 _bars,
@@ -97,7 +97,7 @@ namespace GeminiV26.Instruments.FX
             bool isMomentum = atrRaw > 0 && body >= atrRaw * 0.55 && !isCompression;
 
             // === DEBUG (szándékosan marad) ===
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[FX MSD] {_bot.SymbolName} | " +
                 $"atrPips={atrPips:F2} adx={adx:F1} | " +
                 $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} compression={isCompression}");

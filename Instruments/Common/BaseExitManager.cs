@@ -8,8 +8,8 @@ namespace GeminiV26.Instruments.Common
 {
     /// <summary>
     /// Phase 3.7+
-    /// Glob·lis Exit Manager alap.
-    /// - Context lifecycle kezelÈse
+    /// Glob√°lis Exit Manager alap.
+    /// - Context lifecycle kezel√©se
     /// - Rehydrate logika
     /// - State guardok
     /// Instrument-specifikus exit NEM itt van.
@@ -47,7 +47,7 @@ namespace GeminiV26.Instruments.Common
                 if (!Accepts(pos))
                     continue;
 
-                // m·r van context (pl. hot reload)
+                GlobalLogger.Log($"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
                 if (Contexts.ContainsKey(pos.Id))
                     continue;
 
@@ -79,19 +79,19 @@ namespace GeminiV26.Instruments.Common
         // =====================================================
 
         /// <summary>
-        /// TP1 m·r lefutott? Akkor ˙jra nem futhat.
+        /// TP1 m√°r lefutott? Akkor √∫jra nem futhat.
         /// </summary>
         protected bool GuardTp1AlreadyHit(PositionContext ctx)
             => ctx.Tp1Hit;
 
         /// <summary>
-        /// Trailing csak TP1 ut·n Ès aktÌv mÛdban.
+        /// Trailing csak TP1 ut√°n √©s akt√≠v m√≥dban.
         /// </summary>
         protected bool GuardTrailingAllowed(PositionContext ctx)
             => ctx.Tp1Hit && ctx.TrailingMode != TrailingMode.None;
 
         /// <summary>
-        /// BE csak TP1 ut·n.
+        /// BE csak TP1 ut√°n.
         /// </summary>
         protected bool GuardBeAllowed(PositionContext ctx)
             => ctx.Tp1Hit && ctx.BeMode != BeMode.None;
@@ -119,12 +119,12 @@ namespace GeminiV26.Instruments.Common
         // =====================================================
 
         /// <summary>
-        /// Ez az ExitManager kezeli-e ezt a pozÌciÛt?
+        /// Ez az ExitManager kezeli-e ezt a poz√≠ci√≥t?
         /// </summary>
         protected abstract bool Accepts(Position pos);
 
         /// <summary>
-        /// Rehydrate sor·n Position -> Context visszaÈpÌtÈse.
+        /// Rehydrate sor√°n Position -> Context vissza√©p√≠t√©se.
         /// Instrument-specifikus.
         /// </summary>
         protected abstract PositionContext RehydrateContext(Position pos);

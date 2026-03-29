@@ -91,7 +91,7 @@ namespace GeminiV26.Instruments.AUDUSD
 
             if (_m5 == null || _m5.Count < MinBars || _m15 == null || _m15.Count < 50)
             {
-                _bot.Print($"[AUDUSD LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log($"[AUDUSD LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace GeminiV26.Instruments.AUDUSD
             // =====================================================
             // DEBUG (informatív, nem gate)
             // =====================================================
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDUSD LOGIC] bias={LastBias} logicConf={LastLogicConfidence} | " +
                 $"ema50={ema50:F5} ema200={ema200:F5} diff={emaDiff:F5} | " +
                 $"adx={adx:F1} atr={atr:F5} | htfBull={htfBull}"

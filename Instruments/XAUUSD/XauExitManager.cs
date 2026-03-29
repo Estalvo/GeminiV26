@@ -84,7 +84,7 @@ namespace GeminiV26.Instruments.XAUUSD
             {
                 if (!ctx.MissingDirLogged)
                 {
-                    _bot.Print($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                    GlobalLogger.Log($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
                     ctx.MissingDirLogged = true;
                 }
 
@@ -106,8 +106,8 @@ namespace GeminiV26.Instruments.XAUUSD
             if (suppressRehydrateRegistrationLog || suppressPostEntryRegistrationLog)
                 return;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx));
         }
 
         // =====================================================
@@ -119,7 +119,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (pos == null)
             {
-                _bot.Print("[RESOLVER][EXIT_SKIP] symbol=UNKNOWN positionId=0 reason=position_null");
+                GlobalLogger.Log("[RESOLVER][EXIT_SKIP] symbol=UNKNOWN positionId=0 reason=position_null");
                 return false;
             }
 
@@ -136,7 +136,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     {
                         _rehydratedResolverSkipLogged.Remove(key);
                         ctx.RehydrateRecoveryCompleted = true;
-                        _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
+                        GlobalLogger.Log($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
                         return true;
                     }
 
@@ -160,14 +160,14 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (isRehydratedContext)
                     ctx.RehydrateRecoveryCompleted = true;
 
-                _bot.Print($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
+                GlobalLogger.Log($"[RESOLVER][EXIT_RECOVER] symbol={pos.SymbolName} positionId={pos.Id} source=platform_symbols");
                 return true;
             }
 
             if (isRehydratedContext)
                 _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
 
-            _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos.SymbolName} positionId={pos.Id} reason=unresolved_runtime_symbol");
+            GlobalLogger.Log($"[RESOLVER][EXIT_SKIP] symbol={pos.SymbolName} positionId={pos.Id} reason=unresolved_runtime_symbol");
             return false;
         }
 
@@ -188,7 +188,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     _rehydratedResolverSkipLogged.Add(Convert.ToInt64(ctx.PositionId));
 
                 if (!suppressRepeatedRehydrateResolverLog)
-                    _bot.Print($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
+                    GlobalLogger.Log($"[RESOLVER][EXIT_SKIP] symbol={pos?.SymbolName ?? "UNKNOWN"} positionId={pos?.Id ?? 0} reason=unresolved_runtime_symbol");
 
                 return false;
             }
@@ -217,7 +217,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 string stateFingerprint = $"{ctx.BarsSinceEntryM5}|{ctx.Tp1Hit}|{ctx.BeActivated}|{ctx.TrailingActivated}|{ctx.TrailSteps}";
                 if (ctx.LastStateTraceBarIndex != ctx.BarsSinceEntryM5 || !string.Equals(ctx.LastStateTraceFingerprint, stateFingerprint, StringComparison.Ordinal))
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, pos, stateSymbol), ctx, pos));
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildStateSnapshot(ctx, pos, stateSymbol), ctx, pos));
                     ctx.LastStateTraceBarIndex = ctx.BarsSinceEntryM5;
                     ctx.LastStateTraceFingerprint = stateFingerprint;
                 }
@@ -230,7 +230,7 @@ namespace GeminiV26.Instruments.XAUUSD
         private void Debug(string msg)
         {
             if (DebugTp1)
-                _bot.Print(msg);
+                GlobalLogger.Log(msg);
         }
 
         // =====================================================
@@ -257,7 +257,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (ctx.Tp1Executed && !ctx.IsFullyClosing)
                         continue;
 
-                    _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT][CLEANUP]\nreason=position_not_found", ctx));
                     _contexts.Remove(key);
                     _rehydratedResolverSkipLogged.Remove(key);
                     continue;
@@ -273,8 +273,8 @@ namespace GeminiV26.Instruments.XAUUSD
                     ? sym.Bid
                     : sym.Ask;
                 // Keep MFE/MAE lifecycle tracking independent from TP1/TVM gating.
-                _bot.Print($"[ONTICK] time={_bot.Server.Time:HH:mm:ss.fff}");
-                System.Console.WriteLine($"[MFE_CALLSITE] symbol={_bot.SymbolName} price={currentPrice}");
+                GlobalLogger.Log($"[ONTICK] time={_bot.Server.Time:HH:mm:ss.fff}");
+                GlobalLogger.Log($"[MFE_CALLSITE] symbol={_bot.SymbolName} price={currentPrice}");
                 TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
 
                 double rDist = GetRiskDistance(pos, ctx);
@@ -338,8 +338,8 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     if (hit)
                     {
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][TOUCHED]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
+                        GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
+                        GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TP1][TOUCHED]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -356,8 +356,8 @@ namespace GeminiV26.Instruments.XAUUSD
 
                         if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
-                            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={ctx.DeadTradeReason}\ndetail=tvm_early_exit", ctx, pos));
-                            _bot.Print(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
+                            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={ctx.DeadTradeReason}\ndetail=tvm_early_exit", ctx, pos));
+                            GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
                                 $"symbol={pos.SymbolName}\n" +
                                 $"positionId={pos.Id}\n" +
                                 $"mfe={ctx.MfeR:0.##}\n" +
@@ -365,8 +365,8 @@ namespace GeminiV26.Instruments.XAUUSD
                                 $"tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}\n" +
                                 $"barsOpen={ctx.BarsSinceEntryM5}\n" +
                                 $"reason={ctx.DeadTradeReason}", ctx, pos));
-                            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
-                            _bot.Print(TradeLogIdentity.WithPositionIds($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
+                            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
+                            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[XAUUSD][TVM][EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}", ctx, pos));
 
                             ctx.IsFullyClosing = true;
                             _bot.ClosePosition(pos);
@@ -422,32 +422,32 @@ namespace GeminiV26.Instruments.XAUUSD
             long flooredUnits = (long)Math.Floor(rawUnitsD);
             long closeVolume = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
             
             if (closeVolume < sym.VolumeInUnitsMin)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
                 return;
             }
 
             var closeResult = _bot.ClosePosition(pos, closeVolume);
             if (!closeResult.IsSuccessful)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
-                _bot.Print("[TP1][FAIL] execution failed");
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
+                GlobalLogger.Log("[TP1][FAIL] execution failed");
                 return;
             }
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
 
             double executionPrice = IsLong(ctx) ? sym.Bid : sym.Ask;
-            _bot.Print($"[TP1][EXECUTED] volumeClosed={closeVolume} price={executionPrice}");
+            GlobalLogger.Log($"[TP1][EXECUTED] volumeClosed={closeVolume} price={executionPrice}");
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
-            _bot.Print("[TP1] hit → MFE continues tracking");
+            GlobalLogger.Log("[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeVolume}", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeVolume}", ctx, pos));
 
             // Remaining volume (analytics + rehydrate friendliness)
             ctx.Tp1ClosedVolumeInUnits = closeVolume;
@@ -458,14 +458,14 @@ namespace GeminiV26.Instruments.XAUUSD
             var live = _bot.Positions.Find(pos.Label, pos.SymbolName, pos.TradeType);
             if (live == null)
             {
-                _bot.Print("[EXIT][POST_TP1_NO_POSITION]");
+                GlobalLogger.Log("[EXIT][POST_TP1_NO_POSITION]");
                 _contexts.Remove(Convert.ToInt64(pos.Id));
                 return;
             }
 
             if (live.VolumeInUnits < sym.VolumeInUnitsMin)
             {
-                _bot.Print("[EXIT][POST_TP1_MIN_VOLUME]");
+                GlobalLogger.Log("[EXIT][POST_TP1_MIN_VOLUME]");
                 _contexts.Remove(Convert.ToInt64(pos.Id));
                 return;
             }
@@ -501,8 +501,8 @@ namespace GeminiV26.Instruments.XAUUSD
 
             ctx.BePrice = bePrice;
             double newSl = bePrice;
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[BE] moved", ctx, pos));
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} be={bePrice}", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[BE] moved", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] BE MOVE applied symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} be={bePrice}", ctx, pos));
 
             SafeModify(
                 pos,
@@ -672,7 +672,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 ctx.Tp1CloseFraction = 0.40;
 
                 RegisterContext(ctx);
-                bot.Print($"[XAU REHYDRATE] pos={pos.Id}");
+                GlobalLogger.Log($"[XAU REHYDRATE] pos={pos.Id}");
             }
         }
 
@@ -705,7 +705,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 return;
 
             SafeModify(pos, pos.StopLoss, newTp);
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT] TP2 EXTENDED symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} oldTp={currentTp} newTp={newTp}", ctx, pos));
             ctx.LastExtendedTp2 = newTp;
             ctx.Tp2ExtensionMultiplierApplied = desiredR / baseR;
         }
@@ -727,25 +727,25 @@ namespace GeminiV26.Instruments.XAUUSD
             if (position == null)
                 return;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
             var livePos = FindPosition(Convert.ToInt64(position.Id));
             if (livePos == null)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
-                _bot.Print($"[SAFE_MODIFY][SKIP_NO_POSITION] pos={position.Id}");
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror=POSITION_NOT_FOUND", position.Id, null, position.SymbolName));
+                GlobalLogger.Log($"[SAFE_MODIFY][SKIP_NO_POSITION] pos={position.Id}");
                 return;
             }
 
             var result = _bot.ModifyPosition(livePos, sl, tp);
             if (!result.IsSuccessful)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
-                _bot.Print($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[BE][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
+                GlobalLogger.Log($"[SAFE_MODIFY][FAIL] {position.Id} error={result.Error}");
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[BE][FAIL]\nsl={sl}\ntp={tp}\nerror={result.Error}", position.Id, null, position.SymbolName));
                 return;
             }
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[MODIFY][SUCCESS]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[MODIFY][SUCCESS]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
         }
 
         private static bool IsLong(PositionContext ctx)

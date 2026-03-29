@@ -56,11 +56,11 @@ namespace GeminiV26.Instruments.NAS100
             // - Asia/London/NY: enged (a részletes viselkedést az EntryType-ok döntik el)
             if (s == IndexSession.AfterHours)
             {
-                _bot.Print("[NAS][SESSION] BLOCK AfterHours");
+                GlobalLogger.Log("[NAS][SESSION] BLOCK AfterHours");
                 return false;
             }
 
-            _bot.Print($"[NAS][SESSION] OK {s}");
+            GlobalLogger.Log($"[NAS][SESSION] OK {s}");
             return true;
         }
     }

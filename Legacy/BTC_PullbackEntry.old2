@@ -123,7 +123,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 int agePenalty = Math.Min(10, (ctx.BarsSinceImpulse_M5 - 3) * 2);
                 score -= agePenalty;
 
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}"
                 );
             }
@@ -153,7 +153,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 score -= 4;
 
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC_PULLBACK][SOFT] CRYPTO_EARLY_PULLBACK_WAIT | " +
                     $"penalty=4 | BarsSinceImpulse={ctx.BarsSinceImpulse_M5}"
                 );
@@ -207,7 +207,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 int htfPenalty = (int)Math.Round(2 + 6 * ctx.CryptoHtfConfidence01); // 2..8
                 score -= htfPenalty;
 
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC_PULLBACK][HTF] mismatch dir={dir} htf={ctx.CryptoHtfAllowedDirection} " +
                     $"conf={ctx.CryptoHtfConfidence01:F2} pen={htfPenalty} reason={ctx.CryptoHtfReason}"
                 );
@@ -245,7 +245,7 @@ namespace GeminiV26.EntryTypes.Crypto
         // 4 paraméteres – amikor már van dir
         private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir)
         {
-            Console.WriteLine(
+            GlobalLogger.Log(
                 $"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | " +
                 $"score={score}"
             );

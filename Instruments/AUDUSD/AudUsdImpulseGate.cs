@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.AUDUSD
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[AUDUSD GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[AUDUSD GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[AUDUSD GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[AUDUSD GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print("[AUDUSD GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log("[AUDUSD GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            _bot.Print("[AUDUSD GATE] ALLOWED");
+            GlobalLogger.Log("[AUDUSD GATE] ALLOWED");
             return true;
         }
 

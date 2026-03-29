@@ -44,7 +44,7 @@ namespace GeminiV26.Instruments.BTCUSD
             var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5);
             if (m5 == null || m5.Count < 200)
             {
-                _bot.Print("[BTC][Logic] Not enough M5 bars → neutral bias");
+                GlobalLogger.Log("[BTC][Logic] Not enough M5 bars → neutral bias");
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace GeminiV26.Instruments.BTCUSD
             }
             else
             {
-                _bot.Print("[BTC][Logic] EMA50 ≈ EMA200 → no directional bias");
+                GlobalLogger.Log("[BTC][Logic] EMA50 ≈ EMA200 → no directional bias");
             }
 
             // =========================================================
@@ -75,7 +75,7 @@ namespace GeminiV26.Instruments.BTCUSD
             var atr = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Simple).Result.LastValue;
             if (atr <= 0)
             {
-                _bot.Print("[BTC][Logic] ATR invalid → confidence reduced");
+                GlobalLogger.Log("[BTC][Logic] ATR invalid → confidence reduced");
                 logicConfidence -= 10;
                 return;
             }
@@ -89,7 +89,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (range <= 0)
             {
-                _bot.Print("[BTC][Logic] Candle range invalid → confidence reduced");
+                GlobalLogger.Log("[BTC][Logic] Candle range invalid → confidence reduced");
                 logicConfidence -= 10;
                 return;
             }
@@ -99,12 +99,12 @@ namespace GeminiV26.Instruments.BTCUSD
             if (bodyRatio >= 0.65)
             {
                 logicConfidence += 10;
-                _bot.Print("[BTC][Logic] Strong impulse candle");
+                GlobalLogger.Log("[BTC][Logic] Strong impulse candle");
             }
             else
             {
                 logicConfidence -= 5;
-                _bot.Print("[BTC][Logic] Weak impulse candle");
+                GlobalLogger.Log("[BTC][Logic] Weak impulse candle");
             }
 
             // ATR-based impulse confirmation
@@ -116,7 +116,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             logicConfidence = Math.Max(30, Math.Min(95, logicConfidence));
 
-            _bot.Print($"[BTC][Logic] Bias={biasDirection} LogicConfidence={logicConfidence}");
+            GlobalLogger.Log($"[BTC][Logic] Bias={biasDirection} LogicConfidence={logicConfidence}");
         }
     }
 }

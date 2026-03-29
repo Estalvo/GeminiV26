@@ -76,7 +76,7 @@ namespace GeminiV26.Instruments.INDEX
             bool isTrend = adx >= minAdxTrend;
             bool isMomentum = body > atrRaw * 0.8;
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[INDEX MSD] {_bot.SymbolName} | " +
                 $"atrPts={atrPoints:F1} adx={adx:F1} | " +
                 $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} | " +

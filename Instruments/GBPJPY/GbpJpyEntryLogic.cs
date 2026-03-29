@@ -91,7 +91,7 @@ namespace GeminiV26.Instruments.GBPJPY
 
             if (_m5 == null || _m5.Count < MinBars || _m15 == null || _m15.Count < 50)
             {
-                _bot.Print($"[GBPJPY LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log($"[GBPJPY LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
                 return;
             }
 
@@ -108,9 +108,9 @@ namespace GeminiV26.Instruments.GBPJPY
             LastLogicConfidence = result.Confidence;
 
             if (result.State == "FX_FALLBACK")
-                _bot.Print("[FX BIAS FALLBACK] trend-based bias");
+                GlobalLogger.Log("[FX BIAS FALLBACK] trend-based bias");
 
-            _bot.Print($"[GBPJPY LOGIC] state={result.State} bias={LastBias} logicConf={LastLogicConfidence} | {result.Details}");
+            GlobalLogger.Log($"[GBPJPY LOGIC] state={result.State} bias={LastBias} logicConf={LastLogicConfidence} | {result.Details}");
         }
     }
 }

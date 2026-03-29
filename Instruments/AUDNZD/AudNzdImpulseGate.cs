@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.AUDNZD
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[AUDNZD GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[AUDNZD GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[AUDNZD GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[AUDNZD GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print("[AUDNZD GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log("[AUDNZD GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            _bot.Print("[AUDNZD GATE] ALLOWED");
+            GlobalLogger.Log("[AUDNZD GATE] ALLOWED");
             return true;
         }
 

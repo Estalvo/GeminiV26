@@ -26,7 +26,7 @@ namespace GeminiV26.Instruments.BTCUSD
             _atr = bot.Indicators.AverageTrueRange(_m5, ATR_PERIOD, MovingAverageType.Exponential);
             _dms = bot.Indicators.DirectionalMovementSystem(_m5, ADX_PERIOD);
 
-            // crypto matrix -> paraméterek
+            // crypto matrix -> paramÃ©terek
             _profile = CryptoInstrumentMatrix.Get("BTCUSD");
         }
 
@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.BTCUSD
             bool isTrend = adx >= _profile.MinAdxTrend;
             bool isStrongTrend = adx >= _profile.MinAdxStrong;
 
-            // chop: több bar-on túl wicky
+            GlobalLogger.Log(
             bool isChop = false;
             int lb = Math.Max(1, _profile.ChopLookbackBars);
             int start = Math.Max(0, i - lb + 1);

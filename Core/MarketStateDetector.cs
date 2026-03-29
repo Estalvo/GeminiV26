@@ -184,7 +184,7 @@ namespace GeminiV26.Core
             double atrPipsDbg = state.Atr / _bot.Symbol.PipSize;
             double widthPipsDbg = state.RangeWidth / _bot.Symbol.PipSize;
 
-            _bot.Print($"[MarketStateDBG] {_bot.SymbolName} atrRaw={state.Atr:F6} atrPips={atrPipsDbg:F2} widthRaw={state.RangeWidth:F6} widthPips={widthPipsDbg:F1}");
+            GlobalLogger.Log($"[MarketStateDBG] {_bot.SymbolName} atrRaw={state.Atr:F6} atrPips={atrPipsDbg:F2} widthRaw={state.RangeWidth:F6} widthPips={widthPipsDbg:F1}");
 
             return state;
         }

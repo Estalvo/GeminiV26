@@ -121,7 +121,7 @@ namespace GeminiV26.EntryTypes.FX
 
                     // strong context: ne öljük meg, csak fájjon
                     ApplyPenalty(4);
-                    Console.WriteLine($"[{ctx.Symbol}][A_ADX_SOFT] adx={adxNow:F1} < {hardFloor:F1} but strongContext => penalty=4 score={score}");
+                    GlobalLogger.Log($"[{ctx.Symbol}][A_ADX_SOFT] adx={adxNow:F1} < {hardFloor:F1} but strongContext => penalty=4 score={score}");
                 }
 
                 // -------------------------------------------------
@@ -577,7 +577,7 @@ namespace GeminiV26.EntryTypes.FX
                     return Invalid(ctx, "M1_TRIGGER_REQUIRED", score);
 
                 ApplyPenalty(2); // 3 -> 2
-                Console.WriteLine($"[{ctx.Symbol}][B_M1_SOFT] no M1 trigger, strongContext => penalty=2 score={score}");
+                GlobalLogger.Log($"[{ctx.Symbol}][B_M1_SOFT] no M1 trigger, strongContext => penalty=2 score={score}");
             }
 
             int barsSinceBreak =

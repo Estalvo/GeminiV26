@@ -431,7 +431,7 @@ namespace GeminiV26.Core.HtfBias
 
         private HtfBiasSnapshot CreateUnavailableSnapshot(string symbolName)
         {
-            _bot.Print($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
+            GlobalLogger.Log($"[RESOLVER][HTF_FAIL] symbol={symbolName} reason=unresolved_runtime_symbol");
             return new HtfBiasSnapshot
             {
                 State = HtfBiasState.NotReady,

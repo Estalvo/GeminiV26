@@ -59,14 +59,14 @@ namespace GeminiV26.Instruments.GER40
             if (IsBlockingSpike(i, entryDirection))
             {
                 _lastBlockedBar = i;
-                _bot.Print("[GER40 GATE] BLOCK extreme spike");
+                GlobalLogger.Log("[GER40 GATE] BLOCK extreme spike");
                 return false;
             }
 
             // === 2) COOLDOWN CSAK BLOKK UTÁN ===
             if (i - _lastBlockedBar <= CooldownBars)
             {
-                _bot.Print("[GER40 GATE] BLOCK impulse cooldown");
+                GlobalLogger.Log("[GER40 GATE] BLOCK impulse cooldown");
                 return false;
             }
 

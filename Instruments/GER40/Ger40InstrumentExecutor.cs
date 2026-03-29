@@ -41,13 +41,13 @@ namespace GeminiV26.Instruments.GER40
         {
             if (entry == null)
             {
-                _bot.Print("[DIR][EXEC_ABORT] Missing entry");
+                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing entry");
                 return;
             }
 
             if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
             {
-                _bot.Print("[DIR][EXEC_ABORT] Missing FinalDirection");
+                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
 
@@ -55,11 +55,11 @@ namespace GeminiV26.Instruments.GER40
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
             // =========================
@@ -100,13 +100,13 @@ namespace GeminiV26.Instruments.GER40
             };
             ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
             if (statePenalty != 0)
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
 
             var tradeType =
                 entryContext.FinalDirection == TradeDirection.Long
@@ -144,7 +144,7 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // LOG – KÖTELEZŐ DEBUG
             // =========================
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[GER40 RISK] score={entry.Score} " +
                 $"risk%={riskPercent:F2} " +
                 $"slATR={slAtrMult:F2} " +
@@ -171,7 +171,7 @@ namespace GeminiV26.Instruments.GER40
             if (tp2Pips <= 0)
                 return;
 
-            _bot.Print(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
@@ -184,13 +184,13 @@ namespace GeminiV26.Instruments.GER40
 
             if (!result.IsSuccessful || result.Position == null)
             {
-                _bot.Print(TradeLogIdentity.WithTempId($"[EXEC][FAIL] side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[EXEC][FAIL] side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
                 return;
             }
 
             long positionKey = Convert.ToInt64(result.Position.Id);
-            _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={positionKey} symbol={result.Position.SymbolName}");
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
+            GlobalLogger.Log($"[TRADE LINK] tempId={entryContext.TempId} posId={positionKey} symbol={result.Position.SymbolName}");
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =========================
             // CONTEXT – TELJES, R-ALAPÚ
@@ -237,15 +237,15 @@ namespace GeminiV26.Instruments.GER40
 
             ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[positionKey] = ctx;
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
         }
 
         private double CalculateStopLossPriceDistance(int confidence, EntryType entryType)

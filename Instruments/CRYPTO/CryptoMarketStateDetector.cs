@@ -51,7 +51,7 @@ namespace GeminiV26.Instruments.CRYPTO
             bool isMomentum = atr > 0 && body >= atr * 0.6;
             bool isExpansion = atr > atrPrev * 1.2;
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[CRYPTO MSD] {_bot.SymbolName} | " +
                 $"ATR={atr:F1} ADX={adx:F1} " +
                 $"HighVol={isHighVol} LowVol={isLowVol} Trend={isTrend} Momentum={isMomentum} Expansion={isExpansion}");

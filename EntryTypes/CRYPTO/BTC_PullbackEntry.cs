@@ -66,7 +66,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             void ScoreLog(string label, int delta, int current)
             {
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC_PULLBACK][SCORE] {label} Δ={delta} → {current}"
                 );
             }
@@ -101,13 +101,13 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (allow != TradeDirection.None && dir != allow)
             {
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC_PULLBACK][HTF_SOFT_CONFLICT] conf={htfConf:0.00} allow={allow} keepDir={dir}"
                 );
             }
             else if (allow == TradeDirection.None)
             {
-                Console.WriteLine($"[BTC_PULLBACK][HTF_NEUTRAL] conf={htfConf:0.00} keepDir={dir}");
+                GlobalLogger.Log($"[BTC_PULLBACK][HTF_NEUTRAL] conf={htfConf:0.00} keepDir={dir}");
             }
 
             // =========================
@@ -325,8 +325,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 score += 4;
             }
 
-            Console.WriteLine($"[BTC_PULLBACK][FUEL_APPLIED] fuel={fuelScore} newScore={score}");
-            Console.WriteLine($"[BTC_PULLBACK][FUEL] adxSlope={ctx.AdxSlope_M5:0.00} atrSlope={ctx.AtrSlope_M5:0.00} impulse={ctx.HasImpulse_M5} fuel={fuelScore}");
+            GlobalLogger.Log($"[BTC_PULLBACK][FUEL_APPLIED] fuel={fuelScore} newScore={score}");
+            GlobalLogger.Log($"[BTC_PULLBACK][FUEL] adxSlope={ctx.AdxSlope_M5:0.00} atrSlope={ctx.AtrSlope_M5:0.00} impulse={ctx.HasImpulse_M5} fuel={fuelScore}");
 
             // =========================
             // EMA RECLAIM
@@ -499,7 +499,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 score -= agePenalty;
 
-                Console.WriteLine($"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}");
+                GlobalLogger.Log($"[BTC_PULLBACK][SOFT] IMPULSE_AGE penalty={agePenalty} bars={ctx.BarsSinceImpulse_M5}");
             }
 
             // =========================
@@ -569,7 +569,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 // SOFT gray-zone: ne hard reject, csak tolja le a score-t
                 score -= 4;
-                Console.WriteLine($"[BTC_PULLBACK][SOFT] GRAY_ZONE(-4) score={score} validPb={validPullbackReaction} adx={ctx.Adx_M5:0.0} volOk={ctx.IsVolatilityAcceptable_Crypto}");
+                GlobalLogger.Log($"[BTC_PULLBACK][SOFT] GRAY_ZONE(-4) score={score} validPb={validPullbackReaction} adx={ctx.Adx_M5:0.0} volOk={ctx.IsVolatilityAcceptable_Crypto}");
             }
 
             int dynamicMinScore = MIN_SCORE;
@@ -584,7 +584,7 @@ namespace GeminiV26.EntryTypes.Crypto
             {
                 int prePenalty = score;
                 score = Math.Max(42, score - 6);
-                Console.WriteLine($"[CRYPTO FILTER] pullback low confidence soft-penalty {prePenalty}->{score}");
+                GlobalLogger.Log($"[CRYPTO FILTER] pullback low confidence soft-penalty {prePenalty}->{score}");
                 ctx.Log?.Invoke($"[CRYPTO FILTER] pullback low confidence soft-penalty {prePenalty}->{score}");
             }
 
@@ -595,7 +595,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (isPullbackSetup && !impulseReclaimConfirmed)
             {
-                Console.WriteLine("[BTC FILTER] rejected: no impulse reclaim");
+                GlobalLogger.Log("[BTC FILTER] rejected: no impulse reclaim");
                 ctx.Log?.Invoke("[BTC FILTER] rejected: no impulse reclaim");
                 score -= 10;
             }
@@ -603,7 +603,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // 3) Pullback timeout (dead pullback filter)
             if (isPullbackSetup && ctx.PullbackBars_M5 > 4)
             {
-                Console.WriteLine($"[BTC FILTER] rejected: pullback timeout bars={ctx.PullbackBars_M5}");
+                GlobalLogger.Log($"[BTC FILTER] rejected: pullback timeout bars={ctx.PullbackBars_M5}");
                 ctx.Log?.Invoke($"[BTC FILTER] rejected: pullback timeout bars={ctx.PullbackBars_M5}");
                 return Block(ctx, $"BTC_FILTER_PULLBACK_TIMEOUT_BARS_{ctx.PullbackBars_M5}", score, dir);
             }
@@ -673,7 +673,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 const double ASIA_MAX_RETRACE_RATIO = 0.38;
                 const int ASIA_MIN_CONFIDENCE = 48;
 
-                Console.WriteLine("[BTC ASIA] detected: session modifier active");
+                GlobalLogger.Log("[BTC ASIA] detected: session modifier active");
                 ctx.Log?.Invoke("[BTC ASIA] detected: session modifier active");
 
                 int driftLookback = 5;
@@ -740,7 +740,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 if (!directionalDriftOk)
                 {
-                    Console.WriteLine("[BTC ASIA] rejected: no directional drift quality");
+                    GlobalLogger.Log("[BTC ASIA] rejected: no directional drift quality");
                     ctx.Log?.Invoke(
                         $"[BTC ASIA] rejected: no directional drift quality diAligned={diAligned} slopeAligned={slopeAligned} impulseAligned={impulseAligned} progression={progressionOk} flips={flipCount}"
                     );
@@ -772,14 +772,14 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 if (retracementRatio > ASIA_MAX_RETRACE_RATIO)
                 {
-                    Console.WriteLine($"[BTC ASIA] rejected: pullback too deep ratio={retracementRatio:0.00}");
+                    GlobalLogger.Log($"[BTC ASIA] rejected: pullback too deep ratio={retracementRatio:0.00}");
                     ctx.Log?.Invoke($"[BTC ASIA] rejected: pullback too deep ratio={retracementRatio:0.00}");
                     return Block(ctx, "BTC_ASIA_PULLBACK_TOO_DEEP", score, dir);
                 }
 
                 if (ctx.PullbackBars_M5 > ASIA_MAX_PULLBACK_BARS)
                 {
-                    Console.WriteLine($"[BTC ASIA] rejected: pullback too slow bars={ctx.PullbackBars_M5}");
+                    GlobalLogger.Log($"[BTC ASIA] rejected: pullback too slow bars={ctx.PullbackBars_M5}");
                     ctx.Log?.Invoke($"[BTC ASIA] rejected: pullback too slow bars={ctx.PullbackBars_M5}");
                     return Block(ctx, "BTC_ASIA_PULLBACK_TOO_SLOW", score, dir);
                 }
@@ -791,19 +791,19 @@ namespace GeminiV26.EntryTypes.Crypto
 
                 if (!reclaimConfirmed)
                 {
-                    Console.WriteLine("[BTC ASIA] rejected: no reclaim confirmation");
+                    GlobalLogger.Log("[BTC ASIA] rejected: no reclaim confirmation");
                     ctx.Log?.Invoke("[BTC ASIA] rejected: no reclaim confirmation");
                     score -= 10;
                 }
 
                 if (score < ASIA_MIN_CONFIDENCE)
                 {
-                    Console.WriteLine($"[BTC ASIA] rejected: low confidence score={score}");
+                    GlobalLogger.Log($"[BTC ASIA] rejected: low confidence score={score}");
                     ctx.Log?.Invoke($"[BTC ASIA] rejected: low confidence score={score}");
                     return Block(ctx, "BTC_ASIA_LOW_CONFIDENCE", score, dir);
                 }
 
-                Console.WriteLine(
+                GlobalLogger.Log(
                     $"[BTC ASIA] passed: drift={directionalDriftOk}, retrace={retracementRatio:0.00}, bars={ctx.PullbackBars_M5}, confidence={score}"
                 );
                 ctx.Log?.Invoke(
@@ -921,7 +921,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         private EntryEvaluation Block(EntryContext ctx, string reason, int score, TradeDirection dir = TradeDirection.None)
         {
-            Console.WriteLine($"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}");
+            GlobalLogger.Log($"[BTC_PULLBACK][BLOCK] {reason} | dir={dir} | score={score}");
 
             var eval = new EntryEvaluation
             {

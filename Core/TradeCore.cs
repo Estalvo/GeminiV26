@@ -312,7 +312,7 @@ namespace GeminiV26.Core
 
             else
             {
-                _bot.Print($"❌ UNKNOWN SYMBOL ROUTING: {symbol}");
+                GlobalLogger.Log($"❌ UNKNOWN SYMBOL ROUTING: {symbol}");
             }
 
 
@@ -362,7 +362,7 @@ namespace GeminiV26.Core
 
             else
             {
-                _bot.Print($"[WARN] Unknown symbol fallback used: {symbol}");
+                GlobalLogger.Log($"[WARN] Unknown symbol fallback used: {symbol}");
 
                 _entryTypes = new List<IEntryType>
                 {
@@ -376,7 +376,7 @@ namespace GeminiV26.Core
 
             _entryRouter = new EntryRouter(_entryTypes);
             _transitionDetector = new TransitionDetector();
-            Action<string> safePrint = msg => _bot.BeginInvokeOnMainThread(() => _bot.Print(msg));
+            Action<string> safePrint = msg => _bot.BeginInvokeOnMainThread(() => GlobalLogger.Log(msg));
             _flagBreakoutDetector = new FlagBreakoutDetector(safePrint);
             _logWriter = new LogWriter(safePrint);
             _logger = new CompositeTradeLogger(
@@ -665,7 +665,7 @@ namespace GeminiV26.Core
                     pos.SymbolName
                 );
 
-                _bot.Print(bound
+                GlobalLogger.Log(bound
                     ? $"[META BIND OK] pos={pos.Id} symbol={pos.SymbolName}"
                     : $"[META BIND FAIL] pos={pos.Id} symbol={pos.SymbolName} (NO PENDING)"
                 );
@@ -681,22 +681,22 @@ namespace GeminiV26.Core
                     pctx.FinalDirection = _ctx?.FinalDirection != TradeDirection.None
                         ? _ctx.FinalDirection
                         : FromTradeType(pos.TradeType);
-                    _bot.Print($"[DIR][SET] posId={pctx.PositionId} finalDir={pctx.FinalDirection}");
+                    GlobalLogger.Log($"[DIR][SET] posId={pctx.PositionId} finalDir={pctx.FinalDirection}");
 
                     if (pctx.FinalDirection == TradeDirection.None)
                     {
-                        _bot.Print($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={pctx.PositionId} sym={pctx.Symbol}");
+                        GlobalLogger.Log($"[DIR][POS_CTX_ERROR] Missing FinalDirection posId={pctx.PositionId} sym={pctx.Symbol}");
                         return;
                     }
 
                     if (_ctx != null && pctx.FinalDirection != _ctx.FinalDirection)
                     {
-                        _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} stage=position posId={pctx.PositionId} posFinal={pctx.FinalDirection} entryFinal={_ctx.FinalDirection}");
+                        GlobalLogger.Log($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} stage=position posId={pctx.PositionId} posFinal={pctx.FinalDirection} entryFinal={_ctx.FinalDirection}");
                         return;
                     }
 
                     _contextRegistry.RegisterPosition(pctx);
-                    _bot.Print($"[DIR][POS_CTX] posId={pctx.PositionId} sym={pctx.Symbol} finalDir={pctx.FinalDirection}");
+                    GlobalLogger.Log($"[DIR][POS_CTX] posId={pctx.PositionId} sym={pctx.Symbol} finalDir={pctx.FinalDirection}");
                 }
 
                 _tradeMetaStore.TryGet(pos.Id, out var pendingMeta);
@@ -718,7 +718,7 @@ namespace GeminiV26.Core
                 return;
 
             _runtimeSymbols = new RuntimeSymbolResolver(_bot);
-            _bot.Print("[RESOLVER][INIT] mode=runtime_only phase=OnStart");
+            GlobalLogger.Log("[RESOLVER][INIT] mode=runtime_only phase=OnStart");
         }
 
         public void OnBar()
@@ -728,7 +728,7 @@ namespace GeminiV26.Core
             string rawSym = _bot.SymbolName;
             string sym = NormalizeSymbol(rawSym);   // ✅ CANONICAL
 
-            _bot.Print($"[ONBAR DBG] raw={rawSym} canonical={sym}");
+            GlobalLogger.Log($"[ONBAR DBG] raw={rawSym} canonical={sym}");
 
             EnsureStartupMemoryReady();
 
@@ -764,29 +764,29 @@ namespace GeminiV26.Core
             {
                 fxState = _fxMarketStateDetector.Evaluate();
                 if (fxState != null)
-                    _bot.Print($"[FX MarketState] {rawSym} Trend={fxState.IsTrend} Momentum={fxState.IsMomentum} LowVol={fxState.IsLowVol} ADX={fxState.Adx:F1}");
+                    GlobalLogger.Log($"[FX MarketState] {rawSym} Trend={fxState.IsTrend} Momentum={fxState.IsMomentum} LowVol={fxState.IsLowVol} ADX={fxState.Adx:F1}");
             }
             else if (isCrypto)
             {
                 cryptoState = _cryptoMarketStateDetector.Evaluate();
                 if (cryptoState != null)
-                    _bot.Print($"[CRYPTO MarketState] {rawSym} Trend={cryptoState.IsTrend} Momentum={cryptoState.IsMomentum} LowVol={cryptoState.IsLowVol} ADX={cryptoState.Adx:F1}");
+                    GlobalLogger.Log($"[CRYPTO MarketState] {rawSym} Trend={cryptoState.IsTrend} Momentum={cryptoState.IsMomentum} LowVol={cryptoState.IsLowVol} ADX={cryptoState.Adx:F1}");
             }
             else if (isMetal)
             {
                 xauState = _xauMarketStateDetector.Evaluate();
                 if (xauState != null)
-                    _bot.Print($"[XAU MarketState] {rawSym} Range={xauState.IsRange} Trend={xauState.IsTrend} Momentum={xauState.IsMomentum} ADX={xauState.Adx:F1} HardRange={xauState.IsHardRange}");
+                    GlobalLogger.Log($"[XAU MarketState] {rawSym} Range={xauState.IsRange} Trend={xauState.IsTrend} Momentum={xauState.IsMomentum} ADX={xauState.Adx:F1} HardRange={xauState.IsHardRange}");
             }
             else if (isIndex)
             {
                 indexState = _indexMarketStateDetector.Evaluate();
                 if (indexState != null)
-                    _bot.Print($"[INDEX MarketState] {rawSym} Trend={indexState.IsTrend} Momentum={indexState.IsMomentum} LowVol={indexState.IsLowVol} ADX={indexState.Adx:F1}");
+                    GlobalLogger.Log($"[INDEX MarketState] {rawSym} Trend={indexState.IsTrend} Momentum={indexState.IsMomentum} LowVol={indexState.IsLowVol} ADX={indexState.Adx:F1}");
             }
             else
             {
-                _bot.Print($"[TC] WARN: Unknown instrument type in OnBar sym={rawSym}");
+                GlobalLogger.Log($"[TC] WARN: Unknown instrument type in OnBar sym={rawSym}");
             }
 
             // =========================
@@ -794,8 +794,8 @@ namespace GeminiV26.Core
             // =========================
             if (_positionContexts == null)
             {
-                _bot.Print("BLOCK: _positionContexts == null");
-                _bot.Print("[TC] WARN: _positionContexts is NULL (skip exit+entry pipeline this bar)");
+                GlobalLogger.Log("BLOCK: _positionContexts == null");
+                GlobalLogger.Log("[TC] WARN: _positionContexts is NULL (skip exit+entry pipeline this bar)");
                 return;
             }
 
@@ -807,13 +807,13 @@ namespace GeminiV26.Core
                 if (pos.SymbolName != _bot.SymbolName)
                     continue;
 
-                _bot.Print($"[EXIT DBG] posId={pos.Id} sym={pos.SymbolName}");
+                GlobalLogger.Log($"[EXIT DBG] posId={pos.Id} sym={pos.SymbolName}");
 
                 // ⛔ TEMP SAFETY (you already had this)
                 if (!_positionContexts.TryGetValue(pos.Id, out var ctx))
                 {
-                    _bot.Print($"[TC] Context missing for position posId={pos.Id}");
-                    _bot.Print($"[REHYDRATE_WARN] pos={Convert.ToInt64(pos.Id)} symbol={pos.SymbolName} reason=exit_pipeline_missing_context");
+                    GlobalLogger.Log($"[TC] Context missing for position posId={pos.Id}");
+                    GlobalLogger.Log($"[REHYDRATE_WARN] pos={Convert.ToInt64(pos.Id)} symbol={pos.SymbolName} reason=exit_pipeline_missing_context");
                     continue;
                 }
 
@@ -875,14 +875,14 @@ namespace GeminiV26.Core
                 (_bot.Server.Time - _lastContextPruneUtc) >= ContextPruneInterval)
             {
                 _contextRegistry.PruneStale(ContextMaxAge, id =>
-                    _bot.Print($"[TC] Pruned stale context: positionId={id}"));
+                    GlobalLogger.Log($"[TC] Pruned stale context: positionId={id}"));
                 _lastContextPruneUtc = _bot.Server.Time;
             }
 
             if (HasOpenGeminiPosition())
             {
-                _bot.Print("[DEBUG] HasOpenGeminiPosition = TRUE");
-                _bot.Print("BLOCK: existing Gemini position open");
+                GlobalLogger.Log("[DEBUG] HasOpenGeminiPosition = TRUE");
+                GlobalLogger.Log("BLOCK: existing Gemini position open");
                 return;
             }
 
@@ -891,20 +891,20 @@ namespace GeminiV26.Core
             // =========================
             if (_contextBuilder == null)
             {
-                _bot.Print("BLOCK: _contextBuilder == null");
-                _bot.Print("[TC] ERROR: _contextBuilder is NULL (cannot build entry context)");
+                GlobalLogger.Log("BLOCK: _contextBuilder == null");
+                GlobalLogger.Log("[TC] ERROR: _contextBuilder is NULL (cannot build entry context)");
                 return;
             }
             if (_globalSessionGate == null)
             {
-                _bot.Print("BLOCK: _globalSessionGate == null");
-                _bot.Print("[TC] ERROR: _globalSessionGate is NULL (cannot gate entries)");
+                GlobalLogger.Log("BLOCK: _globalSessionGate == null");
+                GlobalLogger.Log("[TC] ERROR: _globalSessionGate is NULL (cannot gate entries)");
                 return;
             }
             if (_entryRouter == null)
             {
-                _bot.Print("BLOCK: _entryRouter == null");
-                _bot.Print("[TC] ERROR: _entryRouter is NULL (cannot evaluate entries)");
+                GlobalLogger.Log("BLOCK: _entryRouter == null");
+                GlobalLogger.Log("[TC] ERROR: _entryRouter is NULL (cannot evaluate entries)");
                 return;
             }
 
@@ -916,8 +916,8 @@ namespace GeminiV26.Core
             
             if (_ctx == null || !_ctx.IsReady)
             {
-                _bot.Print("BLOCK: EntryContext not ready");
-                _bot.Print("[TC] BLOCKED: EntryContext not ready");
+                GlobalLogger.Log("BLOCK: EntryContext not ready");
+                GlobalLogger.Log("[TC] BLOCKED: EntryContext not ready");
                 return;
             }
 
@@ -933,7 +933,7 @@ namespace GeminiV26.Core
             _ctx.MarketState = BuildEntryMarketState(fxState, cryptoState, xauState, indexState);
             if (_ctx.MarketState != null)
             {
-                _bot.Print(
+                GlobalLogger.Log(
                     "[ENTRY MARKETSTATE ASSIGN] sym={0} trend={1} momentum={2} lowVol={3} adx={4:F1} atrPts={5:F2}",
                     rawSym,
                     _ctx.MarketState.IsTrend,
@@ -952,17 +952,17 @@ namespace GeminiV26.Core
             _ctx.TransitionValid = transition.IsValid;
             _ctx.TransitionScoreBonus = transition.BonusScore;
             _flagBreakoutDetector.Evaluate(_ctx);
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}", _ctx));
 
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
             // =========================
             SessionDecision sessionDecision = _globalSessionGate.GetDecision(_bot.SymbolName, _bot.TimeFrame);
-            _bot.Print($"[SESSION CHECK] time={_bot.Server.Time:O} symbol={_bot.SymbolName} bucket={sessionDecision.Bucket} allow={sessionDecision.Allow}");
+            GlobalLogger.Log($"[SESSION CHECK] time={_bot.Server.Time:O} symbol={_bot.SymbolName} bucket={sessionDecision.Bucket} allow={sessionDecision.Allow}");
             if (!sessionDecision.Allow)
             {
-                _bot.Print("BLOCK: session gate");
-                _bot.Print("[TC] BLOCKED: Global SessionGate");
+                GlobalLogger.Log("BLOCK: session gate");
+                GlobalLogger.Log("[TC] BLOCKED: Global SessionGate");
                 return;
             }
 
@@ -970,7 +970,7 @@ namespace GeminiV26.Core
             SessionMatrixConfig sessionCfg = _sessionMatrix.Resolve(sessionDecision, instrumentClass, _bot.TimeFrame);
             _ctx.SessionMatrixConfig = sessionCfg;
 
-            _bot.Print("[SESSION_MATRIX] symbol={0} bucket={1} tier={2} flag={3} breakout={4} pullback={5} minADX={6:F1} minAtrMult={7:F2}",
+            GlobalLogger.Log(string.Format("[SESSION_MATRIX] symbol={0} bucket={1} tier={2} flag={3} breakout={4} pullback={5} minADX={6:F1} minAtrMult={7:F2}",
                 _bot.SymbolName,
                 sessionDecision.Bucket,
                 SessionMatrix.DetectTier(_bot.TimeFrame),
@@ -978,13 +978,13 @@ namespace GeminiV26.Core
                 sessionCfg.AllowBreakout,
                 sessionCfg.AllowPullback,
                 sessionCfg.MinAdx,
-                sessionCfg.MinAtrMultiplier);
+                sessionCfg.MinAtrMultiplier));
 
             // =========================
             // SESSION INJECT (STRICT FROM GLOBAL GATE BUCKET)
             // =========================
             _ctx.Session = SessionResolver.FromBucket(sessionDecision.Bucket);
-            _bot.Print("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session);
+            GlobalLogger.Log(string.Format("[CTX_SESSION_ASSIGN] sessionFromGate={0} sessionAssigned={1}", sessionDecision.Bucket, _ctx.Session));
             SyncMemoryState(_ctx);
 
             TradeType xauBias = TradeType.Buy;
@@ -1126,60 +1126,60 @@ namespace GeminiV26.Core
             {
                 _ctx.LogicBiasDirection = _ctx.TrendDirection;
                 _ctx.LogicBiasConfidence = 50;
-                _ctx.Print("[BIAS FALLBACK] using TrendDirection");
+                GlobalLogger.Log("[BIAS FALLBACK] using TrendDirection");
             }
 
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}", _ctx));
-            _bot.Print(TradeLogIdentity.WithTempId($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][LOGIC] sym={_bot.SymbolName} logicBias={_ctx.LogicBiasDirection} logicConf={_ctx.LogicBiasConfidence}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[CTX PROPAGATION] symbol={_bot.SymbolName} bias={_ctx.LogicBias} conf={_ctx.LogicConfidence}", _ctx));
 
             if (IsSymbol("AUDNZD"))
-                _ctx.Print($"[AUDNZD TRACE] step2_ctx={_ctx.LogicBiasDirection} conf={_ctx.LogicBiasConfidence}");
+                GlobalLogger.Log($"[AUDNZD TRACE] step2_ctx={_ctx.LogicBiasDirection} conf={_ctx.LogicBiasConfidence}");
 
-            _bot.Print($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
-            _bot.Print($"[DEBUG] M5.Count={_ctx?.M5?.Count}");
+            GlobalLogger.Log($"[DEBUG] HasOpenGeminiPosition={HasOpenGeminiPosition()}");
+            GlobalLogger.Log($"[DEBUG] M5.Count={_ctx?.M5?.Count}");
 
             int minBars = IsSymbol("EURUSD") ? 10 : 30;
             if (_ctx?.M5 == null || _ctx.M5.Count < minBars) return;
 
             _entryRouterPassCounter++;
             _ctx.DirectionDebugLogged = false;
-            _bot.Print(TradeLogIdentity.WithTempId($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}", _ctx));
-            _bot.Print(TradeLogIdentity.WithTempId($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}", _ctx));
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[PIPE] symbol={_bot.SymbolName} " +
                 $"hasSignals={signals.ContainsKey(_bot.SymbolName)} " +
                 $"count={(signals.ContainsKey(_bot.SymbolName) ? signals[_bot.SymbolName].Count : -1)}"
             );
 
-            _bot.Print($"[DEBUG] signals.Keys = {string.Join(",", signals.Keys)}");
+            GlobalLogger.Log($"[DEBUG] signals.Keys = {string.Join(",", signals.Keys)}");
 
             if (!signals.TryGetValue(_bot.SymbolName, out var symbolSignals))
             {
-                _bot.Print("[DEBUG] NO signals for symbol");
+                GlobalLogger.Log("[DEBUG] NO signals for symbol");
                 return;
             }
 
             int countBefore = symbolSignals?.Count ?? 0;
             if (isMetalSymbol)
-                _bot.Print($"[TC][XAU] candidates BEFORE filter: {countBefore}");
+                GlobalLogger.Log($"[TC][XAU] candidates BEFORE filter: {countBefore}");
 
             ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
-            _bot.Print(TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
 
             foreach (var e in symbolSignals)
             {
                 StampEntrySourceHtfTrace(_ctx, e);
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
                 {
                     EnsureHtfClassification(_ctx, e);
                     e.AfterHtfScoreAdjustment = e.Score;
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][LOGIC] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=LOGIC candidateDirection={GetEntryTraceCandidateDirection(e)} score={e.Score} classification={e.HtfClassification} " +
                         $"rawDirection={e.RawDirection} logicBiasDirection={e.LogicBiasDirection} logicConfidence={e.RawLogicConfidence} patternDetected={e.PatternDetected.ToString().ToLowerInvariant()} setupType={e.SetupType ?? e.Type.ToString()}",
                         _ctx));
@@ -1194,25 +1194,25 @@ namespace GeminiV26.Core
         if (isFxSymbol)
         {
             var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.FX);
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "FX");
         }
         else if (isCryptoSymbol)
         {
             var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.CRYPTO);
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "CRYPTO");
         }
         else if (isMetalSymbol)
         {
             var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.METAL);
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "XAU");
         }
         else if (isIndexSymbol)
         {
             var bias = BuildHtfSnapshotFromContext(_ctx, InstrumentClass.INDEX);
-            _bot.Print(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][HTF] sym={_bot.SymbolName} allow={bias.AllowedDirection} conf={bias.Confidence01:0.00} reason={bias.Reason}", _ctx));
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
                 foreach (var e in symbolSignals)
@@ -1229,7 +1229,7 @@ namespace GeminiV26.Core
                         e.ScoreThresholdSnapshot = EntryDecisionPolicy.MinScoreThreshold;
                         e.DirectionAfterScore = e.Direction;
                         bool passedThreshold = e.Score >= EntryDecisionPolicy.MinScoreThreshold;
-                        _bot.Print(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
                             $"[ENTRY_TRACE][SCORE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=SCORE candidateDirection={GetEntryTraceCandidateDirection(e)} score={e.Score} classification={e.HtfClassification} " +
                             $"baseScore={e.BaseScore} afterHtfScoreAdjustment={e.AfterHtfScoreAdjustment} afterPenalty={e.AfterPenaltyScore} finalScore={e.FinalScoreSnapshot} " +
                             $"scoreThreshold={e.ScoreThresholdSnapshot} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}",
@@ -1244,7 +1244,7 @@ namespace GeminiV26.Core
 
                 foreach (var e in symbolSignals.Where(x => x != null))
                 {
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][GATES] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} stage=GATES candidateDirection={GetEntryTraceCandidateDirection(e)} score={e.Score} classification={e.HtfClassification}",
                         _ctx));
                     LogCriticalDirectionDrop(_ctx, e);
@@ -1252,7 +1252,7 @@ namespace GeminiV26.Core
 
                 int countAfter = symbolSignals?.Count ?? 0;
                 if (isMetalSymbol)
-                    _bot.Print($"[TC][XAU] candidates AFTER filter: {countAfter}");
+                    GlobalLogger.Log($"[TC][XAU] candidates AFTER filter: {countAfter}");
 
                 LogEntryTraceSummary(_ctx, symbolSignals);
 
@@ -1261,22 +1261,22 @@ namespace GeminiV26.Core
                 // =====================================================
                 var selected = _router.SelectEntry(symbolSignals, _ctx);
 
-                _bot.Print($"[TRACE] selected is null = {selected == null}");
+                GlobalLogger.Log($"[TRACE] selected is null = {selected == null}");
                 if (selected != null)
                     LogHtfFlowStage(_ctx, selected, "ROUTER_CONSUME", nameof(TradeRouter.SelectEntry));
 
                 if (selected == null)
                 {
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA classification=HTF_NO_DIRECTION " +
                         $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY",
                         _ctx));
-                    _bot.Print("BLOCK: entry gate");
-                    _bot.Print("[TC] NO SELECTED ENTRY (all invalid)");
+                    GlobalLogger.Log("BLOCK: entry gate");
+                    GlobalLogger.Log("[TC] NO SELECTED ENTRY (all invalid)");
                     return;
                 }
 
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={GetEntryTraceCandidateDirection(selected)} score={selected.Score} " +
                     $"classification={selected.HtfClassification} finalCandidateDirection={selected.Direction} finalScore={selected.Score} blocked={(!selected.IsValid).ToString().ToLowerInvariant()} finalReason={selected.Reason ?? "NA"}",
                     _ctx));
@@ -1293,7 +1293,7 @@ namespace GeminiV26.Core
                     if (xauState != null && xauState.IsRange && !xauState.IsTrend)
                     {
                         LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, true, "XAU_RANGE_REGIME");
-                        _bot.Print(
+                        GlobalLogger.Log(
                             $"[TC] ENTRY BLOCKED: XAU RANGE REGIME" +
                             $"Width={xauState.RangeWidth:F2} " +
                             $"ADX={xauState.Adx:F1} " +
@@ -1311,7 +1311,7 @@ namespace GeminiV26.Core
                 // =====================================================
                 if (_tradeMetaStore == null)
                 {
-                    _bot.Print("[TC] ERROR: _tradeMetaStore is NULL (skip entry)");
+                    GlobalLogger.Log("[TC] ERROR: _tradeMetaStore is NULL (skip entry)");
                     return;
                 }
 
@@ -1329,14 +1329,14 @@ namespace GeminiV26.Core
                     }
                 );
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
-                _bot.Print($"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
+                GlobalLogger.Log($"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
 
                 if (!PassFinalAcceptance(_ctx, selected))
                 {
                     LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", nameof(PassFinalAcceptance));
-                    _bot.Print("BLOCK: final acceptance gate");
+                    GlobalLogger.Log("BLOCK: final acceptance gate");
                     return;
                 }
 
@@ -1346,13 +1346,13 @@ namespace GeminiV26.Core
                 var evalDir = selected.Direction;
                 var routedDir = _ctx.RoutedDirection;
                 var finalDir = _ctx.FinalDirection;
-                _bot.Print($"[DIR] logic={logicDir} eval={evalDir} routed={routedDir} final={finalDir}");
+                GlobalLogger.Log($"[DIR] logic={logicDir} eval={evalDir} routed={routedDir} final={finalDir}");
                 _ctx.EntryScore = PositionContext.ClampRiskConfidence(selected.Score);
                 _ctx.LogicBiasConfidence = PositionContext.ClampRiskConfidence(Math.Max(0, _ctx.LogicBiasConfidence));
                 _ctx.FinalConfidence = PositionContext.ComputeFinalConfidenceValue(_ctx.EntryScore, _ctx.LogicBiasConfidence);
                 _ctx.RiskConfidence = PositionContext.ClampRiskConfidence(_ctx.FinalConfidence);
                 LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", "DirectionSet");
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
@@ -1360,52 +1360,52 @@ namespace GeminiV26.Core
                     selected.LastDirectionDropModule = "DirectionSet";
                     selected.DirectionAfterGates = TradeDirection.None;
                     LogCriticalDirectionDrop(_ctx, selected);
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={GetEntryTraceCandidateDirection(selected)} score={selected.Score} classification={selected.HtfClassification} finalCandidateDirection={TradeDirection.None} finalScore={selected.Score} blocked=true finalReason=FINAL_DIRECTION_NONE",
                         _ctx));
-                    _bot.Print("BLOCK: direction/entry failed");
-                    _bot.Print($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
+                    GlobalLogger.Log("BLOCK: direction/entry failed");
+                    GlobalLogger.Log($"[TC] ENTRY DROPPED: Direction=None (type={selected.Type} score={selected.Score} reason={selected.Reason})");
                     return;
                 }
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][FINAL] sym={_bot.SymbolName} routed={_ctx.RoutedDirection} final={_ctx.FinalDirection}", _ctx));
                 DirectionGuard.Validate(_ctx, null, _bot.Print);
 
                 if (!ValidateDirectionConsistency(_ctx, selected))
                 {
-                    _bot.Print("BLOCK: direction/entry failed");
+                    GlobalLogger.Log("BLOCK: direction/entry failed");
                     return;
                 }
 
                 LogEntrySnapshot(_ctx, selected);
-                _bot.Print(TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.ActiveHtfDirection} conf={_ctx.ActiveHtfConfidence:F2}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.ActiveHtfDirection} conf={_ctx.ActiveHtfConfidence:F2}", _ctx));
                 if (_ctx.ActiveHtfDirection == TradeDirection.None)
-                    _bot.Print(TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
-                _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
 
                 if (!HasDirectionTraceCompleteness(_ctx))
-                    _bot.Print(TradeLogIdentity.WithTempId($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
 
                 var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
-                _bot.Print("CHECK: direction gate");
-                _bot.Print("CHECK: entry gate");
+                GlobalLogger.Log("CHECK: direction gate");
+                GlobalLogger.Log("CHECK: entry gate");
 
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _xauSessionGate?.AllowEntry(gateDir) ?? false, "XAU SessionGate"))
                 {
-                    _bot.Print("BLOCK: session gate");
-                    _bot.Print("[TC] BLOCKED: XAU SessionGate");
+                    GlobalLogger.Log("BLOCK: session gate");
+                    GlobalLogger.Log("[TC] BLOCKED: XAU SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _xauImpulseGate?.AllowEntry(gateDir) ?? false, "XAU ImpulseGate"))
                 {
-                    _bot.Print("BLOCK: direction/entry failed");
-                    _bot.Print("[TC] BLOCKED: XAU ImpulseGate");
+                    GlobalLogger.Log("BLOCK: direction/entry failed");
+                    GlobalLogger.Log("[TC] BLOCKED: XAU ImpulseGate");
                     return;
                 }
 
@@ -1416,15 +1416,15 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _nasSessionGate?.AllowEntry(gateDir) ?? false, "NAS SessionGate"))
                 {
-                    _bot.Print("BLOCK: session gate");
-                    _bot.Print("[TC] BLOCKED: NAS SessionGate");
+                    GlobalLogger.Log("BLOCK: session gate");
+                    GlobalLogger.Log("[TC] BLOCKED: NAS SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _nasImpulseGate?.AllowEntry(gateDir) ?? false, "NAS ImpulseGate"))
                 {
-                    _bot.Print("BLOCK: direction/entry failed");
-                    _bot.Print("[TC] BLOCKED: NAS ImpulseGate");
+                    GlobalLogger.Log("BLOCK: direction/entry failed");
+                    GlobalLogger.Log("[TC] BLOCKED: NAS ImpulseGate");
                     return;
                 }
 
@@ -1442,13 +1442,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _ger40SessionGate?.AllowEntry(gateDir) ?? false, "GER40 SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GER40 SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GER40 SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _ger40ImpulseGate?.AllowEntry(gateDir) ?? false, "GER40 ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GER40 ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GER40 ImpulseGate");
                     return;
                 }
 
@@ -1460,13 +1460,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurUsdSessionGate == null || _eurUsdSessionGate.AllowEntry(gateDir), "EUR SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: EUR SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: EUR SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurUsdImpulseGate == null || _eurUsdImpulseGate.AllowEntry(gateDir), "EUR ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: EUR ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: EUR ImpulseGate");
                     return;
                 }
 
@@ -1478,13 +1478,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdJpySessionGate?.AllowEntry(gateDir) ?? false, "USDJPY SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDJPY SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDJPY SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdJpyImpulseGate?.AllowEntry(gateDir) ?? false, "USDJPY ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDJPY ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDJPY ImpulseGate");
                     return;
                 }
 
@@ -1495,13 +1495,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _gbpUsdSessionGate?.AllowEntry(gateDir) ?? false, "GBPUSD SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GBPUSD SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GBPUSD SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _gbpUsdImpulseGate?.AllowEntry(gateDir) ?? false, "GBPUSD ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GBPUSD ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GBPUSD ImpulseGate");
                     return;
                 }
 
@@ -1513,13 +1513,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _audUsdSessionGate.AllowEntry(gateDir), "AUDUSD SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: AUDUSD SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: AUDUSD SessionGate");
                     return;
                 }
                 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _audUsdImpulseGate.AllowEntry(gateDir), "AUDUSD ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: AUDUSD ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: AUDUSD ImpulseGate");
                     return;
                 }
 
@@ -1531,13 +1531,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _audNzdSessionGate.AllowEntry(gateDir), "AUDNZD SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: AUDNZD SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: AUDNZD SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _audNzdImpulseGate.AllowEntry(gateDir), "AUDNZD ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: AUDNZD ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: AUDNZD ImpulseGate");
                     return;
                 }
 
@@ -1549,13 +1549,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurJpySessionGate.AllowEntry(gateDir), "EURJPY SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: EURJPY SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: EURJPY SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurJpyImpulseGate.AllowEntry(gateDir), "EURJPY ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: EURJPY ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: EURJPY ImpulseGate");
                     return;
                 }
 
@@ -1567,13 +1567,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _gbpJpySessionGate.AllowEntry(gateDir), "GBPJPY SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GBPJPY SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GBPJPY SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _gbpJpyImpulseGate.AllowEntry(gateDir), "GBPJPY ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: GBPJPY ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: GBPJPY ImpulseGate");
                     return;
                 }
 
@@ -1585,13 +1585,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _nzdUsdSessionGate.AllowEntry(gateDir), "NZDUSD SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: NZDUSD SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: NZDUSD SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _nzdUsdImpulseGate.AllowEntry(gateDir), "NZDUSD ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: NZDUSD ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: NZDUSD ImpulseGate");
                     return;
                 }
 
@@ -1603,13 +1603,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdCadSessionGate.AllowEntry(gateDir), "USDCAD SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDCAD SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDCAD SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdCadImpulseGate.AllowEntry(gateDir), "USDCAD ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDCAD ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDCAD ImpulseGate");
                     return;
                 }
 
@@ -1621,13 +1621,13 @@ namespace GeminiV26.Core
             {
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _usdChfSessionGate.AllowEntry(gateDir), "USDCHF SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDCHF SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDCHF SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _usdChfImpulseGate.AllowEntry(gateDir), "USDCHF ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: USDCHF ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: USDCHF ImpulseGate");
                     return;
                 }
 
@@ -1643,23 +1643,23 @@ namespace GeminiV26.Core
 
                 if (routerTradeType != gateDir)
                 {
-                    _bot.Print($"[TC] ENTRY BLOCKED: Direction mismatch router={routerTradeType} gate={gateDir}");
+                    GlobalLogger.Log($"[TC] ENTRY BLOCKED: Direction mismatch router={routerTradeType} gate={gateDir}");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _btcUsdSessionGate?.AllowEntry(gateDir) ?? false, "BTC SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: BTC SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: BTC SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _btcUsdImpulseGate?.AllowEntry(gateDir) ?? false, "BTC ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: BTC ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: BTC ImpulseGate");
                     return;
                 }
 
-                _bot.Print("[BTC GATE] ALLOWED (Session+Impulse)");
+                GlobalLogger.Log("[BTC GATE] ALLOWED (Session+Impulse)");
                 LogEntryExecuted(selected);
                 _btcUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
@@ -1672,23 +1672,23 @@ namespace GeminiV26.Core
 
                 if (routerTradeType != gateDir)
                 {
-                    _bot.Print($"[TC] ENTRY BLOCKED: Direction mismatch router={routerTradeType} gate={gateDir}");
+                    GlobalLogger.Log($"[TC] ENTRY BLOCKED: Direction mismatch router={routerTradeType} gate={gateDir}");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _ethUsdSessionGate?.AllowEntry(gateDir) ?? false, "ETH SessionGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: ETH SessionGate");
+                    GlobalLogger.Log("[TC] BLOCKED: ETH SessionGate");
                     return;
                 }
 
                 if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _ethUsdImpulseGate?.AllowEntry(gateDir) ?? false, "ETH ImpulseGate"))
                 {
-                    _bot.Print("[TC] BLOCKED: ETH ImpulseGate");
+                    GlobalLogger.Log("[TC] BLOCKED: ETH ImpulseGate");
                     return;
                 }
 
-                _bot.Print("[ETH GATE] ALLOWED (Session+Impulse)");
+                GlobalLogger.Log("[ETH GATE] ALLOWED (Session+Impulse)");
                 LogEntryExecuted(selected);
                 _ethUsdExecutor?.ExecuteEntry(selected, _ctx);
             }
@@ -1705,14 +1705,14 @@ namespace GeminiV26.Core
         {
             if (entryContext == null || entry == null)
             {
-                _bot.Print($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=null_context_or_entry");
-                _bot.Print("[TC] ENTRY BLOCKED: direction consistency check failed");
+                GlobalLogger.Log($"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=null_context_or_entry");
+                GlobalLogger.Log("[TC] ENTRY BLOCKED: direction consistency check failed");
                 return false;
             }
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                _bot.Print($"[DIR][EXEC_MISMATCH] sym={_bot.SymbolName} entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                GlobalLogger.Log($"[DIR][EXEC_MISMATCH] sym={_bot.SymbolName} entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
             }
 
             return true;
@@ -1774,7 +1774,7 @@ namespace GeminiV26.Core
             TradeDirection afterDirection = candidate.Direction;
             TradeDirection traceCandidateDirection = GetEntryTraceCandidateDirection(candidate);
             candidate.DirectionAfterGates = afterDirection;
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[ENTRY_TRACE][GATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=GATE candidateDirection={traceCandidateDirection} score={candidate.Score} classification={candidate.HtfClassification ?? "HTF_NO_DIRECTION"} " +
                 $"gateName={gateName} beforeDirection={beforeDirection} afterDirection={afterDirection} blocked={blocked.ToString().ToLowerInvariant()} reason={reason ?? "NA"}",
                 ctx));
@@ -1783,7 +1783,7 @@ namespace GeminiV26.Core
             {
                 candidate.LastDirectionDropStage = "GATE";
                 candidate.LastDirectionDropModule = gateName;
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[ENTRY_TRACE][DIRECTION_LOST] gateName={gateName} before={beforeDirection} after={afterDirection}",
                     ctx));
             }
@@ -1819,7 +1819,7 @@ namespace GeminiV26.Core
             summary.LostAfterScoreCount += symbolSignals.Count(e => e != null && e.RawDirection != TradeDirection.None && e.DirectionAfterScore == TradeDirection.None);
             summary.LostAfterGateCount += symbolSignals.Count(e => e != null && e.DirectionAfterScore != TradeDirection.None && e.DirectionAfterGates == TradeDirection.None);
 
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[ENTRY_TRACE][SUMMARY] symbol={ctx.Symbol} totalEvaluations={summary.TotalEvaluations} logicProducedDirectionCount={summary.LogicProducedDirectionCount} " +
                 $"lostAfterScoreCount={summary.LostAfterScoreCount} lostAfterGateCount={summary.LostAfterGateCount} neverHadDirectionCount={summary.NeverHadDirectionCount}",
                 ctx));
@@ -1849,7 +1849,7 @@ namespace GeminiV26.Core
             }
 
             candidate.EntryTraceClassification = classification;
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[ENTRY_TRACE][CLASSIFICATION] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} stage=CLASSIFICATION candidateDirection={candidate.Direction} score={candidate.Score} classification={classification}",
                 ctx));
         }
@@ -1865,7 +1865,7 @@ namespace GeminiV26.Core
             {
                 string lostAtStage = candidate.LastDirectionDropStage ?? "FINAL";
                 string dropModule = candidate.LastDirectionDropModule ?? "UNKNOWN";
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[ENTRY_TRACE][CRITICAL_DIRECTION_DROP] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                     $"lostAtStage={lostAtStage} lastValidDirection={candidate.RawDirection} dropModule={dropModule}",
                     ctx));
@@ -1902,7 +1902,7 @@ namespace GeminiV26.Core
                     entry.Score = 100;
 
                 entry.Reason = $"{entry.Reason} [STRUCTURE+{boost}]";
-                _bot.Print($"[ENTRY][STRUCTURE] score boost applied type={entry.Type} boost={boost} score={entry.Score} transition={ctx.TransitionValid} breakout={ctx.FlagBreakoutConfirmed}");
+                GlobalLogger.Log($"[ENTRY][STRUCTURE] score boost applied type={entry.Type} boost={boost} score={entry.Score} transition={ctx.TransitionValid} breakout={ctx.FlagBreakoutConfirmed}");
             }
         }
 
@@ -1974,7 +1974,7 @@ namespace GeminiV26.Core
 
                 if (!candidate.IsValid)
                 {
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[INTEGRITY] SKIP restart protect on invalid candidate: {candidate.Type}",
                         ctx));
                     LogEntryTraceGate(ctx, candidate, nameof(ApplyRestartProtection), beforeDirection, true, "SKIP_INVALID_CANDIDATE");
@@ -1988,7 +1988,7 @@ namespace GeminiV26.Core
                     bool midTrend =
                         ctx.TrendDirection == candidate.Direction &&
                         ctx.MarketState?.IsTrend == true;
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY][AUTH] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction} authority={continuationAuthority}",
                         ctx));
                     bool freshDirectionalContinuation =
@@ -2010,7 +2010,7 @@ namespace GeminiV26.Core
                                 : $"{candidate.Reason} [RESTART_PROTECT_SUPPRESSED_CONTINUATION_AUTH]";
                             EntryDecisionPolicy.Normalize(candidate);
 
-                            _bot.Print(TradeLogIdentity.WithTempId(
+                            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                                 $"[ENTRY][PROTECT_SUPPRESSED] source=RESTART_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                                 $"type={candidate.Type} dir={candidate.Direction} score={protectedOriginalScore}->{candidate.Score} state={restartReason}",
                                 ctx));
@@ -2028,10 +2028,10 @@ namespace GeminiV26.Core
                                 : $"{candidate.Reason} [RESTART_MID_TREND_SOFT_{restartReason}]";
                             EntryDecisionPolicy.Normalize(candidate);
 
-                            _bot.Print(TradeLogIdentity.WithTempId(
+                            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                                 $"[ENTRY][MID_TREND] active=true restartPenalty={restartPenalty} earlyBreakPenalty=0 symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction}",
                                 ctx));
-                            _bot.Print(TradeLogIdentity.WithTempId(
+                            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                                 $"[ENTRY][PROTECT] source=RESTART_PROTECT action=MID_TREND_SOFT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                                 $"type={candidate.Type} dir={candidate.Direction} score={midTrendOriginalScore}->{candidate.Score} state={restartReason}",
                                 ctx));
@@ -2045,11 +2045,11 @@ namespace GeminiV26.Core
                             : $"{candidate.Reason} [RESTART_DECAY_AFTER_RESTART]";
                         EntryDecisionPolicy.Normalize(candidate);
 
-                        _bot.Print(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
                             $"[ENTRY][PROTECT] source=RESTART_PROTECT action=HARD_BLOCK symbol={candidate.Symbol ?? _bot.SymbolName} " +
                             $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                             ctx));
-                        _bot.Print(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
                             $"[RESTART BLOCK] reason=DECAY_AFTER_RESTART symbol={candidate.Symbol ?? _bot.SymbolName} " +
                             $"type={candidate.Type} dir={candidate.Direction} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                             ctx));
@@ -2065,11 +2065,11 @@ namespace GeminiV26.Core
                         : $"{candidate.Reason} [RESTART_SOFT_AFTER_RESTART_{restartReason}]";
                     EntryDecisionPolicy.Normalize(candidate);
 
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY][PROTECT] source=RESTART_PROTECT action=SOFT_PENALTY symbol={candidate.Symbol ?? _bot.SymbolName} " +
                         $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} state={restartReason}",
                         ctx));
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[RESTART SOFT-HARDPHASE] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
                         $"dir={candidate.Direction} score={originalScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                         ctx));
@@ -2091,7 +2091,7 @@ namespace GeminiV26.Core
                     : $"{candidate.Reason} [RESTART_SOFT_{restartReason}]";
                 EntryDecisionPolicy.Normalize(candidate);
 
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[RESTART SOFT] penalty applied symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} " +
                     $"dir={candidate.Direction} score={originalSoftScore}->{candidate.Score} barsSinceStart={ctx.BarsSinceStart} state={restartReason}",
                     ctx));
@@ -2142,18 +2142,18 @@ namespace GeminiV26.Core
                 ctx.FinalConfidence <= 0 ||
                 ctx.RiskConfidence <= 0)
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     "[SNAPSHOT][SKIP][MISSING_FINAL_STATE]",
                     ctx));
                 return;
             }
 
-            _bot.Print($"[SNAPSHOT][FINAL] dir={ctx.FinalDirection} FC={ctx.FinalConfidence} RC={ctx.RiskConfidence}");
+            GlobalLogger.Log($"[SNAPSHOT][FINAL] dir={ctx.FinalDirection} FC={ctx.FinalConfidence} RC={ctx.RiskConfidence}");
 
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected),
                 ctx));
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 TradeAuditLog.BuildDirectionSnapshot(ctx, selected),
                 ctx));
         }
@@ -2225,13 +2225,13 @@ namespace GeminiV26.Core
                 return currentState ?? _memoryEngine.GetState(normalized);
             }
 
-            _bot.Print($"[MEMORY][RECOVER] symbol={normalized} source={source}");
+            GlobalLogger.Log($"[MEMORY][RECOVER] symbol={normalized} source={source}");
             _memoryEngine.BuildFromHistory(normalized, LoadMemoryHistory(normalized));
 
             SymbolMemoryState rebuiltState = _memoryEngine.GetState(normalized);
             if (rebuiltState == null || !rebuiltState.IsBuilt)
             {
-                _bot.Print($"[MEMORY][CRITICAL_MISSING] symbol={normalized} source={source}");
+                GlobalLogger.Log($"[MEMORY][CRITICAL_MISSING] symbol={normalized} source={source}");
             }
 
             return rebuiltState;
@@ -2262,22 +2262,22 @@ namespace GeminiV26.Core
             foreach (var symbol in symbols)
             {
                 if (DebugStartupTrace)
-                    _bot.Print($"[STARTUP][TRACE] before_resolve symbol={symbol}");
+                    GlobalLogger.Log($"[STARTUP][TRACE] before_resolve symbol={symbol}");
 
                 var runtimeSymbol = ResolveSymbol(symbol);
 
                 if (DebugStartupTrace)
-                    _bot.Print($"[STARTUP][TRACE] after_resolve symbol={symbol} resolved={(runtimeSymbol != null)}");
+                    GlobalLogger.Log($"[STARTUP][TRACE] after_resolve symbol={symbol} resolved={(runtimeSymbol != null)}");
 
                 if (!IsTradable(runtimeSymbol))
                 {
-                    _bot.Print("BLOCK: not tradable");
-                    _bot.Print($"[MEMORY][SKIP] {symbol}");
+                    GlobalLogger.Log("BLOCK: not tradable");
+                    GlobalLogger.Log($"[MEMORY][SKIP] {symbol}");
                     continue;
                 }
 
                 if (DebugStartupTrace)
-                    _bot.Print($"[STARTUP][TRACE] initialize_memory symbol={symbol}");
+                    GlobalLogger.Log($"[STARTUP][TRACE] initialize_memory symbol={symbol}");
 
                 _memoryEngine.Initialize(symbol);
                 _memoryEngine.BuildFromHistory(symbol, LoadMemoryHistory(symbol));
@@ -2285,7 +2285,7 @@ namespace GeminiV26.Core
 
             _isMemoryReady = true;
             EmitStartupCoverageLogs(symbols);
-            _bot.Print($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
+            GlobalLogger.Log($"[BOOT][MEMORY_READY] symbols={symbols.Count}");
         }
 
         private List<Bar> LoadMemoryHistory(string symbol)
@@ -2297,7 +2297,7 @@ namespace GeminiV26.Core
             {
                 string normalizedSymbol = NormalizeSymbol(symbol);
                 _memoryEngine.MarkResolveFailure(normalizedSymbol, "unresolved_runtime_symbol");
-                _bot.Print($"[MEMORY][SYMBOL_UNRESOLVED] canonical={normalizedSymbol}");
+                GlobalLogger.Log($"[MEMORY][SYMBOL_UNRESOLVED] canonical={normalizedSymbol}");
                 return new List<Bar>();
             }
 
@@ -2351,7 +2351,7 @@ namespace GeminiV26.Core
             if (!continuationAuthority && midTrend && hasRestartPenalty && hasEarlyBreakPenalty)
             {
                 earlyBreakPenalty = (int)(earlyBreakPenalty * 0.5);
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[ENTRY][MID_TREND] active=true restartPenalty=carried earlyBreakPenalty={earlyBreakPenalty} symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction}",
                     ctx));
             }
@@ -2368,28 +2368,28 @@ namespace GeminiV26.Core
             candidate.Reason = $"{candidate.Reason} [EARLY_BREAK_PENALTY]";
             if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
             {
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[AUDIT][EARLY BREAK] type={candidate.Type} " +
                     $"penalty={appliedPenalty} " +
                     $"scoreBefore={originalScore} " +
                     $"scoreAfter={candidate.Score}");
             }
 
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                 $"type={candidate.Type} dir={candidate.Direction} authority={continuationAuthority}",
                 ctx));
 
             if (continuationAuthority)
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                     $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} penalty={appliedPenalty} barsSinceBreak={barsSinceBreak}",
                     ctx));
                 return;
             }
 
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol={candidate.Symbol ?? _bot.SymbolName} " +
                 $"type={candidate.Type} dir={candidate.Direction} score={originalScore}->{candidate.Score} penalty={appliedPenalty} barsSinceBreak={barsSinceBreak}",
                 ctx));
@@ -2421,7 +2421,7 @@ namespace GeminiV26.Core
                 bool lateContinuationForCandidate =
                     (candidate.Direction == TradeDirection.Long && ctx.HasLateContinuationLong) ||
                     (candidate.Direction == TradeDirection.Short && ctx.HasLateContinuationShort);
-                _bot.Print($"[TIMING][{candidate.Type}] barsSinceBreak={barsSinceBreak} late={lateContinuationForCandidate.ToString().ToLowerInvariant()}");
+                GlobalLogger.Log($"[TIMING][{candidate.Type}] barsSinceBreak={barsSinceBreak} late={lateContinuationForCandidate.ToString().ToLowerInvariant()}");
                 if (barsSinceBreak == 0)
                     ApplyManagedEarlyBreakTriggers(ctx, candidate, barsSinceBreak);
 
@@ -2456,27 +2456,27 @@ namespace GeminiV26.Core
                         ? "[EARLY_NO_STRUCTURE]"
                         : $"{candidate.Reason} [EARLY_NO_STRUCTURE]";
                     ClearArmedSetup(candidate);
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[ENTRY][REJECT][EARLY_NO_STRUCTURE] {candidate.Symbol ?? _bot.SymbolName} {candidate.Type} {candidate.Direction} phase={movePhase} source={(phaseFromCtx ? "CTX" : "MEM")} barsSinceBreak={barsSinceBreak} pullback={ctx.BarsSinceFirstPullback} score={candidate.Score}",
                         ctx));
                     continue;
                 }
 
-                _bot.Print($"[TRIGGER] type={candidate.Type} confirmed={trigger.TriggerConfirmed}");
+                GlobalLogger.Log($"[TRIGGER] type={candidate.Type} confirmed={trigger.TriggerConfirmed}");
                 if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
                 {
-                    _bot.Print($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
+                    GlobalLogger.Log($"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
 
                     // HARD FIX – enforce trigger truth
                     candidate.TriggerConfirmed = trigger.TriggerConfirmed;
 
-                    _bot.Print($"[TRIGGER STATE FIX] type={candidate.Type} enforcedTrigger={candidate.TriggerConfirmed}");
+                    GlobalLogger.Log($"[TRIGGER STATE FIX] type={candidate.Type} enforcedTrigger={candidate.TriggerConfirmed}");
                 }
                 else
                 {
                     candidate.TriggerConfirmed = trigger.TriggerConfirmed;
                 }
-                _bot.Print($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
+                GlobalLogger.Log($"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
 
                 int currentBarIndex = ctx.M5?.Count - 1 ?? -1;
                 int triggerBarIndex = barsSinceBreak >= 0 ? currentBarIndex - barsSinceBreak : currentBarIndex;
@@ -2484,7 +2484,7 @@ namespace GeminiV26.Core
 
                 if (candidate.TriggerConfirmed && triggerAgeBars > 3)
                 {
-                    _bot.Print("[TRIGGER BLOCK] Stale trigger");
+                    GlobalLogger.Log("[TRIGGER BLOCK] Stale trigger");
                     candidate.TriggerConfirmed = false;
                 }
 
@@ -2501,23 +2501,23 @@ namespace GeminiV26.Core
 
                     if (!candidate.TriggerConfirmed && candidate.State == EntryState.TRIGGERED)
                     {
-                        _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
+                        GlobalLogger.Log($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
                     }
 
-                    _bot.Print($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
+                    GlobalLogger.Log($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
                     continue;
                 }
 
                 if (!trigger.TriggerConfirmed)
                 {
                     UpsertArmedSetup(candidate, barsSinceBreak, false, currentBarIndex);
-                    _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
-                    _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
+                    GlobalLogger.Log($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
+                    GlobalLogger.Log($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
                 }
                 else
                 {
                     UpsertArmedSetup(candidate, barsSinceBreak, true, currentBarIndex);
-                    _bot.Print($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
+                    GlobalLogger.Log($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
                 }
 
                 if (candidate.TriggerConfirmed && _armedSetups.TryGetValue(GetArmedSetupKey(candidate), out var armed))
@@ -2530,7 +2530,7 @@ namespace GeminiV26.Core
                     {
                         int scoreBefore = candidate.Score;
                         candidate.Score = Math.Max(0, (int)Math.Round(candidate.Score * 0.75, MidpointRounding.AwayFromZero));
-                        _bot.Print(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
                             $"[TRIGGER][LATE_PENALTY] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction} barsSinceTrigger={barsSinceTrigger} score={scoreBefore}->{candidate.Score}",
                             ctx));
                     }
@@ -2547,10 +2547,10 @@ namespace GeminiV26.Core
 
                 if (!candidate.TriggerConfirmed && candidate.State == EntryState.TRIGGERED)
                 {
-                    _bot.Print($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
+                    GlobalLogger.Log($"[INTEGRITY ERROR] Illegal state: TRIGGERED without trigger | type={candidate.Type}");
                 }
 
-                _bot.Print($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
+                GlobalLogger.Log($"[TRIGGER FINAL] type={candidate.Type} trigger={candidate.TriggerConfirmed} state={candidate.State}");
             }
         }
 
@@ -2738,10 +2738,10 @@ namespace GeminiV26.Core
                 return false;
 
             int recommendedTimingPenalty = ctx.MemoryAssessment?.RecommendedTimingPenalty ?? ctx.MemoryTimingPenalty;
-            _bot.Print($"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
+            GlobalLogger.Log($"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
             if (recommendedTimingPenalty <= -10)
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[TIMING BLOCK] penalty={recommendedTimingPenalty}",
                     ctx));
                 return false;
@@ -2749,7 +2749,7 @@ namespace GeminiV26.Core
 
             if (BotRestartState.IsHardProtectionPhase && eval.Score < 60)
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     "[RESTART BLOCK] HARD phase requires higher confidence",
                     ctx));
                 return false;
@@ -2762,7 +2762,7 @@ namespace GeminiV26.Core
             if ((isLong && ctx.IsOverextendedLong) ||
                 (isShort && ctx.IsOverextendedShort))
             {
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][OVEREXT] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
@@ -2776,8 +2776,8 @@ namespace GeminiV26.Core
             {
                 if (weakSetup && eval.Score < 60)
                 {
-                    _bot.Print($"[FA][REJECT] rule=LateWeak score={eval.Score}");
-                    _bot.Print(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log($"[FA][REJECT] rule=LateWeak score={eval.Score}");
+                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
                         $"[FINAL][REJECT][LATE] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                         ctx));
                     return false;
@@ -2789,8 +2789,8 @@ namespace GeminiV26.Core
                 ctx.TrendDirection != TradeDirection.None &&
                 eval.Direction != ctx.TrendDirection)
             {
-                _bot.Print($"[FA][REJECT] rule=TrendConflict confidence={ctx.LogicBiasConfidence}");
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log($"[FA][REJECT] rule=TrendConflict confidence={ctx.LogicBiasConfidence}");
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][TREND] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
@@ -2799,14 +2799,14 @@ namespace GeminiV26.Core
             if (weakSetup &&
                 eval.Score < EntryDecisionPolicy.MinScoreThreshold)
             {
-                _bot.Print($"[FA][REJECT] rule=WeakSetupScore score={eval.Score}");
-                _bot.Print(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log($"[FA][REJECT] rule=WeakSetupScore score={eval.Score}");
+                GlobalLogger.Log(TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][WEAK] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
                 return false;
             }
 
-            _bot.Print(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(
                 $"[FINAL][PASS] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                 ctx));
             return true;
@@ -2880,7 +2880,7 @@ namespace GeminiV26.Core
                 return;
 
             ClearArmedSetup(candidate);
-            _bot.Print($"[ENTRY EXECUTED] symbol={candidate.Symbol ?? _bot.SymbolName} score={candidate.Score} type={candidate.Type} dir={candidate.Direction}");
+            GlobalLogger.Log($"[ENTRY EXECUTED] symbol={candidate.Symbol ?? _bot.SymbolName} score={candidate.Score} type={candidate.Type} dir={candidate.Direction}");
         }
 
         private sealed class TriggerDiagnostics
@@ -2918,7 +2918,7 @@ namespace GeminiV26.Core
                 // =====================================================
                 if (CheckHardLoss())
                 {
-                    _bot.Print("BLOCK: hard loss guard");
+                    GlobalLogger.Log("BLOCK: hard loss guard");
                     return;
                 }
 
@@ -2989,11 +2989,11 @@ namespace GeminiV26.Core
             }
             catch (Exception ex)
             {
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[AUDIT][ONTICK EXCEPTION] symbol={_bot.SymbolName} type={ex.GetType().Name} " +
                     $"message={ex.Message} positionCount={_bot.Positions.Count} contextCount={GetTrackedContextCount()} " +
                     $"lastStage={_lastOnTickStage}");
-                _bot.Print($"[TC][ONTICK][FATAL] {ex.GetType().Name}: {ex.Message}");
+                GlobalLogger.Log($"[TC][ONTICK][FATAL] {ex.GetType().Name}: {ex.Message}");
                 throw;
             }
         }
@@ -3004,7 +3004,7 @@ namespace GeminiV26.Core
         {
             _lastOnTickManager = manager;
             _lastOnTickStage = manager?.GetType().Name ?? _bot.SymbolName;
-            _bot.Print($"[AUDIT][ONTICK STAGE] {_lastOnTickStage}");
+            GlobalLogger.Log($"[AUDIT][ONTICK STAGE] {_lastOnTickStage}");
             onTickAction?.Invoke();
         }
 
@@ -3059,7 +3059,7 @@ namespace GeminiV26.Core
             string asset = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol)).ToString();
             bool align = candidate.Direction != TradeDirection.None && (allowed == TradeDirection.None || allowed == candidate.Direction);
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDIT][HTF FLOW][{stageName}] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} stage={stageName} module={module} " +
                 $"htfState={state} allowedDirection={allowed} align={align} candidateDirection={candidate.Direction}");
 
@@ -3069,7 +3069,7 @@ namespace GeminiV26.Core
             {
                 EnsureHtfClassification(ctx, candidate);
                 string htfClassification = candidate.HtfClassification ?? "HTF_NO_DIRECTION";
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[AUDIT][HTF REJECT ANALYSIS] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
                     $"htfAllowedDirection={allowed} htfState={state} align={align} trueDirectionMismatch={(candidate.Direction != TradeDirection.None && allowed != TradeDirection.None && candidate.Direction != allowed ? "YES" : "NO")} " +
                     $"classification={htfClassification} rejectModule={module}");
@@ -3134,7 +3134,7 @@ namespace GeminiV26.Core
 
             if (meta == null)
             {
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[META MISSING] pos={pos.Id} symbol={pos.SymbolName}"
                 );
             }
@@ -3163,14 +3163,14 @@ namespace GeminiV26.Core
 
             if (pipSize <= 0)
             {
-                _bot.Print($"[EXIT][WARN] pos={pos.Id} symbol={pos.SymbolName} reason=missing_runtime_pipsize");
+                GlobalLogger.Log($"[EXIT][WARN] pos={pos.Id} symbol={pos.SymbolName} reason=missing_runtime_pipsize");
             }
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                 $"[EXIT][BROKER_CLOSE_DETECTED]\nreason={MapBrokerCloseReason(args.Reason)}",
                 ctx,
                 pos));
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                 TradeAuditLog.BuildExitSnapshot(
                     ctx,
                     pos,
@@ -3181,10 +3181,10 @@ namespace GeminiV26.Core
                 pos));
             if (ctx != null)
             {
-                System.Console.WriteLine($"[MFE_CLOSE] finalMFE={ctx.MfeR} finalMAE={ctx.MaeR}");
-                _bot.Print($"[CLOSE] final MFE={ctx.MfeR} MAE={ctx.MaeR}");
+                GlobalLogger.Log($"[MFE_CLOSE] finalMFE={ctx.MfeR} finalMAE={ctx.MaeR}");
+                GlobalLogger.Log($"[CLOSE] final MFE={ctx.MfeR} MAE={ctx.MaeR}");
             }
-            _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={args.Reason}\ndetail=broker_closed_event", ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={args.Reason}\ndetail=broker_closed_event", ctx, pos));
 
             _logger.OnTradeClosed(
                 BuildLogContext(pos, meta, ctx, entryCtx),
@@ -3251,7 +3251,7 @@ namespace GeminiV26.Core
             _contextRegistry.RemovePosition(pos.Id);
             _contextRegistry.RemoveEntry(pos.Id);
             _tradeMetaStore.Remove(pos.Id);
-            _bot.Print(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(pos.Id, "position_closed_event"), ctx, pos));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(pos.Id, "position_closed_event"), ctx, pos));
         }
 
         private static string MapBrokerCloseReason(PositionCloseReason reason)
@@ -3294,11 +3294,11 @@ namespace GeminiV26.Core
 
             if (!_isMemoryReady)
             {
-                _bot.Print("[BOOT][REHYDRATE_BLOCKED] reason=memory_not_ready");
+                GlobalLogger.Log("[BOOT][REHYDRATE_BLOCKED] reason=memory_not_ready");
                 return;
             }
 
-            _bot.Print("[BOOT][REHYDRATE_START]");
+            GlobalLogger.Log("[BOOT][REHYDRATE_START]");
             var service = new RehydrateService(
                 _bot,
                 _positionContexts,
@@ -3312,7 +3312,7 @@ namespace GeminiV26.Core
             int restored = summary?.SuccessfullyRehydrated ?? 0;
             int skipped = summary?.Skipped ?? 0;
             int failed = summary?.Failed ?? 0;
-            _bot.Print($"[BOOT][REHYDRATE_DONE] restored={restored} skipped={skipped} failed={failed} openPositions={openCount}");
+            GlobalLogger.Log($"[BOOT][REHYDRATE_DONE] restored={restored} skipped={skipped} failed={failed} openPositions={openCount}");
         }
 
         // =================================================
@@ -3347,23 +3347,23 @@ namespace GeminiV26.Core
                     if (isBuilt)
                         continue;
 
-                    _bot.Print($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} stateNull={isNull}");
+                    GlobalLogger.Log($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} stateNull={isNull}");
 
                     if (isStartupWindow)
-                        _bot.Print($"[MEMORY][CRITICAL] symbol={symbol} missing_after_startup");
+                        GlobalLogger.Log($"[MEMORY][CRITICAL] symbol={symbol} missing_after_startup");
 
                     continue;
                 }
 
                 if (!isResolved)
                 {
-                    _bot.Print($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} resolved={isResolved} usable={isUsable} reason={memoryState?.ResolveFailureReason ?? string.Empty}");
+                    GlobalLogger.Log($"[MEMORY][MISSING] symbol={symbol} built={isBuilt} resolved={isResolved} usable={isUsable} reason={memoryState?.ResolveFailureReason ?? string.Empty}");
                     continue;
                 }
 
                 if (MarketMemoryEngine.DebugMemory)
                 {
-                    _bot.Print(
+                    GlobalLogger.Log(
                         $"[DEBUG][MEMORY][OK] symbol={symbol} phase={memoryState.MovePhase} age={memoryState.MoveAgeBars} pullbacks={memoryState.PullbackCount} usable={isUsable}");
                 }
             }
@@ -3376,9 +3376,9 @@ namespace GeminiV26.Core
             if (_startupCoverageLogged)
                 return;
 
-            _bot.Print($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
-            _bot.Print($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
-            _bot.Print($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
+            GlobalLogger.Log($"[MEMORY][COVERAGE] built={_memoryEngine.GetBuiltCoverageRatio(symbols)}");
+            GlobalLogger.Log($"[MEMORY][RESOLVE_COVERAGE] resolved={_memoryEngine.GetResolvedCoverageRatio(symbols)}");
+            GlobalLogger.Log($"[MEMORY][USABLE_COVERAGE] usable={_memoryEngine.GetUsableCoverageRatio(symbols)}");
             _startupCoverageLogged = true;
         }
 
@@ -3398,16 +3398,16 @@ namespace GeminiV26.Core
                     continue;
                 }
 
-                _bot.Print($"[RESOLVER][MISSING] symbol={symbol}");
+                GlobalLogger.Log($"[RESOLVER][MISSING] symbol={symbol}");
                 if (isStartupWindow)
-                    _bot.Print($"[RESOLVER][CRITICAL] symbol={symbol} missing_after_startup");
+                    GlobalLogger.Log($"[RESOLVER][CRITICAL] symbol={symbol} missing_after_startup");
             }
 
-            _bot.Print($"[RESOLVER][VALIDATION] resolved={resolved}/{total}");
+            GlobalLogger.Log($"[RESOLVER][VALIDATION] resolved={resolved}/{total}");
             if (resolved < total)
-                _bot.Print($"[RESOLVER][ERROR] validation_failed resolved={resolved}/{total}");
+                GlobalLogger.Log($"[RESOLVER][ERROR] validation_failed resolved={resolved}/{total}");
 
-            _bot.Print($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
+            GlobalLogger.Log($"[RESOLVER][COVERAGE] resolved={resolved}/{total}");
         }
 
         private List<string> GetTrackedCanonicalSymbols()
@@ -3436,7 +3436,7 @@ namespace GeminiV26.Core
             var symbol = ResolveSymbol(canonical);
             if (!IsTradable(symbol))
             {
-                _bot.Print($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=symbol_not_tradable");
+                GlobalLogger.Log($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=symbol_not_tradable");
                 return false;
             }
 
@@ -3447,7 +3447,7 @@ namespace GeminiV26.Core
                 return true;
             }
 
-            _bot.Print($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=no_exit_manager_for_symbol");
+            GlobalLogger.Log($"[REHYDRATE_WARN] pos={ctx.PositionId} symbol={ctx.Symbol} reason=no_exit_manager_for_symbol");
             return false;
         }
 
@@ -3564,7 +3564,7 @@ namespace GeminiV26.Core
             if (symbolSignals == null || bias == null)
                 return;
 
-            _bot.Print($"[HTF][BIAS] asset={assetTag} direction={bias.AllowedDirection} state={bias.State} impact=ScoreOnly conf={bias.Confidence01:0.00}");
+            GlobalLogger.Log($"[HTF][BIAS] asset={assetTag} direction={bias.AllowedDirection} state={bias.State} impact=ScoreOnly conf={bias.Confidence01:0.00}");
 
             int alignedCandidates = 0;
             int misalignedCandidates = 0;
@@ -3594,12 +3594,12 @@ namespace GeminiV26.Core
 
                 candidate.Score = Math.Max(0, Math.Min(100, candidate.Score));
 
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[HTF][CANDIDATE] asset={assetTag} type={candidate.Type} dir={candidate.Direction} " +
                     $"aligned={aligned} misaligned={misaligned} score={originalScore}->{candidate.Score} state={bias.State}");
             }
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[HTF][APPLIED] asset={assetTag} dir={bias.AllowedDirection} state={bias.State} " +
                 $"alignedBonus=5 misalignedPenalty=10 " +
                 $"alignedCandidates={alignedCandidates} misaligned={misalignedCandidates}");
@@ -3748,7 +3748,7 @@ namespace GeminiV26.Core
 
                 _hardLossClosing.Add(pos.Id);
 
-                _bot.Print(
+                GlobalLogger.Log(
                     $"[HARD LOSS EXIT] pos={pos.Id} symbol={pos.SymbolName} " +
                     $"net={loss:F2} gross={pos.GrossProfit:F2} " +
                     $"limit={hardLimit:F2}"

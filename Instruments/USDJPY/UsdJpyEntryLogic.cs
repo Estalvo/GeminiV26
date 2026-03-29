@@ -170,10 +170,10 @@ namespace GeminiV26.Instruments.USDJPY
                 LastBias = TradeType.Sell;
                 LastLogicConfidence = Math.Min(confidence, 84);
             }
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[USDJPY STRUCTURE] trendLong={trendLong} higherLow={higherLowConfirmed} contLong={continuationLong} pbLong={pullbackCompleteLong} extLong={extendedLong} exhLong={exhaustionLong} qualifiedLong={hasQualifiedLongBias}");
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[USDJPY LOGIC] trend={(trendLong ? "Long" : trendShort ? "Short" : "None")} " +
                 $"longCont={continuationLong} longPb={pullbackCompleteLong} ext={extendedLong} exh={exhaustionLong} " +
                 $"shortWeak={weakeningShort} shortBreak={shortBreakdown} bias={LastBias} logicConf={LastLogicConfidence} hasLongStructure={higherLowConfirmed && continuationLong && pullbackCompleteLong}");

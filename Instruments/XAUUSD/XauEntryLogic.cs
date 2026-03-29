@@ -109,7 +109,7 @@ namespace GeminiV26.Instruments.XAUUSD
             LastBias = bias;
             LastLogicConfidence = conf;
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[XAU LOGIC] bias={bias} conf={conf} " +
                 $"ema8={ema8:F2} ema21={ema21:F2} ema21HTF={ema21Htf:F2}"
             );

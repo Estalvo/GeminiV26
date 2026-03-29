@@ -70,44 +70,44 @@ namespace GeminiV26.Core
             bool slowSetup = IsSlowDevelopmentSetup(ctx?.EntryType);
             bool breakoutSetup = IsBreakoutSetup(ctx?.EntryType);
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                 $"[TVM][EVAL] BarsSinceEntry={barsSinceEntry} UnrealizedR={unrealizedR:0.00} MomentumState={momentumState} " +
                 $"StructureState={(structureBreakDetected ? "BROKEN" : "INTACT")} OppImpulse={(strongOppositeImpulseDetected ? "YES" : "NO")} " +
                 $"HtfState={(strongHtfConflictDetected ? "STRONG_CONFLICT" : "ALIGNED")} SetupType={ctx?.EntryType}", ctx));
 
             if (barsSinceEntry < TVM_MinBarsBeforeEvaluation)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     $"[TVM][SKIP_REASON] GRACE barsSinceEntry={barsSinceEntry} minBars={TVM_MinBarsBeforeEvaluation}", ctx));
                 return false;
             }
 
             if (Math.Abs(unrealizedR) < 0.30)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     $"[TVM][SKIP_REASON] NO_MOVE_ZONE unrealizedR={unrealizedR:0.00} threshold=0.30", ctx));
                 return false;
             }
 
             if (unrealizedR > -TVM_MinAdverseMoveR)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     $"[TVM][SKIP_REASON] NO_ADVERSE unrealizedR={unrealizedR:0.00} threshold=-{TVM_MinAdverseMoveR:0.00}", ctx));
                 return false;
             }
 
             if (stillValid)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     "[TVM][SKIP_REASON] STILL_VALID", ctx));
                 return false;
             }
 
             if (!noRecoveryInWindow)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     "[TVM][SKIP_REASON] RECOVERY", ctx));
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     "[TVM][HOLD] Recovery detected", ctx));
                 return false;
             }
@@ -211,7 +211,7 @@ namespace GeminiV26.Core
             {
                 if (!ctx.MissingDirLogged)
                 {
-                    _bot.Print($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
+                    GlobalLogger.Log($"[DIR][ERROR] Missing FinalDirection posId={ctx.PositionId}");
                     ctx.MissingDirLogged = true;
                 }
 
@@ -244,8 +244,8 @@ namespace GeminiV26.Core
             if (adverseR > ctx.MaeR)
                 ctx.MaeR = adverseR;
 
-            _bot.Print($"[MFE] value={ctx.MfeR} price={currentPrice}");
-            _bot.Print($"[MAE] value={ctx.MaeR} price={currentPrice}");
+            GlobalLogger.Log($"[MFE] value={ctx.MfeR} price={currentPrice}");
+            GlobalLogger.Log($"[MAE] value={ctx.MaeR} price={currentPrice}");
         }
 
         private bool EvaluateEarlyPhase(
@@ -276,18 +276,18 @@ namespace GeminiV26.Core
                 // csak brutál fail esetén engedünk exitet
                 bool hardFail = ctx.MaeR > 0.60;
 
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     $"[TVM][EARLY_PROTECT] bars={barsSinceEntry} maeR={ctx.MaeR:0.00} hardFail={hardFail}", ctx));
 
                 if (!hardFail)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds(
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                         "[TVM][HOLD][EARLY_PROTECTION_ACTIVE]", ctx));
 
                     return false;
                 }
 
-                _bot.Print(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
                     "[TVM][ALLOW_EXIT][EARLY_HARD_FAIL]", ctx));
             }
 
@@ -319,7 +319,7 @@ namespace GeminiV26.Core
 
             if (strongHtfConflict && !htfFail)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
             }
 
             LogTvmOncePerBar(
@@ -344,16 +344,16 @@ namespace GeminiV26.Core
             if (dangerCount >= 2)
             {
                 bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
                 if (persistenceAlive)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
                     return false;
                 }
 
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "EARLY_FAILURE";
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=EARLY_FAILURE", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=EARLY_FAILURE", ctx));
 
                 LogTvmOncePerBar(
                     ctx,
@@ -367,7 +367,7 @@ namespace GeminiV26.Core
             {
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "HTF_FAIL";
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=HTF_FAIL", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=HTF_FAIL", ctx));
                 return true;
             }
 
@@ -416,16 +416,16 @@ namespace GeminiV26.Core
             if (!slowSetup && barsSinceEntry >= 4 && ctx.MfeR <= (breakoutSetup ? 0.10 : 0.05))
             {
                 bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
                 if (persistenceAlive)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
                     return false;
                 }
 
                 ctx.IsDeadTrade = true;
                 ctx.DeadTradeReason = "NO_PROGRESS";
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=NO_PROGRESS", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][ALLOW_EXIT] reason=NO_PROGRESS", ctx));
                 return true;
             }
 
@@ -445,7 +445,7 @@ namespace GeminiV26.Core
 
             if (strongHtfConflict && !htfFail)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
             }
 
             LogTvmOncePerBar(
@@ -457,10 +457,10 @@ namespace GeminiV26.Core
             if (shouldExit)
             {
                 bool persistenceAlive = TrendPersistenceAlive(ctx, m5, tradeType);
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][PERSISTENCE] alive={persistenceAlive}", ctx));
                 if (persistenceAlive && !structureBreak)
                 {
-                    _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
+                    GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][BLOCK_EXIT] reason=TREND_PERSISTENCE_ALIVE", ctx));
                     return false;
                 }
 
@@ -471,8 +471,8 @@ namespace GeminiV26.Core
                     ctx.DeadTradeReason = "HTF_FAIL";
                 else if (strongOppositeImpulse)
                     ctx.DeadTradeReason = "IMPULSE_REVERSAL";
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][ALLOW_EXIT] reason={ctx.DeadTradeReason}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][ALLOW_EXIT] reason={ctx.DeadTradeReason}", ctx));
 
                 LogTvmOncePerBar(
                     ctx,
@@ -524,7 +524,7 @@ namespace GeminiV26.Core
 
             if (strongHtfConflict && !htfFail)
             {
-                _bot.Print(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[TVM][SKIP_REASON] HTF_WEAK_CONFLICT", ctx));
             }
 
             LogTvmOncePerBar(
@@ -542,7 +542,7 @@ namespace GeminiV26.Core
                     ctx.DeadTradeReason = "HTF_FAIL";
                 else if (strongOppositeImpulse)
                     ctx.DeadTradeReason = "IMPULSE_REVERSAL";
-                _bot.Print(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
+                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TVM][EXIT_REASON] {ctx.DeadTradeReason}", ctx));
 
                 LogTvmOncePerBar(
                     ctx,
@@ -663,7 +663,7 @@ namespace GeminiV26.Core
             if (ctx.LastTvmLogBar == barIndex)
                 return;
 
-            _bot.Print(TradeLogIdentity.WithPositionIds(message, ctx));
+            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(message, ctx));
             ctx.LastTvmLogBar = barIndex;
         }
 
@@ -802,7 +802,7 @@ namespace GeminiV26.Core
         {
             long resolvedPositionId = positionId ?? ctx?.PositionId ?? 0;
             string symbol = _bot?.SymbolName ?? "UNKNOWN";
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDIT][ONTICK INDEX PRECHECK] file=Core/TradeViabilityMonitor.cs method={method} " +
                 $"symbol={symbol} collection={collectionName} count={count} requestedIndex={requestedIndex} " +
                 $"positionId={resolvedPositionId} attemptId={ctx?.EntryAttemptId ?? "NA"}");

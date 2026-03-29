@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.USDCAD
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[USDCAD GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[USDCAD GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[USDCAD GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[USDCAD GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print("[USDCAD GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log("[USDCAD GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            _bot.Print("[USDCAD GATE] ALLOWED");
+            GlobalLogger.Log("[USDCAD GATE] ALLOWED");
             return true;
         }
 
