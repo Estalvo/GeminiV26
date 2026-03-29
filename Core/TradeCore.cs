@@ -2834,6 +2834,8 @@ namespace GeminiV26.Core
             public int LostAfterGateCount { get; set; }
             public int NeverHadDirectionCount { get; set; }
         }
+
+        private string _lastOnTickStage = "INIT";
         
         // =========================================================
         // TICK-LEVEL EXIT DISPATCH (isolated & safe)
@@ -2855,137 +2857,100 @@ namespace GeminiV26.Core
 
                 if (IsSymbol("XAUUSD"))
                 {
-                    try { _xauExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][XAU] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_xauExitManager, () => _xauExitManager?.OnTick());
                 }
                 else if (IsNasSymbol(_bot.SymbolName))
                 {
-                    try { _nasExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][NAS] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_nasExitManager, () => _nasExitManager?.OnTick());
                 }
                 else if (IsSymbol("US30"))
                 {
-                    try { _us30ExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][US30] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_us30ExitManager, () => _us30ExitManager?.OnTick());
                 }
                 else if (IsSymbol("GER40"))
                 {
-                    try { _ger40ExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][GER40] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_ger40ExitManager, () => _ger40ExitManager?.OnTick());
                 }
                 else if (IsSymbol("EURUSD"))
                 {
-                    try { _eurUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][EURUSD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_eurUsdExitManager, () => _eurUsdExitManager?.OnTick());
                 }
                 else if (IsSymbol("USDJPY"))
                 {
-                    try { _usdJpyExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][USDJPY] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_usdJpyExitManager, () => _usdJpyExitManager?.OnTick());
                 }
                 else if (IsSymbol("GBPUSD"))
                 {
-                    try { _gbpUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][GBPUSD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_gbpUsdExitManager, () => _gbpUsdExitManager?.OnTick());
                 }
                 else if (IsSymbol("AUDUSD"))
                 {
-                    try { _audUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][AUDUSD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_audUsdExitManager, () => _audUsdExitManager?.OnTick());
                 }
                 else if (IsSymbol("AUDNZD"))
                 {
-                    try { _audNzdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][AUDNZD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_audNzdExitManager, () => _audNzdExitManager?.OnTick());
                 }
                 else if (IsSymbol("EURJPY"))
                 {
-                    try { _eurJpyExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][EURJPY] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_eurJpyExitManager, () => _eurJpyExitManager?.OnTick());
                 }
                 else if (IsSymbol("GBPJPY"))
                 {
-                    try { _gbpJpyExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][GBPJPY] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_gbpJpyExitManager, () => _gbpJpyExitManager?.OnTick());
                 }
                 else if (IsSymbol("NZDUSD"))
                 {
-                    try { _nzdUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][NZDUSD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_nzdUsdExitManager, () => _nzdUsdExitManager?.OnTick());
                 }
                 else if (IsSymbol("USDCAD"))
                 {
-                    try { _usdCadExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][USDCAD] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_usdCadExitManager, () => _usdCadExitManager?.OnTick());
                 }
                 else if (IsSymbol("USDCHF"))
                 {
-                    try { _usdChfExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][USDCHF] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_usdChfExitManager, () => _usdChfExitManager?.OnTick());
                 }
                 else if (IsSymbol("BTCUSD"))
                 {
-                    try { _btcUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][BTC] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_btcUsdExitManager, () => _btcUsdExitManager?.OnTick());
                 }
                 else if (IsSymbol("ETHUSD"))
                 {
-                    try { _ethUsdExitManager?.OnTick(); }
-                    catch (Exception ex)
-                    {
-                        _bot.Print($"[TC][ONTICK][ETH] {ex.GetType().Name}: {ex.Message}");
-                    }
+                    DispatchExitManagerOnTick(_ethUsdExitManager, () => _ethUsdExitManager?.OnTick());
                 }
             }
             catch (Exception ex)
             {
+                _bot.Print(
+                    $"[AUDIT][ONTICK EXCEPTION] symbol={_bot.SymbolName} type={ex.GetType().Name} " +
+                    $"message={ex.Message} positionCount={_bot.Positions.Count} contextCount={GetTrackedContextCount()} " +
+                    $"lastStage={_lastOnTickStage}");
                 _bot.Print($"[TC][ONTICK][FATAL] {ex.GetType().Name}: {ex.Message}");
+                throw;
             }
+        }
+
+        private object _lastOnTickManager;
+
+        private void DispatchExitManagerOnTick(object manager, Action onTickAction)
+        {
+            _lastOnTickManager = manager;
+            _lastOnTickStage = manager?.GetType().Name ?? _bot.SymbolName;
+            _bot.Print($"[AUDIT][ONTICK STAGE] {_lastOnTickStage}");
+            onTickAction?.Invoke();
+        }
+
+        private int GetTrackedContextCount()
+        {
+            if (_lastOnTickManager == null)
+                return 0;
+
+            var field = _lastOnTickManager.GetType().GetField("_contexts", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (field?.GetValue(_lastOnTickManager) is System.Collections.IDictionary dictionary)
+                return dictionary.Count;
+
+            return 0;
         }
 
         private static TradeType ToTradeTypeStrict(TradeDirection d)
