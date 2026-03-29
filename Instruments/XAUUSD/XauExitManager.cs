@@ -272,6 +272,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 double currentPrice = ctx.FinalDirection == TradeDirection.Long
                     ? sym.Bid
                     : sym.Ask;
+                // Keep MFE/MAE lifecycle tracking independent from TP1/TVM gating.
                 TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
 
                 double rDist = GetRiskDistance(pos, ctx);
