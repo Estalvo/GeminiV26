@@ -269,6 +269,11 @@ namespace GeminiV26.Instruments.XAUUSD
                 if (!TryResolveExitSymbol(pos, out var sym, ctx))
                     continue;
 
+                double currentPrice = ctx.FinalDirection == TradeDirection.Long
+                    ? sym.Bid
+                    : sym.Ask;
+                TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
+
                 double rDist = GetRiskDistance(pos, ctx);
 
                 if (rDist <= 0)
