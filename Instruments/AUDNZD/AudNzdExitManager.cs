@@ -215,6 +215,7 @@ namespace GeminiV26.Instruments.AUDNZD
                 double currentPrice = ctx.FinalDirection == TradeDirection.Long
                     ? sym.Bid
                     : sym.Ask;
+                _bot.Print($"[ONTICK] time={_bot.Server.Time:HH:mm:ss.fff}");
                 TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
 
                 double rDist = GetRiskDistance(pos, ctx);

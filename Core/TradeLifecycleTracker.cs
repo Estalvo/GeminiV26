@@ -11,6 +11,8 @@ namespace GeminiV26.Core
             if (ctx.FinalDirection == TradeDirection.None)
                 return;
 
+            System.Console.WriteLine($"[MFE_TICK] time={System.DateTime.UtcNow:HH:mm:ss.fff} price={currentPrice}");
+
             double rMove;
             double riskDistance = ctx.RiskPriceDistance;
 
