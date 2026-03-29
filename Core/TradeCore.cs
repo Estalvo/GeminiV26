@@ -2751,11 +2751,14 @@ namespace GeminiV26.Core
             }
 
             bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
-            if ((isLong && ctx.HasLateContinuationLong) ||
-                (isShort && ctx.HasLateContinuationShort))
+            bool lateContinuationInDirection =
+                (isLong && ctx.HasLateContinuationLong) ||
+                (isShort && ctx.HasLateContinuationShort);
+            if (lateContinuationInDirection)
             {
-                if (weakSetup)
+                if (weakSetup && eval.Score < 60)
                 {
+                    _bot.Print($"[FA][REJECT] rule=LateWeak score={eval.Score}");
                     _bot.Print(TradeLogIdentity.WithTempId(
                         $"[FINAL][REJECT][LATE] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                         ctx));
@@ -2764,10 +2767,11 @@ namespace GeminiV26.Core
             }
 
             if (ctx.MarketState?.IsTrend == true &&
-                ctx.LogicBiasConfidence >= 60 &&
+                ctx.LogicBiasConfidence >= 70 &&
                 ctx.TrendDirection != TradeDirection.None &&
                 eval.Direction != ctx.TrendDirection)
             {
+                _bot.Print($"[FA][REJECT] rule=TrendConflict confidence={ctx.LogicBiasConfidence}");
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][TREND] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
@@ -2775,8 +2779,9 @@ namespace GeminiV26.Core
             }
 
             if (weakSetup &&
-                eval.Score < EntryDecisionPolicy.MinScoreThreshold + 2)
+                eval.Score < EntryDecisionPolicy.MinScoreThreshold)
             {
+                _bot.Print($"[FA][REJECT] rule=WeakSetupScore score={eval.Score}");
                 _bot.Print(TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][WEAK] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
