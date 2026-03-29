@@ -100,6 +100,7 @@ namespace GeminiV26.Instruments.NAS100
             var ctx = new PositionContext
             {
                 Symbol = _bot.SymbolName,
+                Bot = _bot,
                 TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
@@ -208,6 +209,7 @@ namespace GeminiV26.Instruments.NAS100
             {
                 PositionId = positionKey,
                 Symbol = result.Position.SymbolName,
+                Bot = _bot,
                 TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,

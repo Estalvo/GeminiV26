@@ -374,6 +374,7 @@ namespace GeminiV26.Instruments.XAUUSD
                             {
                                 EventTimestamp = DateTime.UtcNow,
                                 Symbol = _bot.SymbolName,
+                Bot = _bot,
                                 EventType = "EXIT_TVM",
                                 PositionId = ctx.PositionId,
                                 Confidence = ctx.FinalConfidence,
@@ -476,6 +477,7 @@ namespace GeminiV26.Instruments.XAUUSD
             {
                 EventTimestamp = DateTime.UtcNow,
                 Symbol = _bot.SymbolName,
+                Bot = _bot,
                 EventType = "EXIT_TP1",
                 PositionId = ctx.PositionId,
                 Confidence = ctx.FinalConfidence,
@@ -646,6 +648,7 @@ namespace GeminiV26.Instruments.XAUUSD
                 {
                     PositionId = pos.Id,
                     Symbol = pos.SymbolName,
+                    Bot = bot,
                     TempId = pos.Comment ?? string.Empty,
                     EntryPrice = pos.EntryPrice,
 

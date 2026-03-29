@@ -111,6 +111,7 @@ namespace GeminiV26.Instruments.USDJPY
             var ctx = new PositionContext
             {
                 Symbol = _bot.SymbolName,
+                Bot = _bot,
                 TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
@@ -200,6 +201,7 @@ namespace GeminiV26.Instruments.USDJPY
             {
                 PositionId = result.Position.Id,
                 Symbol = result.Position.SymbolName,
+                Bot = _bot,
                 TempId = entryContext.TempId,
                 EntryType = entry.Type.ToString(),
                 EntryReason = entry.Reason,
