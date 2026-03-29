@@ -302,7 +302,7 @@ namespace GeminiV26.Instruments.BTCUSD
                     if (reached)
                     {
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][TOUCHED]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
 
                         // Legacy viselkedés:
@@ -428,6 +428,7 @@ namespace GeminiV26.Instruments.BTCUSD
             if (!closeResult.IsSuccessful)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[BTCUSD][TP1][FAIL] partial close failed pos={pos.Id}", ctx, pos));
+                _bot.Print("[TP1][FAIL] execution failed");
                 return;
             }
 
@@ -435,6 +436,9 @@ namespace GeminiV26.Instruments.BTCUSD
                 $"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} " +
                 $"direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} " +
                 $"closedUnits={closeUnits}", ctx, pos));
+
+            double executionPrice = IsLong(ctx) ? sym.Bid : sym.Ask;
+            _bot.Print($"[TP1][EXECUTED] volumeClosed={closeUnits} price={executionPrice}");
 
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);

@@ -287,7 +287,7 @@ namespace GeminiV26.Instruments.ETHUSD
                     if (reached)
                     {
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][TOUCHED]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -402,7 +402,13 @@ namespace GeminiV26.Instruments.ETHUSD
             var closeResult = _bot.ClosePosition(pos, closeUnits);
 
             if (!closeResult.IsSuccessful)
+            {
+                _bot.Print("[TP1][FAIL] execution failed");
                 return;
+            }
+
+            double executionPrice = IsLong(ctx) ? sym.Bid : sym.Ask;
+            _bot.Print($"[TP1][EXECUTED] volumeClosed={closeUnits} price={executionPrice}");
 
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
 
