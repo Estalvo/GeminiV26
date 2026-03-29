@@ -49,6 +49,15 @@ namespace GeminiV26.EntryTypes.METAL
         }
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir, bool htfMismatch)
         {
+            // TEMP LOGGING (AUDIT): explicit runtime visibility for XAU reversal reachability.
+            string marketStateLabel =
+                ctx?.MarketState == null
+                    ? "NULL"
+                    : ctx.MarketState.IsTrend ? "Trend"
+                    : ctx.MarketState.IsRange ? "Range"
+                    : ctx.MarketState.IsLowVol ? "LowVol"
+                    : "Neutral";
+
             var reasons = new List<string>(8);
             int setupScore = 0;
 
@@ -167,13 +176,16 @@ namespace GeminiV26.EntryTypes.METAL
                 $"Score={score} Min={MinScore} Decision=ACCEPT | " +
                 string.Join(" | ", reasons);
 
+            bool isValid = score >= MinScore;
+            ctx?.Log?.Invoke($"[XAU_REVERSAL] isValid={isValid} state={marketStateLabel} bias={ctx?.TrendDirection}");
+
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                IsValid = score >= MinScore,
+                IsValid = isValid,
                 Reason = note
             };
         }
@@ -227,6 +239,17 @@ namespace GeminiV26.EntryTypes.METAL
             string reason,
             List<string> reasons)
         {
+            // TEMP LOGGING (AUDIT): traces invalid reversal paths with market state + bias context.
+            string marketStateLabel =
+                ctx?.MarketState == null
+                    ? "NULL"
+                    : ctx.MarketState.IsTrend ? "Trend"
+                    : ctx.MarketState.IsRange ? "Range"
+                    : ctx.MarketState.IsLowVol ? "LowVol"
+                    : "Neutral";
+            bool isValid = false;
+            ctx?.Log?.Invoke($"[XAU_REVERSAL] isValid={isValid} state={marketStateLabel} bias={ctx?.TrendDirection}");
+
             string note =
                 $"[XAU_REV] {ctx?.Symbol} dir={dir} " +
                 $"Score={score} Decision=REJECT Reason={reason} | " +

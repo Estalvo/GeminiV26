@@ -1162,6 +1162,10 @@ namespace GeminiV26.Core
                 return;
             }
 
+            int countBefore = symbolSignals?.Count ?? 0;
+            if (isMetalSymbol)
+                _bot.Print($"[TC][XAU] candidates BEFORE filter: {countBefore}");
+
             ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
             _bot.Print(TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
@@ -1245,6 +1249,10 @@ namespace GeminiV26.Core
                         _ctx));
                     LogCriticalDirectionDrop(_ctx, e);
                 }
+
+                int countAfter = symbolSignals?.Count ?? 0;
+                if (isMetalSymbol)
+                    _bot.Print($"[TC][XAU] candidates AFTER filter: {countAfter}");
 
                 LogEntryTraceSummary(_ctx, symbolSignals);
 
