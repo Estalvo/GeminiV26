@@ -871,6 +871,10 @@ namespace GeminiV26.Core.Entry
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.METAL, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
 
+            _bot.Print($"[HTF][SNAPSHOT] dir={ctx.HtfDirection} conf={ctx.HtfConfidence:F2}");
+            if (ctx.HtfDirection == TradeDirection.None)
+                _bot.Print("[HTF][WARN] Missing HTF snapshot");
+
             ctx.IsReady = true;
             _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
             LogEntryMemorySnapshot(ctx, symbol);
