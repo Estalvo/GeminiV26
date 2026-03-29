@@ -228,12 +228,6 @@ namespace GeminiV26.EntryTypes.Crypto
             bool hasStructure =
                 hasFlag || structuredPB;
 
-            if (!hasStructure)
-            {
-                ctx.Log?.Invoke(
-                    "[CRYPTO][STRUCT_FILTER] entryType=Flag reason=NO_FLAG_OR_STRUCTURED_PULLBACK blocked=false");
-            }
-
             bool continuationSignal = breakoutSignal;
 
             bool longValid = bullBreak || bullReclaim || (dir == TradeDirection.Long && breakoutSignal);
@@ -358,35 +352,76 @@ namespace GeminiV26.EntryTypes.Crypto
             bool impulseDetected = ctx.HasImpulse_M5 || barsSinceImpulse <= MaxBarsSinceImpulse;
             bool continuationDetected = continuationSignal;
             bool pullbackDetected = structuredPB;
-            bool flagCompressionDetected = hasFlag && hasValidRange && rangeAtr > 0 && rangeAtr <= 1.00;
-            bool isHtfAlignedShort = htfAligned && dir == TradeDirection.Short;
+            bool compressionDetected = hasFlag && hasValidRange && rangeAtr > 0 && rangeAtr <= 1.00;
+            bool isHtfAlignedShort = dir == TradeDirection.Short && ctx.CryptoHtfAllowedDirection == TradeDirection.Short;
+            bool weakStructure =
+                continuationDetected ||
+                pullbackDetected ||
+                compressionDetected;
+            string structureStrength = "NONE";
+            bool structureValid;
 
-            bool structureValid = hasStructure;
-            if (isHtfAlignedShort)
+            if (impulseDetected)
             {
-                structureValid =
-                    impulseDetected &&
-                    (continuationDetected || pullbackDetected || flagCompressionDetected);
-                ctx.Log?.Invoke(
-                    $"[CRYPTO][FLAG_STRUCTURE_RELAX] dir=Short htfAlign=true impulse={impulseDetected.ToString().ToLowerInvariant()} continuation={continuationDetected.ToString().ToLowerInvariant()} pullback={pullbackDetected.ToString().ToLowerInvariant()} compression={flagCompressionDetected.ToString().ToLowerInvariant()} finalStructure={structureValid.ToString().ToLowerInvariant()}");
+                if (isHtfAlignedShort)
+                {
+                    structureValid = true;
+                    structureStrength = weakStructure ? "STRONG" : "WEAK";
+                }
+                else
+                {
+                    structureValid = weakStructure;
+                    structureStrength = weakStructure ? "NORMAL" : "NONE";
+                }
             }
+            else
+            {
+                structureValid = false;
+            }
+
+            bool structBypass = isHtfAlignedShort && impulseDetected;
+            if (!hasFlag)
+            {
+                if (structBypass)
+                    ctx.Log?.Invoke("[CRYPTO][FLAG_STRUCT_BYPASS] reason=HTF_IMPULSE_OVERRIDE");
+                else
+                    ctx.Log?.Invoke("[CRYPTO][STRUCT_FILTER] entryType=Flag reason=NO_FLAG blocked=true");
+            }
+
+            if (!structuredPB)
+            {
+                if (structBypass)
+                    ctx.Log?.Invoke("[CRYPTO][FLAG_STRUCT_BYPASS] reason=HTF_IMPULSE_OVERRIDE");
+                else
+                    ctx.Log?.Invoke("[CRYPTO][STRUCT_FILTER] entryType=Flag reason=NO_STRUCTURED_PULLBACK blocked=true");
+            }
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FLAG_STRUCTURE_V2] impulse={impulseDetected} weakStruct={weakStructure} htfAligned={isHtfAlignedShort} valid={structureValid} strength={structureStrength}");
 
             if (!structureValid)
                 return Invalid(ctx, dir, "INVALID_STRUCTURE", score);
 
+            score += impulseDetected ? 25 : 0;
+            score += weakStructure ? 5 : 0;
+            score += structureStrength == "STRONG" ? 5 : 0;
             int scoreAfterStructure = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FLAG_SCORE_COMPONENTS] impulse={impulseDetected} weakStructure={weakStructure} structureStrength={structureStrength} scoreAfterStructure={scoreAfterStructure}");
 
             bool momentumAligned =
                 hasVolatility ||
                 ctx.LastClosedBarInTrendDirection ||
                 continuationDetected ||
                 breakoutDetected;
-            bool originalMomentumAligned = momentumAligned;
-            if (isHtfAlignedShort)
+            if (isHtfAlignedShort && impulseDetected)
             {
-                momentumAligned = momentumAligned || impulseDetected;
-                ctx.Log?.Invoke(
-                    $"[CRYPTO][FLAG_MOMENTUM_OVERRIDE] originalMomentum={originalMomentumAligned.ToString().ToLowerInvariant()} impulseDetected={impulseDetected.ToString().ToLowerInvariant()} finalMomentum={momentumAligned.ToString().ToLowerInvariant()}");
+                momentumAligned = true;
+                ctx.Log?.Invoke("[CRYPTO][FLAG_MOMENTUM_OVERRIDE] active=true reason=HTF_IMPULSE");
+            }
+            else
+            {
+                ctx.Log?.Invoke("[CRYPTO][FLAG_MOMENTUM_OVERRIDE] active=false reason=BASE_RULE");
             }
 
             if (!momentumAligned)
@@ -412,33 +447,39 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!minimalTrigger)
                 score -= 10;
 
-            int originalEarlyBreakPenalty = !breakoutDetected ? -8 : 0;
+            bool earlyBreakDetected = !breakoutDetected;
+            int originalEarlyBreakPenalty = earlyBreakDetected ? 8 : 0;
             int appliedEarlyBreakPenalty = originalEarlyBreakPenalty;
-            if (isHtfAlignedShort && appliedEarlyBreakPenalty < -5)
-                appliedEarlyBreakPenalty = -5;
-            score += appliedEarlyBreakPenalty;
-            if (originalEarlyBreakPenalty != 0)
+            if (earlyBreakDetected)
             {
-                ctx.Log?.Invoke(
-                    $"[CRYPTO][FLAG_EARLY_BREAK_ADJUST] originalPenalty={originalEarlyBreakPenalty} appliedPenalty={appliedEarlyBreakPenalty}");
+                if (isHtfAlignedShort)
+                    appliedEarlyBreakPenalty = Math.Min(originalEarlyBreakPenalty, 5);
+                score -= appliedEarlyBreakPenalty;
+                ctx.Log?.Invoke($"[CRYPTO][FLAG_EARLY_BREAK_ADJUST] penalty={appliedEarlyBreakPenalty}");
+            }
+            else
+            {
+                ctx.Log?.Invoke("[CRYPTO][FLAG_EARLY_BREAK_ADJUST] penalty=0");
             }
 
             if (score < 30 && baseScore >= 40)
                 score = 30;
 
-            if (isHtfAlignedShort && structureValid)
+            if (isHtfAlignedShort && impulseDetected)
             {
-                int baseFloorScore = score;
-                score = Math.Max(score, 35);
+                int floor = 35;
                 if (continuationDetected)
-                    score = Math.Max(score, 40);
+                    floor = 40;
+                bool floorApplied = score < floor;
+                if (floorApplied)
+                    score = floor;
                 ctx.Log?.Invoke(
-                    $"[CRYPTO][FLAG_SCORE_FLOOR] baseScore={baseFloorScore} finalScore={score} htfAlign=true continuation={continuationDetected.ToString().ToLowerInvariant()}");
+                    $"[CRYPTO][FLAG_SCORE_FLOOR] floor={floor} applied={floorApplied}");
             }
 
             int scoreAfterPenalty = score;
             ctx.Log?.Invoke(
-                $"[CRYPTO][FLAG_FINAL_SCORE] base={baseScore} afterStructure={scoreAfterStructure} afterMomentum={scoreAfterMomentum} afterPenalty={scoreAfterPenalty} final={score}");
+                $"[CRYPTO][FLAG_FINAL_V2] baseScore={baseScore} afterStructure={scoreAfterStructure} afterMomentum={scoreAfterMomentum} afterPenalty={scoreAfterPenalty} finalScore={score} structureValid={structureValid} momentumAligned={momentumAligned} htfAligned={isHtfAlignedShort}");
 
             ctx.Log?.Invoke(
                 $"[CRYPTO][FLAG_SCORE] base={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} final={score}");
@@ -446,7 +487,7 @@ namespace GeminiV26.EntryTypes.Crypto
             ctx.Log?.Invoke(
                 $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
 
-            if (score < MinScore)
+            if (score < MinScore && !(structureValid && momentumAligned))
                 return Invalid(ctx, dir, $"LOW_SCORE({score})", score);
 
             double finalHtfConf = ctx.ResolveAssetHtfConfidence01();
