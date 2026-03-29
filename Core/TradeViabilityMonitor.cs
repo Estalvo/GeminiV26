@@ -174,6 +174,7 @@ namespace GeminiV26.Core
             }
 
             DateTime entryTime = ctx.EntryTime;
+            AuditIndexPrecheck(ctx, "ComputeBarsSinceEntryByIndex", "m5.OpenTimes.Last", m5.Count, currentBarIndex, null);
             DateTime firstBarTime = m5.OpenTimes.Last(currentBarIndex);
 
             if (entryTime <= firstBarTime)
@@ -186,6 +187,7 @@ namespace GeminiV26.Core
             int offset = 0;
             while (offset <= currentBarIndex)
             {
+                AuditIndexPrecheck(ctx, "ComputeBarsSinceEntryByIndex", "m5.OpenTimes.Last", m5.Count, offset, null);
                 DateTime barOpenTime = m5.OpenTimes.Last(offset);
                 if (barOpenTime <= entryTime)
                 {
@@ -555,6 +557,7 @@ namespace GeminiV26.Core
             if (m5 == null || m5.Count < 7)
                 return false;
 
+            AuditIndexPrecheck(null, "IsAtrShrinking", "m5.HighPrices/LowPrices.Last", m5.Count, 5, null);
             double recent =
                 (m5.HighPrices.Last(0) - m5.LowPrices.Last(0)) +
                 (m5.HighPrices.Last(1) - m5.LowPrices.Last(1)) +
@@ -595,6 +598,7 @@ namespace GeminiV26.Core
             if (m5.Count <= lastNeededOffset)
                 return 0.0;
 
+            AuditIndexPrecheck(null, "EstimateDirectionalStrength", "m5.ClosePrices.Last", m5.Count, lastNeededOffset, null);
             double netMove = Math.Abs(m5.ClosePrices.Last(startOffset) - m5.ClosePrices.Last(startOffset + window));
             double totalMove = 0.0;
 
@@ -618,6 +622,7 @@ namespace GeminiV26.Core
             if (m5 == null || m5.Count < 4)
                 return false;
 
+            AuditIndexPrecheck(null, "IsStructureWeakening", "m5.ClosePrices.Last", m5.Count, 2, null);
             double c0 = m5.ClosePrices.Last(0);
             double c1 = m5.ClosePrices.Last(1);
             double c2 = m5.ClosePrices.Last(2);
@@ -681,6 +686,7 @@ namespace GeminiV26.Core
             if (m5 == null || m5.Count < 6)
                 return false;
 
+            AuditIndexPrecheck(null, "IsStrongOppositeImpulse", "m5.ClosePrices/OpenPrices/LowPrices/HighPrices.Last", m5.Count, 4, null);
             double close0 = m5.ClosePrices.Last(0);
             double open0 = m5.OpenPrices.Last(0);
             double body0 = Math.Abs(close0 - open0);
@@ -710,6 +716,7 @@ namespace GeminiV26.Core
             if (m15 == null || m15.Count < 3)
                 return false;
 
+            AuditIndexPrecheck(null, "IsHtfConflict", "m15.ClosePrices.Last", m15.Count, 2, null);
             double c0 = m15.ClosePrices.Last(0);
             double c1 = m15.ClosePrices.Last(1);
             double c2 = m15.ClosePrices.Last(2);
@@ -728,6 +735,7 @@ namespace GeminiV26.Core
             if (!IsHtfConflict(tradeType, m15))
                 return false;
 
+            AuditIndexPrecheck(null, "IsStrongHtfConflict", "m15.ClosePrices.Last", m15.Count, 3, null);
             double c0 = m15.ClosePrices.Last(0);
             double c3 = m15.ClosePrices.Last(3);
             double c1 = m15.ClosePrices.Last(1);
@@ -763,6 +771,7 @@ namespace GeminiV26.Core
             if (m5 == null || lookbackBars < 1 || m5.Count < lookbackBars + 2)
                 return false;
 
+            AuditIndexPrecheck(null, "RecentRecoveryDetected", "m5.ClosePrices.Last", m5.Count, lookbackBars, null);
             int favorableSteps = 0;
             int i = 0;
             while (i < lookbackBars)
@@ -778,6 +787,22 @@ namespace GeminiV26.Core
             }
 
             return favorableSteps >= lookbackBars;
+        }
+
+        private void AuditIndexPrecheck(
+            PositionContext ctx,
+            string method,
+            string collectionName,
+            int count,
+            int requestedIndex,
+            long? positionId)
+        {
+            long resolvedPositionId = positionId ?? ctx?.PositionId ?? 0;
+            string symbol = _bot?.SymbolName ?? "UNKNOWN";
+            _bot.Print(
+                $"[AUDIT][ONTICK INDEX PRECHECK] file=Core/TradeViabilityMonitor.cs method={method} " +
+                $"symbol={symbol} collection={collectionName} count={count} requestedIndex={requestedIndex} " +
+                $"positionId={resolvedPositionId} attemptId={ctx?.EntryAttemptId ?? "NA"}");
         }
     }
 }
