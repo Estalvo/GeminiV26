@@ -86,7 +86,24 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             // 🔑 ENTRY LOGIC – PRE-EXEC CONFIDENCE
             // =========================================================
-            _entryLogic.Evaluate(out _, out int logicConfidence);
+            int logicConfidence = PositionContext.ClampRiskConfidence(entryContext.LogicBiasConfidence);
+            string logicConfidenceSource = "EntryContext.LogicBiasConfidence";
+
+            if (logicConfidence <= 0 && entry.LogicConfidence > 0)
+            {
+                logicConfidence = PositionContext.ClampRiskConfidence(entry.LogicConfidence);
+                logicConfidenceSource = "EntryEvaluation.LogicConfidence";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            if (logicConfidence <= 0)
+            {
+                logicConfidence = 50;
+                logicConfidenceSource = "NeutralDefault";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_INPUT] entryScore={entry.Score} routedLogic={logicConfidence} source={logicConfidenceSource}", entryContext));
             int statePenalty = 0;
 
             var ctx = new PositionContext
@@ -101,6 +118,8 @@ namespace GeminiV26.Instruments.ETHUSD
                 LogicConfidence = logicConfidence
             };
             ctx.ComputeFinalConfidence();
+            int adjustedRiskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][FINAL] final={ctx.FinalConfidence} adjustedRisk={adjustedRiskConfidence} statePenalty={statePenalty}", entryContext));
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
 
@@ -108,13 +127,13 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (statePenalty != 0)
 
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={adjustedRiskConfidence}", entryContext));
 
             // =========================================================
             // SL DISTANCE (ATR)
             // =========================================================
             double slPriceDist =
-                CalculateStopLossPriceDistance(PositionContext.ClampRiskConfidence(ctx.FinalConfidence), entry.Type);
+                CalculateStopLossPriceDistance(adjustedRiskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
@@ -126,12 +145,12 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
             // =========================================================
-            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence));
+            double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
             long volumeUnits = CryptoPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence)));
+                _riskSizer.GetLotCap(adjustedRiskConfidence));
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
@@ -146,7 +165,7 @@ namespace GeminiV26.Instruments.ETHUSD
             // TP POLICY
             // =========================================================
             _riskSizer.GetTakeProfit(
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence),
+                adjustedRiskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -169,7 +188,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 return;
 
             GlobalLogger.Log(_bot, 
-                $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} RC={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)} FC={ctx.FinalConfidence} " +
+                $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} RC={adjustedRiskConfidence} FC={ctx.FinalConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"volUnits={volumeUnits}"
             );

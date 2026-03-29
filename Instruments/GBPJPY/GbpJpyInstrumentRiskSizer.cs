@@ -42,9 +42,9 @@ namespace GeminiV26.Instruments.GBPJPY
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // GBPJPY: nagyon wickes
             // 3.5 → 3.0
@@ -55,13 +55,13 @@ namespace GeminiV26.Instruments.GBPJPY
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-    int score,
+    int finalConfidence,
     out double tp1R,
     out double tp1Ratio,
     out double tp2R,
     out double tp2Ratio)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // gyenge / zajos
             if (n < 0.50)
@@ -102,10 +102,10 @@ namespace GeminiV26.Instruments.GBPJPY
                 riskPercent);
         }
 
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // GBPJPY: új FX score-tartomány, de óvatos használat
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

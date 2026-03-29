@@ -30,9 +30,9 @@ namespace GeminiV26.Instruments.USDJPY
             return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             double baseMult = SlBase; // FX-only: egységes baseline
 
@@ -43,13 +43,13 @@ namespace GeminiV26.Instruments.USDJPY
         }
 
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
             out double tp2Ratio)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             if (n < 0.40)
             {
@@ -88,10 +88,10 @@ namespace GeminiV26.Instruments.USDJPY
                 riskPercent);
         }
 
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // USDJPY – új FX score-tartomány
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
 
     }

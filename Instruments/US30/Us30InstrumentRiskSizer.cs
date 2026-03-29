@@ -41,7 +41,7 @@ namespace GeminiV26.Instruments.US30
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
             double baseMult = SlBase;
 
@@ -68,8 +68,8 @@ namespace GeminiV26.Instruments.US30
                     break;
             }
 
-            if (score >= 85) baseMult -= 0.1;
-            if (score >= 92) baseMult -= 0.1;
+            if (finalConfidence >= 85) baseMult -= 0.1;
+            if (finalConfidence >= 92) baseMult -= 0.1;
 
             if (baseMult < 1.6) baseMult = 1.6;
 
@@ -80,7 +80,7 @@ namespace GeminiV26.Instruments.US30
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
@@ -93,11 +93,11 @@ namespace GeminiV26.Instruments.US30
             // TP1 RATIO – DINAMIKUS
             // jobb score = több runner
             // =========================
-            if (score < 70)
+            if (finalConfidence < 70)
                 tp1Ratio = 0.65;   // védekező
-            else if (score < 80)
+            else if (finalConfidence < 80)
                 tp1Ratio = 0.55;
-            else if (score < 90)
+            else if (finalConfidence < 90)
                 tp1Ratio = 0.45;
             else
                 tp1Ratio = 0.35;   // prémium setup → futtatjuk
@@ -105,11 +105,11 @@ namespace GeminiV26.Instruments.US30
             // =========================
             // TP2 R – MONOTON GÖRBE
             // =========================
-            if (score < 70)
+            if (finalConfidence < 70)
                 tp2R = 1.0;
-            else if (score < 80)
+            else if (finalConfidence < 80)
                 tp2R = 1.4;
-            else if (score < 90)
+            else if (finalConfidence < 90)
                 tp2R = 2.0;
             else
                 tp2R = 3.0;

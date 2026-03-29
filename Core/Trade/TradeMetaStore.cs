@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace GeminiV26.Core
@@ -45,6 +46,15 @@ namespace GeminiV26.Core
     {
         public string EntryType;
         public string EntryReason;
-        public int? Confidence;
+
+        // Canonical pending value: Entry candidate score snapshot at routing time.
+        public int? EntryScore;
+
+        [Obsolete("LEGACY alias - use EntryScore")]
+        public int? Confidence
+        {
+            get => EntryScore;
+            set => EntryScore = value;
+        }
     }
 }

@@ -43,9 +43,9 @@ namespace GeminiV26.Instruments.EURUSD
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // változatlan struktúra
             return 1.9 - n * 0.4;
@@ -55,13 +55,13 @@ namespace GeminiV26.Instruments.EURUSD
         // TP struktúra
         // =========================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
             out double tp2Ratio)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // FX: gyors biztosítás
             tp1R = 0.50;
@@ -94,10 +94,10 @@ namespace GeminiV26.Instruments.EURUSD
         // =========================
         // SCORE NORMALIZATION – változatlan
         // =========================
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // FX reális tartomány: 55–90
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

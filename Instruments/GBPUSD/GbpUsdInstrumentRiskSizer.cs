@@ -29,11 +29,11 @@ namespace GeminiV26.Instruments.GBPUSD
             return RiskProfileEngine.GetRiskPercent(finalConfidence);
         }
 
-        public double GetStopLossAtrMultiplier(int score, EntryType _ /* FX ignores entry type */)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType _ /* FX ignores entry type */)
         {
             double baseMult = SlBase;
 
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             if (n >= 0.75) baseMult -= 0.05;
             if (n >= 0.90) baseMult -= 0.05;
@@ -45,13 +45,13 @@ namespace GeminiV26.Instruments.GBPUSD
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
             out double tp2Ratio)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // FX: gyors biztosítás
             tp1R = 0.40;
@@ -78,10 +78,10 @@ namespace GeminiV26.Instruments.GBPUSD
                 riskPercent);
         }
 
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // FX új score-tartomány: ~55–90
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

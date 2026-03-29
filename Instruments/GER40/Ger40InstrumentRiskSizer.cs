@@ -37,10 +37,10 @@ namespace GeminiV26.Instruments.GER40
         // STOP LOSS – ATR multiplier
         // EntryType NEM játszik szerepet
         // =====================================================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            if (score >= 85) return 2.3;
-            if (score >= 75) return 2.6;
+            if (finalConfidence >= 85) return 2.3;
+            if (finalConfidence >= 75) return 2.6;
             return 3.0;
         }
 
@@ -48,19 +48,19 @@ namespace GeminiV26.Instruments.GER40
         // TAKE PROFIT – R struktúra
         // =====================================================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
             out double tp2Ratio)
         {
-            if (score >= 85)
+            if (finalConfidence >= 85)
             {
                 tp1R = 0.5;
                 tp1Ratio = 0.30; // 70% runner
                 tp2R = 3.0;
             }
-            else if (score >= 75)
+            else if (finalConfidence >= 75)
             {
                 tp1R = 0.45;
                 tp1Ratio = 0.40;

@@ -1325,7 +1325,7 @@ namespace GeminiV26.Core
                     {
                         EntryType = selected.Type.ToString(),
                         EntryReason = selected.Reason,
-                        Confidence = Convert.ToInt32(selected.Score)
+                        EntryScore = Convert.ToInt32(selected.Score)
                     }
                 );
 
@@ -3216,7 +3216,7 @@ namespace GeminiV26.Core
                     ExitPrice = pos.EntryPrice + pos.Pips * sym.PipSize * (pos.TradeType == TradeType.Buy ? 1 : -1),
                     Profit = pos.NetProfit,
                     Score = null,
-                    Confidence = meta?.Confidence,
+                    Confidence = meta?.EntryScore,
                     SetupType = ResolveSetupType(meta?.EntryType),
                     MarketRegime = ResolveMarketRegime(entryCtx),
                     MfeR = ctx?.MfeR ?? 0.0,
@@ -3240,7 +3240,7 @@ namespace GeminiV26.Core
                 TransitionQuality = entryCtx?.TransitionValid == true
                     ? entryCtx.Transition?.QualityScore ?? 0.0
                     : 0.0,
-                Confidence = ctx?.FinalConfidence ?? meta?.Confidence ?? 0.0,
+                Confidence = ctx?.FinalConfidence ?? meta?.EntryScore ?? 0.0,
                 EntryTime = ctx?.EntryTime ?? pos.EntryTime,
                 ExitTime = _bot.Server.Time
             };

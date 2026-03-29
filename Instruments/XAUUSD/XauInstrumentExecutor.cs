@@ -127,6 +127,25 @@ namespace GeminiV26.Instruments.XAUUSD
                     ? TradeType.Buy
                     : TradeType.Sell;
 
+            int logicConfidence = PositionContext.ClampRiskConfidence(entryContext.LogicBiasConfidence);
+            string logicConfidenceSource = "EntryContext.LogicBiasConfidence";
+
+            if (logicConfidence <= 0 && entry.LogicConfidence > 0)
+            {
+                logicConfidence = PositionContext.ClampRiskConfidence(entry.LogicConfidence);
+                logicConfidenceSource = "EntryEvaluation.LogicConfidence";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            if (logicConfidence <= 0)
+            {
+                logicConfidence = PositionContext.ClampRiskConfidence(entry.Score);
+                logicConfidenceSource = "EntryScoreFallback";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_INPUT] entryScore={entry.Score} routedLogic={logicConfidence} source={logicConfidenceSource}", entryContext));
+
             // =====================================================
             // 3️⃣ POSITION CONTEXT – SSOT
             // -----------------------------------------------------
@@ -144,9 +163,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
                 EntryScore = entry.Score,
 
-                LogicConfidence = entry.LogicConfidence > 0
-                    ? entry.LogicConfidence
-                    : entry.Score,
+                LogicConfidence = logicConfidence,
 
                 EntryTime = _bot.Server.Time,
 
@@ -172,24 +189,26 @@ namespace GeminiV26.Instruments.XAUUSD
             // FinalConfidence összeállítása (Rulebook 1.0)
             // -----------------------------------------------------
             ctx.ComputeFinalConfidence();
+            int adjustedRiskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][FINAL] final={ctx.FinalConfidence} adjustedRisk={adjustedRiskConfidence} statePenalty={statePenalty}", entryContext));
 
                         GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
             if (statePenalty != 0)
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={adjustedRiskConfidence}", entryContext));
 
-            // Trailing mód PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) alapján (FinalConfidence + statePenalty)
+            // Trailing mód adjustedRiskConfidence alapján (FinalConfidence + statePenalty)
             ctx.TrailingMode =
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 85 ? TrailingMode.Loose :
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 75 ? TrailingMode.Normal :
+                adjustedRiskConfidence >= 85 ? TrailingMode.Loose :
+                adjustedRiskConfidence >= 75 ? TrailingMode.Normal :
                                              TrailingMode.Tight;
 
             // =====================================================
-            // 4️⃣ SL / TP POLICY (PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty))
+            // 4️⃣ SL / TP POLICY (adjustedRiskConfidence)
             // =====================================================
             double slPriceDist = _riskSizer.CalculateStopLossPriceDistance(
                 _bot,
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
+                adjustedRiskConfidence,
                 entry.Type);
 
             if (slPriceDist <= 0)
@@ -201,7 +220,7 @@ namespace GeminiV26.Instruments.XAUUSD
             double tp2Price = _riskSizer.CalculateTp2PriceFromSlDistance(
                 _bot,
                 tradeType,
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
+                adjustedRiskConfidence,
                 slPriceDist);
 
             if (tp2Price <= 0)
@@ -214,7 +233,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // 5️⃣ TP / R VALUES (EURUSD MINTA SZERINT)
             // =====================================================
             _riskSizer.GetTakeProfit(
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
+                adjustedRiskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -230,12 +249,12 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 6️⃣ VOLUME POLICY – METAL POSITION SIZER (XAU)
             // =====================================================
-            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
+            double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
             long volumeUnits = MetalPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty))
+                _riskSizer.GetLotCap(adjustedRiskConfidence)
             );
 
             if (volumeUnits <= 0)
