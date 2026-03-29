@@ -111,16 +111,25 @@ namespace GeminiV26.Instruments.GBPUSD
             _entryLogic.Evaluate();
             int logicConfidence = _entryLogic.LastLogicConfidence;
 
-            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
-            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
+            var ctx = new PositionContext
+            {
+                Symbol = _bot.SymbolName,
+                TempId = entryContext.TempId,
+                EntryType = entry.Type.ToString(),
+                EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence
+            };
+            ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, finalConfidence, statePenalty, riskConfidence), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
             if (statePenalty != 0)
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
 
             // =====================================================
             // HARD ATR GATE (GBPUSD) – NO MICRO VOL
@@ -147,11 +156,11 @@ namespace GeminiV26.Instruments.GBPUSD
                     ? TradeType.Buy
                     : TradeType.Sell;
 
-            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty), entry.Type);
             if (slPriceDist <= 0)
                 return;
 
@@ -166,14 +175,14 @@ namespace GeminiV26.Instruments.GBPUSD
             }
 
             _riskSizer.GetTakeProfit(
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
             // sizing MUST use the same slPriceDist we will actually place
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
             if (volumeUnits <= 0)
                 return;
 
@@ -215,7 +224,7 @@ namespace GeminiV26.Instruments.GBPUSD
             _bot.Print($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
-            var ctx = new PositionContext
+            ctx = new PositionContext
             {
                 PositionId = positionKey,
                 Symbol = result.Position.SymbolName,
@@ -240,8 +249,8 @@ namespace GeminiV26.Instruments.GBPUSD
                 BeMode = BeMode.AfterTp1,
 
                 TrailingMode =
-                    riskConfidence >= 85 ? TrailingMode.Loose :
-                    riskConfidence >= 75 ? TrailingMode.Normal :
+                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 85 ? TrailingMode.Loose :
+                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight
             };
 
