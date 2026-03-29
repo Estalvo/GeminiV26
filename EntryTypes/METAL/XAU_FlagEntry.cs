@@ -84,7 +84,7 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return InvalidDir(ctx, TradeDirection.None, "HTF_MISMATCH", 0);
+                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {

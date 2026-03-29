@@ -33,18 +33,22 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.MarketState?.IsTrend != true)
                 return Reject(ctx, "NO_TREND_STATE");
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return Reject(ctx, "HTF_MISMATCH");
+            bool htfMismatch =
+                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
+            if (htfMismatch)
+                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(TradeDirection.Long, ctx, matrix);
+                var eval = EvaluateSide(TradeDirection.Long, ctx, matrix, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(TradeDirection.Short, ctx, matrix);
+                var eval = EvaluateSide(TradeDirection.Short, ctx, matrix, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -54,13 +58,21 @@ namespace GeminiV26.EntryTypes.METAL
         private EntryEvaluation EvaluateSide(
             TradeDirection dir,
             EntryContext ctx,
-            SessionMatrixConfig matrix)
+            SessionMatrixConfig matrix,
+            bool htfMismatch)
         {
             int score = 60;
             int minScore = EntryDecisionPolicy.MinScoreThreshold;
             int setupScore = 0;
 
             var reasons = new List<string>();
+
+            if (htfMismatch)
+            {
+                score -= 8;
+                reasons.Add("HTF_SOFT_MISMATCH");
+                ctx.Log?.Invoke($"[HTF][SCORE_PENALTY] entryType={Type} dir={dir} penalty=8 score={score}");
+            }
 
             // =========================
             // IMPULSE (2-sided)

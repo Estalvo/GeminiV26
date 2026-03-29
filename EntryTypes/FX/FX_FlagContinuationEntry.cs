@@ -22,18 +22,19 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.LogicBias == TradeDirection.None)
                 return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
 
-            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
-                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
+            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(TradeDirection.Long, ctx);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(TradeDirection.Short, ctx);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }

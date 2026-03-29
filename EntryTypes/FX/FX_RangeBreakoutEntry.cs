@@ -45,20 +45,19 @@ namespace GeminiV26.EntryTypes.FX
                 return Invalid(ctx, "Trending;");
             }
 
-            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
-            {
-                return Invalid(ctx, "FX_LOW_CONF_HTF_CONFLICT");
-            }
+            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Long);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Short);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
