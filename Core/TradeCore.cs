@@ -2553,9 +2553,14 @@ namespace GeminiV26.Core
                 if (rangeHigh > rangeLow)
                 {
                     double close = ctx.M5.ClosePrices[lastClosedM5];
-                    diagnostics.BreakoutClose =
-                        close > rangeHigh + buffer ||
-                        close < rangeLow - buffer;
+                    if (candidate.Direction == TradeDirection.Long)
+                    {
+                        diagnostics.BreakoutClose = close > rangeHigh + buffer;
+                    }
+                    else if (candidate.Direction == TradeDirection.Short)
+                    {
+                        diagnostics.BreakoutClose = close < rangeLow - buffer;
+                    }
                 }
 
                 double prevHigh = ctx.M5.HighPrices[lastClosedM5 - 1];
@@ -2563,16 +2568,30 @@ namespace GeminiV26.Core
                 double currentHigh = ctx.M5.HighPrices[lastClosedM5];
                 double currentLow = ctx.M5.LowPrices[lastClosedM5];
 
-                diagnostics.StructureBreak =
-                    currentHigh > prevHigh ||
-                    currentLow < prevLow ||
-                    ctx.BrokeLastSwingHigh_M5 ||
-                    ctx.BrokeLastSwingLow_M5;
+                if (candidate.Direction == TradeDirection.Long)
+                {
+                    diagnostics.StructureBreak =
+                        currentHigh > prevHigh ||
+                        ctx.BrokeLastSwingHigh_M5;
+                }
+                else if (candidate.Direction == TradeDirection.Short)
+                {
+                    diagnostics.StructureBreak =
+                        currentLow < prevLow ||
+                        ctx.BrokeLastSwingLow_M5;
+                }
             }
 
             diagnostics.M1Break =
                 ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == candidate.Direction;
+
+            if (candidate.Direction == TradeDirection.None)
+            {
+                diagnostics.WaitReason = "INVALID_TRIGGER_DIRECTION";
+                diagnostics.TriggerConfirmed = false;
+                return diagnostics;
+            }
 
             diagnostics.TriggerConfirmed =
                 diagnostics.BreakoutClose ||
