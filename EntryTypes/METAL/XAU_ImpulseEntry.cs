@@ -45,26 +45,22 @@ namespace GeminiV26.EntryTypes.METAL
                     Reason = "NO_LOGIC_BIAS"
                 };
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return new EntryEvaluation
-                {
-                    Symbol = ctx?.Symbol,
-                    Type = Type,
-                    Direction = TradeDirection.None,
-                    Score = 0,
-                    IsValid = false,
-                    Reason = "HTF_MISMATCH"
-                };
+            bool htfMismatch =
+                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
+            if (htfMismatch)
+                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(ctx, matrix, TradeDirection.Long);
+                var eval = EvaluateSide(ctx, matrix, TradeDirection.Long, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(ctx, matrix, TradeDirection.Short);
+                var eval = EvaluateSide(ctx, matrix, TradeDirection.Short, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -79,10 +75,16 @@ namespace GeminiV26.EntryTypes.METAL
                 Reason = "NO_LOGIC_BIAS"
             };
         }
-        private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir)
+        private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir, bool htfMismatch)
         {
             int score = 60;
             int setupScore = 0;
+
+            if (htfMismatch)
+            {
+                score -= 8;
+                ctx.Log?.Invoke($"[HTF][SCORE_PENALTY] entryType={Type} dir={dir} penalty=8 score={score}");
+            }
 
             // =====================================================
             // 1️⃣ DIRECTIONAL CONTEXT

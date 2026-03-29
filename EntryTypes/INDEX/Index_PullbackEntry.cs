@@ -89,7 +89,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 }
                 else
                 {
-                    return Reject(ctx, dir, score, "HTF_MISMATCH");
+                    score -= 12;
+                    ctx.Log?.Invoke($"[IDX_PULLBACK][SOFT_PENALTY] reason=HTF_MISMATCH_NO_CONTINUATION penalty=12 dir={dir} score={score}");
                 }
             }
 

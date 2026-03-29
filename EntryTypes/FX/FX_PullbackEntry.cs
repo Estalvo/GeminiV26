@@ -43,18 +43,19 @@ namespace GeminiV26.EntryTypes.FX
             if (!matrix.AllowPullback)
                 return Block(ctx, TradeDirection.None, "SESSION_MATRIX_PULLBACK_DISABLED", 0);
 
-            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
-                return Block(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
+            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
