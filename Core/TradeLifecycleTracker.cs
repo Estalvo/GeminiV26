@@ -8,10 +8,13 @@ namespace GeminiV26.Core
         {
             if (ctx == null || ctx.EntryPrice <= 0 || ctx.RiskPriceDistance <= 0)
                 return;
+            if (ctx.Bot == null)
+                return;
             if (ctx.FinalDirection == TradeDirection.None)
                 return;
 
-            System.Console.WriteLine($"[MFE_TICK] time={System.DateTime.UtcNow:HH:mm:ss.fff} price={currentPrice}");
+            ctx.Bot.Print($"[MFE_TRACKER] active dir={ctx.FinalDirection} entry={ctx.EntryPrice} risk={ctx.RiskPriceDistance}");
+            ctx.Bot.Print($"[MFE_TICK] time={System.DateTime.UtcNow:HH:mm:ss.fff} price={currentPrice}");
 
             double rMove;
             double riskDistance = ctx.RiskPriceDistance;
@@ -26,6 +29,9 @@ namespace GeminiV26.Core
 
             if (rMove < ctx.MaeR)
                 ctx.MaeR = rMove;
+
+            ctx.Bot.Print($"[MFE] value={ctx.MfeR:F2} price={currentPrice}");
+            ctx.Bot.Print($"[MAE] value={ctx.MaeR:F2} price={currentPrice}");
 
         }
     }

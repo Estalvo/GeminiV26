@@ -225,6 +225,7 @@ namespace GeminiV26.Core.Runtime
                 {
                     PositionId = positionKey,
                     Symbol = position.SymbolName,
+                    Bot = _bot,
                     TempId = position.Comment ?? string.Empty,
                     EntryType = "REHYDRATED",
                     EntryReason = "Startup rehydrate from live open position",
@@ -381,6 +382,7 @@ namespace GeminiV26.Core.Runtime
             {
                 PositionId = positionKey,
                 Symbol = position.SymbolName,
+                    Bot = _bot,
                 TempId = position.Comment ?? string.Empty,
                 EntryType = "REHYDRATED",
                 EntryReason = "Startup rehydrate from live open position",

@@ -24,6 +24,7 @@
 // =========================================================
 
 using System;
+using cAlgo.API;
 using Gemini.Memory;
 using GeminiV26.Core.Entry;
 
@@ -44,6 +45,7 @@ namespace GeminiV26.Core
         public long PositionId { get; set; }
 
         public string Symbol { get; set; } = string.Empty;
+        public Robot Bot { get; set; }
 
         public string TempId { get; set; } = string.Empty;
 
