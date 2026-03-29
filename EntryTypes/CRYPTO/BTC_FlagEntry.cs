@@ -148,7 +148,6 @@ namespace GeminiV26.EntryTypes.Crypto
             var bar = bars[lastIndex];
 
             int score = 0;
-            int setupScore = 0;
             double triggerScore = 0;
             int baseScore;
             int scoreAfterRegime;
@@ -165,44 +164,6 @@ namespace GeminiV26.EntryTypes.Crypto
             if (shouldBlock)
                 return Invalid(ctx, dir, "IMPULSE_LOCK_IMMEDIATE_COUNTER", score);
 
-            if (!ctx.HasImpulse_M5)
-            {
-                score -= 6;
-            }
-            else if (ctx.BarsSinceImpulse_M5 > 6)
-            {
-                score -= 4;
-            }
-
-            bool compression =
-                ctx.AtrSlope_M5 <= 0.30 &&
-                ctx.AdxSlope_M5 <= 1.5;
-
-            if (!compression)
-                score -= 2;
-
-            if (rangeAtr > 0)
-            {
-                if (rangeAtr <= 0.8)
-                {
-                    score += 3;
-                }
-                else if (rangeAtr > 1.2)
-                {
-                    score -= 3;
-                }
-
-                if (rangeAtr < 0.15)
-                    score -= 3;
-
-                if (maxFlagAtr > 0 && rangeAtr > maxFlagAtr)
-                    score -= 4;
-            }
-            else
-            {
-                score -= 2;
-            }
-
             bool hasFlag =
                 dir == TradeDirection.Long ? ctx.HasFlagLong_M5 :
                 dir == TradeDirection.Short ? ctx.HasFlagShort_M5 :
@@ -213,14 +174,6 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.IsPullbackDecelerating_M5;
 
             string flagState = hasFlag ? "OK" : "FLAG_WEAK_OR_FORMING";
-
-            if (!hasFlag)
-                score -= 2;
-
-            if (ctx.IsVolatilityAcceptable_Crypto)
-                score += 10;
-            else
-                score -= 10;
 
             double close = bar.Close;
             double open = bar.Open;
@@ -272,28 +225,16 @@ namespace GeminiV26.EntryTypes.Crypto
             bool hasVolatility =
                 ctx.IsAtrExpanding_M5;
 
-            if (!hasVolatility)
-                setupScore -= 30;
-
             bool hasStructure =
                 hasFlag || structuredPB;
 
             if (!hasStructure)
             {
-                setupScore -= 30;
                 ctx.Log?.Invoke(
                     "[CRYPTO][STRUCT_FILTER] entryType=Flag reason=NO_FLAG_OR_STRUCTURED_PULLBACK blocked=false");
             }
-            else
-                setupScore += 15;
 
             bool continuationSignal = breakoutSignal;
-
-            bool hasMomentum =
-                continuationSignal;
-
-            if (hasMomentum)
-                setupScore += 20;
 
             bool longValid = bullBreak || bullReclaim || (dir == TradeDirection.Long && breakoutSignal);
             bool shortValid = bearBreak || bearReclaim || (dir == TradeDirection.Short && breakoutSignal);
@@ -302,42 +243,116 @@ namespace GeminiV26.EntryTypes.Crypto
                 (dir == TradeDirection.Long && close > open) ||
                 (dir == TradeDirection.Short && close < open);
 
-            if (strongCandle) score += 6;
-
             bool missingImpulse =
                 string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
+
+            int impulseScore = 0;
+            if (ctx.HasImpulse_M5)
+            {
+                if (ctx.BarsSinceImpulse_M5 <= 3)
+                    impulseScore = 25;
+                else if (ctx.BarsSinceImpulse_M5 <= 6)
+                    impulseScore = 20;
+                else if (ctx.BarsSinceImpulse_M5 <= MaxBarsSinceImpulse)
+                    impulseScore = 14;
+                else
+                    impulseScore = 8;
+            }
+            else if (barsSinceImpulse <= MaxBarsSinceImpulse)
+            {
+                impulseScore = 10;
+            }
+
+            int pullbackScore = 0;
+            if (hasStructure)
+            {
+                pullbackScore = 12;
+                if (hasFlag)
+                    pullbackScore += 5;
+                if (structuredPB)
+                    pullbackScore += 3;
+            }
+
+            int tightnessScore = 0;
+            if (rangeAtr > 0)
+            {
+                if (rangeAtr >= 0.20 && rangeAtr <= 0.70)
+                    tightnessScore = 15;
+                else if (rangeAtr > 0.70 && rangeAtr <= 1.00)
+                    tightnessScore = 10;
+                else if (rangeAtr > 1.00 && rangeAtr <= 1.25)
+                    tightnessScore = 6;
+                else
+                    tightnessScore = 3;
+
+                if (maxFlagAtr > 0 && rangeAtr > maxFlagAtr)
+                    tightnessScore = Math.Max(0, tightnessScore - 4);
+            }
+
+            int breakoutReadinessScore = 0;
+            if (breakoutDetected)
+                breakoutReadinessScore = 15;
+            else if (continuationSignal || strongCandle)
+                breakoutReadinessScore = 10;
+            else if (hasValidRange)
+            {
+                double distToBreak = dir == TradeDirection.Long
+                    ? Math.Max(0.0, hi - close)
+                    : Math.Max(0.0, close - lo);
+                double distToBreakAtr = ctx.AtrM5 > 0 ? distToBreak / ctx.AtrM5 : 2.0;
+                if (distToBreakAtr <= 0.25)
+                    breakoutReadinessScore = 12;
+                else if (distToBreakAtr <= 0.60)
+                    breakoutReadinessScore = 8;
+                else
+                    breakoutReadinessScore = 5;
+            }
+
+            int momentumConsistencyScore = 0;
+            if (ctx.IsVolatilityAcceptable_Crypto)
+                momentumConsistencyScore += 5;
+            if (hasVolatility)
+                momentumConsistencyScore += 3;
+            if (ctx.LastClosedBarInTrendDirection)
+                momentumConsistencyScore += 2;
+
+            baseScore =
+                impulseScore +
+                pullbackScore +
+                tightnessScore +
+                breakoutReadinessScore +
+                momentumConsistencyScore;
+
+            if (!hasStructure || !hasValidRange || (maxFlagAtr > 0 && rangeAtr > (maxFlagAtr * 1.6)))
+            {
+                baseScore = Math.Min(baseScore, -5);
+            }
 
             if (missingImpulse)
             {
                 ctx.Log?.Invoke(
-                    "[FLAG] Missing impulse context" +
-                    $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
+                    $"[FLAG] Missing impulse context symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} baseScore={baseScore}");
             }
 
-            score += setupScore;
-            baseScore = score;
+            score = baseScore;
 
             bool trendRegime =
                 ctx.MarketState?.IsTrend == true ||
                 (!ctx.IsRange_M5 && ctx.Adx_M5 >= 18.0);
             string regime = trendRegime ? "Trend" : "NonTrend";
-            bool regimeMismatch = !trendRegime;
-
-            int regimeDelta = regimeMismatch ? -25 : +5;
+            int regimeDelta = trendRegime ? +5 : -10;
             score += regimeDelta;
             scoreAfterRegime = score;
             ctx.Log?.Invoke(
-                $"[CRYPTO][REGIME_ADJUST] entryType=Flag regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
+                $"[CRYPTO][REGIME_ADJUST] regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
 
             var htfDirection = ctx.CryptoHtfAllowedDirection;
-            int htfDelta = htfDirection == dir ? +8 : -10;
+            bool htfAligned = htfDirection == TradeDirection.None || htfDirection == dir;
+            int htfDelta = htfAligned ? +6 : -6;
             score += htfDelta;
             scoreAfterHtf = score;
             ctx.Log?.Invoke(
-                $"[CRYPTO][HTF_SCORE] entryType=Flag entryDir={dir} htfDir={htfDirection} delta={htfDelta} scoreAfter={scoreAfterHtf}");
-
-            ctx.Log?.Invoke(
-                $"[CRYPTO][FINAL_SCORE] entryType=Flag baseScore={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} finalScore={score}");
+                $"[CRYPTO][HTF_SCORE] htf={htfDirection} logic={dir} delta={htfDelta} scoreAfter={scoreAfterHtf}");
 
             bool followThrough = continuationSignal;
 
@@ -362,11 +377,14 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!breakoutDetected)
                 score -= 8;
 
+            if (score < 30 && baseScore >= 40)
+                score = 30;
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FLAG_SCORE] base={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} final={score}");
+
             ctx.Log?.Invoke(
                 $"[TRIGGER SCORE] breakout={(breakoutDetected ? 1 : 0)} strong={(strongCandle ? 1 : 0)} follow={(followThrough ? 1 : 0)} total={triggerScore:F0} finalScore={score}");
-
-            if (setupScore <= 0)
-                score = Math.Min(score, MinScore - 10);
 
             if (score < MinScore)
                 return Invalid(ctx, dir, $"LOW_SCORE({score})", score);
