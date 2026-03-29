@@ -641,12 +641,12 @@ namespace GeminiV26.EntryTypes.Crypto
                         score -= 10;
                     }
 
-                    TradeDirection impulseDirection =
+                    TradeDirection breakoutImpulseDirection =
                         ctx.ImpulseDirection != TradeDirection.None ? ctx.ImpulseDirection : dir;
 
                     bool breakoutAligned =
-                        (impulseDirection == TradeDirection.Long && bars[lastClosed].Close > compressionHigh) ||
-                        (impulseDirection == TradeDirection.Short && bars[lastClosed].Close < compressionLow);
+                        (breakoutImpulseDirection == TradeDirection.Long && bars[lastClosed].Close > compressionHigh) ||
+                        (breakoutImpulseDirection == TradeDirection.Short && bars[lastClosed].Close < compressionLow);
 
                     if (!breakoutAligned)
                     {
