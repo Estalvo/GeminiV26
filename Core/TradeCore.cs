@@ -3006,12 +3006,6 @@ namespace GeminiV26.Core
             _lastOnTickManager = manager;
             _lastOnTickStage = manager?.GetType().Name ?? _bot.SymbolName;
 
-            // ONLY log when there is an active trade context
-            if (_activePositionContext != null && _activePositionContext.EntryPrice > 0)
-            {
-                GlobalLogger.Log(_bot, "[AUDIT][ONTICK STAGE] " + _lastOnTickStage);
-            }
-
             onTickAction?.Invoke();
         }
 
