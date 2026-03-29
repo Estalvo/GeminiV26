@@ -46,6 +46,7 @@ namespace GeminiV26.Core
 
         public string Symbol { get; set; } = string.Empty;
         public Robot Bot { get; set; }
+        public Action<string> Log { get; set; }
 
         public string TempId { get; set; } = string.Empty;
 
