@@ -42,9 +42,9 @@ namespace GeminiV26.Instruments.AUDUSD
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // Jobb score → feszesebb SL
             // 3.2 → 2.7
@@ -55,7 +55,7 @@ namespace GeminiV26.Instruments.AUDUSD
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
@@ -68,7 +68,7 @@ namespace GeminiV26.Instruments.AUDUSD
             // TP1 RATIO – DINAMIKUS
             // Jó score → több runner
             // =====================================================
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // TP1 mindig biztos, de jobb score → több runner
             tp1Ratio = 0.70 - n * 0.25; // 0.70 → 0.45
@@ -95,10 +95,10 @@ namespace GeminiV26.Instruments.AUDUSD
                 riskPercent);
         }
 
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // FX új valós tartomány: ~55–90
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

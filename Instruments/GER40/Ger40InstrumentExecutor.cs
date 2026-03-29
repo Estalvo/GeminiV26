@@ -67,7 +67,25 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             _entryLogic.Evaluate();
             _entryLogic.ApplyToEntryEvaluation(entry);
-            int logicConfidence = _entryLogic.LastLogicConfidence;
+
+            int logicConfidence = PositionContext.ClampRiskConfidence(entryContext.LogicBiasConfidence);
+            string logicConfidenceSource = "EntryContext.LogicBiasConfidence";
+
+            if (logicConfidence <= 0 && entry.LogicConfidence > 0)
+            {
+                logicConfidence = PositionContext.ClampRiskConfidence(entry.LogicConfidence);
+                logicConfidenceSource = "EntryEvaluation.LogicConfidence";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            if (logicConfidence <= 0)
+            {
+                logicConfidence = 50;
+                logicConfidenceSource = "NeutralDefault";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
+            }
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_INPUT] entryScore={entry.Score} routedLogic={logicConfidence} source={logicConfidenceSource}", entryContext));
 
             // =========================
             // MARKET STATE – SOFT
@@ -99,6 +117,8 @@ namespace GeminiV26.Instruments.GER40
                 LogicConfidence = logicConfidence
             };
             ctx.ComputeFinalConfidence();
+            int adjustedRiskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][FINAL] final={ctx.FinalConfidence} adjustedRisk={adjustedRiskConfidence} statePenalty={statePenalty}", entryContext));
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
 
@@ -106,7 +126,7 @@ namespace GeminiV26.Instruments.GER40
 
             if (statePenalty != 0)
 
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={adjustedRiskConfidence}", entryContext));
 
             var tradeType =
                 entryContext.FinalDirection == TradeDirection.Long
@@ -116,28 +136,28 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // RISK POLICY
             // =========================
-            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
+            double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
 
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty), entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(adjustedRiskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
                 return;
 
             _riskSizer.GetTakeProfit(
-                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
+                adjustedRiskConfidence,
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
-            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty), entry.Type);
+            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(adjustedRiskConfidence, entry.Type);
 
-            double lotCap = _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
+            double lotCap = _riskSizer.GetLotCap(adjustedRiskConfidence);
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, adjustedRiskConfidence);
             if (volumeUnits <= 0)
                 return;
 
@@ -227,8 +247,8 @@ namespace GeminiV26.Instruments.GER40
                 Tp1CloseFraction = tp1Ratio,
 
                 TrailingMode =
-                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 85 ? TrailingMode.Loose :
-                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 75 ? TrailingMode.Normal :
+                    adjustedRiskConfidence >= 85 ? TrailingMode.Loose :
+                    adjustedRiskConfidence >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = volumeUnits,

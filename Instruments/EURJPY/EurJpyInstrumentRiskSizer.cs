@@ -42,9 +42,9 @@ namespace GeminiV26.Instruments.EURJPY
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // JPY: szélesebb alap, kisebb szűkülés
             // 3.3 → 2.9
@@ -55,13 +55,13 @@ namespace GeminiV26.Instruments.EURJPY
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-    int score,
+    int finalConfidence,
     out double tp1R,
     out double tp1Ratio,
     out double tp2R,
     out double tp2Ratio)
         {
-            double n = NormalizeScore(score);
+            double n = NormalizeScore(finalConfidence);
 
             // gyenge / bizonytalan
             if (n < 0.45)
@@ -102,10 +102,10 @@ namespace GeminiV26.Instruments.EURJPY
                 riskPercent);
         }
 
-        private static double NormalizeScore(int score)
+        private static double NormalizeScore(int finalConfidence)
         {
             // JPY FX: score-tartomány ugyanaz, de óvatosabban használjuk
-            return Math.Clamp((score - 55) / 35.0, 0.0, 1.0);
+            return Math.Clamp((finalConfidence - 55) / 35.0, 0.0, 1.0);
         }
     }
 }

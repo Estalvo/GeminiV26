@@ -41,7 +41,7 @@ namespace GeminiV26.Instruments.US30
         // =========================
         // SL (ATR multiplier)
         // =========================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
             double baseMult = SlBase;
 
@@ -80,7 +80,7 @@ namespace GeminiV26.Instruments.US30
         // TP struktúra (R + arány)
         // =========================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
