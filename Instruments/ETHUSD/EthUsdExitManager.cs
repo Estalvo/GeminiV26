@@ -470,10 +470,18 @@ namespace GeminiV26.Instruments.ETHUSD
             if (ctx.Tp1R > 0)
                 return ctx.Tp1R;
 
-            if (ctx.AdjustedRiskConfidence >= 85)
+            int confidence = ctx.AdjustedRiskConfidence;
+
+            if (confidence <= 0)
+            {
+                confidence = ctx.FinalConfidence;
+                ctx.Log?.Invoke("[CONF][EXIT_FALLBACK] using FinalConfidence");
+            }
+
+            if (confidence >= 85)
                 return 0.40;
 
-            if (ctx.AdjustedRiskConfidence >= 70)
+            if (confidence >= 70)
                 return 0.50;
 
             return 0.60;
