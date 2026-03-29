@@ -40,8 +40,8 @@ namespace GeminiV26.Instruments.NAS100
         public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
             // NAS100 continuation model – adjunk levegőt a jó setupnak
-            if (score >= 85) return 2.2;
-            if (score >= 75) return 2.4;
+            if (finalConfidence >= 85) return 2.2;
+            if (finalConfidence >= 75) return 2.4;
             return 2.6;
         }
 
@@ -58,13 +58,13 @@ namespace GeminiV26.Instruments.NAS100
             // NAS100 – continuation-first model
             // Gyors biztosítás, de runner marad
 
-            if (score >= 85)
+            if (finalConfidence >= 85)
             {
                 tp1R = 0.55;
                 tp1Ratio = 0.50;
                 tp2R = 2.2;
             }
-            else if (score >= 75)
+            else if (finalConfidence >= 75)
             {
                 tp1R = 0.50;
                 tp1Ratio = 0.55;
