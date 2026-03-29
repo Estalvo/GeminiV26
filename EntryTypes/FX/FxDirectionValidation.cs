@@ -21,14 +21,14 @@ namespace GeminiV26.EntryTypes.FX
             if (logicBias == TradeDirection.None)
                 return 0;
 
-            var htfDirection = ctx.FxHtfAllowedDirection;
+            var htfDirection = ctx.ActiveHtfDirection;
             if (htfDirection == TradeDirection.None || htfDirection == logicBias)
                 return 0;
 
             if (ctx.LogicBiasConfidence >= 60)
                 return 0;
 
-            double htfConfidence = ctx.FxHtfConfidence01;
+            double htfConfidence = ctx.ActiveHtfConfidence;
             int penalty = 6;
             if (htfConfidence >= 0.80)
                 penalty += 4;

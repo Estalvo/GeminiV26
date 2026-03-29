@@ -234,8 +234,8 @@ namespace GeminiV26.EntryTypes.METAL
             // HTF (soft only)
             // =========================
             bool against =
-                ctx.MetalHtfAllowedDirection != TradeDirection.None &&
-                ctx.MetalHtfAllowedDirection != dir;
+                ctx.ActiveHtfDirection != TradeDirection.None &&
+                ctx.ActiveHtfDirection != dir;
 
             if (against)
             {
