@@ -364,7 +364,7 @@ namespace GeminiV26.EntryTypes.INDEX
             int score,
             TradeDirection dir)
         {
-            GlobalLogger.Log(this, 
+            GlobalLogger.Log(typeof(Index_BreakoutEntry), 
                 $"[IDX_BREAKOUT][REJECT] {reason} | score={score} | dir={dir}");
 
             return new EntryEvaluation
