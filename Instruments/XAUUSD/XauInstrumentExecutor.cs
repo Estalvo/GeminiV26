@@ -68,13 +68,13 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             if (entry == null)
             {
-                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing entry");
+                GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing entry");
                 return;
             }
 
             if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing FinalDirection");
+                GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
 
@@ -82,11 +82,11 @@ namespace GeminiV26.Instruments.XAUUSD
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
             // =====================================================
@@ -99,7 +99,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             if (_marketStateDetector == null)
             {
-                GlobalLogger.Log("[XAU EXEC] SKIP: MarketStateDetector NULL");
+                GlobalLogger.Log(_bot, "[XAU EXEC] SKIP: MarketStateDetector NULL");
                 return;
             }
 
@@ -173,10 +173,10 @@ namespace GeminiV26.Instruments.XAUUSD
             // -----------------------------------------------------
             ctx.ComputeFinalConfidence();
 
-                        GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
+                        GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
             if (statePenalty != 0)
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
 
             // Trailing mód PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) alapján (FinalConfidence + statePenalty)
             ctx.TrailingMode =
@@ -194,7 +194,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (slPriceDist <= 0)
             {
-                GlobalLogger.Log("[XAU EXEC] SL distance invalid → abort");
+                GlobalLogger.Log(_bot, "[XAU EXEC] SL distance invalid → abort");
                 return;
             }
 
@@ -206,7 +206,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (tp2Price <= 0)
             {
-                GlobalLogger.Log("[XAU EXEC] TP2 price invalid → abort");
+                GlobalLogger.Log(_bot, "[XAU EXEC] TP2 price invalid → abort");
                 return;
             }
 
@@ -240,11 +240,11 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (volumeUnits <= 0)
             {
-                GlobalLogger.Log("[XAU EXEC] Volume invalid after MetalPositionSizer → abort");
+                GlobalLogger.Log(_bot, "[XAU EXEC] Volume invalid after MetalPositionSizer → abort");
                 return;
             }
             // 🔎 DEBUG (EXECUTOR SZINT)
-            GlobalLogger.Log($"[XAU EXEC RISK] FC={ctx.FinalConfidence} slDist={slPriceDist:F2} units={volumeUnits} lot={(double)volumeUnits/_bot.Symbol.LotSize:F2}");
+            GlobalLogger.Log(_bot, $"[XAU EXEC RISK] FC={ctx.FinalConfidence} slDist={slPriceDist:F2} units={volumeUnits} lot={(double)volumeUnits/_bot.Symbol.LotSize:F2}");
 /*
             // =====================================================
             // 6 VOLUME POLICY – FIX LOT (Phase 3.7.x)
@@ -257,7 +257,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (volumeUnits <= 0)
             {
-                GlobalLogger.Log("[XAU EXEC] Volume invalid → abort");
+                GlobalLogger.Log(_bot, "[XAU EXEC] Volume invalid → abort");
                 return;
             }
 */
@@ -270,7 +270,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 8 EXECUTE ORDER
             // =====================================================
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
@@ -284,13 +284,13 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (!result.IsSuccessful || result.Position == null)
             {
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[EXEC][FAIL] side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
-                GlobalLogger.Log("[XAU EXEC] Order execution failed");
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[EXEC][FAIL] side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
+                GlobalLogger.Log(_bot, "[XAU EXEC] Order execution failed");
                 return;
             }
 
-            GlobalLogger.Log($"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
+            GlobalLogger.Log(_bot, $"[TRADE LINK] tempId={entryContext.TempId} posId={result.Position.Id} symbol={result.Position.SymbolName}");
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =====================================================
             // 9 CONTEXT FINALIZÁLÁS (FILL UTÁN)
@@ -324,17 +324,17 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 10 REGISTER CONTEXT
             // =====================================================
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[ctx.PositionId] = ctx;
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[XAU EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"FC={ctx.FinalConfidence} fill={ctx.EntryPrice:F2} " +
                 $"SL={slPriceActual:F2} R={rDist:F2} " +

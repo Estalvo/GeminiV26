@@ -44,7 +44,7 @@ namespace GeminiV26.Instruments.ETHUSD
             var m5 = _bot.MarketData.GetBars(TimeFrame.Minute5);
             if (m5 == null || m5.Count < 200)
             {
-                GlobalLogger.Log("[ETH][Logic] Not enough M5 bars → neutral bias");
+                GlobalLogger.Log(_bot, "[ETH][Logic] Not enough M5 bars → neutral bias");
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace GeminiV26.Instruments.ETHUSD
             }
             else
             {
-                GlobalLogger.Log("[ETH][Logic] EMA50 ≈ EMA200 → no directional bias");
+                GlobalLogger.Log(_bot, "[ETH][Logic] EMA50 ≈ EMA200 → no directional bias");
             }
 
             // =========================================================
@@ -75,7 +75,7 @@ namespace GeminiV26.Instruments.ETHUSD
             var atr = _bot.Indicators.AverageTrueRange(14, MovingAverageType.Simple).Result.LastValue;
             if (atr <= 0)
             {
-                GlobalLogger.Log("[ETH][Logic] ATR invalid → confidence reduced");
+                GlobalLogger.Log(_bot, "[ETH][Logic] ATR invalid → confidence reduced");
                 logicConfidence -= 10;
                 return;
             }
@@ -89,7 +89,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (range <= 0)
             {
-                GlobalLogger.Log("[ETH][Logic] Candle range invalid → confidence reduced");
+                GlobalLogger.Log(_bot, "[ETH][Logic] Candle range invalid → confidence reduced");
                 logicConfidence -= 10;
                 return;
             }
@@ -99,12 +99,12 @@ namespace GeminiV26.Instruments.ETHUSD
             if (bodyRatio >= 0.65)
             {
                 logicConfidence += 10;
-                GlobalLogger.Log("[ETH][Logic] Strong impulse candle");
+                GlobalLogger.Log(_bot, "[ETH][Logic] Strong impulse candle");
             }
             else
             {
                 logicConfidence -= 5;
-                GlobalLogger.Log("[ETH][Logic] Weak impulse candle");
+                GlobalLogger.Log(_bot, "[ETH][Logic] Weak impulse candle");
             }
 
             // ATR-based impulse confirmation
@@ -116,7 +116,7 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             logicConfidence = Math.Max(30, Math.Min(95, logicConfidence));
 
-            GlobalLogger.Log($"[ETH][Logic] Bias={biasDirection} LogicConfidence={logicConfidence}");
+            GlobalLogger.Log(_bot, $"[ETH][Logic] Bias={biasDirection} LogicConfidence={logicConfidence}");
         }
     }
 }

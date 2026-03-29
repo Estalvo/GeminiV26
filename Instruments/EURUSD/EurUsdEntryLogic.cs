@@ -91,7 +91,7 @@ namespace GeminiV26.Instruments.EURUSD
 
             if (_m5 == null || _m5.Count < MinBars || _m15 == null || _m15.Count < 50)
             {
-                GlobalLogger.Log($"[EUR LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log(_bot, $"[EUR LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace GeminiV26.Instruments.EURUSD
             // =====================================================
             // DEBUG (informatív, nem gate)
             // =====================================================
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[EUR LOGIC] bias={LastBias} logicConf={LastLogicConfidence} | " +
                 $"ema50={ema50:F5} ema200={ema200:F5} diff={emaDiff:F5} | " +
                 $"adx={adx:F1} atr={atr:F5} | htfBull={htfBull}"

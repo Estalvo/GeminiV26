@@ -42,7 +42,7 @@ namespace GeminiV26.Core.Entry
                     var startClassification = HtfClassificationModel.ComputeHtfClassification(
                         TradeDirection.None,
                         htfAllowedDirection);
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(this, 
                         $"[ENTRY_TRACE][START] symbol={ctx?.Symbol} entryType={entryType?.GetType().Name} stage=START candidateDirection={TradeDirection.None} score=NA classification={startClassification}");
 
                     var eval = entryType.Evaluate(ctx);
@@ -65,7 +65,7 @@ namespace GeminiV26.Core.Entry
 
                         if (eval.LogicBiasDirection != TradeDirection.None && eval.RawDirection == TradeDirection.None)
                         {
-                            GlobalLogger.Log(
+                            GlobalLogger.Log(this, 
                                 $"[CRITICAL][DIRECTION_BROKEN] symbol={ctx?.Symbol} entryType={eval.Type} logicBiasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} reason={eval.Reason ?? "NA"}");
 
                             // Defensive hard guarantee: direction can never remain None when logic bias exists.
@@ -90,12 +90,12 @@ namespace GeminiV26.Core.Entry
                             eval.Direction,
                             htfAllowedDirection);
 
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(this, 
                             $"[ENTRY_TRACE][LOGIC] symbol={ctx?.Symbol} entryType={eval.Type} stage=LOGIC candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +
                             $"rawDirection={eval.RawDirection} logicBiasDirection={eval.LogicBiasDirection} logicConfidence={eval.RawLogicConfidence} " +
                             $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()} setupType={eval.SetupType}");
 
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(this, 
                             $"[ENTRY_TRACE][DIRECTION_SOURCE] symbol={ctx?.Symbol} entryType={eval.Type} biasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} " +
                             $"fallbackUsed={eval.FallbackDirectionUsed.ToString().ToLowerInvariant()} confidence={eval.RawLogicConfidence} stage=POST_LOGIC " +
                             $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()}");
@@ -104,13 +104,13 @@ namespace GeminiV26.Core.Entry
                         eval.FinalScoreSnapshot = eval.Score;
                         eval.DirectionAfterScore = eval.Direction;
                         bool passedThreshold = eval.Score >= EntryDecisionPolicy.MinScoreThreshold;
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(this, 
                             $"[ENTRY_TRACE][SCORE] symbol={ctx?.Symbol} entryType={eval.Type} stage=SCORE candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +
                             $"baseScore={eval.BaseScore} afterHtfScoreAdjustment={eval.AfterHtfScoreAdjustment} afterPenalty={eval.AfterPenaltyScore} finalScore={eval.FinalScoreSnapshot} " +
                             $"scoreThreshold={EntryDecisionPolicy.MinScoreThreshold} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}");
 
                         eval.Reason = "[ROUTER] " + (eval.Reason ?? "");
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(this, 
                             $"[ENTRY_TRACE][FINAL] symbol={ctx?.Symbol} entryType={eval.Type} stage=ENTRY_ROUTER candidateDirection={eval.Direction} score={eval.Score} " +
                             $"classification={eval.HtfClassification} finalCandidateDirection={eval.Direction} finalScore={eval.Score} blocked={(!eval.IsValid).ToString().ToLowerInvariant()} finalReason={eval.Reason ?? "NA"}");
                     }

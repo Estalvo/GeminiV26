@@ -25,7 +25,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
                     finalUnits,
                     RoundingMode.Down);
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(bot, 
                 $"[POSITION SIZER] {bot.SymbolName} " +
                 $"balance={balance:F2} risk%={riskPercent:F3} " +
                 $"riskAmount={riskAmount:F2} slPips={(slPriceDistance / bot.Symbol.PipSize):F2} " +

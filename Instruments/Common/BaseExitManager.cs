@@ -47,7 +47,7 @@ namespace GeminiV26.Instruments.Common
                 if (!Accepts(pos))
                     continue;
 
-                GlobalLogger.Log($"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
+                GlobalLogger.Log(bot, $"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
                 if (Contexts.ContainsKey(pos.Id))
                     continue;
 
@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.Common
                 ctx.IsRehydrated = true;
                 Contexts[pos.Id] = ctx;
 
-                GlobalLogger.Log($"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
+                GlobalLogger.Log(bot, $"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
             }
         }
 

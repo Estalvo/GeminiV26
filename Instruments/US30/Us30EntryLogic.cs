@@ -104,7 +104,7 @@ namespace GeminiV26.Instruments.US30
             if (fallbackBias)
             {
                 confidence = 50;
-                GlobalLogger.Log("[US30][FALLBACK] EMA-based bias applied");
+                GlobalLogger.Log(_bot, "[US30][FALLBACK] EMA-based bias applied");
             }
 
             LastDirection = direction;
@@ -112,7 +112,7 @@ namespace GeminiV26.Instruments.US30
             LastLogicConfidence = confidence;
 
             if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
-                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log(_bot, "[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
 
             return true;
         }
@@ -151,7 +151,7 @@ namespace GeminiV26.Instruments.US30
             LastBias = direction == TradeDirection.Long ? TradeType.Buy : TradeType.Sell;
 
             if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
-                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log(_bot, "[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
         }
 
         public void ApplyToEntryEvaluation(EntryEvaluation entry)
@@ -163,7 +163,7 @@ namespace GeminiV26.Instruments.US30
             entry.LogicConfidence = LastLogicConfidence;
 
             if (entry.LogicConfidence > 0 && entry.Direction == TradeDirection.None)
-                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log(_bot, "[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
         }
     }
 }

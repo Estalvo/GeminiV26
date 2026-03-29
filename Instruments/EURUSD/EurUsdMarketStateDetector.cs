@@ -46,7 +46,7 @@ namespace GeminiV26.Instruments.EURUSD
             double adx = _adx.ADX[i];
 
             // DEBUG – ez marad, nagyon hasznos
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[EUR MSD] atrRaw={atrRaw:F6} pipSize={_bot.Symbol.PipSize} atrPips={atrPips:F2} adx={adx:F1}");
 
             // ===== FX-PROFIL VEZÉRELT KÜSZÖBÖK =====

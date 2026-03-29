@@ -46,7 +46,7 @@ namespace GeminiV26.Core
         // =========================================================
         public EntryEvaluation SelectEntry(List<EntryEvaluation> signals, EntryContext entryContext = null)
         {
-            GlobalLogger.Log("[TR] SelectEntry CALLED");
+            GlobalLogger.Log(_bot, "[TR] SelectEntry CALLED");
 
             if (signals == null || signals.Count == 0)
                 return null;
@@ -54,7 +54,7 @@ namespace GeminiV26.Core
             int nonNullCount = signals.Count(e => e != null);
             int validCount = signals.Count(e => e != null && e.IsValid);
 
-            GlobalLogger.Log($"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
+            GlobalLogger.Log(_bot, $"[TR] evals={signals.Count} nonNull={nonNullCount} valid={validCount} threshold={EntryDecisionPolicy.MinScoreThreshold}");
             LogCandidates("CAND", signals, entryContext);
 
             EntryEvaluation winner = null;
@@ -63,16 +63,16 @@ namespace GeminiV26.Core
             {
                 string decision;
                 candidate.FinalValid = candidate.IsValid;
-                GlobalLogger.Log($"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.FinalValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
+                GlobalLogger.Log(_bot, $"[BASELINE CHECK] type={candidate.Type} score={candidate.Score} valid={candidate.FinalValid.ToString().ToLowerInvariant()} source=ENTRY_ONLY");
                 if (candidate.TriggerConfirmed)
                 {
-                    GlobalLogger.Log($"[AUDIT][TRIGGERED] type={candidate.Type} score={candidate.Score} dir={candidate.Direction}");
+                    GlobalLogger.Log(_bot, $"[AUDIT][TRIGGERED] type={candidate.Type} score={candidate.Score} dir={candidate.Direction}");
                 }
 
                 if (!candidate.FinalValid)
                 {
                     decision = "REJECT";
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId($"[BLOCK] type={candidate.Type} dir={candidate.Direction} score={candidate.Score} reason=invalid_candidate", entryContext));
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[BLOCK] type={candidate.Type} dir={candidate.Direction} score={candidate.Score} reason=invalid_candidate", entryContext));
                 }
                 else if (!ApplyFxAcceptanceFilters(candidate, entryContext))
                 {
@@ -84,19 +84,19 @@ namespace GeminiV26.Core
 
                     if (!candidate.TriggerConfirmed)
                     {
-                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                             $"[EXEC BLOCK] NOT TRIGGERED → BLOCK execution | {candidate.Type} score={candidate.Score}",
                             entryContext));
                     }
 
                     if (decision == "ACCEPT_SCORE_MODEL")
                     {
-                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                             "[EXEC BLOCK] SCORE_MODEL cannot execute (no trigger)",
                             entryContext));
                     }
 
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][EXEC CHECK] type={candidate.Type} " +
                         $"trigger={candidate.TriggerConfirmed} " +
                         $"valid={candidate.IsValid} " +
@@ -104,7 +104,7 @@ namespace GeminiV26.Core
 
                     if (!IsExecutable(candidate))
                     {
-                        GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                        GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                             $"[EXEC FILTER] candidate not executable | trigger={candidate.TriggerConfirmed.ToString().ToLowerInvariant()} valid={candidate.IsValid.ToString().ToLowerInvariant()}",
                             entryContext));
                         continue;
@@ -137,7 +137,7 @@ namespace GeminiV26.Core
                     entryContext?.BreakoutDirection == candidate.Direction ||
                     entryContext?.RangeBreakDirection == candidate.Direction;
 
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[AUDIT][VALIDITY] type={candidate.Type} " +
                     $"structure={structureAligned} " +
                     $"impulse={hasImpulse} " +
@@ -145,7 +145,7 @@ namespace GeminiV26.Core
                     $"continuation={continuationValid} " +
                     $"pullback={pullbackValid} " +
                     $"breakout={breakoutValid}");
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[AUDIT][HTF FLOW][ROUTER_CONSUME] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                     $"stage={nameof(TradeRouter)} module={nameof(TradeRouter)} htfState={routedHtfState} allowedDirection={routedHtfAllowedDirection} " +
                     $"align={routedHtfAlign} candidateDirection={candidate.Direction}");
@@ -157,34 +157,34 @@ namespace GeminiV26.Core
                     && (!string.Equals(candidate.HtfTraceSourceState, routedHtfState, StringComparison.Ordinal)
                         || candidate.HtfTraceSourceAllowedDirection != routedHtfAllowedDirection
                         || candidate.HtfTraceSourceAlign != routedHtfAlign);
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[AUDIT][HTF ROUTER] asset={assetClass} symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                     $"routerHtfState={routedHtfState} routerAllowedDirection={routedHtfAllowedDirection} routerAlign={routedHtfAlign} " +
                     $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} " +
                     $"sourceAlign={candidate.HtfTraceSourceAlign} divergence={divergence}");
                 if (assetClass == nameof(InstrumentClass.CRYPTO))
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF ROUTER][CRYPTO] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
                         $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} sourceAlign={candidate.HtfTraceSourceAlign} " +
                         $"routedHtfState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign} divergence={divergence}");
                 }
                 if (!hasSourceSnapshot)
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} routedState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
                 }
                 else if (divergence)
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF CONFLICT][GLOBAL] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"stageA={candidate.HtfTraceSourceStage ?? "SOURCE"} stageB={nameof(TradeRouter)} stateA={candidate.HtfTraceSourceState ?? "N/A"} stateB={routedHtfState} " +
                         $"allowedDirA={candidate.HtfTraceSourceAllowedDirection} allowedDirB={routedHtfAllowedDirection} " +
                         $"htfAlignA={candidate.HtfTraceSourceAlign} htfAlignB={routedHtfAlign}");
                     if (assetClass == nameof(InstrumentClass.CRYPTO))
                     {
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(_bot, 
                             $"[AUDIT][HTF CONFLICT][CRYPTO] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} candidateDirection={candidate.Direction} " +
                             $"sourceHtfState={candidate.HtfTraceSourceState ?? "N/A"} sourceAllowedDirection={candidate.HtfTraceSourceAllowedDirection} sourceAlign={candidate.HtfTraceSourceAlign} " +
                             $"routedHtfState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
@@ -192,7 +192,7 @@ namespace GeminiV26.Core
                 }
                 if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF TRACE][CONSUMER] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} consumedHtfState={consumerHtfState} " +
                         $"consumedAllowedDirection={consumerAllowedDirection} consumedHtfAlign={htfAligned} module={nameof(TradeRouter)}");
@@ -202,7 +202,7 @@ namespace GeminiV26.Core
                         || candidate.HtfTraceSourceAlign != htfAligned
                         || !IsDirectionInterpretationMatch(candidate.Direction, candidate.HtfTraceSourceAllowedDirection, consumerAllowedDirection))
                     {
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(_bot, 
                             $"[AUDIT][HTF CONFLICT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                             $"stageA={candidate.HtfTraceSourceStage ?? "UnknownSource"} stageB={nameof(TradeRouter)} " +
                             $"stateA={candidate.HtfTraceSourceState ?? "N/A"} stateB={consumerHtfState} " +
@@ -212,7 +212,7 @@ namespace GeminiV26.Core
                 }
                 if (candidate.Type == EntryType.Index_Flag && candidate.TriggerConfirmed)
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF SOURCE] type={candidate.Type} " +
                         $"htfAlign={htfAligned} " +
                         $"biasState={routedHtfState} " +
@@ -223,7 +223,7 @@ namespace GeminiV26.Core
                 string htfClassification = candidate.HtfClassification;
                 if (string.IsNullOrWhiteSpace(htfClassification))
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} routedState={routedHtfState} routedAllowedDirection={routedHtfAllowedDirection} routedAlign={routedHtfAlign}");
                     htfClassification = "HTF_NO_DIRECTION";
@@ -239,12 +239,12 @@ namespace GeminiV26.Core
 #if DEBUG
                         if (!string.Equals(originalReason, htfClassification, StringComparison.Ordinal))
                         {
-                            GlobalLogger.Log(
+                            GlobalLogger.Log(_bot, 
                                 $"[AUDIT][HTF][INCONSISTENT_REASON] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} reason={originalReason} classification={htfClassification}");
                         }
 #endif
                     }
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][DEATH] type={candidate.Type} " +
                         $"score={candidate.Score} " +
                         $"reason={deathReason} " +
@@ -254,13 +254,13 @@ namespace GeminiV26.Core
                     int nearMissThreshold = Math.Max(60, EntryDecisionPolicy.MinScoreThreshold - 5);
                     if (candidate.TriggerConfirmed && candidate.Score >= nearMissThreshold)
                     {
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(_bot, 
                             $"[AUDIT][NEAR MISS] type={candidate.Type} " +
                             $"score={candidate.Score} reason={candidate.Reason}");
                     }
                 }
 
-                GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[SCORE][DECISION_INPUT] entry={candidate.Score} logic={entryContext?.LogicBiasConfidence ?? 0} final={PositionContext.ComputeFinalConfidenceValue(candidate.Score, entryContext?.LogicBiasConfidence ?? 0)} threshold={EntryDecisionPolicy.MinScoreThreshold}",
                     entryContext));
 
@@ -270,13 +270,13 @@ namespace GeminiV26.Core
                     && candidate.Reason != null
                     && candidate.Reason.Contains("HTF_"))
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF TRACE][REJECT] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} rejectReason={candidate.Reason} " +
                         $"currentHtfState={routedHtfState} currentAllowedDirection={routedHtfAllowedDirection} " +
                         $"currentHtfAlign={routedHtfAlign} module={nameof(TradeRouter)}");
 
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF ROUTER] type={candidate.Type} " +
                         $"reason={htfClassification} " +
                         $"biasState={routedHtfState} " +
@@ -286,13 +286,13 @@ namespace GeminiV26.Core
                 string rejectText = $"{candidate.Reason} {candidate.RejectReason}";
                 if (!string.IsNullOrWhiteSpace(rejectText) && rejectText.Contains("HTF_"))
                 {
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[AUDIT][HTF REJECT ANALYSIS] symbol={candidate.Symbol ?? _bot.SymbolName} asset={assetClass} entryType={candidate.Type} " +
                         $"candidateDirection={candidate.Direction} htfAllowedDirection={routedHtfAllowedDirection} htfState={routedHtfState} " +
                         $"align={routedHtfAlign} trueDirectionMismatch={(candidate.Direction != TradeDirection.None && routedHtfAllowedDirection != TradeDirection.None && candidate.Direction != routedHtfAllowedDirection ? "YES" : "NO")} " +
                         $"classification={htfClassification} rejectModule={nameof(TradeRouter)}");
                 }
-                GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[ENTRY DECISION] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
                     $"rawValid={candidate.RawValid.ToString().ToLowerInvariant()} finalValid={candidate.FinalValid.ToString().ToLowerInvariant()} " +
                     $"preScore={(candidate.HasQualityScoreTrace ? candidate.PreQualityScore : candidate.Score)} " +
@@ -309,12 +309,12 @@ namespace GeminiV26.Core
                         && candidate.Reason != null
                         && candidate.Reason.Contains("HTF_"))
                     {
-                        GlobalLogger.Log(
+                        GlobalLogger.Log(_bot, 
                             $"[AUDIT][HTF CONFLICT] type={candidate.Type} " +
                             $"htfAlign={htfAligned} " +
                             $"reason={candidate.Reason}");
                     }
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[ENTRY REJECT DETAIL] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} side={candidate.Direction} " +
                         $"reason={candidate.RejectReason} structureAligned={IsStructureAligned(entryContext, candidate.Direction).ToString().ToLowerInvariant()} " +
                         $"momentumAligned={IsMomentumAligned(entryContext, candidate.Direction).ToString().ToLowerInvariant()} " +
@@ -325,12 +325,12 @@ namespace GeminiV26.Core
 
             if (winner == null)
             {
-                GlobalLogger.Log("[TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION");
+                GlobalLogger.Log(_bot, "[TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION");
                 return null;
             }
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
         }
 
@@ -415,7 +415,7 @@ namespace GeminiV26.Core
             eval.IgnoreHTFForDecision = false;
             if (string.IsNullOrWhiteSpace(eval.HtfTraceSourceStage))
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[AUDIT][HTF CONFLICT][SKIPPED_NO_SOURCE] symbol={symbol} asset={assetClass} entryType={eval.Type} candidateDirection={eval.Direction}");
             }
 
@@ -437,14 +437,14 @@ namespace GeminiV26.Core
                 {
                     eval.Score = Math.Max(0, eval.Score + TimingEarlyScoreBoost);
                     thresholdBias = -TimingEarlyThresholdRelax;
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[TIMING][EARLY_BIAS] symbol={symbol} type={eval.Type} score={scoreBeforeTimingBias}->{eval.Score}", entryContext));
                 }
                 else if (hasLateContinuation && !hasEarlyContinuation)
                 {
                     eval.Score = Math.Max(0, eval.Score - TimingLateScorePenalty);
                     thresholdBias = TimingLateThresholdTighten;
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[TIMING][LATE_BIAS] symbol={symbol} type={eval.Type} score={scoreBeforeTimingBias}->{eval.Score}", entryContext));
                 }
             }
@@ -456,7 +456,7 @@ namespace GeminiV26.Core
                 if (eval.HtfConfidence01 >= 0.80 && entryContext?.LogicBiasConfidence < 60)
                 {
                     int strongOppositeSoftPenalty = continuationAuthority ? 4 : 8;
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[HTF][STRONG_OPPOSITE_LTF_WEAK_SOFT] type={eval.Type} dir={eval.Direction} " +
                         $"score={eval.Score} penalty={strongOppositeSoftPenalty} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0} continuationAuthority={continuationAuthority.ToString().ToLowerInvariant()}",
                         entryContext));
@@ -470,7 +470,7 @@ namespace GeminiV26.Core
                 int originalScore = eval.Score;
                 eval.Score = Math.Max(0, eval.Score - HtfMismatchPenalty);
                 decisionScore = Math.Max(0, decisionScore - HtfMismatchPenalty);
-                GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[HTF][ROUTER_SCORE_PENALTY] mismatch applied type={eval.Type} dir={eval.Direction} " +
                     $"score={originalScore}->{eval.Score} decisionScore={decisionScore} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}",
                     entryContext));
@@ -486,7 +486,7 @@ namespace GeminiV26.Core
 
                 if (continuationAuthority)
                 {
-                    GlobalLogger.Log(TradeLogIdentity.WithTempId(
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         "[AUTH BLOCK] continuation authority cannot bypass trigger",
                         entryContext));
                     return RejectFxCandidate(eval, decisionScore, "AUTH_TRIGGER_BYPASS_BLOCK", entryContext);
@@ -533,9 +533,9 @@ namespace GeminiV26.Core
                 ? $"[{reasonToken}]"
                 : $"{eval.Reason} [{reasonToken}]";
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                 $"[FX FILTER] type={eval.Type} dir={eval.Direction} score={eval.Score} decisionScore={decisionScore} reason={reasonToken}", entryContext));
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                 $"[BLOCK] type={eval.Type} dir={eval.Direction} score={eval.Score} reason={reasonToken}", entryContext));
 
             return false;
@@ -551,8 +551,8 @@ namespace GeminiV26.Core
             foreach (var e in list)
             {
                 if (e == null) continue;
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[CANDIDATE] type={e.Type} dir={e.Direction} valid={e.IsValid.ToString().ToLowerInvariant()} score={e.Score} reason={e.Reason}", entryContext));
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CANDIDATE] type={e.Type} dir={e.Direction} valid={e.IsValid.ToString().ToLowerInvariant()} score={e.Score} reason={e.Reason}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TR] {scope} {e.Type} dir={e.Direction} valid={e.IsValid} state={e.State} trigger={e.TriggerConfirmed} score={e.Score} reason={e.Reason}", entryContext));
             }
         }
 

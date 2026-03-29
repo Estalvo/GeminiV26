@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.GBPJPY
 
             if (HasDominantWick(i))
             {
-                GlobalLogger.Log("[GBPJPY GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log(_bot, "[GBPJPY GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                GlobalLogger.Log("[GBPJPY GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log(_bot, "[GBPJPY GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                GlobalLogger.Log("[GBPJPY GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log(_bot, "[GBPJPY GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            GlobalLogger.Log("[GBPJPY GATE] ALLOWED");
+            GlobalLogger.Log(_bot, "[GBPJPY GATE] ALLOWED");
             return true;
         }
 

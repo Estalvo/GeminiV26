@@ -57,7 +57,7 @@ namespace GeminiV26.Core.TradeManagement
             bool isLong = ctx?.FinalDirection == TradeDirection.Long;
             if (ctx?.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log($"[DIR][EXIT_ILLEGAL_SOURCE] source=TradeType posId={position?.Id} reason=missing_final_direction");
+                GlobalLogger.Log(_bot, $"[DIR][EXIT_ILLEGAL_SOURCE] source=TradeType posId={position?.Id} reason=missing_final_direction");
                 return new TrendDecision
                 {
                     State = TradeTrendState.Normal,
@@ -75,8 +75,8 @@ namespace GeminiV26.Core.TradeManagement
             if (isRunner && !ctx.RunnerActivated)
             {
                 ctx.RunnerActivated = true;
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TTM] Runner mode activated.", ctx, position));
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit", ctx, position));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM] Runner mode activated.", ctx, position));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][RUNNER] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} pos={position.Id} sl={FormatPrice(position.StopLoss)} tp={FormatPrice(position.TakeProfit)} reason=tp1_hit", ctx, position));
             }
 
             double priceNow = isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask;
@@ -146,7 +146,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (profileStateChanged || profileBucketChanged)
             {
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile", ctx, position));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile", ctx, position));
                 ctx.LastProfileState = state.ToString();
                 ctx.LastProfileBucket = confidenceBucket;
             }
@@ -165,7 +165,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (stateChanged || valueChanged)
             {
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[TTM] state={state} score={score} mode={mode} allowTp2Ext={allowTp2Extension} mult={tpAtrMultiplier:0.00}", ctx, position));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM] state={state} score={score} mode={mode} allowTp2Ext={allowTp2Extension} mult={tpAtrMultiplier:0.00}", ctx, position));
                 ctx.LastTtmAllowTp2Extension = allowTp2Extension;
                 ctx.LastTtmTp2Multiplier = tpAtrMultiplier;
             }
@@ -263,7 +263,7 @@ namespace GeminiV26.Core.TradeManagement
 
             ctx.LastTp2State = state;
             ctx.LastTp2Value = value;
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(message, ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(message, ctx));
         }
 
         private string GetConfidenceBucket(int score)

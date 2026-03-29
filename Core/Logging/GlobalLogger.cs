@@ -4,13 +4,11 @@ namespace GeminiV26.Core.Logging
 {
     public static class GlobalLogger
     {
-        public static Robot Bot;
-
-        public static void Log(string msg)
+        public static void Log(Robot bot, string msg)
         {
-            if (Bot != null)
+            if (bot != null && msg != null)
             {
-                Bot.Print(msg);
+                bot.Print(msg);
             }
         }
     }

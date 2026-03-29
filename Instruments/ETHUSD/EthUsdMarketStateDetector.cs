@@ -82,7 +82,7 @@ namespace GeminiV26.Instruments.ETHUSD
             }
             isChop = wicky >= lb;
 
-            GeminiV26.Core.Logging.GlobalLogger.Log(
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, 
                 $"[ETH MSD] atrRaw={atrRaw:F2} pipSize={_bot.Symbol.PipSize} atrPips={atrPips:F1} adx={adx:F1} wickRatio={wickRatio:F2} " +
                 $"lowVol={isLowVol} extremeVol={isExtremeVol} trend={isTrend} strongTrend={isStrongTrend} chop={isChop}"
             );

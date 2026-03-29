@@ -43,7 +43,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (double.IsNaN(ema) || ema <= 0)
             {
-                GlobalLogger.Log("[XAU MSD] EMA21 invalid");
+                GlobalLogger.Log(_bot, "[XAU MSD] EMA21 invalid");
                 return new XauMarketState();
             }
 
@@ -108,7 +108,7 @@ namespace GeminiV26.Instruments.XAUUSD
             bool isChop = wickRatio >= _p.MaxWickRatio;
             bool isMomentum = atrRaw > 0 && body >= atrRaw * 0.7 && !isChop;
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[XAU MSD] emaDistATR={emaDistAtr:F2} atrPips={atrPips:F1} adx={adx:F1} widthATR={widthAtr:F2} " +
                 $"lowVol={isLowVol} trend={isTrend} momentum={isMomentum} hardRange={isHardRange} wickRatio={wickRatio:F2} chop={isChop}"
             );

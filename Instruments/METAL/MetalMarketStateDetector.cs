@@ -80,7 +80,7 @@ namespace GeminiV26.Instruments.METAL
             if (adx > 40)
                 hardRange = false;
 
-            GlobalLogger.Log(string.Format(
+            GlobalLogger.Log(_bot, string.Format(
                 "[XAU MSD] atrPips={0:F1} adx={1:F1} emaDistATR={2:F2} lowVol={3} trend={4} momentum={5} compression={6} hardRange={7} spike={8}",
                 atrPips,
                 adx,

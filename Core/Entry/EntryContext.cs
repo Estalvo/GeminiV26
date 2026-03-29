@@ -399,7 +399,7 @@ namespace GeminiV26.Core.Entry
 
         private bool GetCrossSidePullbackFallback()
         {
-            GlobalLogger.Log("[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
+            GlobalLogger.Log(Bot, "[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
 
             bool hasAnySidePullback = HasPullbackLong_M5;
             hasAnySidePullback |= HasPullbackShort_M5;

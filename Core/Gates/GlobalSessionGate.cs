@@ -35,7 +35,7 @@ public class GlobalSessionGate
         TimeSpan londonClose = _calendar.GetLondonCloseUtc(utc);
         bool isOverlap = _calendar.IsLondonNyOverlap(utc);
 
-        GlobalLogger.Log(string.Format("[SESSION_CALENDAR] utc={0:o} usDst={1} euDst={2} nyOpen={3} nyCashOpen={4} nyClose={5} londonOpen={6} londonClose={7}",
+        GlobalLogger.Log(_bot, string.Format("[SESSION_CALENDAR] utc={0:o} usDst={1} euDst={2} nyOpen={3} nyCashOpen={4} nyClose={5} londonOpen={6} londonClose={7}",
             utc, usDst, euDst, nyOpen, nyCashOpen, nyClose, londonOpen, londonClose));
 
         var decision = new SessionDecision
@@ -120,7 +120,7 @@ public class GlobalSessionGate
                 decision.Allow = false;
                 decision.Priority = SessionPriority.Blocked;
                 decision.Reason = "NY FX filter: AUD/NZD/JPY blocked";
-                GlobalLogger.Log(string.Format("[SESSION_FILTER] symbol={0} rule=NY_FX_BLOCK allow=false", symbol));
+                GlobalLogger.Log(_bot, string.Format("[SESSION_FILTER] symbol={0} rule=NY_FX_BLOCK allow=false", symbol));
             }
         }
 
@@ -263,7 +263,7 @@ public class GlobalSessionGate
 
     private void LogGate(string symbol, TimeFrame tf, TimeframeTier tier, SessionDecision decision)
     {
-        GlobalLogger.Log(string.Format("[SESSION_GATE] symbol={0} tf={1} tier={2} bucket={3} priority={4} allow={5} reason={6}",
+        GlobalLogger.Log(_bot, string.Format("[SESSION_GATE] symbol={0} tf={1} tier={2} bucket={3} priority={4} allow={5} reason={6}",
             symbol,
             FormatTimeFrame(tf),
             tier,
