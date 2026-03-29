@@ -11,47 +11,6 @@ namespace GeminiV26.EntryTypes.FX
             DirectionDebug.LogOnce(ctx);
         }
 
-        // LEGACY SHIM:
-        // keep for backward compatibility only; FX router uses score-only HTF handling.
-        // Do not use as a hard reject authority for new call sites.
-        public static bool ShouldBlockHtfMismatch(EntryContext ctx)
-        {
-            if (ctx == null)
-                return false;
-
-            string symbol = Normalize(ctx.Symbol);
-            if (symbol == "GBPUSD")
-                return LegacyShouldBlockHtfMismatch(ctx, symbol);
-
-            var logicBias = ctx.LogicBiasDirection;
-            if (logicBias == TradeDirection.None)
-                return false;
-
-            var htfDirection = ctx.FxHtfAllowedDirection;
-            var htfConfidence = ctx.FxHtfConfidence01;
-
-            if (htfDirection == TradeDirection.None || htfDirection == logicBias)
-                return false;
-
-            if (htfConfidence < 0.80 || ctx.LogicBiasConfidence >= 60)
-            {
-                ctx.Log?.Invoke(
-                    $"[HTF][PENALTY] mismatch applied sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                    $"htf={htfDirection}/{htfConfidence:F2}");
-                return false;
-            }
-
-            ctx.Log?.Invoke(
-                $"[HTF][BLOCK] strong opposite HTF + weak LTF sym={symbol} logicBias={logicBias} " +
-                $"logicConf={ctx.LogicBiasConfidence} htf={htfDirection}/{htfConfidence:F2}");
-            return true;
-        }
-
-        // Legacy placeholder kept intentionally non-blocking.
-        public static bool ShouldRejectLowConfidenceHtfConflict(EntryContext ctx)
-        {
-            return false;
-        }
 
         public static int GetLowConfidenceHtfConflictPenalty(EntryContext ctx)
         {
@@ -104,32 +63,6 @@ namespace GeminiV26.EntryTypes.FX
 
             ctx?.Log?.Invoke(
                 $"[HTF][SCORE_PENALTY] sym={Normalize(ctx?.Symbol)} entry={eval.Type} dir={eval.Direction} score={before}->{eval.Score} penalty={penalty}");
-        }
-
-        private static bool LegacyShouldBlockHtfMismatch(EntryContext ctx, string symbol)
-        {
-            var logicBias = ctx.LogicBiasDirection;
-            if (logicBias == TradeDirection.None)
-                return false;
-
-            var htfDirection = ctx.FxHtfAllowedDirection;
-            var htfConfidence = ctx.FxHtfConfidence01;
-
-            if (htfDirection == TradeDirection.None || htfDirection == logicBias)
-                return false;
-
-            if (htfConfidence < 0.80 || ctx.LogicBiasConfidence >= 60)
-            {
-                ctx.Log?.Invoke(
-                    $"[HTF][PENALTY] mismatch applied sym={symbol} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
-                    $"htf={htfDirection}/{htfConfidence:F2}");
-                return false;
-            }
-
-            ctx.Log?.Invoke(
-                $"[HTF][BLOCK] strong opposite HTF + weak LTF sym={symbol} logicBias={logicBias} " +
-                $"logicConf={ctx.LogicBiasConfidence} htf={htfDirection}/{htfConfidence:F2}");
-            return true;
         }
 
         private static bool HasDirectionalStructure(EntryContext ctx, TradeDirection direction)
