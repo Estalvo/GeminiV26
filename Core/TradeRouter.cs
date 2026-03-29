@@ -455,20 +455,25 @@ namespace GeminiV26.Core
             {
                 if (eval.HtfConfidence01 >= 0.80 && entryContext?.LogicBiasConfidence < 60)
                 {
+                    int strongOppositeSoftPenalty = continuationAuthority ? 4 : 8;
                     _bot.Print(TradeLogIdentity.WithTempId(
-                        $"[HTF][BLOCK] strong opposite HTF + weak LTF type={eval.Type} dir={eval.Direction} " +
-                        $"score={eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
-                    if (!continuationAuthority)
-                        return RejectFxCandidate(eval, decisionScore, "HTF_STRONG_OPPOSITE_LTF_WEAK", entryContext);
-
-                    eval.Score -= 8;
+                        $"[HTF][STRONG_OPPOSITE_LTF_WEAK_SOFT] type={eval.Type} dir={eval.Direction} " +
+                        $"score={eval.Score} penalty={strongOppositeSoftPenalty} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0} continuationAuthority={continuationAuthority.ToString().ToLowerInvariant()}",
+                        entryContext));
+                    eval.Score = Math.Max(0, eval.Score - strongOppositeSoftPenalty);
+                    decisionScore = Math.Max(0, decisionScore - strongOppositeSoftPenalty);
+                    eval.Reason = string.IsNullOrWhiteSpace(eval.Reason)
+                        ? "[HTF_STRONG_OPPOSITE_LTF_WEAK_SOFT]"
+                        : $"{eval.Reason} [HTF_STRONG_OPPOSITE_LTF_WEAK_SOFT]";
                 }
 
                 int originalScore = eval.Score;
                 eval.Score = Math.Max(0, eval.Score - HtfMismatchPenalty);
+                decisionScore = Math.Max(0, decisionScore - HtfMismatchPenalty);
                 _bot.Print(TradeLogIdentity.WithTempId(
-                    $"[HTF][PENALTY] mismatch applied type={eval.Type} dir={eval.Direction} " +
-                    $"score={originalScore}->{eval.Score} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}", entryContext));
+                    $"[HTF][ROUTER_SCORE_PENALTY] mismatch applied type={eval.Type} dir={eval.Direction} " +
+                    $"score={originalScore}->{eval.Score} decisionScore={decisionScore} htfConf={eval.HtfConfidence01:F2} logicConf={entryContext?.LogicBiasConfidence ?? 0}",
+                    entryContext));
             }
 
             if (decisionScore < effectiveMinThreshold)

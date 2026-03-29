@@ -11,6 +11,9 @@ namespace GeminiV26.EntryTypes.FX
             DirectionDebug.LogOnce(ctx);
         }
 
+        // LEGACY SHIM:
+        // keep for backward compatibility only; FX router uses score-only HTF handling.
+        // Do not use as a hard reject authority for new call sites.
         public static bool ShouldBlockHtfMismatch(EntryContext ctx)
         {
             if (ctx == null)
@@ -44,6 +47,7 @@ namespace GeminiV26.EntryTypes.FX
             return true;
         }
 
+        // Legacy placeholder kept intentionally non-blocking.
         public static bool ShouldRejectLowConfidenceHtfConflict(EntryContext ctx)
         {
             return false;
