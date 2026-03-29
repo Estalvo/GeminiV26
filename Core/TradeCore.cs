@@ -2730,6 +2730,7 @@ namespace GeminiV26.Core
                 return false;
 
             int recommendedTimingPenalty = ctx.MemoryAssessment?.RecommendedTimingPenalty ?? ctx.MemoryTimingPenalty;
+            _bot.Print($"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
             if (recommendedTimingPenalty <= -10)
             {
                 _bot.Print(TradeLogIdentity.WithTempId(
