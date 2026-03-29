@@ -28,13 +28,12 @@ namespace GeminiV26
 
         protected override void OnStart()
         {
-            GlobalLogger.Bot = this;
-            GlobalLogger.Log("======================================");
-            GlobalLogger.Log("🚀 GEMINI V26 DEMO BOT STARTED");
-            GlobalLogger.Log("❌ NOT legacy Gemini");
-            GlobalLogger.Log($"📊 Symbol: {SymbolName}");
-            GlobalLogger.Log($"⏱ Timeframe: {TimeFrame}");
-            GlobalLogger.Log("======================================");
+            GlobalLogger.Log(this, "======================================");
+            GlobalLogger.Log(this, "🚀 GEMINI V26 DEMO BOT STARTED");
+            GlobalLogger.Log(this, "❌ NOT legacy Gemini");
+            GlobalLogger.Log(this, $"📊 Symbol: {SymbolName}");
+            GlobalLogger.Log(this, $"⏱ Timeframe: {TimeFrame}");
+            GlobalLogger.Log(this, "======================================");
 
             // =========================
             // 🔹 SESSION (restart = új session)
@@ -102,7 +101,7 @@ namespace GeminiV26
             });
 
             _core.OnStop();
-            GlobalLogger.Log("GeminiV26Bot STOP");
+            GlobalLogger.Log(this, "GeminiV26Bot STOP");
         }
     }
 }

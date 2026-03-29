@@ -50,13 +50,13 @@ namespace GeminiV26.Instruments.ETHUSD
         {
             if (entry == null)
             {
-                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing entry");
+                GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing entry");
                 return;
             }
 
             if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log("[DIR][EXEC_ABORT] Missing FinalDirection");
+                GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing FinalDirection");
                 return;
             }
 
@@ -64,14 +64,14 @@ namespace GeminiV26.Instruments.ETHUSD
             DirectionGuard.Validate(entryContext, null, _bot.Print);
 
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_FINAL] symbol={_bot.SymbolName} finalDir={entryContext.FinalDirection}", entryContext));
 
             if (entry.Direction != entryContext.FinalDirection)
             {
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_MISMATCH] entryDir={entry.Direction} finalDir={entryContext.FinalDirection}", entryContext));
                 // DO NOT TRUST entry.Direction
             }
-            GlobalLogger.Log("[ETHUSD][EXEC] ExecuteEntry");
+            GlobalLogger.Log(_bot, "[ETHUSD][EXEC] ExecuteEntry");
 
             // =========================
             // MARKET STATE (OBSERVE ONLY)
@@ -102,13 +102,13 @@ namespace GeminiV26.Instruments.ETHUSD
             };
             ctx.ComputeFinalConfidence();
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
 
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
             if (statePenalty != 0)
 
-                GlobalLogger.Log(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)}", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)}", entryContext));
 
             // =========================================================
             // SL DISTANCE (ATR)
@@ -135,7 +135,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[ETHUSD][EXEC] abort: volume < min " +
                     $"(vol={volumeUnits}, min={_bot.Symbol.VolumeInUnitsMin})"
                 );
@@ -168,7 +168,7 @@ namespace GeminiV26.Instruments.ETHUSD
             if (tp2Pips <= 0)
                 return;
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} RC={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)} FC={ctx.FinalConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"volUnits={volumeUnits}"
@@ -177,7 +177,7 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             // SEND ORDER
             // =========================================================
-            GlobalLogger.Log(TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[EXEC][REQUEST] side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
                 tradeType,
@@ -190,15 +190,15 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (!result.IsSuccessful || result.Position == null)
             {
-                GlobalLogger.Log("[ETHUSD][EXEC] ORDER FAILED (TradeResult unsuccessful or Position null)");
-                GlobalLogger.Log($"[ETHUSD][EXEC] ORDER FAILED isSuccessful={result.IsSuccessful}");
+                GlobalLogger.Log(_bot, "[ETHUSD][EXEC] ORDER FAILED (TradeResult unsuccessful or Position null)");
+                GlobalLogger.Log(_bot, $"[ETHUSD][EXEC] ORDER FAILED isSuccessful={result.IsSuccessful}");
                 return;
             }
 
 
             long posId = result.Position.Id;
-            GlobalLogger.Log($"[TRADE LINK] tempId={entryContext.TempId} posId={posId} symbol={result.Position.SymbolName}");
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
+            GlobalLogger.Log(_bot, $"[TRADE LINK] tempId={entryContext.TempId} posId={posId} symbol={result.Position.SymbolName}");
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 
             // =========================================================
             // POSITION CONTEXT (SSOT)
@@ -249,17 +249,17 @@ namespace GeminiV26.Instruments.ETHUSD
                 ctx.FinalConfidence >= 75 ? TrailingMode.Normal :
                                              TrailingMode.Tight;
 
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC][SUCCESS]\nvolumeUnits={ctx.EntryVolumeInUnits:0.##}\nentryPrice={ctx.EntryPrice:0.#####}\nsl={result.Position.StopLoss}\ntp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[posId] = ctx;
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[ETHUSD][EXEC] OPEN {tradeType} " +
                 $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}", ctx));
         }

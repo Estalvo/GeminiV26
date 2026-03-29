@@ -46,13 +46,13 @@ namespace GeminiV26.Instruments.US30
 
             if (IsExtremeSpike(i, entryDirection))
             {
-                GlobalLogger.Log("[US30 GATE] BLOCK extreme spike");
+                GlobalLogger.Log(_bot, "[US30 GATE] BLOCK extreme spike");
                 return false;
             }
 
             if (IsInCooldown(i))
             {
-                GlobalLogger.Log("[US30 GATE] BLOCK impulse cooldown");
+                GlobalLogger.Log(_bot, "[US30 GATE] BLOCK impulse cooldown");
                 return false;
             }
 
@@ -100,7 +100,7 @@ namespace GeminiV26.Instruments.US30
 
             if (impulseDirection != entryDirection)
             {
-                GlobalLogger.Log("[US30 GATE] spike direction mismatch");
+                GlobalLogger.Log(_bot, "[US30 GATE] spike direction mismatch");
                 return true;
             }
 

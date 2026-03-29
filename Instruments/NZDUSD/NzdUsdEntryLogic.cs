@@ -91,7 +91,7 @@ namespace GeminiV26.Instruments.NZDUSD
 
             if (_m5 == null || _m5.Count < MinBars || _m15 == null || _m15.Count < 50)
             {
-                GlobalLogger.Log($"[NZDUSD LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log(_bot, $"[NZDUSD LOGIC] bars insufficient (m5={_m5?.Count ?? 0}, m15={_m15?.Count ?? 0}) -> default bias/conf");
                 return;
             }
 
@@ -108,9 +108,9 @@ namespace GeminiV26.Instruments.NZDUSD
             LastLogicConfidence = result.Confidence;
 
             if (result.State == "FX_FALLBACK")
-                GlobalLogger.Log("[FX BIAS FALLBACK] trend-based bias");
+                GlobalLogger.Log(_bot, "[FX BIAS FALLBACK] trend-based bias");
 
-            GlobalLogger.Log($"[NZDUSD LOGIC] state={result.State} bias={LastBias} logicConf={LastLogicConfidence} | {result.Details}");
+            GlobalLogger.Log(_bot, $"[NZDUSD LOGIC] state={result.State} bias={LastBias} logicConf={LastLogicConfidence} | {result.Details}");
         }
     }
 }

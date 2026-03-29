@@ -56,10 +56,10 @@ namespace GeminiV26.Core.Runtime
                 catch (Exception ex)
                 {
                     summary.Failed++;
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[REHYDRATE_WARN] pos={(position == null ? "NULL" : Convert.ToInt64(position.Id).ToString())} " +
                         $"symbol={position?.SymbolName ?? "UNKNOWN"} error={ex.GetType().Name} message={ex.Message}");
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[REHYDRATE_SKIP] pos={(position == null ? "NULL" : Convert.ToInt64(position.Id).ToString())} " +
                         $"symbol={position?.SymbolName ?? "UNKNOWN"} reason=exception_during_rebuild unmanaged=true");
                 }
@@ -67,11 +67,11 @@ namespace GeminiV26.Core.Runtime
 
             if (summary.GeminiManagedCandidates > 0 && summary.SuccessfullyRehydrated == 0)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] geminiCandidates={summary.GeminiManagedCandidates} reason=zero_successful_rehydrates");
             }
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[REHYDRATE_SUMMARY] seen={summary.TotalOpenPositionsSeen} " +
                 $"candidates={summary.GeminiManagedCandidates} ok={summary.SuccessfullyRehydrated} " +
                 $"skipped={summary.Skipped} failed={summary.Failed} duplicates={summary.Duplicates} " +
@@ -86,7 +86,7 @@ namespace GeminiV26.Core.Runtime
             if (position == null)
             {
                 summary.Skipped++;
-                GlobalLogger.Log("[REHYDRATE_SKIP] pos=NULL reason=null_position");
+                GlobalLogger.Log(_bot, "[REHYDRATE_SKIP] pos=NULL reason=null_position");
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace GeminiV26.Core.Runtime
                 if (ambiguousOwner)
                 {
                     summary.Skipped++;
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[REHYDRATE_SKIP] pos={Convert.ToInt64(position.Id)} symbol={position.SymbolName} " +
                         $"label={position.Label} reason=ownership_ambiguous");
                 }
@@ -117,7 +117,7 @@ namespace GeminiV26.Core.Runtime
                 !string.Equals(botCanonical, positionCanonical, StringComparison.OrdinalIgnoreCase))
             {
                 summary.Skipped++;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_SKIP] pos={Convert.ToInt64(position.Id)} symbol={position.SymbolName} " +
                     $"reason=symbol_mismatch_bot_scope botCanonical={botCanonical} positionCanonical={positionCanonical}");
                 return;
@@ -125,7 +125,7 @@ namespace GeminiV26.Core.Runtime
 
             long positionKey = Convert.ToInt64(position.Id);
             summary.GeminiManagedCandidates++;
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[REHYDRATE][DISCOVERED]\npositionId={positionKey}\nsymbol={position.SymbolName}\nlabel={position.Label}",
                 positionKey,
                 position.Comment,
@@ -134,7 +134,7 @@ namespace GeminiV26.Core.Runtime
             if (_registry.ContainsKey(positionKey))
             {
                 summary.Duplicates++;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_DUP] pos={positionKey} symbol={position.SymbolName} reason=context_already_exists");
                 return;
             }
@@ -143,7 +143,7 @@ namespace GeminiV26.Core.Runtime
             if (rebuild.Context == null)
             {
                 summary.Failed++;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_SKIP] pos={positionKey} symbol={position.SymbolName} reason=rebuild_failed unmanaged=true");
                 return;
             }
@@ -155,7 +155,7 @@ namespace GeminiV26.Core.Runtime
             catch (ArgumentException)
             {
                 summary.Duplicates++;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_DUP] pos={positionKey} symbol={position.SymbolName} reason=duplicate_registry_key_attempt");
                 return;
             }
@@ -167,7 +167,7 @@ namespace GeminiV26.Core.Runtime
                 _registry.Remove(positionKey);
                 _contextRegistry.RemovePosition(positionKey);
                 summary.Failed++;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_SKIP] pos={positionKey} symbol={position.SymbolName} reason=exit_manager_registration_failed unmanaged=true");
                 return;
             }
@@ -183,20 +183,20 @@ namespace GeminiV26.Core.Runtime
 
             summary.SuccessfullyRehydrated++;
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[REHYDRATE] pos={positionKey} symbol={position.SymbolName} dir={rebuild.Context.FinalDirection} " +
                 $"tp1Hit={rebuild.Context.Tp1Hit} be={rebuild.Context.BeActivated} trailing={rebuild.Context.TrailingActivated} " +
                 $"remainingUnits={rebuild.Context.RemainingVolumeInUnits} source={rebuild.Context.RehydrateSource}");
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[REHYDRATE][ATTACH]\npositionId={positionKey}\nfinalDirection={rebuild.Context.FinalDirection}\ntp1Hit={rebuild.Context.Tp1Hit}\nbeMoved={rebuild.Context.BeActivated}\ntrailActive={rebuild.Context.TrailingActivated}",
                 rebuild.Context,
                 position));
 
             if (rebuild.DefaultedLifecycleFields)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_FALLBACK] pos={positionKey} symbol={position.SymbolName} reason=lifecycle_fields_defaulted");
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds(
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                     "[REHYDRATE][FALLBACK]\nreason=lifecycle_fields_defaulted",
                     rebuild.Context,
                     position));
@@ -210,16 +210,16 @@ namespace GeminiV26.Core.Runtime
 
             if (string.IsNullOrWhiteSpace(position.SymbolName))
             {
-                GlobalLogger.Log($"[REHYDRATE_WARN] pos={positionKey} reason=missing_symbol_name");
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_name", positionKey, position?.Comment, position?.SymbolName));
+                GlobalLogger.Log(_bot, $"[REHYDRATE_WARN] pos={positionKey} reason=missing_symbol_name");
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_name", positionKey, position?.Comment, position?.SymbolName));
                 return result;
             }
 
             if (!_runtimeSymbols.TryGetSymbolMeta(position.SymbolName, out var symbol))
             {
-                GlobalLogger.Log($"[REHYDRATE][RESOLVER_FAIL] symbol={position.SymbolName} positionId={positionKey}");
-                GlobalLogger.Log($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_metadata", positionKey, position.Comment, position.SymbolName));
+                GlobalLogger.Log(_bot, $"[REHYDRATE][RESOLVER_FAIL] symbol={position.SymbolName} positionId={positionKey}");
+                GlobalLogger.Log(_bot, $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_symbol_metadata");
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=missing_symbol_metadata", positionKey, position.Comment, position.SymbolName));
 
                 var unresolvedContext = new PositionContext
                 {
@@ -253,34 +253,34 @@ namespace GeminiV26.Core.Runtime
                 return result;
             }
 
-            GlobalLogger.Log($"[REHYDRATE][RESOLVER_OK] symbol={position.SymbolName} positionId={positionKey}");
+            GlobalLogger.Log(_bot, $"[REHYDRATE][RESOLVER_OK] symbol={position.SymbolName} positionId={positionKey}");
 
             double entryPrice = position.EntryPrice;
             if (!IsFinitePositive(entryPrice))
             {
-                GlobalLogger.Log($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_entry_price value={entryPrice}");
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_entry_price", positionKey, position.Comment, position.SymbolName));
+                GlobalLogger.Log(_bot, $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_entry_price value={entryPrice}");
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_entry_price", positionKey, position.Comment, position.SymbolName));
                 return result;
             }
 
             double currentVolumeInUnits = position.VolumeInUnits;
             if (!IsFinitePositive(currentVolumeInUnits))
             {
-                GlobalLogger.Log($"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_volume_units value={currentVolumeInUnits}");
-                GlobalLogger.Log(TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_volume_units", positionKey, position.Comment, position.SymbolName));
+                GlobalLogger.Log(_bot, $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_volume_units value={currentVolumeInUnits}");
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds("[REHYDRATE][WARN]\nreason=invalid_volume_units", positionKey, position.Comment, position.SymbolName));
                 return result;
             }
 
             if (currentVolumeInUnits < symbol.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=volume_below_min " +
                     $"volume={currentVolumeInUnits} min={symbol.VolumeInUnitsMin}");
             }
 
             if (!IsVolumeStepAligned(currentVolumeInUnits, symbol.VolumeInUnitsStep))
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=volume_step_misaligned " +
                     $"volume={currentVolumeInUnits} step={symbol.VolumeInUnitsStep}");
             }
@@ -301,14 +301,14 @@ namespace GeminiV26.Core.Runtime
             {
                 usedFallback = true;
                 defaultedLifecycleFields = true;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=missing_stop_loss_exit_manager_expectation");
             }
             else if (!IsFinitePositive(stopLoss.Value))
             {
                 usedFallback = true;
                 defaultedLifecycleFields = true;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_stop_loss value={stopLoss.Value}");
                 stopLoss = null;
             }
@@ -319,7 +319,7 @@ namespace GeminiV26.Core.Runtime
                 {
                     usedFallback = true;
                     defaultedLifecycleFields = true;
-                    GlobalLogger.Log(
+                    GlobalLogger.Log(_bot, 
                         $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_risk_distance value={riskDistance}");
                     riskDistance = 0;
                 }
@@ -328,7 +328,7 @@ namespace GeminiV26.Core.Runtime
             if (takeProfit.HasValue && !IsFinitePositive(takeProfit.Value))
             {
                 usedFallback = true;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_take_profit value={takeProfit.Value}");
                 takeProfit = null;
             }
@@ -338,7 +338,7 @@ namespace GeminiV26.Core.Runtime
 
             if (stopLoss.HasValue && IsSuspiciousStop(direction, stopLoss.Value, entryPrice, symbol.TickSize))
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=suspicious_sl_location " +
                     $"entry={entryPrice} sl={stopLoss.Value} side={position.TradeType}");
             }
@@ -356,9 +356,9 @@ namespace GeminiV26.Core.Runtime
                 // Ambiguity note:
                 // the live position proves protective-stop phase, but not the original pre-TP1 volume.
                 // We therefore restore the fact of TP1/BE progression, while keeping remaining volume as the only hard volume fact.
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_TP1] pos={positionKey} symbol={position.SymbolName} reason=protected_stop_infers_tp1 sl={stopLoss.Value} entry={entryPrice}");
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_FALLBACK] pos={positionKey} symbol={position.SymbolName} reason=original_volume_unknown tp1ClosedUnits=0 remainingUnits={currentVolumeInUnits}");
             }
             else
@@ -366,14 +366,14 @@ namespace GeminiV26.Core.Runtime
                 ambiguousTp1 = true;
                 usedFallback = true;
                 defaultedLifecycleFields = true;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_TP1] pos={positionKey} symbol={position.SymbolName} reason=tp1_ambiguous default=false " +
                     $"remainingUnits={currentVolumeInUnits} originalVolumeRecoverable=false");
             }
 
             if (tp1Hit && tp1ClosedVolumeInUnits > 0 && entryVolumeInUnits <= currentVolumeInUnits)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_WARN] pos={positionKey} symbol={position.SymbolName} reason=invalid_tp1_inference " +
                     $"entryUnits={entryVolumeInUnits} remainingUnits={currentVolumeInUnits} closedUnits={tp1ClosedVolumeInUnits}");
             }
@@ -425,8 +425,8 @@ namespace GeminiV26.Core.Runtime
             if (ctx.RuntimeSymbolAvailable)
                 AttachMemoryState(ctx, position.SymbolName, ref defaultedLifecycleFields);
             RebuildTradeExcursions(ctx, position);
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, position));
-            GlobalLogger.Log(TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, position));
 
             TradeDirection liveDirection = position.TradeType == TradeType.Buy
                 ? TradeDirection.Long
@@ -436,14 +436,14 @@ namespace GeminiV26.Core.Runtime
             {
                 directionMismatch = true;
                 ctx.FinalDirection = liveDirection;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_DIR] pos={positionKey} symbol={position.SymbolName} reason=direction_mismatch " +
                     $"restored={ctx.FinalDirection} live={liveDirection}");
             }
 
             if (ctx.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE_DIR] pos={positionKey} symbol={position.SymbolName} reason=direction_missing_after_restore");
                 return result;
             }
@@ -465,12 +465,12 @@ namespace GeminiV26.Core.Runtime
             {
                 if (TryRebuildMemoryState(normalizedSymbol))
                 {
-                    GlobalLogger.Log($"[MEMORY][RECOVER] symbol={normalizedSymbol} source=rehydrate");
+                    GlobalLogger.Log(_bot, $"[MEMORY][RECOVER] symbol={normalizedSymbol} source=rehydrate");
                     memoryState = _memoryEngine.GetState(normalizedSymbol);
                 }
                 else
                 {
-                    GlobalLogger.Log($"[MEMORY][CRITICAL_MISSING] symbol={normalizedSymbol} source=rehydrate");
+                    GlobalLogger.Log(_bot, $"[MEMORY][CRITICAL_MISSING] symbol={normalizedSymbol} source=rehydrate");
                 }
             }
 
@@ -480,7 +480,7 @@ namespace GeminiV26.Core.Runtime
                 ctx.MoveAge = memoryState.MoveAgeBars;
                 ctx.PullbackCount = memoryState.PullbackCount;
                 ctx.ContextTrust = memoryState.TrustLevel;
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[REHYDRATE][MEMORY_ATTACH] phase={ctx.MovePhase} age={ctx.MoveAge} pullbacks={ctx.PullbackCount}");
                 defaultedLifecycleFields = false;
                 return;
@@ -488,7 +488,7 @@ namespace GeminiV26.Core.Runtime
 
             ctx.ContextTrust = MemoryTrustLevel.Low;
             defaultedLifecycleFields = true;
-            GlobalLogger.Log($"[REHYDRATE][NO_MEMORY] symbol={normalizedSymbol}");
+            GlobalLogger.Log(_bot, $"[REHYDRATE][NO_MEMORY] symbol={normalizedSymbol}");
         }
 
         private bool TryRebuildMemoryState(string normalizedSymbol)
@@ -517,7 +517,7 @@ namespace GeminiV26.Core.Runtime
             {
                 if (!TryComputeBarsSinceEntry(ctx, position.SymbolName, TimeFrame.Minute))
                 {
-                    GlobalLogger.Log($"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_entry_history");
+                    GlobalLogger.Log(_bot, $"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_entry_history");
                     return;
                 }
             }
@@ -525,19 +525,19 @@ namespace GeminiV26.Core.Runtime
             if (TryRebuildExcursions(ctx, position.SymbolName, TimeFrame.Minute) ||
                 TryRebuildExcursions(ctx, position.SymbolName, TimeFrame.Minute5))
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(_bot, 
                     $"[MFE][REBUILD_OK] pos={ctx.PositionId} symbol={position.SymbolName} mfe={ctx.MfeR:0.##} mae={ctx.MaeR:0.##}");
                 return;
             }
 
-            GlobalLogger.Log($"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_price_history");
+            GlobalLogger.Log(_bot, $"[MFE][REBUILD_FAIL] pos={ctx.PositionId} symbol={position.SymbolName} reason=missing_price_history");
         }
 
         private bool TryComputeBarsSinceEntry(PositionContext ctx, string symbolName, TimeFrame timeFrame)
         {
             if (!_runtimeSymbols.TryGetBars(timeFrame, symbolName, out Bars bars))
             {
-                GlobalLogger.Log($"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
+                GlobalLogger.Log(_bot, $"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
                 return false;
             }
 
@@ -560,7 +560,7 @@ namespace GeminiV26.Core.Runtime
 
             if (!_runtimeSymbols.TryGetBars(timeFrame, symbolName, out Bars bars))
             {
-                GlobalLogger.Log($"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
+                GlobalLogger.Log(_bot, $"[REHYDRATE][RESOLVER_FAIL] symbol={symbolName} positionId={ctx.PositionId}");
                 return false;
             }
 

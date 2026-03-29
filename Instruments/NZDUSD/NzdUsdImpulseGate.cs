@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.NZDUSD
 
             if (HasDominantWick(i))
             {
-                GlobalLogger.Log("[NZDUSD GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log(_bot, "[NZDUSD GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                GlobalLogger.Log("[NZDUSD GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log(_bot, "[NZDUSD GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                GlobalLogger.Log("[NZDUSD GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log(_bot, "[NZDUSD GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            GlobalLogger.Log("[NZDUSD GATE] ALLOWED");
+            GlobalLogger.Log(_bot, "[NZDUSD GATE] ALLOWED");
             return true;
         }
 

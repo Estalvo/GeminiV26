@@ -25,17 +25,17 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (HasDominantWick(i))
             {
-                GlobalLogger.Log("[ETH GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log(_bot, "[ETH GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                GlobalLogger.Log("[ETH GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log(_bot, "[ETH GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
-            GlobalLogger.Log("[ETH GATE] ALLOWED");
+            GlobalLogger.Log(_bot, "[ETH GATE] ALLOWED");
             return true;
         }
 

@@ -105,7 +105,7 @@ namespace GeminiV26.Instruments.GER40
 
             if (_m5 == null || _m5.Count < MinBars)
             {
-                GlobalLogger.Log($"[GER40 LOGIC] bars<{MinBars} (count={_m5?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log(_bot, $"[GER40 LOGIC] bars<{MinBars} (count={_m5?.Count ?? 0}) -> default bias/conf");
                 return;
             }
 
@@ -187,12 +187,12 @@ namespace GeminiV26.Instruments.GER40
             LastDirection = MapBiasToDirection(LastBias);
 
             if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
-                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log(_bot, "[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
 
             // =========================
             // DEBUG (INFORMATÍV)
             // =========================
-            GlobalLogger.Log(
+            GlobalLogger.Log(_bot, 
                 $"[GER40 LOGIC] signal={signal} bias={LastBias} logicConf={LastLogicConfidence} | " +
                 $"ema50={ema50:F2} ema200={ema200:F2} diff={emaDiff:F2} | " +
                 $"adx={adx:F1} atr={atr:F2} | " +
@@ -211,7 +211,7 @@ namespace GeminiV26.Instruments.GER40
             entry.LogicConfidence = LastLogicConfidence;
 
             if (entry.LogicConfidence > 0 && entry.Direction == TradeDirection.None)
-                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log(_bot, "[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
         }
 
         private static TradeDirection MapBiasToDirection(TradeType bias)

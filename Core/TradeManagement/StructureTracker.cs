@@ -126,7 +126,7 @@ namespace GeminiV26.Core.TradeManagement
                     _lastHigherLow = newLow;
 
                 _lastSwingLow = newLow;
-                GlobalLogger.Log($"[STRUCT] newSwingLow t={newLow.Time:O} price={newLow.Price}");
+                GlobalLogger.Log(_bot, $"[STRUCT] newSwingLow t={newLow.Time:O} price={newLow.Price}");
             }
 
             if (isSwingHigh)
@@ -142,7 +142,7 @@ namespace GeminiV26.Core.TradeManagement
                     _lastLowerHigh = newHigh;
 
                 _lastSwingHigh = newHigh;
-                GlobalLogger.Log($"[STRUCT] newSwingHigh t={newHigh.Time:O} price={newHigh.Price}");
+                GlobalLogger.Log(_bot, $"[STRUCT] newSwingHigh t={newHigh.Time:O} price={newHigh.Price}");
             }
         }
     }

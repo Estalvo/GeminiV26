@@ -43,8 +43,8 @@ namespace GeminiV26.Core
 
             if (string.IsNullOrWhiteSpace(symbolReference))
             {
-                GlobalLogger.Log("[RESOLVER][INPUT] input=");
-                GlobalLogger.Log("[RESOLVER][SKIP] reason=empty_input");
+                GlobalLogger.Log(_bot, "[RESOLVER][INPUT] input=");
+                GlobalLogger.Log(_bot, "[RESOLVER][SKIP] reason=empty_input");
                 return false;
             }
 
@@ -52,31 +52,31 @@ namespace GeminiV26.Core
             if (_cycleCache.TryGetValue(requested, out symbol))
                 return IsUsableSymbol(symbol);
 
-            GlobalLogger.Log($"[RESOLVER][INPUT] input={requested}");
+            GlobalLogger.Log(_bot, $"[RESOLVER][INPUT] input={requested}");
 
             string canonical = SymbolRouting.NormalizeSymbol(requested);
-            GlobalLogger.Log($"[RESOLVER][CANONICAL] input={requested} canonical={canonical}");
+            GlobalLogger.Log(_bot, $"[RESOLVER][CANONICAL] input={requested} canonical={canonical}");
 
             if (TryResolveCurrentBotSymbol(canonical, out symbol))
             {
                 CacheAliases(requested, canonical, symbol);
-                GlobalLogger.Log($"[RESOLVER][RUNTIME] source=current_bot runtime={symbol.Name}");
-                GlobalLogger.Log($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][RUNTIME] source=current_bot runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
                 _cycleCache[requested] = symbol;
                 return true;
             }
 
             if (!IsGeminiSupportedCanonical(canonical))
             {
-                GlobalLogger.Log($"[RESOLVER][SKIP] reason=unsupported_canonical canonical={canonical}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SKIP] reason=unsupported_canonical canonical={canonical}");
                 _cycleCache[requested] = null;
                 return false;
             }
 
             if (_cache.TryGetValue(requested, out symbol) && IsUsableSymbol(symbol))
             {
-                GlobalLogger.Log($"[RESOLVER][RUNTIME] source=cache runtime={symbol.Name}");
-                GlobalLogger.Log($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][RUNTIME] source=cache runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
                 _cycleCache[requested] = symbol;
                 return true;
             }
@@ -85,22 +85,22 @@ namespace GeminiV26.Core
             if (IsUsableSymbol(symbol))
             {
                 CacheAliases(requested, canonical, symbol);
-                GlobalLogger.Log($"[RESOLVER][RUNTIME] source=direct runtime={symbol.Name}");
-                GlobalLogger.Log($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][RUNTIME] source=direct runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
                 _cycleCache[requested] = symbol;
                 return true;
             }
 
             if (TryResolveKnownRuntimeMapping(requested, canonical, out symbol))
             {
-                GlobalLogger.Log($"[RESOLVER][RUNTIME] source=known_map runtime={symbol.Name}");
-                GlobalLogger.Log($"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][RUNTIME] source=known_map runtime={symbol.Name}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SUCCESS] input={requested} canonical={canonical} runtime={symbol.Name}");
                 _cycleCache[requested] = symbol;
                 return true;
             }
 
-            GlobalLogger.Log("[SYMBOL][SKIP] " + canonical);
-            GlobalLogger.Log($"[RESOLVER][SKIP] reason=runtime_not_found canonical={canonical}");
+            GlobalLogger.Log(_bot, "[SYMBOL][SKIP] " + canonical);
+            GlobalLogger.Log(_bot, $"[RESOLVER][SKIP] reason=runtime_not_found canonical={canonical}");
             _cycleCache[requested] = null;
             return false;
         }

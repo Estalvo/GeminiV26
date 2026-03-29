@@ -6,45 +6,45 @@ namespace GeminiV26.Core
     {
         public static void UpdateMfeMae(PositionContext ctx, double currentPrice)
         {
-            GlobalLogger.Log($"[MFE_CALL] time={System.DateTime.UtcNow:HH:mm:ss.fff} ctxNull={ctx == null} price={currentPrice}");
+            GlobalLogger.Log(ctx.Bot, $"[MFE_CALL] time={System.DateTime.UtcNow:HH:mm:ss.fff} ctxNull={ctx == null} price={currentPrice}");
             if (ctx != null)
             {
-                GlobalLogger.Log($"[MFE_CTX] hasBot={(ctx.Bot != null)} entry={ctx.EntryPrice} side={ctx.FinalDirection}");
+                GlobalLogger.Log(ctx.Bot, $"[MFE_CTX] hasBot={(ctx.Bot != null)} entry={ctx.EntryPrice} side={ctx.FinalDirection}");
             }
 
             if (ctx == null)
             {
-                GlobalLogger.Log("[MFE_GUARD] ctx null");
+                GlobalLogger.Log(ctx.Bot, "[MFE_GUARD] ctx null");
                 return;
             }
 
             if (ctx.EntryPrice <= 0)
             {
-                GlobalLogger.Log("[MFE_GUARD] invalid entry price");
+                GlobalLogger.Log(ctx.Bot, "[MFE_GUARD] invalid entry price");
                 return;
             }
 
             if (ctx.RiskPriceDistance <= 0)
             {
-                GlobalLogger.Log("[MFE_GUARD] invalid risk distance");
+                GlobalLogger.Log(ctx.Bot, "[MFE_GUARD] invalid risk distance");
                 return;
             }
 
             if (currentPrice <= 0)
             {
-                GlobalLogger.Log("[MFE_GUARD] invalid price");
+                GlobalLogger.Log(ctx.Bot, "[MFE_GUARD] invalid price");
                 return;
             }
 
             if (ctx.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log("[MFE_GUARD] final direction none");
+                GlobalLogger.Log(ctx.Bot, "[MFE_GUARD] final direction none");
                 return;
             }
 
             double rMove;
             double riskDistance = ctx.RiskPriceDistance;
-            GlobalLogger.Log($"[MFE_BEFORE] mfe={ctx.MfeR} mae={ctx.MaeR}");
+            GlobalLogger.Log(ctx.Bot, $"[MFE_BEFORE] mfe={ctx.MfeR} mae={ctx.MaeR}");
 
             if (ctx.FinalDirection == TradeDirection.Long)
                 rMove = (currentPrice - ctx.EntryPrice) / riskDistance;
@@ -57,15 +57,15 @@ namespace GeminiV26.Core
             if (rMove < ctx.MaeR)
                 ctx.MaeR = rMove;
 
-            GlobalLogger.Log($"[MFE_AFTER] mfe={ctx.MfeR} mae={ctx.MaeR}");
-            GlobalLogger.Log($"[MFE_LOG_CONSOLE] mfe={ctx.MfeR} mae={ctx.MaeR}");
+            GlobalLogger.Log(ctx.Bot, $"[MFE_AFTER] mfe={ctx.MfeR} mae={ctx.MaeR}");
+            GlobalLogger.Log(ctx.Bot, $"[MFE_LOG_CONSOLE] mfe={ctx.MfeR} mae={ctx.MaeR}");
             if (ctx.Bot != null)
             {
-                GlobalLogger.Log($"[MFE_LOG_BOT] mfe={ctx.MfeR} mae={ctx.MaeR}");
+                GlobalLogger.Log(ctx.Bot, $"[MFE_LOG_BOT] mfe={ctx.MfeR} mae={ctx.MaeR}");
             }
             else
             {
-                GlobalLogger.Log("[MFE_LOG_BOT] bot NULL");
+                GlobalLogger.Log(ctx.Bot, "[MFE_LOG_BOT] bot NULL");
             }
 
         }

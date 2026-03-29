@@ -55,13 +55,13 @@ namespace GeminiV26.Instruments.NAS100
 
             if (IsExtremeSpike(i, entryDirection))
             {
-                GlobalLogger.Log("[NAS GATE] BLOCK extreme spike");
+                GlobalLogger.Log(_bot, "[NAS GATE] BLOCK extreme spike");
                 return false;
             }
 
             if (IsInCooldown(i))
             {
-                GlobalLogger.Log("[NAS GATE] BLOCK impulse cooldown");
+                GlobalLogger.Log(_bot, "[NAS GATE] BLOCK impulse cooldown");
                 return false;
             }
 
@@ -113,7 +113,7 @@ namespace GeminiV26.Instruments.NAS100
 
             if (impulseDirection != entryDirection)
             {
-                GlobalLogger.Log("[NAS GATE] spike direction mismatch");
+                GlobalLogger.Log(_bot, "[NAS GATE] spike direction mismatch");
                 return true;
             }
 

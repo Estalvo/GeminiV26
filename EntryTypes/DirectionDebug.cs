@@ -12,7 +12,7 @@ namespace GeminiV26.EntryTypes
                 return;
 
             ctx.DirectionDebugLogged = true;
-            GlobalLogger.Log($"[DIR DEBUG] symbol={ctx.SymbolName} bias={ctx.LogicBiasDirection} conf={ctx.LogicBiasConfidence}");
+            GlobalLogger.Log(this, $"[DIR DEBUG] symbol={ctx.SymbolName} bias={ctx.LogicBiasDirection} conf={ctx.LogicBiasConfidence}");
 
             if (SymbolRouting.NormalizeSymbol(ctx.Symbol) == "AUDNZD")
             {
@@ -22,7 +22,7 @@ namespace GeminiV26.EntryTypes
                     Debug.Assert(ctx.LogicBias == entryBias);
                 }
 
-                GlobalLogger.Log($"[AUDNZD TRACE] step3_entry={entryBias} conf={ctx.LogicBiasConfidence}");
+                GlobalLogger.Log(this, $"[AUDNZD TRACE] step3_entry={entryBias} conf={ctx.LogicBiasConfidence}");
             }
         }
     }

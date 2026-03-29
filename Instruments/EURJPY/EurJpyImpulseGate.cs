@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.EURJPY
 
             if (HasDominantWick(i))
             {
-                GlobalLogger.Log("[EURJPY GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log(_bot, "[EURJPY GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                GlobalLogger.Log("[EURJPY GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log(_bot, "[EURJPY GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                GlobalLogger.Log("[EURJPY GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log(_bot, "[EURJPY GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            GlobalLogger.Log("[EURJPY GATE] ALLOWED");
+            GlobalLogger.Log(_bot, "[EURJPY GATE] ALLOWED");
             return true;
         }
 

@@ -63,7 +63,7 @@ namespace GeminiV26.Data
             }
             catch (Exception ex)
             {
-                GlobalLogger.Log($"[CSV LOGGER ERROR][EVENT] path={path} ex={ex.GetType().Name} msg={ex.Message}");
+                GlobalLogger.Log(null, $"[CSV LOGGER ERROR][EVENT] path={path} ex={ex.GetType().Name} msg={ex.Message}");
             }
         }
 

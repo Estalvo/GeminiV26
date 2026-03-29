@@ -317,7 +317,7 @@ namespace GeminiV26.EntryTypes.INDEX
 
             if (score < MinScore)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(this, 
                     $"[IDX_PULLBACK][REJECT] LOW_SCORE({score}) | " +
                     $"dir={dir} | pbATR={pullbackDepthAtr:F2} | " +
                     $"pbBars={ctx.PullbackBars_M5} | fatigue={trendFatigue} | " +
@@ -326,7 +326,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, dir, score, "LOW_SCORE");
             }
 
-            GlobalLogger.Log(
+            GlobalLogger.Log(this, 
                 $"[IDX_PULLBACK][PASS] dir={dir} score={score} | " +
                 $"pbATR={pullbackDepthAtr:F2} | pbBars={ctx.PullbackBars_M5} | " +
                 $"fatigue={trendFatigue} | ADX={ctx.Adx_M5:F1}"
