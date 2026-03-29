@@ -290,20 +290,20 @@ namespace GeminiV26.EntryTypes
             switch (instrumentClass)
             {
                 case InstrumentClass.FX:
-                    htfDirection = ctx.FxHtfAllowedDirection;
-                    htfConfidence = ctx.FxHtfConfidence01;
+                    htfDirection = ctx.ActiveHtfDirection;
+                    htfConfidence = ctx.ActiveHtfConfidence;
                     break;
                 case InstrumentClass.CRYPTO:
-                    htfDirection = ctx.CryptoHtfAllowedDirection;
-                    htfConfidence = ctx.CryptoHtfConfidence01;
+                    htfDirection = ctx.ActiveHtfDirection;
+                    htfConfidence = ctx.ActiveHtfConfidence;
                     break;
                 case InstrumentClass.INDEX:
-                    htfDirection = ctx.IndexHtfAllowedDirection;
-                    htfConfidence = ctx.IndexHtfConfidence01;
+                    htfDirection = ctx.ActiveHtfDirection;
+                    htfConfidence = ctx.ActiveHtfConfidence;
                     break;
                 case InstrumentClass.METAL:
-                    htfDirection = ctx.MetalHtfAllowedDirection;
-                    htfConfidence = ctx.MetalHtfConfidence01;
+                    htfDirection = ctx.ActiveHtfDirection;
+                    htfConfidence = ctx.ActiveHtfConfidence;
                     break;
             }
         }

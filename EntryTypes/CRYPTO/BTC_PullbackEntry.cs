@@ -93,8 +93,8 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // HTF DIRECTIONAL BIAS (score-only)
             // =========================
-            var allow = ctx.CryptoHtfAllowedDirection;
-            var htfConf = ctx.CryptoHtfConfidence01;
+            var allow = ctx.ActiveHtfDirection;
+            var htfConf = ctx.ActiveHtfConfidence;
 
             if (dir != TradeDirection.Long && dir != TradeDirection.Short)
                 return Block(ctx, "NO_TREND_DIR", score);
@@ -872,7 +872,7 @@ namespace GeminiV26.EntryTypes.Crypto
             ctx.Log?.Invoke(
                 $"[CRYPTO][REGIME_ADJUST] regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
 
-            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            var htfDirection = ctx.ActiveHtfDirection;
             int htfDelta = 0;
             if (htfDirection == dir)
                 htfDelta = +8;
@@ -942,14 +942,14 @@ namespace GeminiV26.EntryTypes.Crypto
             if (evaluation == null)
                 return;
 
-            var sourceAllowedDirection = ctx?.CryptoHtfAllowedDirection ?? TradeDirection.None;
+            var sourceAllowedDirection = ctx?.ActiveHtfDirection ?? TradeDirection.None;
             evaluation.HtfTraceSourceStage = "SOURCE";
             evaluation.HtfTraceSourceModule = "CRYPTO_ENTRY";
-            evaluation.HtfTraceSourceState = ctx?.CryptoHtfReason ?? "N/A";
+            evaluation.HtfTraceSourceState = "N/A";
             evaluation.HtfTraceSourceAllowedDirection = sourceAllowedDirection;
             evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
             evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
-            evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
+            evaluation.HtfConfidence01 = ctx?.ActiveHtfConfidence ?? 0.0;
         }
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)

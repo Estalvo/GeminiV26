@@ -294,12 +294,12 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             bool htfMismatch =
-                ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                ctx.FxHtfAllowedDirection != dir;
+                ctx.ActiveHtfDirection != TradeDirection.None &&
+                ctx.ActiveHtfDirection != dir;
 
             if (htfMismatch)
             {
-                double conf = ctx.FxHtfConfidence01;
+                double conf = ctx.ActiveHtfConfidence;
                 int htfPenalty = (int)(conf * 10);
 
                 ApplyPenalty(ref score, ref penalty, htfPenalty, penaltyBudget, ctx, "HTF_MISMATCH");

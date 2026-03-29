@@ -66,7 +66,7 @@ namespace GeminiV26.EntryTypes.FX
 
             ctx.Log?.Invoke(
                 $"[FX_MICRO START] sym={ctx.Symbol} dir={dir} " +
-                $"htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} " +
+                $"htf={ctx.ActiveHtfDirection}/{ctx.ActiveHtfConfidence:F2} " +
                 $"impulse={ctx.HasImpulse_M5} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}"
             );
 
@@ -117,11 +117,11 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // HTF ALIGNMENT (soft)
             // -----------------------------------------------------
-            if (ctx.FxHtfAllowedDirection == dir)
+            if (ctx.ActiveHtfDirection == dir)
             {
                 score += 5;
             }
-            else if (ctx.FxHtfAllowedDirection != TradeDirection.None)
+            else if (ctx.ActiveHtfDirection != TradeDirection.None)
             {
                 score -= 10;
             }

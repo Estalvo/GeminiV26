@@ -288,8 +288,8 @@ namespace GeminiV26.EntryTypes.METAL
             }
 
             bool isAgainst =
-                ctx.MetalHtfAllowedDirection != TradeDirection.None &&
-                ctx.MetalHtfAllowedDirection != dir;
+                ctx.ActiveHtfDirection != TradeDirection.None &&
+                ctx.ActiveHtfDirection != dir;
 
             if (isAgainst)
             {

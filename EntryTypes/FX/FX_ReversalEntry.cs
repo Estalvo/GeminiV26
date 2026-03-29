@@ -89,19 +89,19 @@ namespace GeminiV26.EntryTypes.FX
             // =========================
             // FX HTF bias – Reversal weighting (soft)
             // =========================
-            if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
-                ctx.FxHtfConfidence01 > 0.0)
+            if (ctx.ActiveHtfDirection != TradeDirection.None &&
+                ctx.ActiveHtfConfidence > 0.0)
             {
-                if (dir != ctx.FxHtfAllowedDirection)
+                if (dir != ctx.ActiveHtfDirection)
                 {
                     // Reversal HTF ellen: enyhe büntetés
-                    int htfPenalty = (int)(4 + 3 * ctx.FxHtfConfidence01);
+                    int htfPenalty = (int)(4 + 3 * ctx.ActiveHtfConfidence);
                     score -= htfPenalty;
                 }
                 else
                 {
                     // Reversal HTF irányába: enyhe jutalom (ritkább, de értékes)
-                    int htfBonus = (int)(2 + 2 * ctx.FxHtfConfidence01);
+                    int htfBonus = (int)(2 + 2 * ctx.ActiveHtfConfidence);
                     score += htfBonus;
                 }
             }

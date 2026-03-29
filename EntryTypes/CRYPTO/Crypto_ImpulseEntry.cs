@@ -113,7 +113,7 @@ namespace GeminiV26.EntryTypes.Crypto
             ctx.Log?.Invoke(
                 $"[CRYPTO][REGIME_ADJUST] entryType=Impulse regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
 
-            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            var htfDirection = ctx.ActiveHtfDirection;
             int htfDelta = htfDirection == dir ? +8 : -10;
             score += htfDelta;
             scoreAfterHtf = score;
@@ -173,14 +173,14 @@ namespace GeminiV26.EntryTypes.Crypto
             if (evaluation == null)
                 return;
 
-            var sourceAllowedDirection = ctx?.CryptoHtfAllowedDirection ?? TradeDirection.None;
+            var sourceAllowedDirection = ctx?.ActiveHtfDirection ?? TradeDirection.None;
             evaluation.HtfTraceSourceStage = "SOURCE";
             evaluation.HtfTraceSourceModule = "CRYPTO_ENTRY";
-            evaluation.HtfTraceSourceState = ctx?.CryptoHtfReason ?? "N/A";
+            evaluation.HtfTraceSourceState = "N/A";
             evaluation.HtfTraceSourceAllowedDirection = sourceAllowedDirection;
             evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
             evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
-            evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
+            evaluation.HtfConfidence01 = ctx?.ActiveHtfConfidence ?? 0.0;
         }
 
     }
