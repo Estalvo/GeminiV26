@@ -3180,7 +3180,10 @@ namespace GeminiV26.Core
                 ctx,
                 pos));
             if (ctx != null)
+            {
+                System.Console.WriteLine($"[MFE_CLOSE] finalMFE={ctx.MfeR} finalMAE={ctx.MaeR}");
                 _bot.Print($"[CLOSE] final MFE={ctx.MfeR} MAE={ctx.MaeR}");
+            }
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={args.Reason}\ndetail=broker_closed_event", ctx, pos));
 
             _logger.OnTradeClosed(
