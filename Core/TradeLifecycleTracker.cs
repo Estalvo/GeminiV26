@@ -9,7 +9,7 @@ namespace GeminiV26.Core
             System.Console.WriteLine($"[MFE_CALL] time={System.DateTime.UtcNow:HH:mm:ss.fff} ctxNull={ctx == null} price={currentPrice}");
             if (ctx != null)
             {
-                System.Console.WriteLine($"[MFE_CTX] hasBot={(ctx.Bot != null)} entry={ctx.EntryPrice} side={ctx.Side}");
+                System.Console.WriteLine($"[MFE_CTX] hasBot={(ctx.Bot != null)} entry={ctx.EntryPrice} side={ctx.FinalDirection}");
             }
 
             if (ctx == null)
