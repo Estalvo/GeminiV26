@@ -357,7 +357,7 @@ namespace GeminiV26.Core.Entry
 
         public string SymbolName => Symbol;
 
-        public void Print(string message)
+        public void Log(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
                 return;
@@ -368,7 +368,7 @@ namespace GeminiV26.Core.Entry
                 return;
             }
 
-            Bot?.Print(TradeLogIdentity.WithTempId(message, this));
+            GlobalLogger.Log(TradeLogIdentity.WithTempId(message, this));
         }
 
         public int GetBarsSinceImpulse(TradeDirection direction)
@@ -413,7 +413,7 @@ namespace GeminiV26.Core.Entry
 
         private bool GetCrossSidePullbackFallback()
         {
-            Print("[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
+            GlobalLogger.Log("[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
 
             bool hasAnySidePullback = HasPullbackLong_M5;
             hasAnySidePullback |= HasPullbackShort_M5;

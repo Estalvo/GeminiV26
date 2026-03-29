@@ -25,17 +25,17 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[BTC GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[BTC GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[BTC GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[BTC GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
-            _bot.Print("[BTC GATE] ALLOWED");
+            GlobalLogger.Log("[BTC GATE] ALLOWED");
             return true;
         }
 

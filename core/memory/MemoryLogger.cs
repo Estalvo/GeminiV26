@@ -16,7 +16,7 @@ namespace GeminiV26.Core.Memory
             if (record == null)
                 return;
 
-            _bot.Print(
+            GlobalLogger.Log(
                 "[MEM][WRITE]\n" +
                 $"Instrument={record.Instrument}\n" +
                 $"EntryType={record.EntryType}\n" +

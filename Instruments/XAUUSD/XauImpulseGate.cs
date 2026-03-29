@@ -34,25 +34,25 @@ namespace GeminiV26.Instruments.XAUUSD
             // ===== 1️⃣ Wick-dominancia =====
             if (HasDominantWick(i))
             {
-                _bot.Print($"[XAU GATE] BLOCKED: Dominant wick (ratio>{WickDominanceRatio})");
+                GlobalLogger.Log($"[XAU GATE] BLOCKED: Dominant wick (ratio>{WickDominanceRatio})");
                 return false;
             }
 
             // ===== 2️⃣ Extrém impulse (spike) =====
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print($"[XAU GATE] BLOCKED: Extreme impulse bar (body > ATR*{ImpulseBodyAtrMult})");
+                GlobalLogger.Log($"[XAU GATE] BLOCKED: Extreme impulse bar (body > ATR*{ImpulseBodyAtrMult})");
                 return false;
             }
 
             // ===== 3️⃣ Rövid impulse cooldown =====
             if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print($"[XAU GATE] BLOCKED: Impulse cooldown ({ImpulseCooldownBars} bars)");
+                GlobalLogger.Log($"[XAU GATE] BLOCKED: Impulse cooldown ({ImpulseCooldownBars} bars)");
                 return false;
             }
 
-            _bot.Print("[XAU GATE] ALLOWED");
+            GlobalLogger.Log("[XAU GATE] ALLOWED");
             return true;
         }
 

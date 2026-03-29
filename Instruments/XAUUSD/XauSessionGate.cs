@@ -26,7 +26,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =========================
             if (t.DayOfWeek == DayOfWeek.Saturday || t.DayOfWeek == DayOfWeek.Sunday)
             {
-                _bot.Print("[XAU SESSION] BLOCKED: Weekend");
+                GlobalLogger.Log("[XAU SESSION] BLOCKED: Weekend");
                 return false;
             }
 
@@ -37,7 +37,7 @@ namespace GeminiV26.Instruments.XAUUSD
             {
                 if (h >= 0 && h < 8)
                 {
-                    _bot.Print("[XAU SESSION] ALLOWED: XAU_ASIA_ALLOWED");
+                    GlobalLogger.Log("[XAU SESSION] ALLOWED: XAU_ASIA_ALLOWED");
                     return true;
                 }
             }
@@ -45,7 +45,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // =========================
             // DEFAULT: ALLOW
             // =========================
-            _bot.Print("[XAU SESSION] ALLOWED");
+            GlobalLogger.Log("[XAU SESSION] ALLOWED");
             return true;
         }
     }

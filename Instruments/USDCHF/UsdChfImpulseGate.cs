@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.USDCHF
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[USDCHF GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[USDCHF GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[USDCHF GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[USDCHF GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print("[USDCHF GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log("[USDCHF GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            _bot.Print("[USDCHF GATE] ALLOWED");
+            GlobalLogger.Log("[USDCHF GATE] ALLOWED");
             return true;
         }
 

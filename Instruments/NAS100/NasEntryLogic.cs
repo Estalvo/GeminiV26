@@ -105,8 +105,8 @@ namespace GeminiV26.Instruments.NAS100
 
             if (_m5 == null || _m5.Count < MinBars)
             {
-                _bot.Print($"[NAS LOGIC] bars<{MinBars} (count={_m5?.Count ?? 0}) -> default bias/conf");
-                _bot.Print($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
+                GlobalLogger.Log($"[NAS LOGIC] bars<{MinBars} (count={_m5?.Count ?? 0}) -> default bias/conf");
+                GlobalLogger.Log($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
                 return;
             }
 
@@ -193,18 +193,18 @@ namespace GeminiV26.Instruments.NAS100
             LastDirection = MapBiasToDirection(LastBias);
 
             if (LastLogicConfidence > 0 && LastDirection == TradeDirection.None)
-                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
 
             // =========================
             // DEBUG (INFORMATÍV)
             // =========================
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[NAS LOGIC] signal={signal} bias={LastBias} logicConf={LastLogicConfidence} | " +
                 $"ema50={ema50:F2} ema200={ema200:F2} diff={emaDiff:F2} | " +
                 $"adx={adx:F1} atr={atr:F2} | " +
                 $"htfBull={htfBull}"
             );
-            _bot.Print($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
+            GlobalLogger.Log($"[NAS LOGIC STATE] LastBias={LastBias} LastConf={LastLogicConfidence}");
         }
 
         public void ApplyToEntryEvaluation(EntryEvaluation entry)
@@ -216,7 +216,7 @@ namespace GeminiV26.Instruments.NAS100
             entry.LogicConfidence = LastLogicConfidence;
 
             if (entry.LogicConfidence > 0 && entry.Direction == TradeDirection.None)
-                _bot.Print("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
+                GlobalLogger.Log("[DIR][LOGIC_ERROR] Direction missing in EntryLogic");
         }
 
         private static TradeDirection MapBiasToDirection(TradeType bias)

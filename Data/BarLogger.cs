@@ -180,7 +180,7 @@ namespace GeminiV26.Data
             }
             catch (Exception ex)
             {
-                _bot.Print($"[CSV LOGGER ERROR][BAR] path={path} ex={ex.GetType().Name} msg={ex.Message}");
+                GlobalLogger.Log($"[CSV LOGGER ERROR][BAR] path={path} ex={ex.GetType().Name} msg={ex.Message}");
             }
         }
     }

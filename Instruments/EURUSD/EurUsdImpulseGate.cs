@@ -33,24 +33,24 @@ namespace GeminiV26.Instruments.EURUSD
 
             if (HasDominantWick(i))
             {
-                _bot.Print("[EUR GATE] BLOCKED: Dominant wick");
+                GlobalLogger.Log("[EUR GATE] BLOCKED: Dominant wick");
                 return false;
             }
 
             if (IsExtremeImpulseBar(i))
             {
-                _bot.Print("[EUR GATE] BLOCKED: Extreme impulse bar");
+                GlobalLogger.Log("[EUR GATE] BLOCKED: Extreme impulse bar");
                 return false;
             }
 
             /*if (IsInRecentImpulseCooldown(i))
             {
-                _bot.Print("[EUR GATE] BLOCKED: Impulse cooldown");
+                GlobalLogger.Log("[EUR GATE] BLOCKED: Impulse cooldown");
                 return false;
             }
             */
 
-            _bot.Print("[EUR GATE] ALLOWED");
+            GlobalLogger.Log("[EUR GATE] ALLOWED");
             return true;
         }
 

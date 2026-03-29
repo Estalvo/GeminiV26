@@ -66,22 +66,22 @@ namespace GeminiV26.Core.Entry
                 TempId = CreateEntryAttemptId(symbol),
                 IsReady = false,
                 TrendDirection = TradeDirection.None,
-                Log = message => _bot.Print(message)
+                Log = message => GlobalLogger.Log(message)
             };
 
             string canonicalSymbol = SymbolRouting.NormalizeSymbol(symbol);
-            _bot.Print($"[MEMORY][CTX_ATTACH][START] symbol={canonicalSymbol}");
+            GlobalLogger.Log($"[MEMORY][CTX_ATTACH][START] symbol={canonicalSymbol}");
             var memory = _memoryEngine.GetState(canonicalSymbol);
 
             if (memory == null)
             {
                 ctx.Memory = null;
-                _bot.Print($"[MEMORY][MISSING] symbol={canonicalSymbol}");
+                GlobalLogger.Log($"[MEMORY][MISSING] symbol={canonicalSymbol}");
             }
             else
             {
                 ctx.Memory = memory;
-                _bot.Print($"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
+                GlobalLogger.Log($"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
             }
 
             AttachMemorySnapshot(ctx, canonicalSymbol);
@@ -93,9 +93,9 @@ namespace GeminiV26.Core.Entry
                 !_runtimeSymbols.TryGetBars(TimeFrame.Minute5, symbol, out var m5) ||
                 !_runtimeSymbols.TryGetBars(TimeFrame.Minute15, symbol, out var m15))
             {
-                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
-                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
-                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                GlobalLogger.Log($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                GlobalLogger.Log($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                GlobalLogger.Log($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -107,8 +107,8 @@ namespace GeminiV26.Core.Entry
 
             if (ctx.M1.Count < 10 || ctx.M5.Count < 30 || ctx.M15.Count < 30)
             {
-                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
-                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                GlobalLogger.Log($"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
+                GlobalLogger.Log($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -141,9 +141,9 @@ namespace GeminiV26.Core.Entry
                 !_runtimeSymbols.TryGetSymbolMeta(symbol, out _))
             {
                 ctx.RuntimeResolved = false;
-                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
-                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
-                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                GlobalLogger.Log($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                GlobalLogger.Log($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                GlobalLogger.Log($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -467,7 +467,7 @@ namespace GeminiV26.Core.Entry
                 ctx.PullbackBars_M5 >= 1 &&
                 ctx.PullbackDepthAtr_M5 >= 0.25;
 
-            _bot.Print($"[PB] bars={ctx.PullbackBars_M5} depth={ctx.PullbackDepthAtr_M5:F2} early={ctx.HasEarlyPullback_M5}");
+            GlobalLogger.Log($"[PB] bars={ctx.PullbackBars_M5} depth={ctx.PullbackDepthAtr_M5:F2} early={ctx.HasEarlyPullback_M5}");
 
             // =================================================
             // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
@@ -533,7 +533,7 @@ namespace GeminiV26.Core.Entry
                     Math.Abs(ctx.M5.HighPrices[impulseIdx] - ctx.M5.LowPrices[impulseIdx]);
             }
 
-            _bot.Print($"[IMPULSE SRC] idx={impulseIdx} barsSince={ctx.BarsSinceImpulse_M5} range={impulseRange:F2}");
+            GlobalLogger.Log($"[IMPULSE SRC] idx={impulseIdx} barsSince={ctx.BarsSinceImpulse_M5} range={impulseRange:F2}");
 
             bool hasValidImpulseRange =
                 impulseRange > 0 &&
@@ -656,7 +656,7 @@ namespace GeminiV26.Core.Entry
                 ctx.HasFlagShort_M5 = false;
             }
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[FLAG FIX] recentImpulse={hasRecentImpulse} bars={flagBars} retraceOk={validRetrace} " +
                 $"tight={isTight} decel={ctx.IsPullbackDecelerating_M5} " +
                 $"long={ctx.HasFlagLong_M5} short={ctx.HasFlagShort_M5} " +
@@ -678,13 +678,13 @@ namespace GeminiV26.Core.Entry
             ctx.IsTransition_M5 =
                 weakTrend || compressed;
 
-            _bot.Print($"[REGIME] transition={ctx.IsTransition_M5} weakTrend={weakTrend} compressed={compressed}");
+            GlobalLogger.Log($"[REGIME] transition={ctx.IsTransition_M5} weakTrend={weakTrend} compressed={compressed}");
 
             // ============================
             // DEBUG (opcionális, de most hasznos)
             // ============================
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[FLAG V2.22] tight={isTight} decel={decelerating} allowNoDecel=false " +
                 $"LH={hasLowerHighs} HL={hasHigherLows} " +
                 $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
@@ -879,12 +879,12 @@ namespace GeminiV26.Core.Entry
                 LogHtfAuditFlow(ctx, symbol, InstrumentClass.METAL, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
 
-            _bot.Print($"[HTF][SNAPSHOT] dir={ctx.ActiveHtfDirection} conf={ctx.ActiveHtfConfidence:F2}");
+            GlobalLogger.Log($"[HTF][SNAPSHOT] dir={ctx.ActiveHtfDirection} conf={ctx.ActiveHtfConfidence:F2}");
             if (ctx.ActiveHtfDirection == TradeDirection.None)
-                _bot.Print("[HTF][WARN] Missing HTF snapshot");
+                GlobalLogger.Log("[HTF][WARN] Missing HTF snapshot");
 
             ctx.IsReady = true;
-            _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+            GlobalLogger.Log($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
             LogEntryMemorySnapshot(ctx, symbol);
             return ctx;
         }
@@ -898,13 +898,13 @@ namespace GeminiV26.Core.Entry
             double confidence01,
             string reason)
         {
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDIT][HTF FLOW][SOURCE] symbol={symbol} asset={assetClass} entryType=N/A stage=SOURCE module={assetClass}HtfBiasEngine " +
                 $"htfState={htfState} allowedDirection={allowedDirection} align=false candidateDirection=None");
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDIT][HTF FLOW][CONTEXT_BUILD] symbol={symbol} asset={assetClass} entryType=N/A stage={nameof(EntryContextBuilder)} module={nameof(EntryContextBuilder)} " +
                 $"htfState={htfState} allowedDirection={allowedDirection} align=false candidateDirection=None htfConfidence={confidence01:0.00}");
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[AUDIT][HTF CONTEXT] symbol={symbol} asset={assetClass} allowedDirection={allowedDirection} confidence={confidence01:0.00} reason={reason ?? "N/A"} " +
                 $"activeDirection={ctx.ActiveHtfDirection} activeConfidence={ctx.ActiveHtfConfidence:0.00}");
         }
@@ -962,12 +962,12 @@ namespace GeminiV26.Core.Entry
 
         private void LogEntryMemorySnapshot(EntryContext ctx, string symbol)
         {
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[ENTRY][SNAPSHOT] symbol={symbol} movePhase={ctx?.MemoryState?.MovePhase ?? MovePhase.Unknown} continuationWindow={ctx?.MemoryContinuationWindow ?? ContinuationWindowState.Unknown} extensionState={ctx?.MemoryMoveExtension ?? MoveExtensionState.Unknown} impulseFreshness={ctx?.MemoryImpulseFreshnessScore ?? 0:0.00} continuationFreshness={ctx?.MemoryContinuationFreshnessScore ?? 0:0.00} triggerLateScore={ctx?.MemoryTriggerLateScore ?? 0:0.00} chaseRisk={ctx?.MemoryAssessment?.IsChaseRisk ?? false} timingPenalty={ctx?.MemoryTimingPenalty ?? 0}");
 
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[CTX][TIMING][SIDE] symbol={symbol} side=LONG timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationLong ?? false} late={ctx?.HasLateContinuationLong ?? false} overextended={ctx?.IsOverextendedLong ?? false} freshness={ctx?.ContinuationFreshnessLong ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseLong ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakLong ?? -1} attempts={ctx?.ContinuationAttemptCountLong ?? -1} triggerLate={ctx?.TriggerLateScoreLong ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrLong ?? 0:0.00}");
-            _bot.Print(
+            GlobalLogger.Log(
                 $"[CTX][TIMING][SIDE] symbol={symbol} side=SHORT timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationShort ?? false} late={ctx?.HasLateContinuationShort ?? false} overextended={ctx?.IsOverextendedShort ?? false} freshness={ctx?.ContinuationFreshnessShort ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseShort ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakShort ?? -1} attempts={ctx?.ContinuationAttemptCountShort ?? -1} triggerLate={ctx?.TriggerLateScoreShort ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrShort ?? 0:0.00}");
         }
 
