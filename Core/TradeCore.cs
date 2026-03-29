@@ -2493,14 +2493,30 @@ namespace GeminiV26.Core
 
                 if (!trigger.TriggerConfirmed)
                 {
-                    UpsertArmedSetup(candidate, barsSinceBreak);
+                    UpsertArmedSetup(candidate, barsSinceBreak, false, currentBarIndex);
                     _bot.Print($"[SETUP DETECTED] symbol={candidate.Symbol} score={candidate.Score} state=ARMED type={candidate.Type} dir={candidate.Direction}");
                     _bot.Print($"[TRIGGER WAIT] symbol={candidate.Symbol} reason={trigger.WaitReason} type={candidate.Type} dir={candidate.Direction} impact=score_only");
                 }
                 else
                 {
-                    UpsertArmedSetup(candidate, barsSinceBreak);
+                    UpsertArmedSetup(candidate, barsSinceBreak, true, currentBarIndex);
                     _bot.Print($"[TRIGGER CONFIRMED] symbol={candidate.Symbol} breakoutClose={trigger.BreakoutClose.ToString().ToLowerInvariant()} structureBreak={trigger.StructureBreak.ToString().ToLowerInvariant()} m1Break={trigger.M1Break.ToString().ToLowerInvariant()} type={candidate.Type} dir={candidate.Direction}");
+                }
+
+                if (candidate.TriggerConfirmed && _armedSetups.TryGetValue(GetArmedSetupKey(candidate), out var armed))
+                {
+                    int barsSinceTrigger = armed.TriggerBarIndex >= 0
+                        ? Math.Max(0, currentBarIndex - armed.TriggerBarIndex)
+                        : 0;
+
+                    if (barsSinceTrigger > 1)
+                    {
+                        int scoreBefore = candidate.Score;
+                        candidate.Score = Math.Max(0, (int)Math.Round(candidate.Score * 0.75, MidpointRounding.AwayFromZero));
+                        _bot.Print(TradeLogIdentity.WithTempId(
+                            $"[TRIGGER][LATE_PENALTY] symbol={candidate.Symbol ?? _bot.SymbolName} type={candidate.Type} dir={candidate.Direction} barsSinceTrigger={barsSinceTrigger} score={scoreBefore}->{candidate.Score}",
+                            ctx));
+                    }
                 }
 
                 if (candidate.TriggerConfirmed)
@@ -2795,12 +2811,20 @@ namespace GeminiV26.Core
             }
         }
 
-        private void UpsertArmedSetup(EntryEvaluation candidate, int barsSinceBreak)
+        private void UpsertArmedSetup(EntryEvaluation candidate, int barsSinceBreak, bool triggerConfirmed, int currentBarIndex)
         {
             if (candidate == null)
                 return;
 
             string key = GetArmedSetupKey(candidate);
+            _armedSetups.TryGetValue(key, out var existing);
+            int triggerBarIndex = -1;
+            if (triggerConfirmed)
+            {
+                triggerBarIndex = existing?.TriggerBarIndex >= 0
+                    ? existing.TriggerBarIndex
+                    : currentBarIndex;
+            }
             _armedSetups[key] = new ArmedSetup
             {
                 Symbol = candidate.Symbol ?? _bot.SymbolName,
@@ -2808,6 +2832,7 @@ namespace GeminiV26.Core
                 Score = candidate.Score,
                 DetectedAt = _bot.Server.Time,
                 BarsSince = barsSinceBreak,
+                TriggerBarIndex = triggerBarIndex,
                 EntryType = candidate.Type,
                 Reason = candidate.Reason ?? string.Empty
             };

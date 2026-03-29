@@ -9,6 +9,7 @@ namespace GeminiV26.Core.Entry
         public double Score { get; set; }
         public DateTime DetectedAt { get; set; }
         public int BarsSince { get; set; }
+        public int TriggerBarIndex { get; set; } = -1;
 
         public EntryType EntryType { get; set; }
         public string Reason { get; set; } = string.Empty;
