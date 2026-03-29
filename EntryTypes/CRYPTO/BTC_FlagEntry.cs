@@ -355,6 +355,44 @@ namespace GeminiV26.EntryTypes.Crypto
                 $"[CRYPTO][HTF_SCORE] htf={htfDirection} logic={dir} delta={htfDelta} scoreAfter={scoreAfterHtf}");
 
             bool followThrough = continuationSignal;
+            bool impulseDetected = ctx.HasImpulse_M5 || barsSinceImpulse <= MaxBarsSinceImpulse;
+            bool continuationDetected = continuationSignal;
+            bool pullbackDetected = structuredPB;
+            bool flagCompressionDetected = hasFlag && hasValidRange && rangeAtr > 0 && rangeAtr <= 1.00;
+            bool isHtfAlignedShort = htfAligned && dir == TradeDirection.Short;
+
+            bool structureValid = hasStructure;
+            if (isHtfAlignedShort)
+            {
+                structureValid =
+                    impulseDetected &&
+                    (continuationDetected || pullbackDetected || flagCompressionDetected);
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][FLAG_STRUCTURE_RELAX] dir=Short htfAlign=true impulse={impulseDetected.ToString().ToLowerInvariant()} continuation={continuationDetected.ToString().ToLowerInvariant()} pullback={pullbackDetected.ToString().ToLowerInvariant()} compression={flagCompressionDetected.ToString().ToLowerInvariant()} finalStructure={structureValid.ToString().ToLowerInvariant()}");
+            }
+
+            if (!structureValid)
+                return Invalid(ctx, dir, "INVALID_STRUCTURE", score);
+
+            int scoreAfterStructure = score;
+
+            bool momentumAligned =
+                hasVolatility ||
+                ctx.LastClosedBarInTrendDirection ||
+                continuationDetected ||
+                breakoutDetected;
+            bool originalMomentumAligned = momentumAligned;
+            if (isHtfAlignedShort)
+            {
+                momentumAligned = momentumAligned || impulseDetected;
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][FLAG_MOMENTUM_OVERRIDE] originalMomentum={originalMomentumAligned.ToString().ToLowerInvariant()} impulseDetected={impulseDetected.ToString().ToLowerInvariant()} finalMomentum={momentumAligned.ToString().ToLowerInvariant()}");
+            }
+
+            if (!momentumAligned)
+                return Invalid(ctx, dir, "INVALID_MOMENTUM", score);
+
+            int scoreAfterMomentum = score;
 
             if (breakoutDetected)
                 triggerScore += 1;
@@ -374,11 +412,33 @@ namespace GeminiV26.EntryTypes.Crypto
             if (!minimalTrigger)
                 score -= 10;
 
-            if (!breakoutDetected)
-                score -= 8;
+            int originalEarlyBreakPenalty = !breakoutDetected ? -8 : 0;
+            int appliedEarlyBreakPenalty = originalEarlyBreakPenalty;
+            if (isHtfAlignedShort && appliedEarlyBreakPenalty < -5)
+                appliedEarlyBreakPenalty = -5;
+            score += appliedEarlyBreakPenalty;
+            if (originalEarlyBreakPenalty != 0)
+            {
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][FLAG_EARLY_BREAK_ADJUST] originalPenalty={originalEarlyBreakPenalty} appliedPenalty={appliedEarlyBreakPenalty}");
+            }
 
             if (score < 30 && baseScore >= 40)
                 score = 30;
+
+            if (isHtfAlignedShort && structureValid)
+            {
+                int baseFloorScore = score;
+                score = Math.Max(score, 35);
+                if (continuationDetected)
+                    score = Math.Max(score, 40);
+                ctx.Log?.Invoke(
+                    $"[CRYPTO][FLAG_SCORE_FLOOR] baseScore={baseFloorScore} finalScore={score} htfAlign=true continuation={continuationDetected.ToString().ToLowerInvariant()}");
+            }
+
+            int scoreAfterPenalty = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FLAG_FINAL_SCORE] base={baseScore} afterStructure={scoreAfterStructure} afterMomentum={scoreAfterMomentum} afterPenalty={scoreAfterPenalty} final={score}");
 
             ctx.Log?.Invoke(
                 $"[CRYPTO][FLAG_SCORE] base={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} final={score}");
