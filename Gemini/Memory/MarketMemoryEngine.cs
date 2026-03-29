@@ -140,15 +140,14 @@ namespace Gemini.Memory
             if (state.BarsSinceBreak >= 0)
                 state.BarsSinceBreak++;
 
-            bool timingChanged = false;
-
             if (IsStrongMove(bar))
             {
                 ApplyImpulse(state, bar, "new_impulse");
-                timingChanged = RefreshTimingState(state, bar, "new_impulse");
+                RefreshTimingState(state, bar, "new_impulse");
                 RecomputeUsable(state);
                 _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
                 _log?.Invoke($"[MEMORY][IMPULSE] symbol={state.Symbol} phase={state.MovePhase}");
+                _log?.Invoke($"[MEMORY] phase={state.MovePhase} window={state.ContinuationWindowState} ext={state.MoveExtensionState}");
                 return;
             }
 
@@ -185,11 +184,10 @@ namespace Gemini.Memory
                 state.MovePhase = MovePhase.Stale;
             }
 
-            timingChanged = RefreshTimingState(state, bar, "on_bar") || timingChanged;
+            RefreshTimingState(state, bar, "on_bar");
             RecomputeUsable(state);
             _log?.Invoke($"[MEMORY][UPDATE] symbol={state.Symbol} age={state.MoveAgeBars} sinceImpulse={state.BarsSinceImpulse}");
-            if (!timingChanged && DebugMemory)
-                LogTimingState(state, "on_bar");
+            _log?.Invoke($"[MEMORY] phase={state.MovePhase} window={state.ContinuationWindowState} ext={state.MoveExtensionState}");
         }
 
         public string GetCoverageRatio(IEnumerable<string> symbols)
@@ -478,16 +476,7 @@ namespace Gemini.Memory
             state.ContinuationWindowState = ResolveContinuationWindowState(state);
 
             bool changed = previousWindow != state.ContinuationWindowState || previousExtension != state.MoveExtensionState;
-            if (changed || DebugMemory)
-                LogTimingState(state, source);
-
             return changed;
-        }
-
-        private void LogTimingState(SymbolMemoryState state, string source)
-        {
-            _log?.Invoke(
-                $"[MEMORY][TIMING] symbol={state.Symbol} source={source} movePhase={state.MovePhase} continuationWindow={state.ContinuationWindowState} extensionState={state.MoveExtensionState} barsSinceBreak={state.BarsSinceBreak} barsSinceFirstPullback={state.BarsSinceFirstPullback} continuationAttempts={state.ContinuationAttemptCount} impulseFreshness={state.ImpulseFreshnessScore:0.00} continuationFreshness={state.ContinuationFreshnessScore:0.00} triggerLateScore={state.TriggerLateScore:0.00} distanceAtr={state.DistanceFromFastStructureAtr:0.00}");
         }
 
         private static double ResolveFastStructureAnchor(SymbolMemoryState state)
