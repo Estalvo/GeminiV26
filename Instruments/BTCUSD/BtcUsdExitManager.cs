@@ -545,10 +545,10 @@ namespace GeminiV26.Instruments.BTCUSD
             if (ctx.Tp1R > 0)
                 return ctx.Tp1R;
 
-            if (ctx.FinalConfidence >= 85)
+            if (ctx.AdjustedRiskConfidence >= 85)
                 return 0.40;
 
-            if (ctx.FinalConfidence >= 70)
+            if (ctx.AdjustedRiskConfidence >= 70)
                 return 0.50;
 
             return 0.60;

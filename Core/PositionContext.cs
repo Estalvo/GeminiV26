@@ -89,6 +89,8 @@ namespace GeminiV26.Core
         /// </summary>
         public int FinalConfidence { get; private set; }
 
+        public int AdjustedRiskConfidence { get; set; }
+
         private bool _isFinalConfidenceComputed;
 
         public DateTime EntryTime { get; set; }
@@ -326,6 +328,8 @@ namespace GeminiV26.Core
                 return;
 
             FinalConfidence = ComputeFinalConfidenceValue(EntryScore, LogicConfidence);
+            if (AdjustedRiskConfidence <= 0)
+                AdjustedRiskConfidence = FinalConfidence;
             _isFinalConfidenceComputed = true;
         }
 

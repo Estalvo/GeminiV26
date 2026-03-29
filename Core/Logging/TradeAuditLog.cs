@@ -65,6 +65,7 @@ namespace GeminiV26.Core.Logging
                    $"logicConfidence={ctx.LogicBiasConfidence}\n" +
                    $"finalConfidence={ctx.FinalConfidence}\n" +
                    "statePenalty=0\n" +
+                   $"adjustedRiskConfidence={ctx.RiskConfidence}\n" +
                    $"riskFinal={ctx.RiskConfidence}\n" +
                    $"atr={ctx?.AtrM5 ?? 0:0.#####}\n" +
                    $"adx={ctx?.Adx_M5 ?? 0:0.##}\n" +

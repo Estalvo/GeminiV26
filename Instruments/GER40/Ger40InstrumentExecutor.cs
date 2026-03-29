@@ -65,9 +65,6 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // ENTRY LOGIC – GER40
             // =========================
-            _entryLogic.Evaluate();
-            _entryLogic.ApplyToEntryEvaluation(entry);
-
             int logicConfidence = PositionContext.ClampRiskConfidence(entryContext.LogicBiasConfidence);
             string logicConfidenceSource = "EntryContext.LogicBiasConfidence";
 
@@ -263,6 +260,7 @@ namespace GeminiV26.Instruments.GER40
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[positionKey] = ctx;
+            ctx.AdjustedRiskConfidence = adjustedRiskConfidence;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[OPEN] entryPrice={ctx.EntryPrice}", ctx));

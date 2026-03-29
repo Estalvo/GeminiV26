@@ -139,8 +139,8 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (logicConfidence <= 0)
             {
-                logicConfidence = PositionContext.ClampRiskConfidence(entry.Score);
-                logicConfidenceSource = "EntryScoreFallback";
+                logicConfidence = 50;
+                logicConfidenceSource = "NeutralDefault";
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[CONF][EXEC_FALLBACK] source={logicConfidenceSource} value={logicConfidence}", entryContext));
             }
 
@@ -349,6 +349,7 @@ namespace GeminiV26.Instruments.XAUUSD
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
 
             _positionContexts[ctx.PositionId] = ctx;
+            ctx.AdjustedRiskConfidence = adjustedRiskConfidence;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
