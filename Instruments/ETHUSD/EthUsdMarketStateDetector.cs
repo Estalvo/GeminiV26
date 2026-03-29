@@ -58,7 +58,6 @@ namespace GeminiV26.Instruments.ETHUSD
             bool isTrend = adx >= _profile.MinAdxTrend;
             bool isStrongTrend = adx >= _profile.MinAdxStrong;
 
-            GlobalLogger.Log(
             bool isChop = false;
             int lb = Math.Max(1, _profile.ChopLookbackBars);
             int start = Math.Max(0, i - lb + 1);

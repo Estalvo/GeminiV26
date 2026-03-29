@@ -357,20 +357,6 @@ namespace GeminiV26.Core.Entry
 
         public string SymbolName => Symbol;
 
-        public void Log(string message)
-        {
-            if (string.IsNullOrWhiteSpace(message))
-                return;
-
-            if (Log != null)
-            {
-                Log(TradeLogIdentity.WithTempId(message, this));
-                return;
-            }
-
-            GlobalLogger.Log(TradeLogIdentity.WithTempId(message, this));
-        }
-
         public int GetBarsSinceImpulse(TradeDirection direction)
         {
             return direction switch
