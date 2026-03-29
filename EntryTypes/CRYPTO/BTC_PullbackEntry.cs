@@ -111,7 +111,7 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
-            // IMPULSE DIRECTION LOCK (CRYPTO SAFETY)
+            // IMPULSE DIRECTION LOCK (CRYPTO ONLY)
             // =========================
 
             TradeDirection lastClosedDir = TradeDirection.None;
@@ -122,32 +122,25 @@ namespace GeminiV26.EntryTypes.Crypto
                 else if (c.Close < c.Open) lastClosedDir = TradeDirection.Short;
             }
 
-            // "Strong impulse" proxy (ha nincs külön flag)
-            // - HasImpulse_M5 már megvan nálad
-            // - a veszélyes ablak: friss impulse után 1-2 bar
-            bool freshImpulse = ctx.HasImpulse_M5 && ctx.BarsSinceImpulse_M5 <= 2;
+            TradeDirection impulseDirection =
+                ctx.ImpulseDirection != TradeDirection.None
+                    ? ctx.ImpulseDirection
+                    : lastClosedDir;
+            int barsSinceImpulse = Math.Max(0, ctx.BarsSinceImpulse_M5);
+            bool isSameDirection = (dir == impulseDirection);
+            bool shouldBlock =
+                ctx.HasImpulse_M5 &&
+                impulseDirection != TradeDirection.None &&
+                (barsSinceImpulse < 1) &&
+                !isSameDirection;
 
-            if (freshImpulse && lastClosedDir != TradeDirection.None)
-            {
-                // 1) Counter-trend lock (ez fogja meg a squeeze-t)
-                if (dir != lastClosedDir)
-                {
-                    return Block(ctx,
-                        $"IMPULSE_LOCK_CT dir={dir} lastClosedDir={lastClosedDir} barsSinceImpulse={ctx.BarsSinceImpulse_M5}",
-                        score,
-                        dir);
-                }
+            ctx.Log?.Invoke(
+                $"[CRYPTO][IMPULSE_GATE] barsSinceImpulse={barsSinceImpulse} impulseDir={impulseDirection} entryDir={dir} sameDir={isSameDirection.ToString().ToLowerInvariant()} blocked={shouldBlock.ToString().ToLowerInvariant()}");
 
-                // 2) Cooldown: ne nyiss azonnal új PB-t impulse után (whipsaw védelem)
-                if (ctx.BarsSinceImpulse_M5 <= 1 &&
-                    (!ctx.IsPullbackDecelerating_M5 || !ctx.HasReactionCandle_M5))
-                {
-                    return Block(ctx,
-                        $"IMPULSE_COOLDOWN barsSinceImpulse={ctx.BarsSinceImpulse_M5} pbDecel={ctx.IsPullbackDecelerating_M5} react={ctx.HasReactionCandle_M5}",
-                        score,
-                        dir);
-                }
-            }
+            if (shouldBlock)
+                return Block(ctx, "IMPULSE_LOCK_IMMEDIATE_COUNTER", score, dir);
+
+            bool freshImpulse = ctx.HasImpulse_M5 && barsSinceImpulse <= 2;
 
             // =========================
             // MIN PULLBACK MATURITY GUARD
@@ -155,7 +148,7 @@ namespace GeminiV26.EntryTypes.Crypto
             if (ctx.HasImpulse_M5)
             {
                 // 0-1 bar után nincs belépés
-                if (ctx.BarsSinceImpulse_M5 < 2)
+                if (ctx.BarsSinceImpulse_M5 < 1)
                 {
                     return Block(ctx,
                         $"PULLBACK_TOO_EARLY barsSinceImpulse={ctx.BarsSinceImpulse_M5}",
@@ -561,32 +554,6 @@ namespace GeminiV26.EntryTypes.Crypto
             }
 
             // =========================
-            // UNIFIED HTF WEIGHTING
-            // =========================
-
-            bool htfConflict =
-                ctx.CryptoHtfAllowedDirection != TradeDirection.None &&
-                ctx.CryptoHtfAllowedDirection != dir;
-
-            htfConf = ctx.CryptoHtfConfidence01;
-
-            if (htfConflict && htfConf > 0)
-            {
-                int htfPenalty = (int)Math.Round(3 + 10 * htfConf);
-                score -= htfPenalty;
-
-                bool weakLocal =
-                    ctx.Adx_M5 < 28 ||
-                    !validPullbackReaction ||
-                    fuelScore < 4;
-
-                if (htfConf >= 0.7 && weakLocal)
-                    score -= 3;
-
-                Console.WriteLine($"[BTC_PULLBACK][HTF_PENALTY] conf={htfConf:0.00} penalty={htfPenalty} weakLocal={weakLocal}");
-            }
-
-            // =========================
             // LOW QUALITY ZONE FILTER
             // =========================
 
@@ -883,8 +850,42 @@ namespace GeminiV26.EntryTypes.Crypto
             bool followThrough = continuationSignal || validPullbackReaction;
             score = TriggerScoreModel.Apply(ctx, $"BTC_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
+
+            int baseScore = score;
+
+            bool trendRegime =
+                ctx.MarketState?.IsTrend == true ||
+                (!ctx.IsRange_M5 && ctx.Adx_M5 >= 18.0);
+            string regime = trendRegime ? "Trend" : "NonTrend";
+            bool regimeMismatch = !trendRegime;
+
+            int regimeDelta = 0;
+            if (regimeMismatch)
+                regimeDelta = -25;
+            else
+                regimeDelta = +5;
+
+            score += regimeDelta;
+            int scoreAfterRegime = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][REGIME_ADJUST] regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
+
+            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            int htfDelta = 0;
+            if (htfDirection == dir)
+                htfDelta = +8;
+            else
+                htfDelta = -10;
+
+            score += htfDelta;
+            int scoreAfterHtf = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][HTF_SCORE] entryDir={dir} htfDir={htfDirection} delta={htfDelta} scoreAfter={scoreAfterHtf}");
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FINAL_SCORE] baseScore={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} finalScore={score}");
 
             if (setupScore <= 0)
                 score = Math.Min(score, dynamicMinScore - 10);
@@ -953,15 +954,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
         private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
         {
-            return EntryDirectionQuality.Apply(
-                ctx,
-                direction,
-                score,
-                new DirectionQualityRequest
-                {
-                    TypeTag = "BTC_PullbackEntry",
-                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
-                });
+            return score;
         }
 
     }
