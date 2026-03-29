@@ -359,6 +359,7 @@ namespace GeminiV26.Instruments.USDCAD
             ctx.Tp1ClosedVolumeInUnits = closeUnits;
             ctx.RemainingVolumeInUnits = Math.Max(0, pos.VolumeInUnits - closeUnits);
             ctx.Tp1Hit = true;
+            _bot.Print("[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 

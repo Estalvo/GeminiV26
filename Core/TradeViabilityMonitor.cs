@@ -243,6 +243,9 @@ namespace GeminiV26.Core
 
             if (adverseR > ctx.MaeR)
                 ctx.MaeR = adverseR;
+
+            _bot.Print($"[MFE] value={ctx.MfeR} price={currentPrice}");
+            _bot.Print($"[MAE] value={ctx.MaeR} price={currentPrice}");
         }
 
         private bool EvaluateEarlyPhase(

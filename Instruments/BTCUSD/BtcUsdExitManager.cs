@@ -445,6 +445,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             // 2) TP1 state
             ctx.Tp1Hit = true;
+            _bot.Print("[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
