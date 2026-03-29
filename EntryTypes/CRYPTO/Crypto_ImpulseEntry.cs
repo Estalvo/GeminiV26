@@ -20,9 +20,6 @@ namespace GeminiV26.EntryTypes.Crypto
             if (logicBiasDirection == TradeDirection.None)
                 return Invalid(ctx, "NO_LOGIC_BIAS", TradeDirection.None, 0);
 
-            if (!ctx.IsVolatilityAcceptable_Crypto)
-                return Invalid(ctx, "CRYPTO_VOL_DISABLED");
-
             double htfConf = ctx.ResolveAssetHtfConfidence01();
             var htfDir = ctx.ResolveAssetHtfAllowedDirection();
             bool htfMismatch =
@@ -55,13 +52,35 @@ namespace GeminiV26.EntryTypes.Crypto
         private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
             int score = 60;
+            int baseScore;
+            int scoreAfterRegime;
+            int scoreAfterHtf;
+
+            TradeDirection impulseDirection = ctx.ImpulseDirection;
+            if (impulseDirection == TradeDirection.None)
+                impulseDirection = dir;
+            int barsSinceImpulse = Math.Max(0, ctx.BarsSinceImpulse_M5);
+            bool isSameDirection = (dir == impulseDirection);
+            bool shouldBlock = (barsSinceImpulse < 1) && !isSameDirection;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][IMPULSE_GATE] entryType=Impulse barsSinceImpulse={barsSinceImpulse} impulseDir={impulseDirection} entryDir={dir} sameDir={isSameDirection.ToString().ToLowerInvariant()} blocked={shouldBlock.ToString().ToLowerInvariant()}");
+            if (shouldBlock)
+                return Invalid(ctx, "IMPULSE_LOCK_IMMEDIATE_COUNTER", dir, score);
+
+            if (!ctx.IsVolatilityAcceptable_Crypto)
+            {
+                score -= 8;
+                ctx.Log?.Invoke(
+                    "[CRYPTO][STRUCT_FILTER] entryType=Impulse reason=LOW_CRYPTO_VOL blocked=false");
+            }
+
             bool directionalImpulse = ctx.ImpulseDirection == dir;
             bool directionalTrend = ctx.TrendDirection == dir;
 
             if (!directionalImpulse && !directionalTrend &&
                 (ctx.ImpulseDirection != TradeDirection.None || ctx.TrendDirection != TradeDirection.None))
             {
-                score -= 18;
+                score -= 10;
             }
 
             if (directionalImpulse)
@@ -81,9 +100,28 @@ namespace GeminiV26.EntryTypes.Crypto
             bool followThrough = breakoutDetected || (ctx.IsAtrExpanding_M5 && (directionalImpulse || directionalTrend));
 
             score = TriggerScoreModel.Apply(ctx, $"CRYPTO_IMPULSE_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_IMPULSE_TRIGGER");
+            baseScore = score;
 
+            bool trendRegime =
+                ctx.MarketState?.IsTrend == true ||
+                (!ctx.IsRange_M5 && ctx.Adx_M5 >= 18.0);
+            string regime = trendRegime ? "Trend" : "NonTrend";
+            bool regimeMismatch = !trendRegime;
+            int regimeDelta = regimeMismatch ? -25 : +5;
+            score += regimeDelta;
+            scoreAfterRegime = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][REGIME_ADJUST] entryType=Impulse regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
+            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            int htfDelta = htfDirection == dir ? +8 : -10;
+            score += htfDelta;
+            scoreAfterHtf = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][HTF_SCORE] entryType=Impulse entryDir={dir} htfDir={htfDirection} delta={htfDelta} scoreAfter={scoreAfterHtf}");
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FINAL_SCORE] entryType=Impulse baseScore={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} finalScore={score}");
 
             if (score < MinScore)
                 return Invalid(ctx, $"LOW_SCORE_{dir}_{score}", dir, score);
@@ -143,19 +181,6 @@ namespace GeminiV26.EntryTypes.Crypto
             evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
             evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
             evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
-        }
-
-        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
-        {
-            return EntryDirectionQuality.Apply(
-                ctx,
-                direction,
-                score,
-                new DirectionQualityRequest
-                {
-                    TypeTag = "Crypto_ImpulseEntry",
-                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
-                });
         }
 
     }

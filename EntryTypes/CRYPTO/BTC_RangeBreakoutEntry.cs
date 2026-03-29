@@ -8,7 +8,7 @@ namespace GeminiV26.EntryTypes.Crypto
     {
         public EntryType Type => EntryType.Crypto_RangeBreakout;
         private const int MIN_SCORE = EntryDecisionPolicy.MinScoreThreshold;
-        private const int MIN_RANGE_BARS = 15;
+        private const int MIN_RANGE_BARS = 10;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -26,7 +26,11 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Invalid(ctx, "DISABLED");
 
             if (!ctx.IsRange_M5 || ctx.RangeBarCount_M5 < MIN_RANGE_BARS)
+            {
+                ctx.Log?.Invoke(
+                    "[CRYPTO][STRUCT_FILTER] entryType=Breakout reason=NO_RANGE blocked=true");
                 return Invalid(ctx, "NO_RANGE");
+            }
 
             double htfConf = ctx.ResolveAssetHtfConfidence01();
             var htfDir = ctx.ResolveAssetHtfAllowedDirection();
@@ -61,6 +65,20 @@ namespace GeminiV26.EntryTypes.Crypto
         {
             int score = 25;
             int setupScore = 0;
+            int baseScore;
+            int scoreAfterRegime;
+            int scoreAfterHtf;
+
+            TradeDirection impulseDirection = ctx.ImpulseDirection;
+            if (impulseDirection == TradeDirection.None)
+                impulseDirection = dir;
+            int barsSinceImpulse = System.Math.Max(0, ctx.BarsSinceImpulse_M5);
+            bool isSameDirection = (dir == impulseDirection);
+            bool shouldBlock = (barsSinceImpulse < 1) && !isSameDirection;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][IMPULSE_GATE] entryType=Breakout barsSinceImpulse={barsSinceImpulse} impulseDir={impulseDirection} entryDir={dir} sameDir={isSameDirection.ToString().ToLowerInvariant()} blocked={shouldBlock.ToString().ToLowerInvariant()}");
+            if (shouldBlock)
+                return Invalid(ctx, "IMPULSE_LOCK_IMMEDIATE_COUNTER", dir, score);
 
             if (!ctx.IsVolatilityAcceptable_Crypto)
                 score -= 15;
@@ -79,14 +97,18 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.IsValidFlagStructure_M5;
 
             bool structuredPB =
-                ctx.PullbackBars_M5 >= 2 &&
+                ctx.PullbackBars_M5 >= 1 &&
                 ctx.IsPullbackDecelerating_M5;
 
             bool hasStructure =
                 hasFlag || structuredPB;
 
             if (!hasStructure)
+            {
                 setupScore -= 30;
+                ctx.Log?.Invoke(
+                    "[CRYPTO][STRUCT_FILTER] entryType=Breakout reason=NO_FLAG_OR_STRUCTURED_PULLBACK blocked=false");
+            }
             else
                 setupScore += 15;
 
@@ -102,7 +124,7 @@ namespace GeminiV26.EntryTypes.Crypto
             // =========================
             // BREAK STRENGTH
             // =========================
-            if (ctx.RangeBreakAtrSize_M5 > 1.2)
+            if (ctx.RangeBreakAtrSize_M5 > 1.4)
                 return Invalid(ctx, "OVEREXTENDED_BREAK", dir, 0);
 
             score += 10;
@@ -139,8 +161,29 @@ namespace GeminiV26.EntryTypes.Crypto
             bool followThrough = ctx.M1TriggerInTrendDirection || (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
             score = TriggerScoreModel.Apply(ctx, $"BTC_RANGE_BREAKOUT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_RANGE_BREAK_TRIGGER");
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, false);
             score += setupScore;
+            baseScore = score;
+
+            bool trendRegime =
+                ctx.MarketState?.IsTrend == true ||
+                (!ctx.IsRange_M5 && ctx.Adx_M5 >= 18.0);
+            string regime = trendRegime ? "Trend" : "NonTrend";
+            bool regimeMismatch = !trendRegime;
+            int regimeDelta = regimeMismatch ? -25 : +5;
+            score += regimeDelta;
+            scoreAfterRegime = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][REGIME_ADJUST] entryType=Breakout regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
+
+            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            int htfDelta = htfDirection == dir ? +8 : -10;
+            score += htfDelta;
+            scoreAfterHtf = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][HTF_SCORE] entryType=Breakout entryDir={dir} htfDir={htfDirection} delta={htfDelta} scoreAfter={scoreAfterHtf}");
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FINAL_SCORE] entryType=Breakout baseScore={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} finalScore={score}");
 
             if (setupScore <= 0)
                 score = System.Math.Min(score, MIN_SCORE - 10);
@@ -210,19 +253,6 @@ namespace GeminiV26.EntryTypes.Crypto
             evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
             evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
             evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
-        }
-
-        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
-        {
-            return EntryDirectionQuality.Apply(
-                ctx,
-                direction,
-                score,
-                new DirectionQualityRequest
-                {
-                    TypeTag = "BTC_RangeBreakoutEntry",
-                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
-                });
         }
 
     }
