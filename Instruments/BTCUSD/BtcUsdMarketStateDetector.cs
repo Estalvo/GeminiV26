@@ -82,7 +82,7 @@ namespace GeminiV26.Instruments.BTCUSD
             }
             isChop = wicky >= lb;
 
-            _bot.Print(
+            GeminiV26.Core.Logging.GlobalLogger.Log(
                 $"[BTC MSD] atrRaw={atrRaw:F2} pipSize={_bot.Symbol.PipSize} atrPips={atrPips:F1} adx={adx:F1} wickRatio={wickRatio:F2} " +
                 $"lowVol={isLowVol} extremeVol={isExtremeVol} trend={isTrend} strongTrend={isStrongTrend} chop={isChop}"
             );
