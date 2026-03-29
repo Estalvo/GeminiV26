@@ -58,7 +58,7 @@ namespace GeminiV26.Instruments.Common
                 ctx.IsRehydrated = true;
                 Contexts[pos.Id] = ctx;
 
-                Bot.Print($"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
+                GlobalLogger.Log($"[{pos.SymbolName} REHYDRATE] pos={pos.Id}");
             }
         }
 
