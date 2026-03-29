@@ -134,7 +134,7 @@ namespace GeminiV26.Instruments.USDCAD
             };
             ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry)), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
