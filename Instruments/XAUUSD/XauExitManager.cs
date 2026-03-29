@@ -331,7 +331,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     if (hit)
                     {
                         _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT][TP1] symbol={pos.SymbolName} positionId={pos.Id} price={tp1Price:0.#####}", ctx, pos));
-                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][HIT]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
+                        _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][TOUCHED]\npos={pos.Id}\ntp1={tp1Price:0.#####}", ctx, pos));
                         ExecuteTp1(pos, ctx, rDist);
                         continue;
                     }
@@ -426,10 +426,14 @@ namespace GeminiV26.Instruments.XAUUSD
             if (!closeResult.IsSuccessful)
             {
                 _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
+                _bot.Print("[TP1][FAIL] execution failed");
                 return;
             }
 
             _bot.Print(TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE executed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} closedUnits={closeVolume}", ctx, pos));
+
+            double executionPrice = IsLong(ctx) ? sym.Bid : sym.Ask;
+            _bot.Print($"[TP1][EXECUTED] volumeClosed={closeVolume} price={executionPrice}");
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
