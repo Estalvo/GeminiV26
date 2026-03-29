@@ -46,18 +46,60 @@ namespace GeminiV26.EntryTypes.FX
 
         public static bool ShouldRejectLowConfidenceHtfConflict(EntryContext ctx)
         {
+            return false;
+        }
+
+        public static int GetLowConfidenceHtfConflictPenalty(EntryContext ctx)
+        {
             if (ctx == null)
-                return false;
+                return 0;
 
             var logicBias = ctx.LogicBiasDirection;
             if (logicBias == TradeDirection.None)
-                return false;
+                return 0;
 
             var htfDirection = ctx.FxHtfAllowedDirection;
             if (htfDirection == TradeDirection.None || htfDirection == logicBias)
-                return false;
+                return 0;
 
-            return ctx.LogicBiasConfidence < 60;
+            if (ctx.LogicBiasConfidence >= 60)
+                return 0;
+
+            double htfConfidence = ctx.FxHtfConfidence01;
+            int penalty = 6;
+            if (htfConfidence >= 0.80)
+                penalty += 4;
+            else if (htfConfidence >= 0.60)
+                penalty += 2;
+
+            if (ctx.LogicBiasConfidence < 45)
+                penalty += 2;
+
+            penalty = Math.Max(4, Math.Min(14, penalty));
+            ctx.Log?.Invoke(
+                $"[HTF][LOW_CONF_MISMATCH_SOFT] sym={Normalize(ctx.Symbol)} logicBias={logicBias} logicConf={ctx.LogicBiasConfidence} " +
+                $"htf={htfDirection}/{htfConfidence:F2} penalty={penalty}");
+            return penalty;
+        }
+
+        public static void ApplyLowConfidenceHtfConflictSoftPenalty(EntryContext ctx, EntryEvaluation eval)
+        {
+            if (eval == null)
+                return;
+
+            int penalty = GetLowConfidenceHtfConflictPenalty(ctx);
+            if (penalty <= 0)
+                return;
+
+            int before = eval.Score;
+            eval.Score = Math.Max(0, eval.Score - penalty);
+            eval.AfterPenaltyScore = eval.Score;
+            eval.Reason = string.IsNullOrWhiteSpace(eval.Reason)
+                ? $"HTF_SOFT_PENALTY_{penalty}"
+                : $"{eval.Reason};HTF_SOFT_PENALTY_{penalty}";
+
+            ctx?.Log?.Invoke(
+                $"[HTF][SCORE_PENALTY] sym={Normalize(ctx?.Symbol)} entry={eval.Type} dir={eval.Direction} score={before}->{eval.Score} penalty={penalty}");
         }
 
         private static bool LegacyShouldBlockHtfMismatch(EntryContext ctx, string symbol)

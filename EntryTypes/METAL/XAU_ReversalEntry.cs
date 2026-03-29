@@ -25,25 +25,29 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.LogicBias == TradeDirection.None)
                 return RejectDecision(ctx, TradeDirection.None, 0, "NO_LOGIC_BIAS", null);
 
-            if (ctx.ResolveAssetHtfConfidence01() >= 0.6 && ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None && ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias)
-                return RejectDecision(ctx, TradeDirection.None, 0, "HTF_MISMATCH", null);
+            bool htfMismatch =
+                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
+            if (htfMismatch)
+                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Long);
+                var eval = EvaluateSide(ctx, TradeDirection.Long, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Short);
+                var eval = EvaluateSide(ctx, TradeDirection.Short, htfMismatch);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
             return RejectDecision(ctx, TradeDirection.None, 0, "NO_LOGIC_BIAS", null);
         }
-        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir, bool htfMismatch)
         {
             var reasons = new List<string>(8);
             int setupScore = 0;
@@ -68,6 +72,11 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             int evidence = ctx.ReversalEvidenceScore;
             int score = evidence * 12 + 20;
+            if (htfMismatch)
+            {
+                score -= 8;
+                reasons.Add("HTF_SOFT_MISMATCH(-8)");
+            }
             if (evidence < MinEvidence)
             {
                 score -= 12;

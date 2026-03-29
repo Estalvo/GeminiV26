@@ -82,12 +82,12 @@ using GeminiV26.Instruments.FX;
             if (fx.FlagTuning == null || !fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, TradeDirection.None, "NO_FLAG_TUNING", 0);
 
-            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
-                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
+            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvalForDir(ctx, fx, tuning, TradeDirection.Long);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 ApplyScoreModifier(eval, matrix);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
@@ -95,6 +95,7 @@ using GeminiV26.Instruments.FX;
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvalForDir(ctx, fx, tuning, TradeDirection.Short);
+                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 ApplyScoreModifier(eval, matrix);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
