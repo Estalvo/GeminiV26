@@ -123,7 +123,7 @@ namespace GeminiV26.Instruments.GBPUSD
             };
             ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry)), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 

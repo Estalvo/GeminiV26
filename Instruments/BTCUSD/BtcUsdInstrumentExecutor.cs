@@ -101,7 +101,7 @@ namespace GeminiV26.Instruments.BTCUSD
             };
             ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence)), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry)), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
@@ -168,7 +168,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
 
             _bot.Print(
-                $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} FC={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)} " +
+                $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} RC={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)} FC={ctx.FinalConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"volUnits={volumeUnits}"
             );

@@ -1334,6 +1334,10 @@ namespace GeminiV26.Core
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
+                _ctx.EntryScore = PositionContext.ClampRiskConfidence(selected.Score);
+                _ctx.LogicBiasConfidence = PositionContext.ClampRiskConfidence(Math.Max(0, _ctx.LogicBiasConfidence));
+                _ctx.FinalConfidence = PositionContext.ComputeFinalConfidenceValue(_ctx.EntryScore, _ctx.LogicBiasConfidence);
+                _ctx.RiskConfidence = PositionContext.ClampRiskConfidence(_ctx.FinalConfidence);
                 LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", "DirectionSet");
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][SET] sym={_ctx.Symbol} finalDir={_ctx.FinalDirection}", _ctx));
 
@@ -1361,8 +1365,8 @@ namespace GeminiV26.Core
                 }
 
                 LogEntrySnapshot(_ctx, selected);
-                _bot.Print(TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.HtfDirection} conf={_ctx.HtfConfidence:F2}", _ctx));
-                if (_ctx.HtfDirection == TradeDirection.None)
+                _bot.Print(TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.ActiveHtfDirection} conf={_ctx.ActiveHtfConfidence:F2}", _ctx));
+                if (_ctx.ActiveHtfDirection == TradeDirection.None)
                     _bot.Print(TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
 
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
@@ -1725,7 +1729,7 @@ namespace GeminiV26.Core
             if (candidate == null || !string.IsNullOrWhiteSpace(candidate.HtfClassification))
                 return;
 
-            TradeDirection htfAllowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
+            TradeDirection htfAllowedDirection = ctx?.ActiveHtfDirection ?? TradeDirection.None;
             HtfClassificationModel.InitializeEntryHtfClassification(
                 candidate,
                 candidate.Direction,
@@ -2120,31 +2124,21 @@ namespace GeminiV26.Core
             if (ctx == null || selected == null)
                 return;
 
-            if (ctx.FinalDirection == TradeDirection.None)
+            if (ctx.FinalDirection == TradeDirection.None ||
+                ctx.EntryScore <= 0 ||
+                ctx.FinalConfidence <= 0 ||
+                ctx.RiskConfidence <= 0)
             {
-                _bot.Print("[SNAPSHOT][SKIP] FinalDirection not set");
+                _bot.Print(TradeLogIdentity.WithTempId(
+                    "[SNAPSHOT][SKIP][MISSING_FINAL_STATE]",
+                    ctx));
                 return;
             }
 
-            int normalizedEntryScore = PositionContext.ClampRiskConfidence(selected.Score);
-            int logicConfidence = Math.Max(0, ctx.LogicBiasConfidence);
-            int normalizedLogicConfidence = PositionContext.ClampRiskConfidence(logicConfidence);
-            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(normalizedEntryScore, normalizedLogicConfidence);
-            int riskFinal = PositionContext.ClampRiskConfidence(finalConfidence);
+            _bot.Print($"[SNAPSHOT][FINAL] dir={ctx.FinalDirection} FC={ctx.FinalConfidence} RC={ctx.RiskConfidence}");
 
             _bot.Print(TradeLogIdentity.WithTempId(
-                $"[SCORE][PRODUCER] source=EntryScore raw={selected.Score} normalized={normalizedEntryScore}",
-                ctx));
-            _bot.Print(TradeLogIdentity.WithTempId(
-                $"[SCORE][PRODUCER] source=LogicConfidence raw={logicConfidence} normalized={normalizedLogicConfidence}",
-                ctx));
-            _bot.Print(TradeLogIdentity.WithTempId(
-                $"[SCORE][BLEND] entry={normalizedEntryScore} logic={normalizedLogicConfidence} final={finalConfidence}",
-                ctx));
-            _bot.Print($"[SNAPSHOT][FINAL] dir={ctx.FinalDirection} conf={finalConfidence:F2}");
-
-            _bot.Print(TradeLogIdentity.WithTempId(
-                TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected, normalizedLogicConfidence, finalConfidence, 0, riskFinal),
+                TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected),
                 ctx));
             _bot.Print(TradeLogIdentity.WithTempId(
                 TradeAuditLog.BuildDirectionSnapshot(ctx, selected),
@@ -3000,31 +2994,14 @@ namespace GeminiV26.Core
             if (d == TradeDirection.Short) return TradeType.Sell;
             throw new ArgumentException("TradeDirection.None is not allowed");
         }
-
         private TradeDirection ResolveHtfAllowedDirection(EntryContext ctx)
         {
-            if (ctx == null)
-                return TradeDirection.None;
-
-            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol));
-            if (instrumentClass == InstrumentClass.FX) return ctx.FxHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.CRYPTO) return ctx.CryptoHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfAllowedDirection;
-            if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfAllowedDirection;
-            return TradeDirection.None;
+            return ctx?.ActiveHtfDirection ?? TradeDirection.None;
         }
 
         private double ResolveHtfConfidence(EntryContext ctx)
         {
-            if (ctx == null)
-                return 0.0;
-
-            var instrumentClass = SymbolRouting.ResolveInstrumentClass(SymbolRouting.NormalizeSymbol(ctx.Symbol));
-            if (instrumentClass == InstrumentClass.FX) return ctx.FxHtfConfidence01;
-            if (instrumentClass == InstrumentClass.CRYPTO) return ctx.CryptoHtfConfidence01;
-            if (instrumentClass == InstrumentClass.METAL) return ctx.MetalHtfConfidence01;
-            if (instrumentClass == InstrumentClass.INDEX) return ctx.IndexHtfConfidence01;
-            return 0.0;
+            return ctx?.ActiveHtfConfidence ?? 0.0;
         }
 
         private string ResolveHtfState(EntryContext ctx)
@@ -3054,13 +3031,6 @@ namespace GeminiV26.Core
                 $"[AUDIT][HTF FLOW][{stageName}] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} stage={stageName} module={module} " +
                 $"htfState={state} allowedDirection={allowed} align={align} candidateDirection={candidate.Direction}");
 
-            if (ctx.HtfDirection != allowed || Math.Abs(ctx.HtfConfidence - ResolveHtfConfidence(ctx)) > 0.0001)
-            {
-                bool legacyAlign = candidate.Direction != TradeDirection.None && (ctx.HtfDirection == TradeDirection.None || ctx.HtfDirection == candidate.Direction);
-                _bot.Print(
-                    $"[AUDIT][HTF CONFLICT][GLOBAL] symbol={ctx.Symbol} asset={asset} entryType={candidate.Type} stageA={stageName}_ASSET stageB={stageName}_LEGACY " +
-                    $"stateA={state} stateB=LEGACY_AGG allowedDirA={allowed} allowedDirB={ctx.HtfDirection} htfAlignA={align} htfAlignB={legacyAlign} interpretationMismatch=true");
-            }
 
             string reason = $"{candidate.Reason} {candidate.RejectReason}";
             if (!string.IsNullOrWhiteSpace(reason) && reason.Contains("HTF_"))
@@ -3537,36 +3507,17 @@ namespace GeminiV26.Core
             if (ctx == null)
                 return snapshot;
 
+            snapshot.AllowedDirection = ctx.ActiveHtfDirection;
+            snapshot.Confidence01 = ctx.ActiveHtfConfidence;
+
             if (instrumentClass == InstrumentClass.FX)
-            {
-                snapshot.AllowedDirection = ctx.FxHtfAllowedDirection;
-                snapshot.Confidence01 = ctx.FxHtfConfidence01;
                 snapshot.Reason = ctx.FxHtfReason ?? string.Empty;
-                return snapshot;
-            }
-
-            if (instrumentClass == InstrumentClass.CRYPTO)
-            {
-                snapshot.AllowedDirection = ctx.CryptoHtfAllowedDirection;
-                snapshot.Confidence01 = ctx.CryptoHtfConfidence01;
+            else if (instrumentClass == InstrumentClass.CRYPTO)
                 snapshot.Reason = ctx.CryptoHtfReason ?? string.Empty;
-                return snapshot;
-            }
-
-            if (instrumentClass == InstrumentClass.METAL)
-            {
-                snapshot.AllowedDirection = ctx.MetalHtfAllowedDirection;
-                snapshot.Confidence01 = ctx.MetalHtfConfidence01;
+            else if (instrumentClass == InstrumentClass.METAL)
                 snapshot.Reason = ctx.MetalHtfReason ?? string.Empty;
-                return snapshot;
-            }
-
-            if (instrumentClass == InstrumentClass.INDEX)
-            {
-                snapshot.AllowedDirection = ctx.IndexHtfAllowedDirection;
-                snapshot.Confidence01 = ctx.IndexHtfConfidence01;
+            else if (instrumentClass == InstrumentClass.INDEX)
                 snapshot.Reason = ctx.IndexHtfReason ?? string.Empty;
-            }
 
             return snapshot;
         }

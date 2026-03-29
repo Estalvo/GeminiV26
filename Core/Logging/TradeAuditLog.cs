@@ -21,8 +21,8 @@ namespace GeminiV26.Core.Logging
 
         public static string BuildDirectionSnapshot(EntryContext ctx, EntryEvaluation entry)
         {
-            TradeDirection htfDirection = ctx?.HtfDirection ?? TradeDirection.None;
-            int htfConfidence = (int)Math.Round((ctx?.HtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
+            TradeDirection htfDirection = ctx?.ActiveHtfDirection ?? TradeDirection.None;
+            int htfConfidence = (int)Math.Round((ctx?.ActiveHtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
 
             return "[DIR]\n" +
                    $"logicBias={ctx?.LogicBiasDirection ?? TradeDirection.None}\n" +
@@ -45,16 +45,12 @@ namespace GeminiV26.Core.Logging
         public static string BuildEntrySnapshot(
             Robot bot,
             EntryContext ctx,
-            EntryEvaluation entry,
-            int logicConfidence,
-            int finalConfidence,
-            int statePenalty,
-            int riskFinal)
+            EntryEvaluation entry)
         {
             string symbol = entry?.Symbol ?? ctx?.Symbol ?? bot?.SymbolName ?? "UNKNOWN";
             string attemptId = ctx?.EntryAttemptId ?? string.Empty;
-            TradeDirection htfDirection = ctx?.HtfDirection ?? TradeDirection.None;
-            int htfConfidence = (int)Math.Round((ctx?.HtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
+            TradeDirection htfDirection = ctx?.ActiveHtfDirection ?? TradeDirection.None;
+            int htfConfidence = (int)Math.Round((ctx?.ActiveHtfConfidence ?? 0.0) * 100.0, MidpointRounding.AwayFromZero);
 
             return "[ENTRY SNAPSHOT]\n" +
                    $"symbol={symbol}\n" +
@@ -65,11 +61,11 @@ namespace GeminiV26.Core.Logging
                    $"setupType={entry?.Type}\n" +
                    $"entryType={entry?.Type}\n" +
                    $"direction={ctx.FinalDirection}\n" +
-                   $"entryScore={entry?.Score ?? 0}\n" +
-                   $"logicConfidence={logicConfidence}\n" +
-                   $"finalConfidence={finalConfidence}\n" +
-                   $"statePenalty={statePenalty}\n" +
-                   $"riskFinal={riskFinal}\n" +
+                   $"entryScore={ctx.EntryScore}\n" +
+                   $"logicConfidence={ctx.LogicBiasConfidence}\n" +
+                   $"finalConfidence={ctx.FinalConfidence}\n" +
+                   "statePenalty=0\n" +
+                   $"riskFinal={ctx.RiskConfidence}\n" +
                    $"atr={ctx?.AtrM5 ?? 0:0.#####}\n" +
                    $"adx={ctx?.Adx_M5 ?? 0:0.##}\n" +
                    $"htfDirection={htfDirection}\n" +
