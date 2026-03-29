@@ -2999,12 +2999,19 @@ namespace GeminiV26.Core
         }
 
         private object _lastOnTickManager;
+        private DateTime _lastTickLogTime = DateTime.MinValue;
 
         private void DispatchExitManagerOnTick(object manager, Action onTickAction)
         {
             _lastOnTickManager = manager;
             _lastOnTickStage = manager?.GetType().Name ?? _bot.SymbolName;
-            GlobalLogger.Log($"[AUDIT][ONTICK STAGE] {_lastOnTickStage}");
+
+            if ((DateTime.UtcNow - _lastTickLogTime).TotalMilliseconds > 1000)
+            {
+                GlobalLogger.Log("[AUDIT][ONTICK STAGE] " + _lastOnTickStage);
+                _lastTickLogTime = DateTime.UtcNow;
+            }
+
             onTickAction?.Invoke();
         }
 
