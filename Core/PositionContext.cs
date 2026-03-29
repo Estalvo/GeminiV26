@@ -333,7 +333,7 @@ namespace GeminiV26.Core
                 // Failsafe fallback – MUST be visible
                 AdjustedRiskConfidence = FinalConfidence;
 
-                Log?.Invoke("[CONF][ADJUSTED_FALLBACK] using FinalConfidence");
+                GlobalLogger.Log(Bot, "[CONF][ADJUSTED_FALLBACK] using FinalConfidence");
             }
             _isFinalConfidenceComputed = true;
         }

@@ -599,7 +599,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (confidence <= 0)
             {
                 confidence = ctx.FinalConfidence;
-                ctx.Log?.Invoke("[CONF][EXIT_FALLBACK] using FinalConfidence");
+                GlobalLogger.Log(_bot, "[CONF][EXIT_FALLBACK] using FinalConfidence");
             }
 
             // Profil bucket
