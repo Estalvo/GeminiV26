@@ -216,6 +216,7 @@ namespace GeminiV26.Instruments.NAS100
                     ? sym.Bid
                     : sym.Ask;
                 _bot.Print($"[ONTICK] time={_bot.Server.Time:HH:mm:ss.fff}");
+                System.Console.WriteLine($"[MFE_CALLSITE] symbol={_bot.SymbolName} price={currentPrice}");
                 TradeLifecycleTracker.UpdateMfeMae(ctx, currentPrice);
 
                 double rDist = GetRiskDistance(pos, ctx);
