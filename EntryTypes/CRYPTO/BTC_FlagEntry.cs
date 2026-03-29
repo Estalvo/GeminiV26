@@ -10,15 +10,14 @@ namespace GeminiV26.EntryTypes.Crypto
     {
         public EntryType Type => EntryType.Crypto_Flag;
 
-        private const int MaxBarsSinceImpulse = 18;
+        private const int MaxBarsSinceImpulse = 22;
         private const int MinFlagBars = 3;
-        private const int MaxFlagBars = 7;
+        private const int MaxFlagBars = 9;
 
         private const double BreakBufferAtr = 0.03;
         private const double MaxDistFromEmaAtr = 1.2;
 
         private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
-        private const int HtfAgainstPenalty = 8;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -42,7 +41,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             bool hasDirectionalImpulse = directionalBarsSinceImpulse <= MaxBarsSinceImpulse;
 
-            if (!ctx.HasImpulse_M5 && !hasDirectionalImpulse && ctx.BarsSinceImpulse_M5 > 14)
+            if (!ctx.HasImpulse_M5 && !hasDirectionalImpulse && ctx.BarsSinceImpulse_M5 > 18)
                 return Invalid(ctx, "NO_RECENT_IMPULSE");
 
             if (directionalBarsSinceImpulse > MaxBarsSinceImpulse)
@@ -151,6 +150,20 @@ namespace GeminiV26.EntryTypes.Crypto
             int score = 0;
             int setupScore = 0;
             double triggerScore = 0;
+            int baseScore;
+            int scoreAfterRegime;
+            int scoreAfterHtf;
+
+            TradeDirection impulseDirection = ctx.ImpulseDirection;
+            if (impulseDirection == TradeDirection.None)
+                impulseDirection = dir;
+            int barsSinceImpulse = Math.Max(0, ctx.BarsSinceImpulse_M5);
+            bool isSameDirection = (dir == impulseDirection);
+            bool shouldBlock = (barsSinceImpulse < 1) && !isSameDirection;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][IMPULSE_GATE] entryType=Flag barsSinceImpulse={barsSinceImpulse} impulseDir={impulseDirection} entryDir={dir} sameDir={isSameDirection.ToString().ToLowerInvariant()} blocked={shouldBlock.ToString().ToLowerInvariant()}");
+            if (shouldBlock)
+                return Invalid(ctx, dir, "IMPULSE_LOCK_IMMEDIATE_COUNTER", score);
 
             if (!ctx.HasImpulse_M5)
             {
@@ -166,7 +179,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.AdxSlope_M5 <= 1.5;
 
             if (!compression)
-                score -= 6;
+                score -= 2;
 
             if (rangeAtr > 0)
             {
@@ -196,7 +209,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.IsValidFlagStructure_M5;
 
             bool structuredPB =
-                ctx.PullbackBars_M5 >= 2 &&
+                ctx.PullbackBars_M5 >= 1 &&
                 ctx.IsPullbackDecelerating_M5;
 
             string flagState = hasFlag ? "OK" : "FLAG_WEAK_OR_FORMING";
@@ -266,7 +279,11 @@ namespace GeminiV26.EntryTypes.Crypto
                 hasFlag || structuredPB;
 
             if (!hasStructure)
+            {
                 setupScore -= 30;
+                ctx.Log?.Invoke(
+                    "[CRYPTO][STRUCT_FILTER] entryType=Flag reason=NO_FLAG_OR_STRUCTURED_PULLBACK blocked=false");
+            }
             else
                 setupScore += 15;
 
@@ -287,12 +304,6 @@ namespace GeminiV26.EntryTypes.Crypto
 
             if (strongCandle) score += 6;
 
-            if (ctx.TrendDirection != TradeDirection.None &&
-                dir != ctx.TrendDirection)
-            {
-                score -= HtfAgainstPenalty;
-            }
-
             bool missingImpulse =
                 string.Equals(ctx.Transition?.Reason, "MissingImpulse", StringComparison.Ordinal);
 
@@ -303,8 +314,30 @@ namespace GeminiV26.EntryTypes.Crypto
                     $"symbol={ctx.Symbol} entry={EntryType.Crypto_Flag} penalty=6 score={score}");
             }
 
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += setupScore;
+            baseScore = score;
+
+            bool trendRegime =
+                ctx.MarketState?.IsTrend == true ||
+                (!ctx.IsRange_M5 && ctx.Adx_M5 >= 18.0);
+            string regime = trendRegime ? "Trend" : "NonTrend";
+            bool regimeMismatch = !trendRegime;
+
+            int regimeDelta = regimeMismatch ? -25 : +5;
+            score += regimeDelta;
+            scoreAfterRegime = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][REGIME_ADJUST] entryType=Flag regime={regime} delta={regimeDelta} scoreAfter={scoreAfterRegime}");
+
+            var htfDirection = ctx.CryptoHtfAllowedDirection;
+            int htfDelta = htfDirection == dir ? +8 : -10;
+            score += htfDelta;
+            scoreAfterHtf = score;
+            ctx.Log?.Invoke(
+                $"[CRYPTO][HTF_SCORE] entryType=Flag entryDir={dir} htfDir={htfDirection} delta={htfDelta} scoreAfter={scoreAfterHtf}");
+
+            ctx.Log?.Invoke(
+                $"[CRYPTO][FINAL_SCORE] entryType=Flag baseScore={baseScore} afterRegime={scoreAfterRegime} afterHtf={scoreAfterHtf} finalScore={score}");
 
             bool followThrough = continuationSignal;
 
@@ -393,19 +426,6 @@ namespace GeminiV26.EntryTypes.Crypto
             evaluation.HtfTraceSourceAlign = sourceAllowedDirection == candidateDirection;
             evaluation.HtfTraceSourceCandidateDirection = candidateDirection;
             evaluation.HtfConfidence01 = ctx?.CryptoHtfConfidence01 ?? 0.0;
-        }
-
-        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
-        {
-            return EntryDirectionQuality.Apply(
-                ctx,
-                direction,
-                score,
-                new DirectionQualityRequest
-                {
-                    TypeTag = "BTC_FlagEntry",
-                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
-                });
         }
 
     }
