@@ -655,6 +655,10 @@ namespace GeminiV26.Instruments.XAUUSD
                     RemainingVolumeInUnits = pos.VolumeInUnits,
                     InitialVolumeInUnits = pos.VolumeInUnits,
 
+                    // Neutral confidence placeholders (same rehydrate convention as RehydrateService).
+                    EntryScore = 50,
+                    LogicConfidence = 50,
+
                     // SSOT snapshot
                     RiskPriceDistance = rDist,
                     PipSize = bot.Symbol.PipSize,

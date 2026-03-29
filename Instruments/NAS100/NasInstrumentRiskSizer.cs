@@ -37,7 +37,7 @@ namespace GeminiV26.Instruments.NAS100
         // STOP LOSS – ATR multiplier
         // EntryType NEM játszik szerepet
         // =====================================================
-        public double GetStopLossAtrMultiplier(int score, EntryType entryType)
+        public double GetStopLossAtrMultiplier(int finalConfidence, EntryType entryType)
         {
             // NAS100 continuation model – adjunk levegőt a jó setupnak
             if (score >= 85) return 2.2;
@@ -49,7 +49,7 @@ namespace GeminiV26.Instruments.NAS100
         // TAKE PROFIT – R struktúra
         // =====================================================
         public void GetTakeProfit(
-            int score,
+            int finalConfidence,
             out double tp1R,
             out double tp1Ratio,
             out double tp2R,
