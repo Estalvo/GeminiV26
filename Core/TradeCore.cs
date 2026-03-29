@@ -1338,7 +1338,6 @@ namespace GeminiV26.Core
                     }
                 );
 
-                LogEntrySnapshot(_ctx, selected);
                 _bot.Print(TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
                 _bot.Print($"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
@@ -1377,6 +1376,8 @@ namespace GeminiV26.Core
                     _bot.Print("BLOCK: direction/entry failed");
                     return;
                 }
+
+                LogEntrySnapshot(_ctx, selected);
 
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
                 _bot.Print(TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
@@ -2133,6 +2134,12 @@ namespace GeminiV26.Core
             if (ctx == null || selected == null)
                 return;
 
+            if (ctx.FinalDirection == TradeDirection.None)
+            {
+                _bot.Print("[SNAPSHOT][SKIP] FinalDirection not set");
+                return;
+            }
+
             int normalizedEntryScore = PositionContext.ClampRiskConfidence(selected.Score);
             int logicConfidence = Math.Max(0, ctx.LogicBiasConfidence);
             int normalizedLogicConfidence = PositionContext.ClampRiskConfidence(logicConfidence);
@@ -2148,6 +2155,7 @@ namespace GeminiV26.Core
             _bot.Print(TradeLogIdentity.WithTempId(
                 $"[SCORE][BLEND] entry={normalizedEntryScore} logic={normalizedLogicConfidence} final={finalConfidence}",
                 ctx));
+            _bot.Print($"[SNAPSHOT][FINAL] dir={ctx.FinalDirection} conf={finalConfidence:F2}");
 
             _bot.Print(TradeLogIdentity.WithTempId(
                 TradeAuditLog.BuildEntrySnapshot(_bot, ctx, selected, normalizedLogicConfidence, finalConfidence, 0, riskFinal),
