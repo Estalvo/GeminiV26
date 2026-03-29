@@ -1334,6 +1334,11 @@ namespace GeminiV26.Core
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
+                var logicDir = _ctx.LogicBiasDirection;
+                var evalDir = selected.Direction;
+                var routedDir = _ctx.RoutedDirection;
+                var finalDir = _ctx.FinalDirection;
+                _bot.Print($"[DIR] logic={logicDir} eval={evalDir} routed={routedDir} final={finalDir}");
                 _ctx.EntryScore = PositionContext.ClampRiskConfidence(selected.Score);
                 _ctx.LogicBiasConfidence = PositionContext.ClampRiskConfidence(Math.Max(0, _ctx.LogicBiasConfidence));
                 _ctx.FinalConfidence = PositionContext.ComputeFinalConfidenceValue(_ctx.EntryScore, _ctx.LogicBiasConfidence);
