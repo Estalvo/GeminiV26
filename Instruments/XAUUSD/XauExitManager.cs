@@ -437,6 +437,7 @@ namespace GeminiV26.Instruments.XAUUSD
 
             // TP1 state (SSOT) – csak itt állítjuk
             ctx.Tp1Hit = true;
+            _bot.Print("[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
             _bot.Print(TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeVolume}", ctx, pos));
 
