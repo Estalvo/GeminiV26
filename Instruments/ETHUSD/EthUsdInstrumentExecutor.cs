@@ -89,22 +89,31 @@ namespace GeminiV26.Instruments.ETHUSD
             _entryLogic.Evaluate(out _, out int logicConfidence);
             int statePenalty = 0;
 
-            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
-            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence);
+            var ctx = new PositionContext
+            {
+                Symbol = _bot.SymbolName,
+                TempId = entryContext.TempId,
+                EntryType = entry.Type.ToString(),
+                EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence
+            };
+            ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, finalConfidence, statePenalty, riskConfidence), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence)), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
             if (statePenalty != 0)
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)}", entryContext));
 
             // =========================================================
             // SL DISTANCE (ATR)
             // =========================================================
             double slPriceDist =
-                CalculateStopLossPriceDistance(riskConfidence, entry.Type);
+                CalculateStopLossPriceDistance(PositionContext.ClampRiskConfidence(ctx.FinalConfidence), entry.Type);
 
             if (slPriceDist <= 0)
                 return;
@@ -116,12 +125,12 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
             // =========================================================
-            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence));
             long volumeUnits = CryptoPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(riskConfidence));
+                _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence)));
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
@@ -136,7 +145,7 @@ namespace GeminiV26.Instruments.ETHUSD
             // TP POLICY
             // =========================================================
             _riskSizer.GetTakeProfit(
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence),
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -159,7 +168,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 return;
 
             _bot.Print(
-                $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} FC={riskConfidence} " +
+                $"[ETH RISK] score={entry.Score} logicConf={logicConfidence} FC={PositionContext.ClampRiskConfidence(ctx.FinalConfidence)} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"volUnits={volumeUnits}"
             );
@@ -193,7 +202,7 @@ namespace GeminiV26.Instruments.ETHUSD
             // =========================================================
             // POSITION CONTEXT (SSOT)
             // =========================================================
-            var ctx = new PositionContext
+            ctx = new PositionContext
             {
                 PositionId = posId,
                 Symbol = result.Position.SymbolName,

@@ -172,24 +172,23 @@ namespace GeminiV26.Instruments.XAUUSD
             // -----------------------------------------------------
             ctx.ComputeFinalConfidence();
 
-            int riskConfidence = PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty);
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, ctx.LogicConfidence, ctx.FinalConfidence, statePenalty, riskConfidence), entryContext));
+                        _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, ctx.LogicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)), entryContext));
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
             if (statePenalty != 0)
-                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
 
-            // Trailing mód riskConfidence alapján (FinalConfidence + statePenalty)
+            // Trailing mód PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) alapján (FinalConfidence + statePenalty)
             ctx.TrailingMode =
-                riskConfidence >= 85 ? TrailingMode.Loose :
-                riskConfidence >= 75 ? TrailingMode.Normal :
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 85 ? TrailingMode.Loose :
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 75 ? TrailingMode.Normal :
                                              TrailingMode.Tight;
 
             // =====================================================
-            // 4️⃣ SL / TP POLICY (riskConfidence)
+            // 4️⃣ SL / TP POLICY (PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty))
             // =====================================================
             double slPriceDist = _riskSizer.CalculateStopLossPriceDistance(
                 _bot,
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
                 entry.Type);
 
             if (slPriceDist <= 0)
@@ -201,7 +200,7 @@ namespace GeminiV26.Instruments.XAUUSD
             double tp2Price = _riskSizer.CalculateTp2PriceFromSlDistance(
                 _bot,
                 tradeType,
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
                 slPriceDist);
 
             if (tp2Price <= 0)
@@ -214,7 +213,7 @@ namespace GeminiV26.Instruments.XAUUSD
             // 5️⃣ TP / R VALUES (EURUSD MINTA SZERINT)
             // =====================================================
             _riskSizer.GetTakeProfit(
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
@@ -230,12 +229,12 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 6️⃣ VOLUME POLICY – METAL POSITION SIZER (XAU)
             // =====================================================
-            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
             long volumeUnits = MetalPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(riskConfidence)
+                _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty))
             );
 
             if (volumeUnits <= 0)

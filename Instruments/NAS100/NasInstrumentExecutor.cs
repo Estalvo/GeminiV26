@@ -97,16 +97,25 @@ namespace GeminiV26.Instruments.NAS100
                 }
             }
 
-            int finalConfidence = PositionContext.ComputeFinalConfidenceValue(entry.Score, logicConfidence);
-            int riskConfidence = PositionContext.ClampRiskConfidence(finalConfidence + statePenalty);
+            var ctx = new PositionContext
+            {
+                Symbol = _bot.SymbolName,
+                TempId = entryContext.TempId,
+                EntryType = entry.Type.ToString(),
+                EntryReason = entry.Reason,
+                FinalDirection = entryContext.FinalDirection,
+                EntryScore = entry.Score,
+                LogicConfidence = logicConfidence
+            };
+            ctx.ComputeFinalConfidence();
 
-            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, finalConfidence, statePenalty, riskConfidence), entryContext));
+            _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildEntrySnapshot(_bot, entryContext, entry, logicConfidence, ctx.FinalConfidence, statePenalty, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)), entryContext));
 
             _bot.Print(TradeLogIdentity.WithTempId(TradeAuditLog.BuildDirectionSnapshot(entryContext, entry), entryContext));
 
             if (statePenalty != 0)
 
-                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={riskConfidence}", entryContext));
+                _bot.Print(TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty)}", entryContext));
 
             // === ORIGINAL LOGIC CONTINUES ===
             var tradeType =
@@ -117,26 +126,26 @@ namespace GeminiV26.Instruments.NAS100
             // =========================
             // RISK POLICY
             // =========================
-            double riskPercent = _riskSizer.GetRiskPercent(riskConfidence);
+            double riskPercent = _riskSizer.GetRiskPercent(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
 
             if (riskPercent <= 0)
                 return;
 
-            double slPriceDist = CalculateStopLossPriceDistance(riskConfidence, entry.Type);
+            double slPriceDist = CalculateStopLossPriceDistance(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty), entry.Type);
             if (slPriceDist <= 0)
                 return;
 
             _riskSizer.GetTakeProfit(
-                riskConfidence,
+                PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty),
                 out double tp1R,
                 out double tp1Ratio,
                 out double tp2R,
                 out double tp2Ratio);
 
-            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(riskConfidence, entry.Type);
-            double lotCap = _riskSizer.GetLotCap(riskConfidence);
+            double slAtrMult = _riskSizer.GetStopLossAtrMultiplier(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty), entry.Type);
+            double lotCap = _riskSizer.GetLotCap(PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
 
-            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, riskConfidence);
+            long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty));
 
             if (volumeUnits <= 0)
                 return;
@@ -195,7 +204,7 @@ namespace GeminiV26.Instruments.NAS100
             // =========================
             // CONTEXT – TELJES, R-ALAPÚ
             // =========================
-            var ctx = new PositionContext
+            ctx = new PositionContext
             {
                 PositionId = positionKey,
                 Symbol = result.Position.SymbolName,
@@ -225,8 +234,8 @@ namespace GeminiV26.Instruments.NAS100
                 Tp1CloseFraction = tp1Ratio,
 
                 TrailingMode =
-                    riskConfidence >= 85 ? TrailingMode.Loose :
-                    riskConfidence >= 75 ? TrailingMode.Normal :
+                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 85 ? TrailingMode.Loose :
+                    PositionContext.ClampRiskConfidence(ctx.FinalConfidence + statePenalty) >= 75 ? TrailingMode.Normal :
                                                 TrailingMode.Tight,
 
                 EntryVolumeInUnits = volumeUnits,
