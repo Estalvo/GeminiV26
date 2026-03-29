@@ -1,4 +1,4 @@
-using cAlgo.API;
+using GeminiV26.Core.Entry;
 
 namespace GeminiV26.Core
 {
@@ -22,8 +22,6 @@ namespace GeminiV26.Core
             if (rMove < ctx.MaeR)
                 ctx.MaeR = rMove;
 
-            ctx.Bot?.Print($"[MFE] value={ctx.MfeR:F2} price={currentPrice}");
-            ctx.Bot?.Print($"[MAE] value={ctx.MaeR:F2} price={currentPrice}");
         }
     }
 }
