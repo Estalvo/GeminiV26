@@ -933,14 +933,14 @@ namespace GeminiV26.Core
             _ctx.MarketState = BuildEntryMarketState(fxState, cryptoState, xauState, indexState);
             if (_ctx.MarketState != null)
             {
-                GlobalLogger.Log(
+                GlobalLogger.Log(string.Format(
                     "[ENTRY MARKETSTATE ASSIGN] sym={0} trend={1} momentum={2} lowVol={3} adx={4:F1} atrPts={5:F2}",
                     rawSym,
                     _ctx.MarketState.IsTrend,
                     _ctx.MarketState.IsMomentum,
                     _ctx.MarketState.IsLowVol,
                     _ctx.MarketState.Adx,
-                    _ctx.MarketState.AtrPoints);
+                    _ctx.MarketState.AtrPoints));
             }
 
             _ctx.LastUpdateUtc = DateTime.UtcNow;
