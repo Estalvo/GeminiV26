@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Execution;
 using GeminiV26.Core.Logging;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Core.Risk.PositionSizing;
@@ -167,7 +168,10 @@ namespace GeminiV26.Instruments.USDJPY
                 out double tp2Ratio);
 
             // === RISK ===
+            var quality = ExecutionQualityPolicy.Decide(entryContext, entry);
+
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
+            riskPercent *= quality.RiskMultiplier;
 
             if (riskPercent <= 0)
                 return;
@@ -240,6 +244,9 @@ namespace GeminiV26.Instruments.USDJPY
                 // =========================
                 EntryScore = entry.Score,
                 LogicConfidence = logicConfidence,
+                QualityTier = quality.Tier,
+                ForceFastBE = quality.ForceFastBE,
+                ForceTightTrailing = quality.ForceTightTrailing,
                 // FinalConfidence-t ComputeFinalConfidence tölti
 
                 EntryTime = _bot.Server.Time,

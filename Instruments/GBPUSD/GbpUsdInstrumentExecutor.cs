@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Execution;
 using GeminiV26.Core.Logging;
 using GeminiV26.Instruments.FX;
 using cAlgo.API.Indicators;
@@ -175,7 +176,10 @@ namespace GeminiV26.Instruments.GBPUSD
                     ? TradeType.Buy
                     : TradeType.Sell;
 
+            var quality = ExecutionQualityPolicy.Decide(entryContext, entry);
+
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
+            riskPercent *= quality.RiskMultiplier;
             if (riskPercent <= 0)
                 return;
 
@@ -264,6 +268,9 @@ namespace GeminiV26.Instruments.GBPUSD
                 FinalDirection = entryContext.FinalDirection,
                 EntryScore = entry.Score,
                 LogicConfidence = logicConfidence,
+                QualityTier = quality.Tier,
+                ForceFastBE = quality.ForceFastBE,
+                ForceTightTrailing = quality.ForceTightTrailing,
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,
 

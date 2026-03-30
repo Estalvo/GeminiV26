@@ -27,6 +27,7 @@ using System;
 using cAlgo.API;
 using Gemini.Memory;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Execution;
 
 namespace GeminiV26.Core
 {
@@ -158,6 +159,15 @@ namespace GeminiV26.Core
         public BeMode BeMode { get; set; }
 
         public TrailingMode TrailingMode { get; set; }
+
+        // =========================
+        // Execution quality policy hints
+        // =========================
+        public ExecutionQualityTier QualityTier { get; set; } = ExecutionQualityTier.Full;
+
+        public bool ForceFastBE { get; set; }
+
+        public bool ForceTightTrailing { get; set; }
 
         // =========================================================
         // RiskSizer → ExitManager bridge

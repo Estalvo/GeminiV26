@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Execution;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.CRYPTO;
@@ -153,7 +154,10 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
             // =========================================================
+            var quality = ExecutionQualityPolicy.Decide(entryContext, entry);
+
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
+            riskPercent *= quality.RiskMultiplier;
             long volumeUnits = CryptoPositionSizer.Calculate(
                 _bot,
                 riskPercent,
@@ -256,6 +260,9 @@ namespace GeminiV26.Instruments.BTCUSD
 
                 EntryScore = entry.Score,
                 LogicConfidence = logicConfidence,
+                QualityTier = quality.Tier,
+                ForceFastBE = quality.ForceFastBE,
+                ForceTightTrailing = quality.ForceTightTrailing,
 
                 EntryTime = _bot.Server.Time,
                 EntryPrice = result.Position.EntryPrice,

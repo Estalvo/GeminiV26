@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using cAlgo.API;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Execution;
 using GeminiV26.Core.Logging;
 using GeminiV26.Core.Risk.PositionSizing;
 using GeminiV26.Instruments.METAL;
@@ -249,7 +250,13 @@ namespace GeminiV26.Instruments.XAUUSD
             // =====================================================
             // 6️⃣ VOLUME POLICY – METAL POSITION SIZER (XAU)
             // =====================================================
+            var quality = ExecutionQualityPolicy.Decide(entryContext, entry);
+            ctx.QualityTier = quality.Tier;
+            ctx.ForceFastBE = quality.ForceFastBE;
+            ctx.ForceTightTrailing = quality.ForceTightTrailing;
+
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
+            riskPercent *= quality.RiskMultiplier;
             long volumeUnits = MetalPositionSizer.Calculate(
                 _bot,
                 riskPercent,
