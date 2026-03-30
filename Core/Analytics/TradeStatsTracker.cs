@@ -193,7 +193,7 @@ namespace GeminiV26.Core.Analytics
 
         private void ExportInstrumentStatsToFile(string symbol, InstrumentStats stats)
         {
-            const string basePath = @"C:\Users\Administrator\Documents\GeminiV26\Data\Trades";
+            var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26", "Logs", "Trades");
             var instrumentPath = Path.Combine(basePath, symbol);
             Directory.CreateDirectory(instrumentPath);
 
@@ -266,7 +266,7 @@ namespace GeminiV26.Core.Analytics
 
             try
             {
-                const string basePath = @"C:\Users\Administrator\Documents\GeminiV26\Data\Trades";
+                var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26", "Logs", "Trades");
                 Directory.CreateDirectory(basePath);
 
                 var safeSymbol = snapshot.Symbol.Trim();
