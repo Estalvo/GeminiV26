@@ -268,8 +268,15 @@ namespace GeminiV26.Core.Analytics
                     CloseTimeUtc = snapshot.CloseTimeUtc
                 };
 
-                UnifiedAnalyticsWriter.Write(record);
-                _log($"[TRADESTATS] trade logged {record.Symbol}");
+                var writeOk = UnifiedAnalyticsWriter.Write(record);
+                if (writeOk)
+                {
+                    _log($"[TRADESTATS] trade logged {record.Symbol}");
+                }
+                else
+                {
+                    _log($"[TRADESTATS][ANALYTICS_DEGRADED] symbol={record.Symbol} posId={record.PositionId}");
+                }
             }
             catch (Exception ex)
             {
