@@ -282,7 +282,7 @@ namespace GeminiV26.Instruments.BTCUSD
                                              TrailingMode.Tight;
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
-                $"[ENTRY][EXEC][SUCCESS] symbol={ctx.Symbol ?? result.Position.SymbolName ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={result.Position.Id} pipelineId={ctx.PositionId > 0 ? ctx.PositionId.ToString() : (ctx.TempId ?? entryContext.TempId)}\n" +
+                $"[ENTRY][EXEC][SUCCESS] symbol={ctx.Symbol ?? result.Position.SymbolName ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={result.Position.Id} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : (ctx.TempId ?? entryContext.TempId))}\n" +
                 $"volumeUnits={ctx.EntryVolumeInUnits:0.##}\n" +
                 $"entryPrice={ctx.EntryPrice:0.#####}\n" +
                 $"sl={result.Position.StopLoss}\n" +
@@ -296,7 +296,7 @@ namespace GeminiV26.Instruments.BTCUSD
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[DIR][SET] posId={ctx.PositionId} finalDir={ctx.FinalDirection}", ctx));
             _exitManager.RegisterContext(ctx);
 
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[POSITION][OPEN] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={ctx.PositionId} pipelineId={ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId} entryPrice={ctx.EntryPrice}", ctx));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[POSITION][OPEN] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} entryPrice={ctx.EntryPrice}", ctx));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[BTCUSD][EXEC] OPEN {tradeType} " +
                 $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}", ctx));
