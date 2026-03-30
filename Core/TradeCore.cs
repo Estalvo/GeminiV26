@@ -2754,8 +2754,8 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot, $"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
             if (recommendedTimingPenalty <= -10)
             {
-                double triggerLateScore = ctx.MemoryAssessment?.TriggerLateScore ?? 0.0;
-                bool overextended = ctx.MemoryAssessment?.IsOverextended ?? false;
+                double triggerLateScore = ctx.MemoryTriggerLateScore;
+                bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
                 bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
                 string timingFingerprint = $"timing_block:{ctx.Symbol}:{eval.Type}:{eval.Score}:{recommendedTimingPenalty}:{triggerLateScore:0.###}:{overextended}:{exhausted}";
                 if (!string.Equals(ctx.LastLoggedStateFingerprint, timingFingerprint, StringComparison.Ordinal))
