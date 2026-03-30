@@ -330,7 +330,7 @@ namespace GeminiV26.Core
             }
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ACCEPT] type={winner.Type} dir={winner.Direction} score={winner.Score} reason={winner.Reason}", entryContext));
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TR] WINNER: {winner.Type} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY][WINNER] symbol={winner.Symbol ?? entryContext?.Symbol ?? _bot.SymbolName} entryType={winner.Type} pipelineId={entryContext?.TempId} dir={winner.Direction} score={winner.Score} valid={winner.IsValid} reason={winner.Reason}", entryContext));
             return winner;
         }
 
