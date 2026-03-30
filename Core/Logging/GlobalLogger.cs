@@ -12,17 +12,25 @@ namespace GeminiV26.Core.Logging
 
         public static void Log(string msg, Robot bot = null)
         {
+            Log(msg, bot, null);
+        }
+
+        public static void Log(string msg, Robot bot, string positionId)
+        {
             if (msg == null)
                 return;
 
+            var finalMessage = WithPosition(msg, positionId);
+
             if (bot != null)
-                bot.Print(msg);
+                bot.Print(finalMessage);
             else
-                Debug.WriteLine(msg);
+                Debug.WriteLine(finalMessage);
 
             try
             {
-                RuntimeFileLogger.Write(msg);
+                var instanceName = bot != null ? bot.SymbolName : "GLOBAL";
+                RuntimeFileLogger.Write(finalMessage, instanceName);
             }
             catch
             {
@@ -32,7 +40,7 @@ namespace GeminiV26.Core.Logging
 
         public static void Log(string msg)
         {
-            Log(msg, null);
+            Log(msg, null, null);
         }
 
         public static void Log(object source, string msg)
@@ -42,6 +50,14 @@ namespace GeminiV26.Core.Logging
 
             string prefix = source == null ? "[LOG]" : $"[{source.GetType().Name}]";
             Log($"{prefix} {msg}");
+        }
+
+        public static string WithPosition(string msg, string positionId)
+        {
+            if (msg == null || positionId == null)
+                return msg;
+
+            return $"[POS:{positionId}] {msg}";
         }
     }
 }
