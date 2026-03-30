@@ -10,8 +10,10 @@ namespace GeminiV26.Core.Risk.PositionSizing
             double riskPercent,
             double slPriceDistance,
             double lotCap,
-            bool isExecutionContext = false)
+            bool? isExecutionContext = null)
         {
+            bool execCtx = isExecutionContext ?? false;
+
             if (riskPercent <= 0 || slPriceDistance <= 0 || lotCap <= 0)
                 return 0;
 
@@ -27,7 +29,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
                     finalUnits,
                     RoundingMode.Down);
 
-            if (isExecutionContext)
+            if (execCtx)
             {
                 GlobalLogger.Log(bot, $"[CRYPTO SIZE RAW] symbol={symbol} balance={balance:0.##} riskPercent={riskPercent:0.###} riskAmount={riskAmount:0.###} slDistance={slPriceDistance:0.########} rawUnits={rawUnits:0.###} capUnits={capUnits:0.###} finalUnits={finalUnits:0.###}");
                 GlobalLogger.Log(bot, $"[CRYPTO SIZE NORMALIZED] symbol={symbol} normalizedUnits={normalized} minVolume={bot.Symbol.VolumeInUnitsMin} step={bot.Symbol.VolumeInUnitsStep} lotSize={bot.Symbol.LotSize}");
@@ -35,7 +37,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
 
             if (normalized < bot.Symbol.VolumeInUnitsMin)
             {
-                if (isExecutionContext)
+                if (execCtx)
                 {
                     GlobalLogger.Log(bot, $"[CRYPTO SIZE ZERO] symbol={symbol} reason=below_min_after_normalization finalUnits={finalUnits:0.###} normalizedUnits={normalized} minVolume={bot.Symbol.VolumeInUnitsMin} step={bot.Symbol.VolumeInUnitsStep} riskPercent={riskPercent:0.###} slDistance={slPriceDistance:0.########}");
                 }
