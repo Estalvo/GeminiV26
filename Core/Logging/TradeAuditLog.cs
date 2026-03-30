@@ -111,7 +111,10 @@ namespace GeminiV26.Core.Logging
 
         public static string BuildOpenSnapshot(PositionContext ctx, double? sl, double? tp, double volumeUnits)
         {
-            return "[OPEN]\n" +
+            return "[POSITION][OPEN]\n" +
+                   $"symbol={ctx?.Symbol ?? "UNKNOWN"}\n" +
+                   $"entryType={ctx?.EntryType ?? "UNKNOWN"}\n" +
+                   $"positionId={ctx?.PositionId ?? 0}\n" +
                    $"entryPrice={FormatNumber(ctx?.EntryPrice)}\n" +
                    $"sl={FormatNumber(sl)}\n" +
                    $"tp={FormatNumber(tp)}\n" +
