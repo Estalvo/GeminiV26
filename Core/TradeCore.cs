@@ -66,6 +66,7 @@ using GeminiV26.Core.Context;
 using GeminiV26.Core.Analytics;
 using GeminiV26.Core.Memory;
 using GeminiV26.Core.Runtime;
+using GeminiV26.Core.Risk;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -263,6 +264,8 @@ namespace GeminiV26.Core
 
         private GlobalSessionGate _globalSessionGate;
         private SessionMatrix _sessionMatrix;
+        private readonly GeminiRiskConfig _riskConfig;
+        private readonly GlobalRiskGuard _globalRiskGuard;
 
         private EntryContext _ctx;
         private long _entryRouterPassCounter;
@@ -388,6 +391,8 @@ namespace GeminiV26.Core
             _contextBuilder = new EntryContextBuilder(bot, _memoryEngine);
             _globalSessionGate = new GlobalSessionGate(_bot);
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
+            _riskConfig = new GeminiRiskConfig();
+            _globalRiskGuard = new GlobalRiskGuard(_riskConfig, msg => GlobalLogger.Log(_bot, msg));
 
             _xauEntryLogic = new XauEntryLogic(_bot);
             _xauSessionGate = new XauSessionGate(_bot);
@@ -1428,6 +1433,14 @@ namespace GeminiV26.Core
                 var gateDir = ToTradeTypeStrict(_ctx.FinalDirection);
                 GlobalLogger.Log(_bot, "CHECK: direction gate");
                 GlobalLogger.Log(_bot, "CHECK: entry gate");
+
+                var utcNow = _bot.Server.Time.ToUniversalTime();
+                var currentEquity = _bot.Account.Equity;
+                if (!_globalRiskGuard.CanTrade(currentEquity, utcNow))
+                {
+                    GlobalLogger.Log(_bot, "[RISK][DD_BLOCK] Daily DD limit reached");
+                    return;
+                }
 
             // === GATES ONLY ===
             if (IsSymbol("XAUUSD"))
