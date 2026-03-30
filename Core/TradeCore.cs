@@ -1173,20 +1173,10 @@ namespace GeminiV26.Core
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
 
-            double topCandidateScore = symbolSignals
-                .Where(x => x != null)
-                .Select(x => (double)x.Score)
-                .DefaultIfEmpty(double.MinValue)
-                .Max();
-
             foreach (var e in symbolSignals)
             {
                 StampEntrySourceHtfTrace(_ctx, e);
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
-                if (e != null && (e.Score >= 50 || e.Score >= topCandidateScore))
-                {
-                    GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} score={e.Score:0.##} confidence={e.LogicConfidence:0.##} trend={_ctx?.TrendDirection}");
-                }
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
                 {
@@ -1273,6 +1263,37 @@ namespace GeminiV26.Core
                 // ROUTER
                 // =====================================================
                 var selected = _router.SelectEntry(symbolSignals, _ctx);
+                bool hasWinner = selected != null;
+                double topCandidateScore = symbolSignals
+                    .Where(x => x != null)
+                    .Select(x => (double)x.Score)
+                    .DefaultIfEmpty(double.MinValue)
+                    .Max();
+                var bestCandidate = symbolSignals
+                    .Where(x => x != null)
+                    .OrderByDescending(x => x.Score)
+                    .FirstOrDefault();
+                bool fallbackLogged = false;
+
+                foreach (var candidate in symbolSignals.Where(x => x != null))
+                {
+                    bool isTopRanked = candidate.Score >= topCandidateScore;
+                    bool shouldLogCandidate = isTopRanked || candidate.Score >= 50 || !hasWinner;
+                    if (!shouldLogCandidate)
+                        continue;
+
+                    if (!hasWinner)
+                    {
+                        if (fallbackLogged || !ReferenceEquals(candidate, bestCandidate))
+                            continue;
+
+                        GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} score={candidate.Score:0.##} confidence={candidate.LogicConfidence:0.##} trend={_ctx?.TrendDirection} fallback=true");
+                        fallbackLogged = true;
+                        continue;
+                    }
+
+                    GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} score={candidate.Score:0.##} confidence={candidate.LogicConfidence:0.##} trend={_ctx?.TrendDirection}");
+                }
 
                 GlobalLogger.Log(_bot, $"[TRACE] selected is null = {selected == null}");
                 if (selected != null)
