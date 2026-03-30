@@ -98,7 +98,10 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.BarsSinceImpulseLong_M5
                     : ctx.BarsSinceImpulseShort_M5;
 
-            double rangeWidth = ctx.MarketState?.RangeWidth ?? 0.0;
+            bool hasValidRange = ctx.RangeBreakAtrSize_M5 > 0.0;
+            double rangeWidth = hasValidRange
+                ? ctx.RangeBreakAtrSize_M5
+                : 0.0;
             bool isAtrCompression = !ctx.IsAtrExpanding_M5;
             bool isChop =
                 ctx.Adx_M5 < 18.0
