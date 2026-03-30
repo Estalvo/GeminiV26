@@ -314,6 +314,9 @@ namespace GeminiV26.Instruments.XAUUSD
                     }
                     else
                     {
+                        double slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss ?? 0;
+                        _bot.Print($"[TP1_SOURCE] entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
+
                         tp1Price = IsLong(ctx)
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R;
@@ -657,18 +660,24 @@ namespace GeminiV26.Instruments.XAUUSD
 
         private double GetRiskDistance(Position pos, PositionContext ctx)
         {
-            // 1) Legjobb: ctx.RiskPriceDistance (belépéskori SSOT)
+            // 1) Legjobb: immutable entrykori SL snapshot
+            if (ctx.InitialStopLossPrice.HasValue)
+            {
+                return Math.Abs(ctx.EntryPrice - ctx.InitialStopLossPrice.Value);
+            }
+
+            // 2) ctx.RiskPriceDistance (belépéskori SSOT)
             if (ctx.RiskPriceDistance > 0)
                 return ctx.RiskPriceDistance;
 
-            // 2) Ha nincs: próbáljuk a “kanonikus” SL snapshotot (rehydrate / executor töltheti)
+            // 3) Ha nincs: próbáljuk a “kanonikus” SL snapshotot (rehydrate / executor töltheti)
             if (ctx.LastStopLossPrice.HasValue && ctx.LastStopLossPrice.Value > 0 && ctx.EntryPrice > 0)
             {
                 double d = Math.Abs(ctx.EntryPrice - ctx.LastStopLossPrice.Value);
                 if (d > 0) return d;   // <-- marad double!
             }
 
-            // 3) Végső fallback (nem ideális): entryPrice vs aktuális SL
+            // 4) Végső fallback (nem ideális): entryPrice vs aktuális SL
             // TP1 előtt még oké, TP1 után torzulhat, de TP1 után már Tp1Hit=true
             double d2 = Math.Abs(pos.EntryPrice - pos.StopLoss.Value);
             return d2 > 0 ? d2 : 0;

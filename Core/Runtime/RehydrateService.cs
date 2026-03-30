@@ -420,6 +420,12 @@ namespace GeminiV26.Core.Runtime
                 RuntimeSymbolAvailable = true
             };
 
+            if (!ctx.InitialStopLossPrice.HasValue && stopLoss != null)
+            {
+                ctx.InitialStopLossPrice = stopLoss;
+                _bot.Print($"[SL_REBUILD] symbol={position.SymbolName} source=broker sl={stopLoss}");
+            }
+
             // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
             ctx.ComputeFinalConfidence();
             if (ctx.RuntimeSymbolAvailable)

@@ -416,6 +416,8 @@ namespace GeminiV26.Core
         /// </summary>
         public double? LastStopLossPrice { get; set; }
 
+        public double? InitialStopLossPrice { get; set; }
+
 
         // =========================
         // Post-TP1 management state
