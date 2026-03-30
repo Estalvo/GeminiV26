@@ -7,24 +7,32 @@ namespace GeminiV26.Core.Logging
     {
         public static void Log(Robot bot, string msg)
         {
-            if (msg == null)
-                return;
-
-            if (bot != null)
-            {
-                bot.Print(msg);
-                return;
-            }
-
-            Debug.WriteLine(msg);
+            Log(msg, bot);
         }
 
-        public static void Log(string msg)
+        public static void Log(string msg, Robot bot = null)
         {
             if (msg == null)
                 return;
 
-            Debug.WriteLine(msg);
+            if (bot != null)
+                bot.Print(msg);
+            else
+                Debug.WriteLine(msg);
+
+            try
+            {
+                RuntimeFileLogger.Write(msg);
+            }
+            catch
+            {
+                // never break trading
+            }
+        }
+
+        public static void Log(string msg)
+        {
+            Log(msg, null);
         }
 
         public static void Log(object source, string msg)
@@ -33,7 +41,7 @@ namespace GeminiV26.Core.Logging
                 return;
 
             string prefix = source == null ? "[LOG]" : $"[{source.GetType().Name}]";
-            Debug.WriteLine($"{prefix} {msg}");
+            Log($"{prefix} {msg}");
         }
     }
 }

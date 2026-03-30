@@ -45,7 +45,7 @@ namespace GeminiV26.Data
             _baseDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "GeminiV26",
-                "Data",
+                "Logs",
                 "Bars",
                 _symbol
             );
