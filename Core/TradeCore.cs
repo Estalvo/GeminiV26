@@ -1175,7 +1175,7 @@ namespace GeminiV26.Core
 
             double topCandidateScore = symbolSignals
                 .Where(x => x != null)
-                .Select(x => x.Score)
+                .Select(x => (double)x.Score)
                 .DefaultIfEmpty(double.MinValue)
                 .Max();
 
