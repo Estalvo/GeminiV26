@@ -26,11 +26,12 @@ namespace GeminiV26.Core.Execution
             EntryEvaluation eval)
         {
             bool htfMismatch = false;
+            TradeDirection allowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
 
             if (ctx != null &&
-                ctx.HtfAllowedDirection != TradeDirection.None)
+                allowedDirection != TradeDirection.None)
             {
-                htfMismatch = ctx.FinalDirection != ctx.HtfAllowedDirection;
+                htfMismatch = ctx.FinalDirection != allowedDirection;
             }
 
             bool lowScore = eval != null && eval.Score < 50;
