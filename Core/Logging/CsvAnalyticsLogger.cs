@@ -38,6 +38,9 @@ namespace GeminiV26.Core.Logging
 
         public void OnTradeClosed(TradeLogContext context, Position position, TradeLogResult result)
         {
+            // SSOT ENFORCEMENT: disabled duplicate analytics writer
+            return;
+
             if (context == null)
                 return;
 
