@@ -51,14 +51,14 @@ namespace GeminiV26.Instruments.ETHUSD
             if (entry == null)
             {
                 GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing entry");
-                GlobalLogger.Log(_bot, "[ENTRY][EXEC][ABORT] symbol=ETHUSD entryType=UNKNOWN positionId=NA reason=missing_entry");
+                GlobalLogger.Log(_bot, "[ENTRY][EXEC][ABORT] symbol=ETHUSD entryType=UNKNOWN reason=missing_entry");
                 return;
             }
 
             if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
             {
                 GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing FinalDirection");
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=missing_final_direction");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=missing_final_direction");
                 return;
             }
 
@@ -139,14 +139,14 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (slPriceDist <= 0)
             {
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_sl_distance");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=invalid_sl_distance");
                 return;
             }
 
             double slPips = slPriceDist / _bot.Symbol.PipSize;
             if (slPips <= 0)
             {
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_sl_pips");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=invalid_sl_pips");
                 return;
             }
 
@@ -158,11 +158,12 @@ namespace GeminiV26.Instruments.ETHUSD
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(adjustedRiskConfidence));
+                _riskSizer.GetLotCap(adjustedRiskConfidence),
+                isExecutionContext: true);
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=volume_below_min");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=volume_below_min");
                 return;
             }
 
@@ -191,7 +192,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             if (tp2Pips <= 0)
             {
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_tp_pips");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=invalid_tp_pips");
                 return;
             }
 
@@ -220,7 +221,7 @@ namespace GeminiV26.Instruments.ETHUSD
                 GlobalLogger.Log(_bot, "[ETHUSD][EXEC] ORDER FAILED (TradeResult unsuccessful or Position null)");
                 GlobalLogger.Log(_bot, $"[ETHUSD][EXEC] ORDER FAILED isSuccessful={result.IsSuccessful}");
                 string error = result?.Error.ToString() ?? "unknown";
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][FAIL] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason={error}");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][FAIL] symbol={_bot.SymbolName} entryType={entry.Type} reason={error}");
                 return;
             }
 

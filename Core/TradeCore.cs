@@ -1173,13 +1173,19 @@ namespace GeminiV26.Core
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
 
+            double topCandidateScore = symbolSignals
+                .Where(x => x != null)
+                .Select(x => x.Score)
+                .DefaultIfEmpty(double.MinValue)
+                .Max();
+
             foreach (var e in symbolSignals)
             {
                 StampEntrySourceHtfTrace(_ctx, e);
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
-                if (e != null)
+                if (e != null && (e.Score >= 50 || e.Score >= topCandidateScore))
                 {
-                    GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} positionId=NA score={e.Score:0.##} confidence={e.LogicConfidence:0.##} trend={_ctx?.TrendDirection}");
+                    GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} score={e.Score:0.##} confidence={e.LogicConfidence:0.##} trend={_ctx?.TrendDirection}");
                 }
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
@@ -1339,7 +1345,7 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
                 GlobalLogger.Log(_bot, $"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
-                GlobalLogger.Log(_bot, $"[ENTRY][WINNER] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=NA score={selected.Score:0.##} confidence={selected.LogicConfidence:0.##}");
+                GlobalLogger.Log(_bot, $"[ENTRY][WINNER] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} score={selected.Score:0.##} confidence={selected.LogicConfidence:0.##}");
 
                 if (!PassFinalAcceptance(_ctx, selected))
                 {
@@ -1390,7 +1396,7 @@ namespace GeminiV26.Core
                 if (_ctx.ActiveHtfDirection == TradeDirection.None)
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
                 double requestRiskPercent = ResolveExecutionRiskPercent(selected, _ctx);
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][REQUEST] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=NA score={selected.Score:0.##} riskPercent={requestRiskPercent:0.##}");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][REQUEST] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} score={selected.Score:0.##} riskPercent={requestRiskPercent:0.##}");
 
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
@@ -2761,8 +2767,7 @@ namespace GeminiV26.Core
                 if (!string.Equals(ctx.LastLoggedStateFingerprint, timingFingerprint, StringComparison.Ordinal))
                 {
                     ctx.LastLoggedStateFingerprint = timingFingerprint;
-                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()}");
-                    GlobalLogger.Log(_bot, $"[ENTRY][FINAL][BLOCK] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} reason=timing_block penalty={recommendedTimingPenalty}");
+                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} confidence={ctx.LogicBiasConfidence:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()}");
                 }
                 return false;
             }
@@ -2829,7 +2834,7 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                 $"[FINAL][PASS] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                 ctx));
-            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
+            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
             return true;
         }
 
