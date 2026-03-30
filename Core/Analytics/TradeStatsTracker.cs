@@ -39,13 +39,17 @@ namespace GeminiV26.Core.Analytics
         {
             public DateTime TimestampUtc;
             public string Symbol;
+            public string PositionId;
             public string Direction;
             public double EntryPrice;
             public double ExitPrice;
             public double Profit;
+            public DateTime OpenTimeUtc;
+            public DateTime CloseTimeUtc;
             public int? Score;
             public int? Confidence;
             public string SetupType;
+            public string EntryType;
             public string MarketRegime;
             public double MfeR;
             public double MaeR;
@@ -127,13 +131,17 @@ namespace GeminiV26.Core.Analytics
             {
                 TimestampUtc = DateTime.UtcNow,
                 Symbol = symbol,
+                PositionId = "UNKNOWN",
                 Direction = string.Empty,
                 EntryPrice = 0,
                 ExitPrice = 0,
                 Profit = pnl,
+                OpenTimeUtc = DateTime.UtcNow,
+                CloseTimeUtc = DateTime.UtcNow,
                 Score = null,
                 Confidence = null,
                 SetupType = string.Empty,
+                EntryType = string.Empty,
                 MarketRegime = string.Empty,
                 MfeR = 0,
                 MaeR = 0,
@@ -266,36 +274,25 @@ namespace GeminiV26.Core.Analytics
 
             try
             {
-                var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26", "Logs", "Trades");
-                Directory.CreateDirectory(basePath);
-
-                var safeSymbol = snapshot.Symbol.Trim();
-                var filePath = Path.Combine(basePath, $"{safeSymbol}_trades.csv");
-
-                if (!File.Exists(filePath))
+                var record = new TradeAnalyticsRecord
                 {
-                    const string header = "timestamp,symbol,direction,entryPrice,exitPrice,profit,score,confidence,SetupType,MarketRegime,MFE_R,MAE_R,RMultiple,TransitionQuality";
-                    File.WriteAllText(filePath, header + Environment.NewLine);
-                }
+                    Symbol = snapshot.Symbol.Trim(),
+                    PositionId = string.IsNullOrWhiteSpace(snapshot.PositionId) ? "UNKNOWN" : snapshot.PositionId,
+                    SetupType = snapshot.SetupType ?? string.Empty,
+                    EntryType = snapshot.EntryType ?? string.Empty,
+                    MarketRegime = snapshot.MarketRegime ?? string.Empty,
+                    MfeR = snapshot.MfeR,
+                    MaeR = snapshot.MaeR,
+                    RMultiple = snapshot.RMultiple,
+                    TransitionQuality = snapshot.TransitionQuality,
+                    Confidence = snapshot.Confidence ?? 0,
+                    Profit = snapshot.Profit,
+                    OpenTimeUtc = snapshot.OpenTimeUtc,
+                    CloseTimeUtc = snapshot.CloseTimeUtc
+                };
 
-                var row = string.Join(",",
-                    snapshot.TimestampUtc.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-                    safeSymbol,
-                    snapshot.Direction ?? string.Empty,
-                    snapshot.EntryPrice.ToString(CultureInfo.InvariantCulture),
-                    snapshot.ExitPrice.ToString(CultureInfo.InvariantCulture),
-                    snapshot.Profit.ToString(CultureInfo.InvariantCulture),
-                    snapshot.Score?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-                    snapshot.Confidence?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
-                    snapshot.SetupType ?? string.Empty,
-                    snapshot.MarketRegime ?? string.Empty,
-                    snapshot.MfeR.ToString("0.####", CultureInfo.InvariantCulture),
-                    snapshot.MaeR.ToString("0.####", CultureInfo.InvariantCulture),
-                    snapshot.RMultiple.ToString("0.####", CultureInfo.InvariantCulture),
-                    snapshot.TransitionQuality.ToString("0.####", CultureInfo.InvariantCulture));
-
-                File.AppendAllText(filePath, row + Environment.NewLine);
-                _log($"[TRADESTATS] trade logged {safeSymbol}");
+                UnifiedAnalyticsWriter.Write(record);
+                _log($"[TRADESTATS] trade logged {record.Symbol}");
             }
             catch (Exception ex)
             {
