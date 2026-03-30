@@ -93,8 +93,8 @@ namespace GeminiV26.Core.TradeManagement
             if (decision.ScoreNormalized > 0.7)
             {
                 newSl = isLong
-                    ? Math.Max(newSl, _bot.Symbol.Bid - atr * decision.DynamicSlMultiplier * 0.8)
-                    : Math.Min(newSl, _bot.Symbol.Ask + atr * decision.DynamicSlMultiplier * 0.8);
+                    ? Math.Max(newSl, _bot.Symbol.Bid - atr * decision.DynamicSlMultiplier * (0.9 + 0.1 * decision.ScoreNormalized))
+                    : Math.Min(newSl, _bot.Symbol.Ask + atr * decision.DynamicSlMultiplier * (0.9 + 0.1 * decision.ScoreNormalized));
             }
 
             newSl = Normalize(newSl);
@@ -255,7 +255,8 @@ namespace GeminiV26.Core.TradeManagement
                 multiplier = profile.AtrMultiplierNormal;
             }
 
-            multiplier = slAtrMultiplier;
+            double volMultiplier = multiplier;
+            multiplier = slAtrMultiplier * volMultiplier;
             double price = isLong ? s.Bid : s.Ask;
 
             newSl = isLong
