@@ -123,7 +123,8 @@ namespace GeminiV26.Core.TradeManagement
             if (shallowPullback)
                 score++;
 
-            double scoreNormalized = Math.Min(1.0, Math.Max(0.0, score / 5.0));
+            double scoreRaw = Math.Min(1.0, Math.Max(0.0, score / 5.0));
+            double scoreNormalized = Math.Pow(scoreRaw, 1.3);
 
             TradeTrendState state = score switch
             {
@@ -141,6 +142,7 @@ namespace GeminiV26.Core.TradeManagement
             double tpAtrMultiplier =
                 profile.LowConfidenceTpAtrMultiplier +
                 (profile.StrongTrendTpAtrMultiplier - profile.LowConfidenceTpAtrMultiplier) * scoreNormalized;
+            tpAtrMultiplier = Math.Min(tpAtrMultiplier, profile.StrongTrendTpAtrMultiplier);
 
             string confidenceBucket = GetConfidenceBucket(score);
             bool profileStateChanged = !string.Equals(ctx.LastProfileState, state.ToString(), StringComparison.Ordinal);
@@ -160,7 +162,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (dynamicMultiplierChanged)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][DYNAMIC] score={score} norm={scoreNormalized:0.00} sl={slAtrMultiplier:0.00} tp={tpAtrMultiplier:0.00}", ctx, position));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][DYNAMIC] score={score} norm={scoreNormalized:0.00} sl={slAtrMultiplier:0.00} tp={tpAtrMultiplier:0.00} atr={atr:0.#####}", ctx, position));
             }
 
             bool allowTp2Extension = isRunner && profile.AllowTp2Extension;
