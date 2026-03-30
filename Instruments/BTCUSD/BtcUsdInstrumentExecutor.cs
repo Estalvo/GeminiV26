@@ -51,12 +51,14 @@ namespace GeminiV26.Instruments.BTCUSD
             if (entry == null)
             {
                 GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing entry");
+                GlobalLogger.Log(_bot, "[ENTRY][EXEC][ABORT] symbol=BTCUSD entryType=UNKNOWN positionId=NA reason=missing_entry");
                 return;
             }
 
             if (entryContext == null || entryContext.FinalDirection == TradeDirection.None)
             {
                 GlobalLogger.Log(_bot, "[DIR][EXEC_ABORT] Missing FinalDirection");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=missing_final_direction");
                 return;
             }
 
@@ -136,11 +138,17 @@ namespace GeminiV26.Instruments.BTCUSD
                 CalculateStopLossPriceDistance(adjustedRiskConfidence, entry.Type);
 
             if (slPriceDist <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_sl_distance");
                 return;
+            }
 
             double slPips = slPriceDist / _bot.Symbol.PipSize;
             if (slPips <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_sl_pips");
                 return;
+            }
 
             // =========================================================
             // RISK-BASED VOLUME (CRYPTO POSITION SIZER)
@@ -154,10 +162,8 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(_bot, 
-                    $"[BTCUSD][EXEC] abort: volume < min " +
-                    $"(vol={volumeUnits}, min={_bot.Symbol.VolumeInUnitsMin})"
-                );
+                GlobalLogger.Log(_bot, $"[BTCUSD][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=volume_below_min volume={volumeUnits} minVolume={_bot.Symbol.VolumeInUnitsMin} riskPercent={riskPercent:0.##} slDistance={slPriceDist:0.########}");
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=volume_below_min");
                 return;
             }
 
@@ -185,7 +191,10 @@ namespace GeminiV26.Instruments.BTCUSD
                 Math.Abs(tp2Price - entryPrice) / _bot.Symbol.PipSize;
 
             if (tp2Pips <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason=invalid_tp_pips");
                 return;
+            }
 
             GlobalLogger.Log(_bot, 
                 $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} RC={adjustedRiskConfidence} FC={ctx.FinalConfidence} " +
@@ -211,11 +220,14 @@ namespace GeminiV26.Instruments.BTCUSD
             {
                 GlobalLogger.Log(_bot, "[BTCUSD][EXEC] ORDER FAILED (TradeResult unsuccessful or Position null)");
                 GlobalLogger.Log(_bot, $"[BTCUSD][EXEC] ORDER FAILED isSuccessful={result.IsSuccessful}");
+                string error = result?.Error.ToString() ?? "unknown";
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][FAIL] symbol={_bot.SymbolName} entryType={entry.Type} positionId=NA reason={error}");
                 return;
             }
 
 
             long posId = result.Position.Id;
+            GlobalLogger.Log(_bot, $"[ENTRY][EXEC][SUCCESS] symbol={result.Position.SymbolName ?? _bot.SymbolName} entryType={entry.Type} positionId={posId}");
             GlobalLogger.Log(_bot, $"[TRADE LINK] tempId={entryContext.TempId} posId={posId} symbol={result.Position.SymbolName}");
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXEC] order placed volume={volumeUnits}", result.Position.Id, entryContext.TempId));
 

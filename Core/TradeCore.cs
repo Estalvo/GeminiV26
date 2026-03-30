@@ -701,6 +701,8 @@ namespace GeminiV26.Core
                 }
 
                 _tradeMetaStore.TryGet(pos.Id, out var pendingMeta);
+                string openedEntryType = pctx?.EntryType ?? pendingMeta?.EntryType ?? "UNKNOWN";
+                GlobalLogger.Log(_bot, $"[POSITION][OPEN] symbol={pos.SymbolName ?? _bot.SymbolName} entryType={openedEntryType} positionId={pos.Id}");
                 _logger.OnTradeOpened(BuildLogContext(pos, pendingMeta, pctx: _positionContexts.TryGetValue(pos.Id, out var ctxValue) ? ctxValue : null));
             };
 
@@ -1175,6 +1177,10 @@ namespace GeminiV26.Core
             {
                 StampEntrySourceHtfTrace(_ctx, e);
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
+                if (e != null)
+                {
+                    GlobalLogger.Log(_bot, $"[ENTRY][CANDIDATE] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} positionId=NA score={e.Score:0.##} confidence={e.LogicConfidence:0.##} trend={_ctx?.TrendDirection}");
+                }
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
                 {
@@ -1333,6 +1339,7 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
                 GlobalLogger.Log(_bot, $"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
+                GlobalLogger.Log(_bot, $"[ENTRY][WINNER] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=NA score={selected.Score:0.##} confidence={selected.LogicConfidence:0.##}");
 
                 if (!PassFinalAcceptance(_ctx, selected))
                 {
@@ -1382,6 +1389,8 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[HTF][PASS] dir={_ctx.ActiveHtfDirection} conf={_ctx.ActiveHtfConfidence:F2}", _ctx));
                 if (_ctx.ActiveHtfDirection == TradeDirection.None)
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[HTF][WARN] Missing HTF snapshot", _ctx));
+                double requestRiskPercent = ResolveExecutionRiskPercent(selected, _ctx);
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][REQUEST] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=NA score={selected.Score:0.##} riskPercent={requestRiskPercent:0.##}");
 
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
@@ -2745,9 +2754,16 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot, $"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
             if (recommendedTimingPenalty <= -10)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
-                    $"[TIMING BLOCK] penalty={recommendedTimingPenalty}",
-                    ctx));
+                double triggerLateScore = ctx.MemoryTriggerLateScore;
+                bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
+                bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
+                string timingFingerprint = $"timing_block:{ctx.Symbol}:{eval.Type}:{eval.Score}:{recommendedTimingPenalty}:{triggerLateScore:0.###}:{overextended}:{exhausted}";
+                if (!string.Equals(ctx.LastLoggedStateFingerprint, timingFingerprint, StringComparison.Ordinal))
+                {
+                    ctx.LastLoggedStateFingerprint = timingFingerprint;
+                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()}");
+                    GlobalLogger.Log(_bot, $"[ENTRY][FINAL][BLOCK] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} reason=timing_block penalty={recommendedTimingPenalty}");
+                }
                 return false;
             }
 
@@ -2813,7 +2829,27 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                 $"[FINAL][PASS] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                 ctx));
+            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=NA score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
             return true;
+        }
+
+        private double ResolveExecutionRiskPercent(EntryEvaluation selected, EntryContext ctx)
+        {
+            if (selected == null || ctx == null)
+                return 0;
+
+            int logic = PositionContext.ClampRiskConfidence(Math.Max(0, ctx.LogicBiasConfidence));
+            int entryScore = PositionContext.ClampRiskConfidence(selected.Score);
+            int final = PositionContext.ComputeFinalConfidenceValue(entryScore, logic);
+            int adjusted = PositionContext.ClampRiskConfidence(final);
+            string symbol = (ctx.Symbol ?? _bot.SymbolName ?? string.Empty).ToUpperInvariant();
+
+            if (symbol == "BTCUSD")
+                return _btcUsdRiskSizer?.GetRiskPercent(adjusted) ?? 0;
+            if (symbol == "ETHUSD")
+                return _ethUsdRiskSizer?.GetRiskPercent(adjusted) ?? 0;
+
+            return 0;
         }
 
         private static bool HasStrongStructure(EntryContext ctx, TradeDirection direction)
