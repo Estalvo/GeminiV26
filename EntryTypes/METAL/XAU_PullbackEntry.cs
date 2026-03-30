@@ -16,6 +16,9 @@ namespace GeminiV26.EntryTypes.METAL
 
         private const int FreshImpulsePenalty = 6;
         private const int NoM1Penalty = 6;
+        private const double MinRangeThreshold = 0.35;
+        private const double StrongImpulseThreshold = 0.90;
+        private const double StrongBreakoutThreshold = 0.60;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -95,6 +98,20 @@ namespace GeminiV26.EntryTypes.METAL
                     ? ctx.BarsSinceImpulseLong_M5
                     : ctx.BarsSinceImpulseShort_M5;
 
+            double rangeWidth = ctx.MarketState?.RangeWidth ?? 0.0;
+            bool isAtrCompression = !ctx.IsAtrExpanding_M5;
+            bool isChop =
+                ctx.Adx_M5 < 18.0
+                || isAtrCompression
+                || rangeWidth < MinRangeThreshold
+                || barsSinceImpulse > 5;
+
+            if (isChop)
+            {
+                ctx.Log?.Invoke($"[XAU][CHOP] detected: ADX={ctx.Adx_M5:0.0} atrCompression={isAtrCompression} rangeWidth={rangeWidth:0.00} barsSinceImpulse={barsSinceImpulse}");
+                return InvalidDir(ctx, dir, "XAU chop environment", score);
+            }
+
             if (barsSinceImpulse > 6)
                 return InvalidDir(ctx, dir, "STALE_IMPULSE", score);
 
@@ -132,6 +149,12 @@ namespace GeminiV26.EntryTypes.METAL
                 hasImpulse &&
                 barsSinceImpulse <= 2 &&
                 ctx.LastClosedBarInTrendDirection;
+
+            if (earlyContinuation)
+            {
+                ctx.Log?.Invoke("[XAU][EARLY_BREAK] blocked");
+                return InvalidDir(ctx, dir, "Early break", score);
+            }
 
             // ha early continuation → NEM büntetjük
             if (noPullback)
@@ -233,15 +256,27 @@ namespace GeminiV26.EntryTypes.METAL
             // =========================
             // HTF (soft only)
             // =========================
-            bool against =
-                ctx.ActiveHtfDirection != TradeDirection.None &&
-                ctx.ActiveHtfDirection != dir;
+            bool htfConflict =
+                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
+                dir != ctx.ResolveAssetHtfAllowedDirection();
 
-            if (against)
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            double impulseStrength = ctx.AtrM5 > 0 ? Math.Abs(bar.Close - bar.Open) / ctx.AtrM5 : 0;
+            double breakoutStrength = m1 ? 1.0 : 0.0;
+            bool strongLtf =
+                ctx.Adx_M5 > 25.0 &&
+                impulseStrength > StrongImpulseThreshold &&
+                breakoutStrength > StrongBreakoutThreshold;
+
+            if (htfConflict && !strongLtf)
             {
-                score -= 5;
-                reasons.Add("HTF_AGAINST");
+                ctx.Log?.Invoke($"[XAU][HTF_CONFLICT] blocked - weak LTF adx={ctx.Adx_M5:0.0} impulse={impulseStrength:0.00} breakout={breakoutStrength:0.00}");
+                return InvalidDir(ctx, dir, "HTF conflict without strong LTF", score);
             }
+
+            if (htfConflict && strongLtf)
+                ctx.Log?.Invoke($"[XAU][HTF_OVERRIDE] strong LTF allows trade adx={ctx.Adx_M5:0.0} impulse={impulseStrength:0.00} breakout={breakoutStrength:0.00}");
 
             bool hasFlag =
                 dir == TradeDirection.Long
@@ -278,8 +313,6 @@ namespace GeminiV26.EntryTypes.METAL
             if (hasConfirmation)
                 setupScore += 20;
 
-            int lastClosed = ctx.M5.Count - 2;
-            var bar = ctx.M5[lastClosed];
             bool breakoutDetected = breakoutConfirmed || earlyBreakout;
             bool strongCandle =
                 (dir == TradeDirection.Long && bar.Close > bar.Open) ||
@@ -311,6 +344,18 @@ namespace GeminiV26.EntryTypes.METAL
                 score = (int)Math.Round(score * 0.65);
                 ctx.Log?.Invoke(
                     $"[XAU CONTINUATION FILTER] score {scoreBeforeCompression}->{score} momentum={ctx.MarketState.IsMomentum} earlyWeakness={earlyWeakness}");
+            }
+
+            bool validEnvironment =
+                ctx.Adx_M5 > 22.0 &&
+                hasImpulse &&
+                !isAtrCompression &&
+                rangeWidth > MinRangeThreshold;
+
+            if (!validEnvironment)
+            {
+                ctx.Log?.Invoke($"[XAU][NO_MOVE] blocked adx={ctx.Adx_M5:0.0} hasImpulse={hasImpulse} atrCompression={isAtrCompression} rangeWidth={rangeWidth:0.00}");
+                return InvalidDir(ctx, dir, "No expansion environment", score);
             }
 
             bool valid = score >= minScore;

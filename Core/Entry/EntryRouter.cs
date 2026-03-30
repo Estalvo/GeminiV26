@@ -38,6 +38,12 @@ namespace GeminiV26.Core.Entry
 
                 foreach (var entryType in _entryTypes)
                 {
+                    if (entryType != null && entryType.Type == EntryType.XAU_Impulse)
+                    {
+                        ctx?.Log?.Invoke("[ENTRY BLOCK] XAU Impulse disabled");
+                        continue;
+                    }
+
                     TradeDirection htfAllowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
                     var startClassification = HtfClassificationModel.ComputeHtfClassification(
                         TradeDirection.None,
