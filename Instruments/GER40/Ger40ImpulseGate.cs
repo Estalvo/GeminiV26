@@ -53,7 +53,10 @@ namespace GeminiV26.Instruments.GER40
         {
             int i = _bars.Count - 1;
             if (i < 2)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=insufficient_bars_allow symbol={_bot.SymbolName}");
                 return true;
+            }
 
             // === 1) VALÓDI SPIKE MIATTI BLOKK ===
             if (IsBlockingSpike(i, entryDirection))

@@ -1,4 +1,5 @@
 ﻿using cAlgo.API;
+using GeminiV26.Core.Logging;
 using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.GER40
@@ -24,13 +25,20 @@ namespace GeminiV26.Instruments.GER40
 
             // Asia tiltás
             if (h < 8)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
                 return false;
+            }
 
             // London + NY
             if (h >= 8 && h < 22)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=session_allow symbol={_bot.SymbolName}");
                 return true;
+            }
 
             // === KÉSŐ NY / ROLL-OVER TILTÁS ===
+            GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
             return false;
         }
     }

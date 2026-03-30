@@ -21,11 +21,17 @@ namespace GeminiV26.Core.TradeManagement
         public void Apply(Position pos, PositionContext ctx, TrendDecision decision, StructureSnapshot structure, TrailingProfile profile)
         {
             if (!pos.StopLoss.HasValue)
+            {
+                GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=no_stop_loss symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             double atr = _atr.Result.LastValue;
             if (atr <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (ctx?.FinalDirection == TradeDirection.None)
             {
@@ -100,7 +106,10 @@ namespace GeminiV26.Core.TradeManagement
             newSl = Normalize(newSl);
 
             if (newSl <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=invalid_new_sl symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (!ImprovesStop(isLong, newSl, oldSl) && trailMode == "STRUCTURE")
             {
@@ -140,7 +149,10 @@ namespace GeminiV26.Core.TradeManagement
 
             double epsilon = GetPriceEpsilon();
             if (Math.Abs(newSl - oldSl) < epsilon)
+            {
+                GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=delta_below_epsilon symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             double minDelta = Math.Max(profile.MinSlUpdateDeltaPips * _bot.Symbol.PipSize, atr * 0.05);
             if (Math.Abs(newSl - oldSl) < minDelta)

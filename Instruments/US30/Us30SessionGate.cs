@@ -1,5 +1,6 @@
 ﻿using System;
 using cAlgo.API;
+using GeminiV26.Core.Logging;
 using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.US30
@@ -39,16 +40,23 @@ namespace GeminiV26.Instruments.US30
 
             // ===== Asia: BLOCK =====
             if (t < londonOpen)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
                 return false;
+            }
 
             // ===== London =====
             if (t >= londonOpen && t < nyOpen)
             {
                 // London open +30 min
                 if (t < londonTradeStart)
+                {
+                    GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
                     return false;
+                }
 
                 // Pre-NY noise block
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=session_allow symbol={_bot.SymbolName}");
                 return true;
             }
 
@@ -57,12 +65,17 @@ namespace GeminiV26.Instruments.US30
             {
                 // NY open +30 min
                 if (t < nyTradeStart)
+                {
+                    GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
                     return false;
+                }
 
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=session_allow symbol={_bot.SymbolName}");
                 return true;
             }
 
             // ===== NY close & after =====
+            GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_block symbol={_bot.SymbolName}");
             return false;
         }
     }
