@@ -31,6 +31,9 @@ namespace GeminiV26.Core.TradeManagement
         public bool IsRunner { get; init; }
         public double SlAtrMultiplier { get; init; }
         public double TpAtrMultiplier { get; init; }
+        public double ScoreNormalized { get; init; }
+        public double DynamicSlMultiplier { get; init; }
+        public double DynamicTpMultiplier { get; init; }
     }
 
     public sealed class TrendTradeManager
@@ -67,7 +70,10 @@ namespace GeminiV26.Core.TradeManagement
                     Tp2ExtensionMultiplier = 1.0,
                     IsRunner = false,
                     SlAtrMultiplier = profile?.LowConfidenceSlAtrMultiplier ?? 1.0,
-                    TpAtrMultiplier = profile?.LowConfidenceTpAtrMultiplier ?? 1.0
+                    TpAtrMultiplier = profile?.LowConfidenceTpAtrMultiplier ?? 1.0,
+                    ScoreNormalized = 0.0,
+                    DynamicSlMultiplier = profile?.LowConfidenceSlAtrMultiplier ?? 1.0,
+                    DynamicTpMultiplier = profile?.LowConfidenceTpAtrMultiplier ?? 1.0
                 };
             }
 
@@ -117,6 +123,8 @@ namespace GeminiV26.Core.TradeManagement
             if (shallowPullback)
                 score++;
 
+            double scoreNormalized = Math.Min(1.0, Math.Max(0.0, score / 5.0));
+
             TradeTrendState state = score switch
             {
                 <= 1 => TradeTrendState.Normal,
@@ -126,19 +134,13 @@ namespace GeminiV26.Core.TradeManagement
 
             AdaptiveTrailingMode mode = AdaptiveTrailingMode.Structure;
 
-            double slAtrMultiplier = state switch
-            {
-                TradeTrendState.StrongTrend => profile.StrongTrendSlAtrMultiplier,
-                TradeTrendState.Trend => profile.TrendSlAtrMultiplier,
-                _ => profile.LowConfidenceSlAtrMultiplier
-            };
+            double slAtrMultiplier =
+                profile.LowConfidenceSlAtrMultiplier +
+                (profile.StrongTrendSlAtrMultiplier - profile.LowConfidenceSlAtrMultiplier) * scoreNormalized;
 
-            double tpAtrMultiplier = state switch
-            {
-                TradeTrendState.StrongTrend => profile.StrongTrendTpAtrMultiplier,
-                TradeTrendState.Trend => profile.TrendTpAtrMultiplier,
-                _ => profile.LowConfidenceTpAtrMultiplier
-            };
+            double tpAtrMultiplier =
+                profile.LowConfidenceTpAtrMultiplier +
+                (profile.StrongTrendTpAtrMultiplier - profile.LowConfidenceTpAtrMultiplier) * scoreNormalized;
 
             string confidenceBucket = GetConfidenceBucket(score);
             bool profileStateChanged = !string.Equals(ctx.LastProfileState, state.ToString(), StringComparison.Ordinal);
@@ -149,6 +151,16 @@ namespace GeminiV26.Core.TradeManagement
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][PROFILE] symbol={position.SymbolName} direction={(isLong ? "LONG" : "SHORT")} state={state} score={score} slMult={slAtrMultiplier:0.00} tpMult={tpAtrMultiplier:0.00} reason=confidence_profile", ctx, position));
                 ctx.LastProfileState = state.ToString();
                 ctx.LastProfileBucket = confidenceBucket;
+            }
+
+            bool dynamicMultiplierChanged =
+                ctx.PostTp1TrendScore != score ||
+                !ctx.LastTtmTp2Multiplier.HasValue ||
+                Math.Abs(ctx.LastTtmTp2Multiplier.Value - tpAtrMultiplier) >= 0.000001;
+
+            if (dynamicMultiplierChanged)
+            {
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][DYNAMIC] score={score} norm={scoreNormalized:0.00} sl={slAtrMultiplier:0.00} tp={tpAtrMultiplier:0.00}", ctx, position));
             }
 
             bool allowTp2Extension = isRunner && profile.AllowTp2Extension;
@@ -175,11 +187,14 @@ namespace GeminiV26.Core.TradeManagement
                 State = state,
                 Score = score,
                 TrailingMode = mode,
-                AllowTp2Extension = false,
+                AllowTp2Extension = allowTp2Extension,
                 Tp2ExtensionMultiplier = tpAtrMultiplier,
                 IsRunner = isRunner,
                 SlAtrMultiplier = slAtrMultiplier,
-                TpAtrMultiplier = tpAtrMultiplier
+                TpAtrMultiplier = tpAtrMultiplier,
+                ScoreNormalized = scoreNormalized,
+                DynamicSlMultiplier = slAtrMultiplier,
+                DynamicTpMultiplier = tpAtrMultiplier
             };
         }
 

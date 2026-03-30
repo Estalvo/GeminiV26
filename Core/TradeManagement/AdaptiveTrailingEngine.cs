@@ -50,7 +50,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!forceFallback)
             {
-                valid = TryBuildStructureStop(isLong, structure, profile, atr, decision.SlAtrMultiplier, out newSl, out string structureReason, out int anchorBarsAgo);
+                valid = TryBuildStructureStop(isLong, structure, profile, atr, decision.DynamicSlMultiplier, out newSl, out string structureReason, out int anchorBarsAgo);
                 if (valid)
                 {
                     trailMode = "STRUCTURE";
@@ -69,7 +69,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!valid)
             {
-                BuildVolatilityStop(isLong, profile, atr, decision.SlAtrMultiplier, out newSl, out string regime, out double multiplier);
+                BuildVolatilityStop(isLong, profile, atr, decision.DynamicSlMultiplier, out newSl, out string regime, out double multiplier);
                 trailMode = "VOLATILITY_FALLBACK";
                 reason = string.IsNullOrWhiteSpace(reason) ? $"fallback regime={regime}" : $"{reason} regime={regime}";
                 fallbackVolatilityLog = $"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode=VOLATILITY_FALLBACK slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason={reason} multiplier={multiplier:0.00}";
@@ -90,6 +90,13 @@ namespace GeminiV26.Core.TradeManagement
                     : Math.Min(newSl, ctx.BePrice);
             }
 
+            if (decision.ScoreNormalized > 0.7)
+            {
+                newSl = isLong
+                    ? Math.Max(newSl, _bot.Symbol.Bid - atr * decision.DynamicSlMultiplier * 0.8)
+                    : Math.Min(newSl, _bot.Symbol.Ask + atr * decision.DynamicSlMultiplier * 0.8);
+            }
+
             newSl = Normalize(newSl);
 
             if (newSl <= 0)
@@ -97,7 +104,7 @@ namespace GeminiV26.Core.TradeManagement
 
             if (!ImprovesStop(isLong, newSl, oldSl) && trailMode == "STRUCTURE")
             {
-                BuildVolatilityStop(isLong, profile, atr, decision.SlAtrMultiplier, out double fallbackSl, out string fallbackRegime, out double fallbackMultiplier);
+                BuildVolatilityStop(isLong, profile, atr, decision.DynamicSlMultiplier, out double fallbackSl, out string fallbackRegime, out double fallbackMultiplier);
                 fallbackSl = isLong
                     ? Math.Max(fallbackSl, oldSl)
                     : Math.Min(fallbackSl, oldSl);
@@ -172,6 +179,7 @@ namespace GeminiV26.Core.TradeManagement
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL][STEP]\nstep={ctx.TrailSteps}\nslOld={FormatPrice(oldSl)}\nslNew={FormatPrice(newSl)}", ctx, pos));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}", ctx, pos));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slNew={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=updated", ctx, pos));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][TRAIL][DYNAMIC] norm={decision.ScoreNormalized:0.00} slMult={decision.DynamicSlMultiplier:0.00}", ctx, pos));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask)} sl={newSl} tp={pos.TakeProfit}", ctx, pos));
         }
 
