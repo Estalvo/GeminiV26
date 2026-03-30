@@ -271,6 +271,13 @@ namespace GeminiV26.Instruments.NAS100
                 RemainingVolumeInUnits = volumeUnits
             };
 
+            double slPriceActual = result.Position.StopLoss ??
+                (tradeType == TradeType.Buy ? ctx.EntryPrice - slPriceDist : ctx.EntryPrice + slPriceDist);
+            ctx.InitialStopLossPrice = slPriceActual;
+            ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
+            ctx.LastStopLossPrice = slPriceActual;
+            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+
             ctx.ComputeFinalConfidence();
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
