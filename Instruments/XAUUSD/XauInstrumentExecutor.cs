@@ -303,7 +303,17 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (!result.IsSuccessful || result.Position == null)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY][EXEC][FAIL] symbol={entry.Symbol ?? entryContext.Symbol ?? _bot.SymbolName} entryType={entry.Type} pipelineId={entryContext.TempId} side={tradeType} volumeUnits={volumeUnits} error={(result == null ? "NULL_RESULT" : result.Error.ToString())}", entryContext));
+                string errorCode = result?.Error.ToString() ?? "NA";
+                string normalizedError = errorCode.ToUpperInvariant();
+                string reason =
+                    normalizedError.Contains("VOLUME") ? "volume_invalid" :
+                    (normalizedError.Contains("SL") || normalizedError.Contains("TP") || normalizedError.Contains("STOP")) ? "sl_tp_invalid" :
+                    normalizedError.Contains("MARKET") ? "market_closed" :
+                    normalizedError.Contains("LIQUID") ? "no_liquidity" :
+                    normalizedError.Contains("TIMEOUT") ? "timeout" :
+                    (errorCode == "NA" || normalizedError.Contains("REJECT") || normalizedError.Contains("DENIED")) ? "broker_reject" :
+                    "unknown";
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY][EXEC][FAIL] symbol={entry.Symbol ?? entryContext.Symbol ?? _bot.SymbolName} entryType={entry.Type} pipelineId={entryContext.TempId} reason={reason} errorCode={errorCode}", entryContext));
                 GlobalLogger.Log(_bot, "[XAU EXEC] Order execution failed");
                 return;
             }
@@ -359,6 +369,18 @@ namespace GeminiV26.Instruments.XAUUSD
             _exitManager.RegisterContext(ctx);
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[POSITION][OPEN] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} entryPrice={ctx.EntryPrice}", ctx));
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
+
+                $"[POSITION][CONTEXT] symbol={ctx.Symbol ?? _bot.SymbolName} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} " +
+
+                $"entryType={ctx.EntryType ?? \"NA\"} side={(result?.Position != null ? result.Position.TradeType.ToString() : \"NA\")} entryPrice={ctx.EntryPrice:0.#####} " +
+
+                $"sl={(result?.Position?.StopLoss ?? 0):0.#####} tp1={(ctx.Tp1Price ?? 0):0.#####} tp2={(ctx.Tp2Price ?? 0):0.#####} " +
+
+                $"riskPct={riskPercent:F2} confidence={ctx.FinalConfidence:F2} " +
+
+                $"htfState={(entryContext != null ? entryContext.ActiveHtfDirection.ToString() : \"NA\")}", ctx));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[XAU EXEC] OPEN {tradeType} vol={ctx.EntryVolumeInUnits} " +
                 $"FC={ctx.FinalConfidence} fill={ctx.EntryPrice:F2} " +
