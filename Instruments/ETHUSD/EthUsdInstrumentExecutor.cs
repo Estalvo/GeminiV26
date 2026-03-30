@@ -280,6 +280,13 @@ namespace GeminiV26.Instruments.ETHUSD
                     ? ctx.EntryPrice + slPriceDist * ctx.Tp1R
                     : ctx.EntryPrice - slPriceDist * ctx.Tp1R;
 
+            double slPriceActual = result.Position.StopLoss ??
+                (tradeType == TradeType.Buy ? ctx.EntryPrice - slPriceDist : ctx.EntryPrice + slPriceDist);
+            ctx.InitialStopLossPrice = slPriceActual;
+            ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
+            ctx.LastStopLossPrice = slPriceActual;
+            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+
             // 🔒 FINAL CONFIDENCE
             ctx.ComputeFinalConfidence();
 

@@ -314,9 +314,6 @@ namespace GeminiV26.Instruments.XAUUSD
                     }
                     else
                     {
-                        double slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss ?? 0;
-                        _bot.Print($"[TP1_SOURCE] entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
-
                         tp1Price = IsLong(ctx)
                             ? pos.EntryPrice + rDist * tp1R
                             : pos.EntryPrice - rDist * tp1R;
@@ -326,6 +323,14 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
+
+                    if (!ctx.InitialStopLossPrice.HasValue)
+                    {
+                        _bot.Print($"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
+                    }
+
+                    var slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss;
+                    _bot.Print($"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
 
                     // ------------------------------------------------
                     // TP1 HIT DETECTION

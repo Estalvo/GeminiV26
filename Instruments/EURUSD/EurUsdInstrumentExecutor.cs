@@ -264,6 +264,13 @@ namespace GeminiV26.Instruments.EURUSD
                 Adx_M5 = entryContext.Adx_M5
             };
 
+            double slPriceActual = result.Position.StopLoss ??
+                (tradeType == TradeType.Buy ? ctx.EntryPrice - slPriceDist : ctx.EntryPrice + slPriceDist);
+            ctx.InitialStopLossPrice = slPriceActual;
+            ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
+            ctx.LastStopLossPrice = slPriceActual;
+            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+
             // ✅ 1 sor, safe: kanonikus FinalConfidence kiszámolása (CSV/analytics)
             ctx.ComputeFinalConfidence();
 

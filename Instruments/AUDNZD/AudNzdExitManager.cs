@@ -259,6 +259,14 @@ namespace GeminiV26.Instruments.AUDNZD
                     if (ctx.Tp1R <= 0)
                         ctx.Tp1R = tp1R;
 
+                    if (!ctx.InitialStopLossPrice.HasValue)
+                    {
+                        _bot.Print($"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
+                    }
+
+                    var slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss;
+                    _bot.Print($"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
+
                     bool reached =
                         IsLong(ctx)
                             ? sym.Bid >= tp1Price
@@ -444,6 +452,11 @@ namespace GeminiV26.Instruments.AUDNZD
 
         private double GetRiskDistance(Position pos, PositionContext ctx)
         {
+            if (ctx.InitialStopLossPrice.HasValue)
+            {
+                return Math.Abs(ctx.EntryPrice - ctx.InitialStopLossPrice.Value);
+            }
+
             if (ctx.RiskPriceDistance > 0)
                 return ctx.RiskPriceDistance;
 
