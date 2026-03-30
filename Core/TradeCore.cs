@@ -2831,6 +2831,41 @@ namespace GeminiV26.Core
             string symbol = ctx.Symbol ?? _bot.SymbolName;
             bool isLong = eval.Direction == TradeDirection.Long;
             bool isShort = eval.Direction == TradeDirection.Short;
+            string canonicalSymbol = SymbolRouting.NormalizeSymbol(symbol);
+            TradeDirection htfDirection = ResolveHtfAllowedDirection(ctx);
+            TradeDirection candidateDirection = eval.Direction;
+            bool structureAligned = eval.HasStrongStructure;
+            int scoreBeforeXauCounterFilter = eval.Score;
+            int scoreAfterXauCounterFilter = eval.Score;
+
+            bool isCounterHTF =
+                (htfDirection == TradeDirection.Long && candidateDirection == TradeDirection.Short) ||
+                (htfDirection == TradeDirection.Short && candidateDirection == TradeDirection.Long);
+
+            if (canonicalSymbol == "XAUUSD" && isCounterHTF)
+            {
+                if (!structureAligned)
+                {
+                    string reason = "xau_counter_htf_structure_fail";
+                    GlobalLogger.Log(_bot,
+                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
+                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    return false;
+                }
+
+                if (scoreAfterXauCounterFilter < 65)
+                {
+                    string reason = "xau_counter_htf_block";
+                    GlobalLogger.Log(_bot,
+                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
+                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    return false;
+                }
+
+                GlobalLogger.Log(_bot,
+                    $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
+                    $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=allow reason=pass");
+            }
 
             if ((isLong && ctx.IsOverextendedLong) ||
                 (isShort && ctx.IsOverextendedShort))
