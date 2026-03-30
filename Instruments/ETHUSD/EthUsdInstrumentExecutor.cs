@@ -220,8 +220,17 @@ namespace GeminiV26.Instruments.ETHUSD
             {
                 GlobalLogger.Log(_bot, "[ETHUSD][EXEC] ORDER FAILED (TradeResult unsuccessful or Position null)");
                 GlobalLogger.Log(_bot, $"[ETHUSD][EXEC] ORDER FAILED isSuccessful={result.IsSuccessful}");
-                string error = result?.Error.ToString() ?? "unknown";
-                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][FAIL] symbol={_bot.SymbolName} entryType={entry.Type} positionId=0 pipelineId={entryContext.TempId} reason={error}");
+                string errorCode = result?.Error.ToString() ?? "NA";
+                string normalizedError = errorCode.ToUpperInvariant();
+                string reason =
+                    normalizedError.Contains("VOLUME") ? "volume_invalid" :
+                    (normalizedError.Contains("SL") || normalizedError.Contains("TP") || normalizedError.Contains("STOP")) ? "sl_tp_invalid" :
+                    normalizedError.Contains("MARKET") ? "market_closed" :
+                    normalizedError.Contains("LIQUID") ? "no_liquidity" :
+                    normalizedError.Contains("TIMEOUT") ? "timeout" :
+                    (errorCode == "NA" || normalizedError.Contains("REJECT") || normalizedError.Contains("DENIED")) ? "broker_reject" :
+                    "unknown";
+                GlobalLogger.Log(_bot, $"[ENTRY][EXEC][FAIL] symbol={_bot.SymbolName} entryType={entry.Type} pipelineId={entryContext.TempId} reason={reason} errorCode={errorCode}");
                 return;
             }
 
@@ -295,6 +304,18 @@ namespace GeminiV26.Instruments.ETHUSD
             _exitManager.RegisterContext(ctx);
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[POSITION][OPEN] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} entryPrice={ctx.EntryPrice}", ctx));
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
+
+                $"[POSITION][CONTEXT] symbol={ctx.Symbol ?? _bot.SymbolName} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} " +
+
+                $"entryType={ctx.EntryType ?? \"NA\"} side={(result?.Position != null ? result.Position.TradeType.ToString() : \"NA\")} entryPrice={ctx.EntryPrice:0.#####} " +
+
+                $"sl={(result?.Position?.StopLoss ?? 0):0.#####} tp1={(ctx.Tp1Price ?? 0):0.#####} tp2={(ctx.Tp2Price ?? 0):0.#####} " +
+
+                $"riskPct={riskPercent:F2} confidence={ctx.FinalConfidence:F2} " +
+
+                $"htfState={(entryContext != null ? entryContext.ActiveHtfDirection.ToString() : \"NA\")}", ctx));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[ETHUSD][EXEC] OPEN {tradeType} " +
                 $"vol={ctx.EntryVolumeInUnits} FC={ctx.FinalConfidence}", ctx));
