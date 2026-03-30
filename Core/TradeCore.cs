@@ -2849,22 +2849,31 @@ namespace GeminiV26.Core
                     string reason = "xau_counter_htf_structure_fail";
                     GlobalLogger.Log(_bot,
                         $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
                     return false;
                 }
 
-                if (scoreAfterXauCounterFilter < 65)
+                if (recommendedTimingPenalty <= -10)
                 {
-                    string reason = "xau_counter_htf_block";
+                    string reason = "xau_counter_htf_timing_conflict";
                     GlobalLogger.Log(_bot,
                         $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    return false;
+                }
+
+                if (scoreAfterXauCounterFilter < 80)
+                {
+                    string reason = "xau_counter_htf_low_score";
+                    GlobalLogger.Log(_bot,
+                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
+                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
                     return false;
                 }
 
                 GlobalLogger.Log(_bot,
                     $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                    $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=allow reason=pass");
+                    $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=allow reason=pass");
             }
 
             if ((isLong && ctx.IsOverextendedLong) ||
