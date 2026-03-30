@@ -204,8 +204,17 @@ namespace GeminiV26.Instruments.XAUUSD
 
         public void OnBar(Position pos)
         {
-            if (!_contexts.TryGetValue(pos.Id, out var ctx))
+            if (pos == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=position_null symbol={_bot.SymbolName}");
                 return;
+            }
+
+            if (!_contexts.TryGetValue(pos.Id, out var ctx))
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=context_not_registered symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
 
             // =====================================================
             // M5 bar counter (TVM / rescue / viability window)
@@ -520,18 +529,30 @@ namespace GeminiV26.Instruments.XAUUSD
         {
             // csak TP1 után
             if (!ctx.Tp1Hit)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=tp1_not_hit symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (!pos.StopLoss.HasValue)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=no_stop_loss symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (!TryResolveExitSymbol(pos, out var sym, ctx))
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=resolver_failed symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             // ===== ATR (előre inicializált indikátor!) =====
             double atrPrice = _atr.Result.LastValue;
             if (atrPrice <= 0)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             // ===== PROFIL SZERINTI ATR SZORZÓ =====
             double atrMult =
@@ -555,7 +576,10 @@ namespace GeminiV26.Instruments.XAUUSD
 
             // legalább 0.25 ATR előny kell
             if (progressDist < atrPrice * 0.25)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=low_progress symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             // ===== ÚJ SL =====
             double newSl =
@@ -570,7 +594,10 @@ namespace GeminiV26.Instruments.XAUUSD
                     : (pos.StopLoss.Value - newSl) / sym.PipSize;
 
             if (improvePips < _profile.MinTrailImprovePips)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=no_improvement symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             SafeModify(
                  pos,
@@ -690,7 +717,19 @@ namespace GeminiV26.Instruments.XAUUSD
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
-            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
+            if (!decision.AllowTp2Extension)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=extension_disabled symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
+
+            if (!ctx.Tp2Price.HasValue)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=tp2_missing symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
+
+            if (!ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
                 return;
 
             double? currentPrice = null;
@@ -711,7 +750,10 @@ namespace GeminiV26.Instruments.XAUUSD
             double currentTp = pos.TakeProfit ?? ctx.Tp2Price.Value;
             bool outward = IsLong(ctx) ? newTp > currentTp : newTp < currentTp;
             if (!outward)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=not_outward symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
                 return;

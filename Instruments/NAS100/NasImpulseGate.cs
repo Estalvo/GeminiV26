@@ -51,7 +51,10 @@ namespace GeminiV26.Instruments.NAS100
         {
             int i = _bars.Count - 1;
             if (i < 2)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=insufficient_bars_allow symbol={_bot.SymbolName}");
                 return true;
+            }
 
             if (IsExtremeSpike(i, entryDirection))
             {

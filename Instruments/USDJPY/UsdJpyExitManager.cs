@@ -161,12 +161,18 @@ namespace GeminiV26.Instruments.USDJPY
         public void OnBar(Position position)
         {
             if (position == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=position_null symbol={_bot.SymbolName}");
                 return;
+            }
 
             long key = Convert.ToInt64(position.Id);
 
             if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=context_not_registered symbol={position.SymbolName} positionId={position.Id}");
                 return;
+            }
 
             ctx.BarsSinceEntryM5++;
 
@@ -342,7 +348,10 @@ namespace GeminiV26.Instruments.USDJPY
 
             long minUnits = (long)sym.VolumeInUnitsMin;
             if (closeUnits < minUnits)
+            {
+                GlobalLogger.Log(_bot, $"[TP1][SKIP] reason=tp1_close_units_below_min symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits}");
                 return;
+            }
 
             if (closeUnits >= pos.VolumeInUnits)
                 closeUnits = (long)sym.NormalizeVolumeInUnits(
@@ -351,12 +360,15 @@ namespace GeminiV26.Instruments.USDJPY
                 );
 
             if (closeUnits < minUnits)
+            {
+                GlobalLogger.Log(_bot, $"[TP1][SKIP] reason=tp1_close_units_below_min symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits}");
                 return;
+            }
 
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
             {
-                GlobalLogger.Log(_bot, "[TP1][FAIL] execution failed");
+                GlobalLogger.Log(_bot, $"[TP1][FAIL] symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits} error={closeResult.Error}");
                 return;
             }
 
@@ -448,8 +460,17 @@ namespace GeminiV26.Instruments.USDJPY
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
-            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue)
+            if (!decision.AllowTp2Extension)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=extension_disabled symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
+
+            if (!ctx.Tp2Price.HasValue)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=tp2_missing symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
 
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
             double desiredR = baseR * decision.Tp2ExtensionMultiplier;
@@ -462,7 +483,10 @@ namespace GeminiV26.Instruments.USDJPY
             bool outward = IsLong(ctx) ? newTp > currentTp : newTp < currentTp;
 
             if (!outward)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=not_outward symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             SafeModify(pos, pos.StopLoss, newTp);
             ctx.LastExtendedTp2 = newTp;
@@ -483,7 +507,10 @@ namespace GeminiV26.Instruments.USDJPY
         private void SafeModify(Position position, double? sl, double? tp)
         {
             if (position == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=position_null symbol={_bot.SymbolName}");
                 return;
+            }
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
             var livePos = FindPosition(Convert.ToInt64(position.Id));

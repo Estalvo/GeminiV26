@@ -1,4 +1,5 @@
 using cAlgo.API;
+using GeminiV26.Core.Logging;
 using GeminiV26.Interfaces;
 using System;
 
@@ -27,9 +28,13 @@ namespace GeminiV26.Instruments.BTCUSD
                 // Asia-ban csak akkor engedünk,
                 // ha ERŐS trend van
                 if (adx < 28)
+                {
+                    GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=asia_low_adx_block adx={adx:0.##} symbol={_bot.SymbolName}");
                     return false;
+                }
             }
 
+            GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=false reason=session_allow symbol={_bot.SymbolName}");
             return true;
         }
     }

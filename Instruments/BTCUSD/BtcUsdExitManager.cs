@@ -191,12 +191,18 @@ namespace GeminiV26.Instruments.BTCUSD
         public void OnBar(Position position)
         {
             if (position == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=position_null symbol={_bot.SymbolName}");
                 return;
+            }
 
             long key = Convert.ToInt64(position.Id);
 
             if (!_contexts.TryGetValue(key, out var ctx) || ctx == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=context_not_registered symbol={position.SymbolName} positionId={position.Id}");
                 return;
+            }
 
             ctx.BarsSinceEntryM5++;
 
@@ -409,6 +415,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (closeUnits < minUnits)
             {
+                GlobalLogger.Log(_bot, $"[TP1][SKIP] reason=tp1_close_units_below_min symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                     $"[BTCUSD][TP1][SKIP] partial close below min " +
                     $"pos={pos.Id} requested={closeUnits} min={minUnits}", ctx, pos));
@@ -425,6 +432,7 @@ namespace GeminiV26.Instruments.BTCUSD
 
             if (closeUnits < minUnits)
             {
+                GlobalLogger.Log(_bot, $"[TP1][SKIP] reason=tp1_close_units_below_min symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                     $"[BTCUSD][TP1][SKIP] adjusted partial close below min " +
                     $"pos={pos.Id} adjusted={closeUnits} min={minUnits}", ctx, pos));
@@ -434,8 +442,7 @@ namespace GeminiV26.Instruments.BTCUSD
             var closeResult = _bot.ClosePosition(pos, closeUnits);
             if (!closeResult.IsSuccessful)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[BTCUSD][TP1][FAIL] partial close failed pos={pos.Id}", ctx, pos));
-                GlobalLogger.Log(_bot, "[TP1][FAIL] execution failed");
+                GlobalLogger.Log(_bot, $"[TP1][FAIL] symbol={pos.SymbolName} positionId={pos.Id} volume={closeUnits} error={closeResult.Error}");
                 return;
             }
 
@@ -591,7 +598,19 @@ namespace GeminiV26.Instruments.BTCUSD
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {
-            if (!decision.AllowTp2Extension || !ctx.Tp2Price.HasValue || !ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
+            if (!decision.AllowTp2Extension)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=extension_disabled symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
+
+            if (!ctx.Tp2Price.HasValue)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=tp2_missing symbol={pos.SymbolName} positionId={pos.Id}");
+                return;
+            }
+
+            if (!ctx.Tp2Price.Value.Equals(pos.TakeProfit ?? ctx.Tp2Price.Value))
                 return;
 
             double baseR = ctx.Tp2R > 0 ? ctx.Tp2R : 1.0;
@@ -611,7 +630,10 @@ namespace GeminiV26.Instruments.BTCUSD
             bool outward = IsLong(ctx) ? newTp > currentTp : newTp < currentTp;
 
             if (!outward)
+            {
+                GlobalLogger.Log(_bot, $"[TP2][SKIP] reason=not_outward symbol={pos.SymbolName} positionId={pos.Id}");
                 return;
+            }
 
             if (ctx.LastExtendedTp2.HasValue && Math.Abs(ctx.LastExtendedTp2.Value - newTp) < _bot.Symbol.PipSize)
                 return;
@@ -645,7 +667,10 @@ namespace GeminiV26.Instruments.BTCUSD
         private void SafeModify(Position position, double? sl, double? tp)
         {
             if (position == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][SKIP] reason=position_null symbol={_bot.SymbolName}");
                 return;
+            }
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[MODIFY][REQUEST]\nsl={sl}\ntp={tp}", position.Id, null, position.SymbolName));
             var livePos = FindPosition(Convert.ToInt64(position.Id));

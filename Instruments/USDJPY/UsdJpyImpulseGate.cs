@@ -1,5 +1,6 @@
 ﻿using System;
 using cAlgo.API;
+using GeminiV26.Core.Logging;
 using GeminiV26.Interfaces;
 
 namespace GeminiV26.Instruments.USDJPY
@@ -31,13 +32,22 @@ namespace GeminiV26.Instruments.USDJPY
             int i = _bars.Count - 1;
 
             if (IsImpulseBar(i))
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=impulse_bar symbol={_bot.SymbolName}");
                 return false;
+            }
 
             if (IsInImpulseCooldown(i))
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=impulse_cooldown symbol={_bot.SymbolName}");
                 return false;
+            }
 
             if (HasDominantWick(i))
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=dominant_wick symbol={_bot.SymbolName}");
                 return false;
+            }
 
             return true;
         }

@@ -1792,7 +1792,10 @@ namespace GeminiV26.Core
         private bool EvaluateEntryGate(EntryContext ctx, EntryEvaluation candidate, string gateName, Func<bool> evaluator, string blockedReason)
         {
             if (candidate == null)
+            {
+                GlobalLogger.Log(_bot, $"[ENTRY_TRACE][GATE] blocked=true reason=null_candidate symbol={ctx?.Symbol ?? _bot.SymbolName}");
                 return false;
+            }
 
             TradeDirection beforeDirection = candidate.Direction;
             bool allowed = evaluator != null && evaluator();
