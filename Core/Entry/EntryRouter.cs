@@ -71,15 +71,10 @@ namespace GeminiV26.Core.Entry
 
                         if (eval.LogicBiasDirection != TradeDirection.None && eval.RawDirection == TradeDirection.None)
                         {
-                            GlobalLogger.Log(this, 
+                            GlobalLogger.Log(this,
                                 $"[CRITICAL][DIRECTION_BROKEN] symbol={ctx?.Symbol} entryType={eval.Type} logicBiasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} reason={eval.Reason ?? "NA"}");
-
-                            // Defensive hard guarantee: direction can never remain None when logic bias exists.
-                            eval.Direction = eval.LogicBiasDirection;
-                            eval.RawDirection = eval.LogicBiasDirection;
-                            eval.FallbackDirectionUsed = true;
-                            if (eval.RawLogicConfidence <= 0)
-                                eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
+                            GlobalLogger.Log(this,
+                                $"[DIR][ROUTER_WARNING] symbol={ctx?.Symbol} entryType={eval.Type} rawDirection={eval.RawDirection} logicBias={eval.LogicBiasDirection} reason=DirectionInvalidAfterFallback");
                         }
 
                         eval.SetupType = eval.Type.ToString();

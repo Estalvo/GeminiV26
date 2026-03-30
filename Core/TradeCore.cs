@@ -684,9 +684,30 @@ namespace GeminiV26.Core
 
                 if (_positionContexts.TryGetValue(pos.Id, out var pctx))
                 {
-                    pctx.FinalDirection = _ctx?.FinalDirection != TradeDirection.None
-                        ? _ctx.FinalDirection
-                        : FromTradeType(pos.TradeType);
+                    TradeDirection authoritativeFinalDirection = TradeDirection.None;
+                    if (_ctx != null && _ctx.FinalDirection != TradeDirection.None)
+                    {
+                        authoritativeFinalDirection = _ctx.FinalDirection;
+                        GlobalLogger.Log(_bot, $"[DIR][SOURCE] posId={pctx.PositionId} source=ctx finalDir={authoritativeFinalDirection}");
+                    }
+                    // Temporary safety gate: non-rehydrated contexts are treated as higher-trust provenance here.
+                    // This is not a final provenance model.
+                    else if (!pctx.IsRehydrated && pctx.FinalDirection != TradeDirection.None)
+                    {
+                        authoritativeFinalDirection = pctx.FinalDirection;
+                        GlobalLogger.Log(_bot,
+                            $"[DIR][POS_CTX_WARNING] Using existing PositionContext FinalDirection posId={pctx.PositionId} sym={pctx.Symbol} ctxPresent={(_ctx != null).ToString().ToLowerInvariant()}");
+                        GlobalLogger.Log(_bot, $"[DIR][SOURCE] posId={pctx.PositionId} source=pctx finalDir={authoritativeFinalDirection} provenanceGate=temporary_non_rehydrated_only");
+                    }
+
+                    if (authoritativeFinalDirection == TradeDirection.None)
+                    {
+                        GlobalLogger.Log(_bot,
+                            $"[DIR][POS_CTX_ERROR] Missing authoritative FinalDirection posId={pctx.PositionId} sym={pctx.Symbol} ctxPresent={(_ctx != null).ToString().ToLowerInvariant()} pctxFinal={pctx.FinalDirection} pctxIsRehydrated={pctx.IsRehydrated.ToString().ToLowerInvariant()}");
+                        return;
+                    }
+
+                    pctx.FinalDirection = authoritativeFinalDirection;
                     GlobalLogger.Log(_bot, $"[DIR][SET] posId={pctx.PositionId} finalDir={pctx.FinalDirection}");
 
                     if (pctx.FinalDirection == TradeDirection.None)
