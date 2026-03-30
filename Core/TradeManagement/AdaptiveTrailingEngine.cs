@@ -29,9 +29,16 @@ namespace GeminiV26.Core.TradeManagement
             double atr = _atr.Result.LastValue;
             if (atr <= 0)
             {
-                GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
+                if (ctx == null || !ctx.TrailAtrUnavailableLogged)
+                {
+                    GlobalLogger.Log(_bot, $"[TTM][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
+                    if (ctx != null)
+                        ctx.TrailAtrUnavailableLogged = true;
+                }
                 return;
             }
+            if (ctx != null)
+                ctx.TrailAtrUnavailableLogged = false;
 
             if (ctx?.FinalDirection == TradeDirection.None)
             {
@@ -43,7 +50,12 @@ namespace GeminiV26.Core.TradeManagement
             string direction = isLong ? "LONG" : "SHORT";
             double oldSl = pos.StopLoss.Value;
             double newSl = 0;
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL][CHECK]\ncurrentSl={FormatPrice(oldSl)}\ntp1Hit={ctx.Tp1Hit}\ntrailActive={ctx.TrailingActivated}", ctx, pos));
+            string trailCheckFingerprint = $"{FormatPrice(oldSl)}|{ctx.Tp1Hit}|{ctx.TrailingActivated}|{ctx.LastTrailingStopTarget}";
+            if (!string.Equals(ctx.LastTrailCheckFingerprint, trailCheckFingerprint, StringComparison.Ordinal))
+            {
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL][CHECK]\ncurrentSl={FormatPrice(oldSl)}\ntp1Hit={ctx.Tp1Hit}\ntrailActive={ctx.TrailingActivated}", ctx, pos));
+                ctx.LastTrailCheckFingerprint = trailCheckFingerprint;
+            }
             string trailMode = "FALLBACK";
             string reason = string.Empty;
             bool valid = false;
@@ -177,8 +189,6 @@ namespace GeminiV26.Core.TradeManagement
             if (!result.IsSuccessful)
             {
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[MODIFY][FAIL]\nsl={FormatPrice(newSl)}\ntp={FormatPrice(pos.TakeProfit)}\nerror={result.Error}", ctx, pos));
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL][FAIL]\nsl={FormatPrice(newSl)}\nerror={result.Error}", ctx, pos));
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL] modify FAILED pos={pos.Id} error={result.Error}", ctx, pos));
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slCandidate={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=modify_failed error={result.Error}", ctx, pos));
                 return;
             }
@@ -188,11 +198,7 @@ namespace GeminiV26.Core.TradeManagement
             ctx.TrailingActivated = true;
             ctx.TrailSteps++;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[MODIFY][SUCCESS]\nsl={FormatPrice(newSl)}\ntp={FormatPrice(pos.TakeProfit)}\nreason=trail_update", ctx, pos));
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL][STEP]\nstep={ctx.TrailSteps}\nslOld={FormatPrice(oldSl)}\nslNew={FormatPrice(newSl)}", ctx, pos));
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TRAIL] modified pos={pos.Id} oldSL={oldSl} newSL={newSl}", ctx, pos));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][TRAIL] symbol={pos.SymbolName} direction={direction} mode={trailMode} slOld={FormatPrice(oldSl)} slNew={FormatPrice(newSl)} tp={FormatPrice(pos.TakeProfit)} reason=updated", ctx, pos));
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TTM][TRAIL][DYNAMIC] norm={decision.ScoreNormalized:0.00} slMult={decision.DynamicSlMultiplier:0.00}", ctx, pos));
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] TRAILING ACTIVE symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(isLong ? _bot.Symbol.Bid : _bot.Symbol.Ask)} sl={newSl} tp={pos.TakeProfit}", ctx, pos));
         }
 
         private bool TryBuildStructureStop(bool isLong, StructureSnapshot structure, TrailingProfile profile, double atr, double slAtrMultiplier, out double newSl, out string reason, out int anchorBarsAgo)

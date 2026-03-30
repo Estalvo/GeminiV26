@@ -450,6 +450,14 @@ namespace GeminiV26.Core
 
         public bool TrailNoStructureLogged { get; set; }
 
+        public bool TrailLowProgressLogged { get; set; }
+
+        public bool TrailAtrUnavailableLogged { get; set; }
+
+        public bool TrailResolverFailedLogged { get; set; }
+
+        public string LastTrailCheckFingerprint { get; set; } = string.Empty;
+
         public int TrailSteps { get; set; }
 
         public int LastStateTraceBarIndex { get; set; } = -1;
