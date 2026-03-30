@@ -11,7 +11,6 @@ Missing columns are tolerated (filled with empty values), with conservative fall
 
 from __future__ import annotations
 
-import argparse
 import csv
 import math
 from pathlib import Path
@@ -382,24 +381,132 @@ def comparison(before: Dict[str, object], after: Dict[str, object]) -> List[Dict
     return rows
 
 
+def discover_csv_files(base_dirs: List[Path]) -> List[Path]:
+    csv_files: List[Path] = []
+    for base in base_dirs:
+        if not base.exists():
+            continue
+        for path in base.rglob("*.csv"):
+            if path.is_file():
+                csv_files.append(path)
+    return sorted(csv_files)
+
+
+def classify_dataset_type(path: Path) -> str:
+    filename = path.name.lower()
+    if "after" in filename:
+        return "after"
+    if "before" in filename:
+        return "before"
+    return "single"
+
+
+def pairing_key(path: Path) -> Tuple[str, str]:
+    stem = path.stem.lower()
+    for token in ("after", "before"):
+        stem = stem.replace(token, "")
+    cleaned = "".join(ch if ch.isalnum() else "_" for ch in stem).strip("_")
+    if not cleaned:
+        cleaned = "__default__"
+    return (str(path.parent), cleaned)
+
+
+def output_dir_for_csv(root_output: Path, csv_path: Path) -> Path:
+    rel_parent = csv_path.parent
+    return root_output / rel_parent
+
+
+
 def main() -> None:
-    p = argparse.ArgumentParser(description="Validate updated timing logic expectancy using trade CSV exports.")
-    p.add_argument("--after-csv", required=True, type=Path)
-    p.add_argument("--before-csv", type=Path)
-    p.add_argument("--output-dir", type=Path, default=Path("timing_validation_output"))
-    args = p.parse_args()
+    output_root = Path("timing_validation_output")
+    base_dirs = [Path("Data"), Path("Logs")]
 
-    after = run_dataset("after", args.after_csv, args.output_dir)
+    files = discover_csv_files(base_dirs)
+    if not files:
+        print("No CSV files found.")
+        return
 
-    if args.before_csv:
-        before = run_dataset("before", args.before_csv, args.output_dir)
-        comp = comparison(before, after)
-        write_table(args.output_dir / "before_vs_after_summary.csv", comp, [
-            "Group", "BeforeAvgR", "AfterAvgR", "DeltaAvgR", "BeforeWinratePct", "AfterWinratePct", "DeltaWinratePct",
-        ])
-        print_table("BEFORE vs AFTER", comp, [
-            "Group", "BeforeAvgR", "AfterAvgR", "DeltaAvgR", "BeforeWinratePct", "AfterWinratePct", "DeltaWinratePct",
-        ])
+    grouped: Dict[Tuple[str, str], Dict[str, List[Path]]] = {}
+    singles: List[Path] = []
+
+    for path in files:
+        dataset_type = classify_dataset_type(path)
+        if dataset_type == "single":
+            singles.append(path)
+            continue
+        key = pairing_key(path)
+        grouped.setdefault(key, {"before": [], "after": []})[dataset_type].append(path)
+
+    for key in grouped:
+        grouped[key]["before"].sort()
+        grouped[key]["after"].sort()
+
+    for key in sorted(grouped):
+        before_files = grouped[key]["before"]
+        after_files = grouped[key]["after"]
+        pair_count = min(len(before_files), len(after_files))
+
+        for idx in range(pair_count):
+            before_path = before_files[idx]
+            after_path = after_files[idx]
+            out_dir = output_dir_for_csv(output_root, after_path)
+
+            print(f"Processing: {before_path.as_posix()}")
+            try:
+                before = run_dataset("before", before_path, out_dir)
+            except Exception as e:
+                print(f"[ERROR] {before_path.as_posix()}: {e}")
+                continue
+
+            print(f"Processing: {after_path.as_posix()}")
+            try:
+                after = run_dataset("after", after_path, out_dir)
+            except Exception as e:
+                print(f"[ERROR] {after_path.as_posix()}: {e}")
+                continue
+
+            comp = comparison(before, after)
+            write_table(out_dir / "before_vs_after_summary.csv", comp, [
+                "Group", "BeforeAvgR", "AfterAvgR", "DeltaAvgR", "BeforeWinratePct", "AfterWinratePct", "DeltaWinratePct",
+            ])
+            print_table("BEFORE vs AFTER", comp, [
+                "Group", "BeforeAvgR", "AfterAvgR", "DeltaAvgR", "BeforeWinratePct", "AfterWinratePct", "DeltaWinratePct",
+            ])
+
+            for dataset_name in ("before", "after"):
+                for src, dst in (
+                    (f"{dataset_name}_group_metrics.csv", "group_metrics.csv"),
+                    (f"{dataset_name}_penalty_curve.csv", "penalty_curve.csv"),
+                    (f"{dataset_name}_score_penalty_matrix.csv", "score_penalty_matrix.csv"),
+                ):
+                    source_path = out_dir / src
+                    if source_path.exists():
+                        source_path.replace(out_dir / dst)
+
+        for before_path in before_files[pair_count:]:
+            singles.append(before_path)
+        for after_path in after_files[pair_count:]:
+            singles.append(after_path)
+
+    for csv_path in sorted(singles):
+        out_dir = output_dir_for_csv(output_root, csv_path)
+        dataset_type = classify_dataset_type(csv_path)
+        print(f"Processing: {csv_path.as_posix()}")
+        try:
+            run_dataset(dataset_type, csv_path, out_dir)
+        except Exception as e:
+            print(f"[ERROR] {csv_path.as_posix()}: {e}")
+            continue
+
+        for src, dst in (
+            (f"{dataset_type}_group_metrics.csv", "group_metrics.csv"),
+            (f"{dataset_type}_penalty_curve.csv", "penalty_curve.csv"),
+            (f"{dataset_type}_score_penalty_matrix.csv", "score_penalty_matrix.csv"),
+        ):
+            source_path = out_dir / src
+            if source_path.exists():
+                source_path.replace(out_dir / dst)
+
 
 
 if __name__ == "__main__":
