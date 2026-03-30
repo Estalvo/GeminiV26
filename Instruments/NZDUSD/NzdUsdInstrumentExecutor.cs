@@ -275,11 +275,12 @@ namespace GeminiV26.Instruments.NZDUSD
             // ✅ Kanonikus 70/30 FinalConfidence
             ctx.ComputeFinalConfidence();
 
-            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[ENTRY][EXEC][SUCCESS] symbol={ctx.Symbol ?? result.Position.SymbolName ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={result.Position.Id} pipelineId={ctx.PositionId > 0 ? ctx.PositionId.ToString() : (ctx.TempId ?? entryContext.TempId)}
-volumeUnits={ctx.EntryVolumeInUnits:0.##}
-entryPrice={ctx.EntryPrice:0.#####}
-sl={result.Position.StopLoss}
-tp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
+                $"[ENTRY][EXEC][SUCCESS] symbol={ctx.Symbol ?? result.Position.SymbolName ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={result.Position.Id} pipelineId={ctx.PositionId > 0 ? ctx.PositionId.ToString() : (ctx.TempId ?? entryContext.TempId)}\n" +
+                $"volumeUnits={ctx.EntryVolumeInUnits:0.##}\n" +
+                $"entryPrice={ctx.EntryPrice:0.#####}\n" +
+                $"sl={result.Position.StopLoss}\n" +
+                $"tp={result.Position.TakeProfit ?? ctx.Tp2Price}", ctx, result.Position));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildContextCreate(ctx), ctx, result.Position));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildDirectionSnapshot(ctx), ctx, result.Position));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildOpenSnapshot(ctx, result.Position.StopLoss, result.Position.TakeProfit ?? ctx.Tp2Price, ctx.EntryVolumeInUnits), ctx, result.Position));
