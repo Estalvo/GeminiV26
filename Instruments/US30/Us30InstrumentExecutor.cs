@@ -270,10 +270,10 @@ namespace GeminiV26.Instruments.US30
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[POSITION][OPEN] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={ctx.EntryType} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} entryPrice={ctx.EntryPrice}", ctx));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[POSITION][CONTEXT] symbol={ctx.Symbol ?? _bot.SymbolName} positionId={ctx.PositionId} pipelineId={(ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId)} " +
-                $"entryType={ctx.EntryType ?? \"NA\"} side={(result?.Position != null ? result.Position.TradeType.ToString() : \"NA\")} entryPrice={ctx.EntryPrice:0.#####} " +
+                $"entryType={ctx.EntryType ?? "NA"} side={(result?.Position != null ? result.Position.TradeType.ToString() : "NA")} entryPrice={ctx.EntryPrice:0.#####} " +
                 $"sl={(result?.Position?.StopLoss ?? 0):0.#####} tp1={(ctx.Tp1Price ?? 0):0.#####} tp2={(ctx.Tp2Price ?? 0):0.#####} " +
                 $"riskPct={riskPercent:F2} confidence={ctx.FinalConfidence:F2} " +
-                $"htfState={(entryContext != null ? entryContext.ActiveHtfDirection.ToString() : \"NA\")}", ctx));
+                $"htfState={(entryContext != null ? entryContext.ActiveHtfDirection.ToString() : "NA")}", ctx));
         }
 
         private double CalculateStopLossPriceDistance(int score, EntryType entryType)
