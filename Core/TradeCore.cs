@@ -380,8 +380,9 @@ namespace GeminiV26.Core
             _flagBreakoutDetector = new FlagBreakoutDetector(safePrint);
             _logWriter = new LogWriter(safePrint);
             _logger = new CompositeTradeLogger(
-                new CsvTradeLogger(_logWriter, safePrint),
-                new CsvAnalyticsLogger(_logWriter, safePrint));
+                new CsvTradeLogger(_logWriter, safePrint));
+            // SSOT ENFORCEMENT: analytics handled by UnifiedAnalyticsWriter
+            // CsvAnalyticsLogger removed
             _statsTracker = new TradeStatsTracker(safePrint);
             _memoryEngine = new MarketMemoryEngine(safePrint);
             _contextBuilder = new EntryContextBuilder(bot, _memoryEngine);
@@ -3224,7 +3225,7 @@ namespace GeminiV26.Core
                     Score = null,
                     Confidence = meta?.EntryScore,
                     SetupType = ResolveSetupType(meta?.EntryType),
-                    EntryType = meta?.EntryType ?? string.Empty,
+                    EntryType = meta?.EntryType ?? ctx?.EntryType ?? "UNKNOWN",
                     MarketRegime = ResolveMarketRegime(entryCtx),
                     MfeR = ctx?.MfeR ?? 0.0,
                     MaeR = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,

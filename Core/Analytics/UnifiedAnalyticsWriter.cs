@@ -30,12 +30,18 @@ namespace GeminiV26.Core.Analytics
                     using (var stream = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
                     using (var writer = new StreamWriter(stream))
                     {
+                        var resolvedPositionId = string.IsNullOrWhiteSpace(record.PositionId) ? "UNKNOWN" : record.PositionId;
+                        if (resolvedPositionId == "UNKNOWN")
+                        {
+                            GlobalLogger.Log("[ANALYTICS WARNING] Missing PositionId", null, null);
+                        }
+
                         if (writeHeader)
                             writer.WriteLine(Header);
 
                         var row = string.Join(",",
                             Csv(record.Symbol),
-                            Csv(string.IsNullOrWhiteSpace(record.PositionId) ? "UNKNOWN" : record.PositionId),
+                            Csv(resolvedPositionId),
                             Csv(record.SetupType),
                             Csv(record.EntryType),
                             Csv(record.MarketRegime),
@@ -52,7 +58,8 @@ namespace GeminiV26.Core.Analytics
                     }
                 }
 
-                GlobalLogger.Log($"[ANALYTICS WRITE] {record.Symbol} {(string.IsNullOrWhiteSpace(record.PositionId) ? "UNKNOWN" : record.PositionId)} R={record.RMultiple}", null, string.IsNullOrWhiteSpace(record.PositionId) ? "UNKNOWN" : record.PositionId);
+                var normalizedPositionId = string.IsNullOrWhiteSpace(record.PositionId) ? "UNKNOWN" : record.PositionId;
+                GlobalLogger.Log($"[ANALYTICS WRITE] {record.Symbol} {normalizedPositionId} R={record.RMultiple}", null, normalizedPositionId);
             }
             catch
             {

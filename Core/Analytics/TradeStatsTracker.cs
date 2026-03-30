@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using GeminiV26.Core.Entry;
 
@@ -201,33 +200,11 @@ namespace GeminiV26.Core.Analytics
 
         private void ExportInstrumentStatsToFile(string symbol, InstrumentStats stats)
         {
-            var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GeminiV26", "Logs", "Trades");
-            var instrumentPath = Path.Combine(basePath, symbol);
-            Directory.CreateDirectory(instrumentPath);
-
-            var filePath = Path.Combine(instrumentPath, "TradeStats.csv");
-            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-
-            if (!File.Exists(filePath))
-            {
-                const string header = "Timestamp,Symbol,AllTrades,AllWinrate,AllNetProfit,TransitionTrades,TransitionWinrate,NonTransitionTrades,NonTransitionWinrate,BreakoutTrades,BreakoutWinrate";
-                File.AppendAllText(filePath, header + Environment.NewLine);
-            }
-
-            var row = string.Join(",",
-                timestamp,
-                symbol,
-                stats.All.Total.ToString(CultureInfo.InvariantCulture),
-                stats.All.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
-                Math.Round(stats.All.NetProfit, 2).ToString("0.00", CultureInfo.InvariantCulture),
-                stats.Transition.Total.ToString(CultureInfo.InvariantCulture),
-                stats.Transition.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
-                stats.NonTransition.Total.ToString(CultureInfo.InvariantCulture),
-                stats.NonTransition.WinRate.ToString("0.00", CultureInfo.InvariantCulture),
-                stats.Breakout.Total.ToString(CultureInfo.InvariantCulture),
-                stats.Breakout.WinRate.ToString("0.00", CultureInfo.InvariantCulture));
-
-            File.AppendAllText(filePath, row + Environment.NewLine);
+            // SSOT ENFORCEMENT: direct CSV writing disabled
+            // All analytics routed through UnifiedAnalyticsWriter
+            _ = symbol;
+            _ = stats;
+            return;
         }
 
         private static EntryContext ToContext(TradeMeta meta)

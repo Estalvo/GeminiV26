@@ -28,6 +28,9 @@ namespace GeminiV26.Data
 
         public void Log(TradeRecord t)
         {
+            // LEGACY LOGGER DISABLED (SSOT analytics enforced)
+            return;
+
             string path = string.Empty;
             try
             {
