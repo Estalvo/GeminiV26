@@ -2852,7 +2852,7 @@ namespace GeminiV26.Core
                 return false;
             }
 
-            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId={ctx.PositionId} pipelineId={ctx.PositionId > 0 ? ctx.PositionId.ToString() : ctx.TempId} score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
+            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=0 pipelineId={(ctx?.TempId ?? "NA")} score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
             return true;
         }
 
