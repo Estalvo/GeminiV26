@@ -2778,17 +2778,44 @@ namespace GeminiV26.Core
                 return false;
 
             int recommendedTimingPenalty = ctx.MemoryAssessment?.RecommendedTimingPenalty ?? ctx.MemoryTimingPenalty;
+            double triggerLateScore = ctx.MemoryTriggerLateScore;
+            bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
+            bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
+            const int timingBlockThreshold = -20;
+
+            double timingMultiplier = 1.0 + (recommendedTimingPenalty / 100.0);
+            timingMultiplier = Math.Max(0.5, Math.Min(1.0, timingMultiplier));
+            double adjustedConfidence = ctx.LogicBiasConfidence * timingMultiplier;
+
             GlobalLogger.Log(_bot, $"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
-            if (recommendedTimingPenalty <= -10)
+
+            bool timingOverride = false;
+            string timingOverrideReason = "none";
+            bool timingBlocked = recommendedTimingPenalty <= timingBlockThreshold;
+
+            if (eval.Score >= 70 && recommendedTimingPenalty > timingBlockThreshold)
             {
-                double triggerLateScore = ctx.MemoryTriggerLateScore;
-                bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
-                bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
+                timingOverride = true;
+                timingOverrideReason = "high_score_override";
+            }
+
+            if (timingBlocked && (overextended || exhausted) && eval.Score >= 75)
+            {
+                timingOverride = true;
+                timingOverrideReason = "strong_score_overext_exhaust_override";
+                timingBlocked = false;
+            }
+
+            string timingDecision = timingBlocked ? "block" : "allow";
+            GlobalLogger.Log(_bot, $"[TIMING DECISION] symbol={ctx.Symbol ?? _bot.SymbolName} score={eval.Score:0.##} penalty={recommendedTimingPenalty} threshold={timingBlockThreshold} override={timingOverride.ToString().ToLowerInvariant()} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} finalDecision={timingDecision} reason={timingOverrideReason} adjustedConfidence={adjustedConfidence:0.##}");
+
+            if (timingBlocked)
+            {
                 string timingFingerprint = $"timing_block:{ctx.Symbol}:{eval.Type}:{eval.Score}:{recommendedTimingPenalty}:{triggerLateScore:0.###}:{overextended}:{exhausted}";
                 if (!string.Equals(ctx.LastLoggedStateFingerprint, timingFingerprint, StringComparison.Ordinal))
                 {
                     ctx.LastLoggedStateFingerprint = timingFingerprint;
-                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] stage=final_acceptance symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} confidence={ctx.LogicBiasConfidence:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()}");
+                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] stage=final_acceptance symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} confidence={ctx.LogicBiasConfidence:0.##} adjustedConfidence={adjustedConfidence:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} threshold={timingBlockThreshold}");
                 }
                 return false;
             }
