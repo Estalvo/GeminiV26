@@ -268,6 +268,7 @@ namespace GeminiV26.Core.Entry
         public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
         public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
         public bool DirectionDebugLogged { get; set; }
+        public string LastLoggedStateFingerprint { get; set; }
 
         // Finalized snapshot fields (read-only source for audit snapshot generation)
         public int EntryScore { get; set; }
