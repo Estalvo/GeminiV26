@@ -435,7 +435,7 @@ namespace GeminiV26.Instruments.XAUUSD
             
             if (closeVolume < sym.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=closeVolumeBelowMin rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=tp1_close_units_below_min rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
                 return;
             }
 
@@ -443,7 +443,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (!closeResult.IsSuccessful)
             {
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE failed symbol={pos.SymbolName} positionId={pos.Id} direction={pos.TradeType} currentPrice={(IsLong(ctx) ? sym.Bid : sym.Ask)} tp1={ctx.Tp1Price} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
-                GlobalLogger.Log(_bot, "[TP1][FAIL] execution failed");
+                GlobalLogger.Log(_bot, $"[TP1][FAIL] symbol={pos.SymbolName} positionId={pos.Id} volume={closeVolume} error={closeResult.Error}");
                 return;
             }
 
@@ -542,17 +542,27 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (!TryResolveExitSymbol(pos, out var sym, ctx))
             {
-                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=resolver_failed symbol={pos.SymbolName} positionId={pos.Id}");
+                if (!ctx.TrailResolverFailedLogged)
+                {
+                    GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=resolver_failed symbol={pos.SymbolName} positionId={pos.Id}");
+                    ctx.TrailResolverFailedLogged = true;
+                }
                 return;
             }
+            ctx.TrailResolverFailedLogged = false;
 
             // ===== ATR (előre inicializált indikátor!) =====
             double atrPrice = _atr.Result.LastValue;
             if (atrPrice <= 0)
             {
-                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
+                if (!ctx.TrailAtrUnavailableLogged)
+                {
+                    GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=atr_unavailable symbol={pos.SymbolName} positionId={pos.Id}");
+                    ctx.TrailAtrUnavailableLogged = true;
+                }
                 return;
             }
+            ctx.TrailAtrUnavailableLogged = false;
 
             // ===== PROFIL SZERINTI ATR SZORZÓ =====
             double atrMult =
@@ -577,9 +587,14 @@ namespace GeminiV26.Instruments.XAUUSD
             // legalább 0.25 ATR előny kell
             if (progressDist < atrPrice * 0.25)
             {
-                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=low_progress symbol={pos.SymbolName} positionId={pos.Id}");
+                if (!ctx.TrailLowProgressLogged)
+                {
+                    GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=low_progress symbol={pos.SymbolName} positionId={pos.Id}");
+                    ctx.TrailLowProgressLogged = true;
+                }
                 return;
             }
+            ctx.TrailLowProgressLogged = false;
 
             // ===== ÚJ SL =====
             double newSl =
@@ -595,9 +610,14 @@ namespace GeminiV26.Instruments.XAUUSD
 
             if (improvePips < _profile.MinTrailImprovePips)
             {
-                GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=no_improvement symbol={pos.SymbolName} positionId={pos.Id}");
+                if (!ctx.TrailNoImprovementLogged)
+                {
+                    GlobalLogger.Log(_bot, $"[EXIT][TRAIL][SKIP] reason=no_improvement symbol={pos.SymbolName} positionId={pos.Id}");
+                    ctx.TrailNoImprovementLogged = true;
+                }
                 return;
             }
+            ctx.TrailNoImprovementLogged = false;
 
             SafeModify(
                  pos,
