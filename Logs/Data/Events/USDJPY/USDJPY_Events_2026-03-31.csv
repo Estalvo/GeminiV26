@@ -1,0 +1,3 @@
+EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
+2026-03-31T08:26:53.8260000Z,USDJPY,BotStop,0,,,,
+2026-03-31T08:26:58.6700000Z,USDJPY,BotStart,0,,Started on Minute5,,
