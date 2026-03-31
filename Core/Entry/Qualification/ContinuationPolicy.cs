@@ -24,7 +24,9 @@ namespace GeminiV26.Core.Entry.Qualification
                 }
             }
 
-            bool hasMomentum = (ctx.Transition?.QualityScore ?? 0.0) >= 0.55;
+            bool hasMomentum = ctx.HasMomentum;
+            double transitionQuality = ctx.Transition?.QualityScore ?? 0.0;
+            bool hasTransition = transitionQuality >= 0.55;
             bool hasImpulse = ctx.HasImpulse_M5 || ctx.HasImpulseLong_M5 || ctx.HasImpulseShort_M5;
             bool hasTrend =
                 ctx.LogicBiasDirection != TradeDirection.None ||
@@ -33,8 +35,14 @@ namespace GeminiV26.Core.Entry.Qualification
 
             if (instrumentClass == InstrumentClass.INDEX && !hasMomentum)
             {
-                Log(ctx, "[ENTRY][BLOCK][NO_MOMENTUM_INDEX]", string.Empty);
-                return EntryDecision.Block("NO_MOMENTUM_INDEX");
+                if (!hasTrend)
+                {
+                    Log(ctx, "[ENTRY][BLOCK][NO_MOMENTUM_INDEX]", "no_trend");
+                    return EntryDecision.Block("NO_MOMENTUM_INDEX");
+                }
+
+                Log(ctx, "[ENTRY][PENALTY][NO_MOMENTUM_INDEX]", "trend_present");
+                return EntryDecision.Penalize(0.20, "NO_MOMENTUM_INDEX");
             }
 
             if (instrumentClass == InstrumentClass.CRYPTO && !hasImpulse)
@@ -47,6 +55,12 @@ namespace GeminiV26.Core.Entry.Qualification
             {
                 Log(ctx, "[ENTRY][BLOCK][DEAD_MARKET]", string.Empty);
                 return EntryDecision.Block("DEAD_MARKET");
+            }
+
+            if (transitionQuality < 0.30)
+            {
+                Log(ctx, "[ENTRY][BLOCK][TRANSITION_COLLAPSE]", $"TQ={transitionQuality:0.00}");
+                return EntryDecision.Block("TRANSITION_COLLAPSE");
             }
 
             SymbolMemoryState memory = ctx.Memory;
@@ -65,9 +79,9 @@ namespace GeminiV26.Core.Entry.Qualification
                 }
             }
 
-            if (ctx.Transition != null && ctx.Transition.QualityScore < 50.0)
+            if (!hasTransition)
             {
-                Log(ctx, "[ENTRY][PENALTY][WEAK_STRUCTURE]", $"score={ctx.Transition.QualityScore:0.##}");
+                Log(ctx, "[ENTRY][PENALTY][WEAK_STRUCTURE]", $"score={transitionQuality:0.##}");
                 return EntryDecision.Penalize(0.15, "WEAK_STRUCTURE");
             }
 
