@@ -96,6 +96,7 @@ namespace GeminiV26.Core
         private readonly string _symbolCanonical;
         private readonly InstrumentClass _instrumentClass;
         private readonly Dictionary<string, EntryTraceSummary> _entryTraceSummaries = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<long, double> _entryBalanceByPositionId = new();
        
         private const string BotLabel = "GeminiV26";
                 
@@ -682,6 +683,8 @@ namespace GeminiV26.Core
                     _statsTracker.RegisterTradeOpen(_ctx, pos.Id);
                 }
 
+                _entryBalanceByPositionId[pos.Id] = _bot.Account.Balance;
+
                 if (_positionContexts.TryGetValue(pos.Id, out var pctx))
                 {
                     TradeDirection authoritativeFinalDirection = TradeDirection.None;
@@ -729,6 +732,7 @@ namespace GeminiV26.Core
                 _tradeMetaStore.TryGet(pos.Id, out var pendingMeta);
                 string openedEntryType = pctx?.EntryType ?? pendingMeta?.EntryType ?? "UNKNOWN";
                 GlobalLogger.Log(_bot, $"[POSITION][OPEN] symbol={pos.SymbolName ?? _bot.SymbolName} entryType={openedEntryType} positionId={pos.Id} pipelineId={pos.Id}");
+                LogScalingOpenAudit(pos, pctx);
                 _logger.OnTradeOpened(BuildLogContext(pos, pendingMeta, pctx: _positionContexts.TryGetValue(pos.Id, out var ctxValue) ? ctxValue : null));
             };
 
@@ -3439,6 +3443,9 @@ namespace GeminiV26.Core
             _tradeMetaStore.TryGet(pos.Id, out var meta);
             _positionContexts.TryGetValue(pos.Id, out var ctx);
             var entryCtx = _contextRegistry.GetEntry(pos.Id);
+            double entryBalance = _entryBalanceByPositionId.TryGetValue(pos.Id, out var mappedBalance)
+                ? mappedBalance
+                : _bot.Account.Balance;
 
             if (meta == null)
             {
@@ -3535,8 +3542,11 @@ namespace GeminiV26.Core
                     RMultiple = ComputeRMultiple(pos, ctx, sym.PipSize),
                     TransitionQuality = entryCtx?.TransitionValid == true
                         ? entryCtx.Transition?.QualityScore ?? 0.0
-                        : 0.0
+                        : 0.0,
+                    AccountBalanceAtEntry = entryBalance
                 });
+
+            LogScalingCloseAudit(pos, ctx, entryBalance);
 
             var memoryRecord = new TradeMemoryRecord
             {
@@ -3563,6 +3573,7 @@ namespace GeminiV26.Core
             _contextRegistry.RemovePosition(pos.Id);
             _contextRegistry.RemoveEntry(pos.Id);
             _tradeMetaStore.Remove(pos.Id);
+            _entryBalanceByPositionId.Remove(pos.Id);
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(TradeAuditLog.BuildCleanup(pos.Id, "position_closed_event"), ctx, pos));
         }
 
@@ -4018,6 +4029,76 @@ namespace GeminiV26.Core
                 return 0.0;
 
             return (pos.Pips * pipSize) / ctx.RiskPriceDistance;
+        }
+
+        private void LogScalingOpenAudit(Position pos, PositionContext? ctx)
+        {
+            if (pos == null || ctx == null || ctx.RiskPriceDistance <= 0)
+                return;
+
+            var symbol = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
+            if (symbol == null || symbol.TickSize <= 0)
+                return;
+
+            double balance = _entryBalanceByPositionId.TryGetValue(pos.Id, out var entryBalance)
+                ? entryBalance
+                : _bot.Account.Balance;
+            double accountSize = ResolveAccountSizeAnchor(balance);
+            double valuePerPricePerUnit = symbol.TickValue / symbol.TickSize;
+            double expectedLossUsd = ctx.RiskPriceDistance * valuePerPricePerUnit * pos.VolumeInUnits;
+            double riskPercent = balance > 0 ? (expectedLossUsd / balance) * 100.0 : 0.0;
+            double slPips = symbol.PipSize > 0 ? ctx.RiskPriceDistance / symbol.PipSize : 0.0;
+            double pipValue = symbol.PipSize * valuePerPricePerUnit;
+            double lotSize = symbol.LotSize > 0 ? pos.VolumeInUnits / symbol.LotSize : 0.0;
+            double notionalExposure = pos.VolumeInUnits * pos.EntryPrice;
+            bool capped = ctx.LotCap > 0 && lotSize + 1e-9 >= ctx.LotCap;
+
+            GlobalLogger.Log(_bot, $"[SCALING][RISK] accountSize={accountSize:0} balance={balance:0.##} riskPercent={riskPercent:0.####} riskUSD={expectedLossUsd:0.####} volume={pos.VolumeInUnits:0.####} slPips={slPips:0.####} pipValue={pipValue:0.####} expectedLossUSD={expectedLossUsd:0.####}");
+            GlobalLogger.Log(_bot, $"[SCALING][POSITION] symbol={pos.SymbolName} accountSize={accountSize:0} volume={pos.VolumeInUnits:0.####} lotSize={lotSize:0.####} notionalExposure={notionalExposure:0.####} riskPercent={riskPercent:0.####}");
+            GlobalLogger.Log(_bot, $"[SCALING][TP_SL] accountSize={accountSize:0} SL_R=1 TP1_R={ctx.Tp1R:0.####} TP2_R={ctx.Tp2R:0.####} TP1_ratio={ctx.Tp1Ratio:0.####} TP2_ratio={ctx.Tp2Ratio:0.####}");
+            GlobalLogger.Log(_bot, $"[SCALING][LOTCAP] accountSize={accountSize:0} desiredVolume=NA actualVolume={pos.VolumeInUnits:0.####} capped={capped.ToString().ToLowerInvariant()} riskDeviationPercent=NA");
+        }
+
+        private void LogScalingCloseAudit(Position pos, PositionContext? ctx, double entryBalance)
+        {
+            if (pos == null || ctx == null || ctx.RiskPriceDistance <= 0)
+                return;
+
+            var symbol = _runtimeSymbols.ResolveSymbol(pos.SymbolName);
+            if (symbol == null || symbol.PipSize <= 0)
+                return;
+
+            double accountSize = ResolveAccountSizeAnchor(entryBalance);
+            double rMultiple = ComputeRMultiple(pos, ctx, symbol.PipSize);
+            double profitPercent = entryBalance > 0 ? (pos.NetProfit / entryBalance) * 100.0 : 0.0;
+            GlobalLogger.Log(_bot, $"[SCALING][RESULT] accountSize={accountSize:0} Rmultiple={rMultiple:0.####} profitUSD={pos.NetProfit:0.####} profitPercent={profitPercent:0.####} MFE_R={ctx.MfeR:0.####} MAE_R={ctx.MaeR:0.####}");
+
+            if (Math.Abs(ctx.Tp1R) < 1e-9 && Math.Abs(ctx.Tp2R) < 1e-9)
+            {
+                GlobalLogger.Log(_bot, $"[SCALING][ANOMALY] type=tp_sl_missing accountSize={accountSize:0} details=tp_structure_not_resolved");
+            }
+        }
+
+        private static double ResolveAccountSizeAnchor(double balance)
+        {
+            if (balance <= 0)
+                return 0;
+
+            double[] anchors = { 10000, 25000, 50000, 100000 };
+            double nearest = anchors[0];
+            double nearestDistance = Math.Abs(balance - nearest);
+
+            for (int i = 1; i < anchors.Length; i++)
+            {
+                double distance = Math.Abs(balance - anchors[i]);
+                if (distance < nearestDistance)
+                {
+                    nearest = anchors[i];
+                    nearestDistance = distance;
+                }
+            }
+
+            return nearest;
         }
 
         // =========================================================

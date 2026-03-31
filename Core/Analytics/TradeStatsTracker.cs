@@ -54,6 +54,16 @@ namespace GeminiV26.Core.Analytics
             public double MaeR;
             public double RMultiple;
             public double TransitionQuality;
+            public double AccountBalanceAtEntry;
+        }
+
+        private sealed class ScalingStats
+        {
+            public int Trades;
+            public int Wins;
+            public readonly List<double> RValues = new List<double>();
+            public double SumMfe;
+            public double SumMae;
         }
 
         private readonly Dictionary<string, InstrumentStats> _instrumentStats = new Dictionary<string, InstrumentStats>(StringComparer.OrdinalIgnoreCase);
@@ -62,6 +72,7 @@ namespace GeminiV26.Core.Analytics
 
         private readonly Action<string> _log;
         private int _closedTrades;
+        private readonly Dictionary<string, ScalingStats> _scalingByAccountSize = new Dictionary<string, ScalingStats>(StringComparer.OrdinalIgnoreCase);
 
         public TradeStatsTracker(Action<string> log)
         {
@@ -149,6 +160,8 @@ namespace GeminiV26.Core.Analytics
             });
 
             _closedTrades++;
+            if (snapshot != null)
+                UpdateScalingStats(snapshot);
             if (_closedTrades % 20 == 0)
                 PrintSummary();
         }
@@ -196,6 +209,68 @@ namespace GeminiV26.Core.Analytics
 
                 ExportInstrumentStatsToFile(symbol, s);
             }
+
+            PrintScalingSummary();
+        }
+
+        private void UpdateScalingStats(TradeCloseSnapshot snapshot)
+        {
+            string bucket = ResolveAccountSizeBucket(snapshot.AccountBalanceAtEntry);
+            if (!_scalingByAccountSize.TryGetValue(bucket, out var stats))
+            {
+                stats = new ScalingStats();
+                _scalingByAccountSize[bucket] = stats;
+            }
+
+            stats.Trades++;
+            if (snapshot.Profit > 0)
+                stats.Wins++;
+            stats.RValues.Add(snapshot.RMultiple);
+            stats.SumMfe += snapshot.MfeR;
+            stats.SumMae += snapshot.MaeR;
+        }
+
+        private void PrintScalingSummary()
+        {
+            foreach (var kv in _scalingByAccountSize.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase))
+            {
+                var bucket = kv.Key;
+                var stats = kv.Value;
+                if (stats.Trades <= 0)
+                    continue;
+
+                var orderedR = stats.RValues.OrderBy(x => x).ToList();
+                double avgR = orderedR.Average();
+                double medianR = orderedR.Count % 2 == 1
+                    ? orderedR[orderedR.Count / 2]
+                    : (orderedR[orderedR.Count / 2 - 1] + orderedR[orderedR.Count / 2]) / 2.0;
+                double winrate = (double)stats.Wins / stats.Trades;
+                double avgMfe = stats.SumMfe / stats.Trades;
+                double avgMae = stats.SumMae / stats.Trades;
+
+                _log($"[SCALING][SUMMARY] accountSize={bucket} avgR={avgR:0.####} medianR={medianR:0.####} winrate={winrate:0.####} avgMFE={avgMfe:0.####} avgMAE={avgMae:0.####} trades={stats.Trades}");
+            }
+        }
+
+        private static string ResolveAccountSizeBucket(double balance)
+        {
+            if (balance <= 0)
+                return "UNKNOWN";
+
+            double[] anchors = { 10000, 25000, 50000, 100000 };
+            double nearest = anchors[0];
+            double nearestDistance = Math.Abs(balance - nearest);
+            for (int i = 1; i < anchors.Length; i++)
+            {
+                double d = Math.Abs(balance - anchors[i]);
+                if (d < nearestDistance)
+                {
+                    nearest = anchors[i];
+                    nearestDistance = d;
+                }
+            }
+
+            return nearest.ToString("0", CultureInfo.InvariantCulture);
         }
 
         private void ExportInstrumentStatsToFile(string symbol, InstrumentStats stats)

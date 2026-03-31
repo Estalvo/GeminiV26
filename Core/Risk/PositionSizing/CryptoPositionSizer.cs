@@ -33,6 +33,12 @@ namespace GeminiV26.Core.Risk.PositionSizing
             {
                 GlobalLogger.Log(bot, $"[CRYPTO SIZE RAW] symbol={symbol} balance={balance:0.##} riskPercent={riskPercent:0.###} riskAmount={riskAmount:0.###} slDistance={slPriceDistance:0.########} rawUnits={rawUnits:0.###} capUnits={capUnits:0.###} finalUnits={finalUnits:0.###}");
                 GlobalLogger.Log(bot, $"[CRYPTO SIZE NORMALIZED] symbol={symbol} normalizedUnits={normalized} minVolume={bot.Symbol.VolumeInUnitsMin} step={bot.Symbol.VolumeInUnitsStep} lotSize={bot.Symbol.LotSize}");
+                bool capped = rawUnits > capUnits;
+                double effectiveRisk = Math.Min(rawUnits, capUnits) * slPriceDistance;
+                double riskDeviationPercent = riskAmount > 0
+                    ? ((riskAmount - effectiveRisk) / riskAmount) * 100.0
+                    : 0.0;
+                GlobalLogger.Log(bot, $"[SCALING][LOTCAP] accountSize={balance:0.##} desiredVolume={rawUnits:0.####} actualVolume={finalUnits:0.####} capped={capped.ToString().ToLowerInvariant()} riskDeviationPercent={riskDeviationPercent:0.####}");
             }
 
             if (normalized < bot.Symbol.VolumeInUnitsMin)
