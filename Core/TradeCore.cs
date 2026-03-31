@@ -955,6 +955,7 @@ namespace GeminiV26.Core
             }
 
             _ctx.BarsSinceStart = BotRestartState.BarsSinceStart;
+            _ctx.Flags.IsDeadMarketBlocked = false;
 
 
             if (isMetalSymbol)
@@ -1473,6 +1474,33 @@ namespace GeminiV26.Core
                     }
 
                     LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, false, "PASS");
+                }
+
+                _ctx.FinalDirection = selected.Direction;
+                const double deadMarketMomentumThreshold = 0.55;
+                double transitionQuality = _ctx.Transition?.QualityScore ?? 0.0;
+                bool hasTrend =
+                    _ctx.FinalDirection != TradeDirection.None &&
+                    _ctx.ActiveHtfDirection == _ctx.FinalDirection;
+                bool hasMomentum = transitionQuality >= deadMarketMomentumThreshold;
+                bool isDeadMarket = !hasTrend && !hasMomentum;
+
+                bool isContinuation =
+                    selected.Type.ToString().IndexOf("Pullback", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    selected.Type.ToString().IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    selected.Type.ToString().IndexOf("Breakout", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                if (isDeadMarket && isContinuation)
+                {
+                    _ctx.Flags.IsDeadMarketBlocked = true;
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][BLOCK][DEAD_MARKET] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} TQ={transitionQuality:F2}");
+                }
+
+                if (_ctx.Flags.IsDeadMarketBlocked)
+                {
+                    GlobalLogger.Log(_bot, "[ROUTER][BLOCK][DEAD_MARKET]");
+                    return;
                 }
 
 
