@@ -983,6 +983,21 @@ namespace GeminiV26.Core
             _flagBreakoutDetector.Evaluate(_ctx);
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][CTX_BUILD] sym={_bot.SymbolName} trend={_ctx.TrendDirection} impulse={_ctx.ImpulseDirection} breakout={_ctx.BreakoutDirection} reversal={_ctx.ReversalDirection}", _ctx));
 
+            DateTime utcNow = _bot.Server.Time.ToUniversalTime();
+            _bot.Print($"[SESSION][CHECK] utc={utcNow:HH:mm}");
+            bool isHardBlocked = _globalSessionGate.IsBlockedSession(utcNow);
+            _globalSessionGate.RecordHardBlock(isHardBlocked);
+            _bot.Print($"[SESSION][HARD_BLOCK] active={isHardBlocked.ToString().ToLowerInvariant()}");
+            _bot.Print($"[SESSION][STATS] blockedCount={_globalSessionGate.BlockedCount} allowedCount={_globalSessionGate.AllowedCount}");
+            if (isHardBlocked)
+            {
+                _bot.Print($"[SESSION][HARD_BLOCK] Trading disabled | UTC={utcNow:HH:mm}");
+                GlobalLogger.Log(_bot, "BLOCK: global hard session block");
+                return;
+            }
+
+            _bot.Print("[SESSION][PASS] allowed=true");
+
             // =========================
             // GLOBAL SESSION GATE + SESSION MATRIX
             // =========================

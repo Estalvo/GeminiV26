@@ -6,6 +6,8 @@ public class GlobalSessionGate
 {
     private readonly Robot _bot;
     private readonly SessionCalendar _calendar;
+    private int _blockedCount;
+    private int _allowedCount;
 
     public GlobalSessionGate(Robot bot)
     {
@@ -22,6 +24,32 @@ public class GlobalSessionGate
     {
         return GetDecision(symbol, tf).Allow;
     }
+
+    public bool IsBlockedSession(DateTime utcNow)
+    {
+        var time = utcNow.TimeOfDay;
+
+        // Block: 19:30 → 23:59
+        if (time >= TimeSpan.FromHours(19.5))
+            return true;
+
+        // Block: 00:00 → 02:00
+        if (time < TimeSpan.FromHours(2))
+            return true;
+
+        return false;
+    }
+
+    public void RecordHardBlock(bool blocked)
+    {
+        if (blocked)
+            _blockedCount++;
+        else
+            _allowedCount++;
+    }
+
+    public int BlockedCount => _blockedCount;
+    public int AllowedCount => _allowedCount;
 
     public SessionDecision GetDecision(string symbol, TimeFrame tf)
     {
