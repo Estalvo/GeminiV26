@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using GeminiV26.Core;
 using GeminiV26.Core.Entry;
+using GeminiV26.Core.Logging;
 
 namespace GeminiV26.EntryTypes
 {
@@ -230,10 +231,8 @@ namespace GeminiV26.EntryTypes
                 {
                     int cap = EntryDecisionPolicy.MinScoreThreshold - 1;
 
-                    Log.Debug(
-                        "[ENTRY][QUALITY][DEAD_MARKET_BLOCK] continuation + noTrend + noMomentum → score capped below threshold ({0})",
-                        cap
-                    );
+                    GlobalLogger.Log(
+                        $"[ENTRY][QUALITY][DEAD_MARKET_BLOCK] continuation + noTrend + noMomentum -> score capped below threshold ({cap})");
 
                     score = Math.Min(score, cap);
                 }
@@ -250,12 +249,12 @@ namespace GeminiV26.EntryTypes
                 impulseAligned ? "ImpulseAligned" :
                 "None";
 
-            ctx.Log?.Invoke(
+            GlobalLogger.Log(
                 $"[DIR QUALITY] type={request.TypeTag} side={direction} structure={structure} " +
                 $"logicBias={logicBias} logicConf={logicConfidence} htfDir={htfDirection} htfConf={htfConfidence:F2} " +
                 $"regime={regime} penalty={penalty} marketStatePenalty={marketStateAdditivePenalty} bonus={bonus} finalScore={score}");
 
-            ctx.Log?.Invoke(
+            GlobalLogger.Log(
                 $"[ENTRY SCORE FLOW] type={request.TypeTag} side={direction} " +
                 $"baseScore={baseScoreFlow:F1} afterAdditive={afterAdditiveFlow:F1} " +
                 $"afterTrendScaling={afterTrendFlow:F1} afterMomentumScaling={afterMomentumFlow:F1} " +
@@ -282,7 +281,7 @@ namespace GeminiV26.EntryTypes
                 eval.PostCapScore = trace.PostCapScore;
                 eval.HasQualityScoreTrace = true;
             }
-            ctx?.Log?.Invoke(
+            GlobalLogger.Log(
                 $"[DIR FLOW] type={typeTag} logicBias={ctx?.LogicBiasDirection ?? TradeDirection.None} evalDir={eval?.Direction ?? TradeDirection.None} score={eval?.Score ?? 0}");
         }
 
