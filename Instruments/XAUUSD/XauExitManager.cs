@@ -53,6 +53,11 @@ namespace GeminiV26.Instruments.XAUUSD
         private readonly Dictionary<long, PositionContext> _contexts = new();
         private readonly HashSet<long> _rehydratedResolverSkipLogged = new();
 
+
+        private const double Tp1ProtectMinR = 0.8;
+        private const int Tp1ProtectSwingLookback = 5;
+        private const int Tp1ProtectExtremeLookback = 3;
+
         public XauExitManager(Robot bot)
         {
             _bot = bot;
@@ -410,6 +415,11 @@ namespace GeminiV26.Instruments.XAUUSD
                 // =========================
                 // TRAILING (TP1 után)
                 // =========================
+                UpdatePostTp1ProtectionState(ctx, currentPrice, rDist);
+
+                if (CheckPostTp1ProfitProtection(ctx, currentPrice))
+                    continue;
+
                 var profile = TrailingProfiles.ResolveBySymbol(pos.SymbolName);
                 var structure = _structureTracker.GetSnapshot();
                 var decision = _trendTradeManager.Evaluate(pos, ctx, profile, structure);
@@ -748,6 +758,168 @@ namespace GeminiV26.Instruments.XAUUSD
                 GlobalLogger.Log(_bot, $"[XAU REHYDRATE] pos={pos.Id}");
             }
         }
+
+        private void UpdatePostTp1ProtectionState(PositionContext ctx, double currentPrice, double rDist)
+        {
+            if (ctx == null || !ctx.Tp1Hit || rDist <= 0)
+                return;
+
+            double currentR = Math.Abs(currentPrice - ctx.EntryPrice) / rDist;
+            if (currentR > ctx.PostTp1MaxR)
+            {
+                ctx.PostTp1MaxR = currentR;
+                ctx.PostTp1MaxPrice = currentPrice;
+            }
+        }
+
+        public bool CheckPostTp1ProfitProtection(PositionContext ctx, double currentPrice)
+        {
+            var pos = ctx == null ? null : FindPosition(ctx.PositionId);
+            return CheckPostTp1ProfitProtection(pos, ctx, currentPrice);
+        }
+
+        private bool CheckPostTp1ProfitProtection(Position pos, PositionContext ctx, double currentPrice)
+        {
+            if (ctx == null || pos == null)
+                return false;
+
+            ctx.RemainingVolumeInUnits = pos.VolumeInUnits;
+
+            bool activation = ctx.Tp1ClosedVolumeInUnits > 0 && ctx.RemainingVolumeInUnits > 0;
+            if (!activation)
+                return false;
+
+            double rDist = GetRiskDistance(pos, ctx);
+            if (rDist <= 0)
+                return false;
+
+            double currentR = Math.Abs(currentPrice - ctx.EntryPrice) / rDist;
+            bool profitThreshold = currentR >= Tp1ProtectMinR;
+
+            if (!TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) || m1 == null || m1.Count < 8)
+                return false;
+
+            var bars = m1;
+            int last = bars.Count - 2;
+            if (last < 6)
+                return false;
+
+            double tickSize = _bot.Symbols.GetSymbol(pos.SymbolName)?.TickSize ?? 1e-5;
+            double eps = Math.Max(1e-8, tickSize * 0.5);
+
+            int swingStart = Math.Max(1, last - Tp1ProtectSwingLookback + 1);
+            double lastSwingLow = double.MaxValue;
+            double lastSwingHigh = double.MinValue;
+            for (int i = swingStart; i <= last; i++)
+            {
+                if (bars.LowPrices[i] < lastSwingLow) lastSwingLow = bars.LowPrices[i];
+                if (bars.HighPrices[i] > lastSwingHigh) lastSwingHigh = bars.HighPrices[i];
+            }
+
+            bool structureBreak = IsLong(ctx)
+                ? currentPrice < (lastSwingLow - eps)
+                : currentPrice > (lastSwingHigh + eps);
+
+            int recentStart = Math.Max(1, last - Tp1ProtectExtremeLookback + 1);
+            int priorEnd = recentStart - 1;
+            int priorStart = Math.Max(1, priorEnd - Tp1ProtectExtremeLookback + 1);
+
+            double recentHigh = double.MinValue;
+            double recentLow = double.MaxValue;
+            for (int i = recentStart; i <= last; i++)
+            {
+                if (bars.HighPrices[i] > recentHigh) recentHigh = bars.HighPrices[i];
+                if (bars.LowPrices[i] < recentLow) recentLow = bars.LowPrices[i];
+            }
+
+            double priorHigh = double.MinValue;
+            double priorLow = double.MaxValue;
+            for (int i = priorStart; i <= priorEnd; i++)
+            {
+                if (bars.HighPrices[i] > priorHigh) priorHigh = bars.HighPrices[i];
+                if (bars.LowPrices[i] < priorLow) priorLow = bars.LowPrices[i];
+            }
+
+            bool noNewExtreme = IsLong(ctx)
+                ? recentHigh <= (priorHigh + eps)
+                : recentLow >= (priorLow - eps);
+
+            bool structureWeakening = IsLong(ctx)
+                ? (bars.HighPrices[last] < bars.HighPrices[last - 1] || Math.Abs(bars.HighPrices[last] - bars.HighPrices[last - 1]) <= eps)
+                : (bars.LowPrices[last] > bars.LowPrices[last - 1] || Math.Abs(bars.LowPrices[last] - bars.LowPrices[last - 1]) <= eps);
+
+            double currOpen = bars.OpenPrices[last];
+            double currClose = bars.ClosePrices[last];
+            double prevOpen = bars.OpenPrices[last - 1];
+            double prevClose = bars.ClosePrices[last - 1];
+            double prev2Open = bars.OpenPrices[last - 2];
+            double prev2Close = bars.ClosePrices[last - 2];
+
+            double currBody = Math.Abs(currClose - currOpen);
+            double prevBody = Math.Abs(prevClose - prevOpen);
+            double prev2Body = Math.Abs(prev2Close - prev2Open);
+
+            bool bodySmaller = currBody < prevBody;
+            bool twoWeakening = currBody < prevBody && prevBody < prev2Body;
+
+            double currRange = Math.Max(bars.HighPrices[last] - bars.LowPrices[last], eps);
+            double prevRange = Math.Max(bars.HighPrices[last - 1] - bars.LowPrices[last - 1], eps);
+            bool atrNormalizedShrink = (currBody / currRange) < (prevBody / prevRange);
+
+            bool strongOpposite = IsLong(ctx)
+                ? (currClose < currOpen && currBody > prevBody)
+                : (currClose > currOpen && currBody > prevBody);
+
+            bool momentumCollapseStrong = strongOpposite;
+            bool momentumCollapse = bodySmaller || twoWeakening || atrNormalizedShrink || strongOpposite || momentumCollapseStrong;
+
+            int protectScore = 0;
+            if (structureBreak) protectScore++;
+            if (noNewExtreme) protectScore++;
+            if (momentumCollapse) protectScore++;
+            if (structureWeakening) protectScore++;
+
+            bool earlyProtect = profitThreshold && protectScore >= 2;
+            bool hardProtect = currentR >= 1.0 && protectScore >= 1;
+
+            GlobalLogger.Log(_bot,
+                $"[EXIT][TP1_PROTECT][SCORE]\n" +
+                $"symbol={pos.SymbolName}\n" +
+                $"positionId={pos.Id}\n" +
+                $"currentR={currentR:0.###}\n" +
+                $"protectScore={protectScore}\n" +
+                $"earlyProtect={earlyProtect}\n" +
+                $"hardProtect={hardProtect}");
+
+            if (!(earlyProtect || hardProtect))
+                return false;
+
+            bool trailingConflict = pos.StopLoss.HasValue &&
+                (IsLong(ctx)
+                    ? currentPrice < (pos.StopLoss.Value - eps)
+                    : currentPrice > (pos.StopLoss.Value + eps));
+
+            if (trailingConflict)
+                return false;
+
+            ctx.Tp1ProtectExitHit = true;
+            ctx.Tp1ProtectExitR = currentR;
+            ctx.Tp1ProtectScoreAtExit = protectScore;
+            ctx.Tp1ProtectMode = hardProtect ? "HARD" : "EARLY";
+            ctx.PostTp1GivebackR = Math.Max(0, ctx.PostTp1MaxR - currentR);
+            ctx.IsFullyClosing = true;
+
+            GlobalLogger.Log(_bot,
+                $"[EXIT][TP1_PROTECT][TRIGGER]\n" +
+                $"symbol={pos.SymbolName}\n" +
+                $"positionId={pos.Id}\n" +
+                $"exitPrice={currentPrice:0.#####}\n" +
+                $"currentR={currentR:0.###}");
+
+            _bot.ClosePosition(pos);
+            return true;
+        }
+
 
         private void TryExtendTp2(Position pos, PositionContext ctx, TrendDecision decision)
         {

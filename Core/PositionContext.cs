@@ -438,6 +438,20 @@ namespace GeminiV26.Core
 
         public string PostTp1TrailingMode { get; set; } = string.Empty;
 
+        public double PostTp1MaxR { get; set; }
+
+        public double PostTp1MaxPrice { get; set; }
+
+        public bool Tp1ProtectExitHit { get; set; }
+
+        public double? Tp1ProtectExitR { get; set; }
+
+        public int? Tp1ProtectScoreAtExit { get; set; }
+
+        public string Tp1ProtectMode { get; set; } = string.Empty;
+
+        public double? PostTp1GivebackR { get; set; }
+
         public double Tp2ExtensionMultiplierApplied { get; set; } = 1.0;
 
         public double? LastExtendedTp2 { get; set; }

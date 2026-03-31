@@ -17,6 +17,8 @@ namespace GeminiV26.Core.Logging
             "InitialRiskR","RiskPercent","StopDistanceATR","SlAtrMult","LotCapHit",
             "MFE_R","MAE_R","BarsInTrade","MinutesInTrade",
             "Tp1Hit","Tp2Hit","BeActivated","TrailingActivated",
+            "PostTp1MaxR","PostTp1GivebackR","Tp1ProtectExitHit","Tp1ProtectExitR",
+            "Tp1ProtectScoreAtExit","Tp1ProtectMode",
             "ExitMode","ExitReason","ExitTime","ExitPrice",
             "NetProfit","GrossProfit","Commissions","Swap","Pips"
         };
@@ -104,6 +106,12 @@ namespace GeminiV26.Core.Logging
                     CsvBool((pctx != null) ? (bool?)(pctx.Tp2Hit > 0) : null),
                     CsvBool(pctx?.BeActivated),
                     CsvBool(pctx?.TrailingActivated),
+                    CsvNum(result?.PostTp1MaxR),
+                    CsvNum(result?.PostTp1GivebackR),
+                    CsvBool(result?.Tp1ProtectExitHit),
+                    CsvNum(result?.Tp1ProtectExitR),
+                    CsvInt(pctx?.Tp1ProtectExitHit == true ? pctx?.Tp1ProtectScoreAtExit : null),
+                    Csv(pctx?.Tp1ProtectExitHit == true ? pctx?.Tp1ProtectMode : null),
 
                     Csv(result?.ExitMode),
                     Csv(result?.ExitReason),
@@ -148,6 +156,11 @@ namespace GeminiV26.Core.Logging
         }
 
         private static string CsvNum(double? value)
+        {
+            return value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : "";
+        }
+
+        private static string CsvInt(int? value)
         {
             return value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : "";
         }
