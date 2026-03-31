@@ -1561,9 +1561,9 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, "CHECK: direction gate");
                 GlobalLogger.Log(_bot, "CHECK: entry gate");
 
-                var utcNow = _bot.Server.Time.ToUniversalTime();
+                var utcNowRisk = _bot.Server.Time.ToUniversalTime();
                 var currentEquity = _bot.Account.Equity;
-                if (!_globalRiskGuard.CanTrade(currentEquity, utcNow))
+                if (!_globalRiskGuard.CanTrade(currentEquity, utcNowRisk))
                 {
                     GlobalLogger.Log(_bot, "[RISK][DD_BLOCK] Daily DD limit reached");
                     return;
