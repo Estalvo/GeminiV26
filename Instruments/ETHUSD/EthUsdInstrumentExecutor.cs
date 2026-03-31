@@ -158,7 +158,7 @@ namespace GeminiV26.Instruments.ETHUSD
 
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
             riskPercent *= quality.RiskMultiplier;
-            long volumeUnits = CryptoPositionSizer.Calculate(
+            double volumeUnits = CryptoPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
