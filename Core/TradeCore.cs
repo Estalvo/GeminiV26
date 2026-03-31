@@ -1529,7 +1529,7 @@ namespace GeminiV26.Core
                 if (qualificationDecision.Type == EntryDecisionType.Block)
                 {
                     GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
-                    GlobalLogger.Log(_bot, "[ROUTER][ABORT][QUALIFICATION_BLOCK]");
+                    GlobalLogger.Log(_bot, $"[ROUTER][ABORT][QUALIFICATION_BLOCK] {qualificationDecision.Reason}");
                     return;
                 }
 
