@@ -67,6 +67,7 @@ using GeminiV26.Core.Analytics;
 using GeminiV26.Core.Memory;
 using GeminiV26.Core.Runtime;
 using GeminiV26.Core.Risk;
+using GeminiV26.Core.Entry.Qualification;
 using System.Linq;
 
 namespace GeminiV26.Core
@@ -1501,6 +1502,22 @@ namespace GeminiV26.Core
                 {
                     GlobalLogger.Log(_bot, "[ROUTER][BLOCK][DEAD_MARKET]");
                     return;
+                }
+
+                var qualificationDecision = EntryQualificationEngine.Evaluate(_ctx, selected.Type);
+                if (qualificationDecision.Type == EntryDecisionType.Block)
+                {
+                    GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
+                    return;
+                }
+
+                if (qualificationDecision.Type == EntryDecisionType.Penalize)
+                {
+                    int scoreBeforePenalty = selected.Score;
+                    int scorePenalty = (int)Math.Round(qualificationDecision.Penalty * 100.0, MidpointRounding.AwayFromZero);
+                    selected.Score = Math.Max(0, selected.Score - scorePenalty);
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][QUALIFICATION][PENALTY] {qualificationDecision.Reason} penalty={qualificationDecision.Penalty:0.##} score={scoreBeforePenalty}->{selected.Score}");
                 }
 
 
