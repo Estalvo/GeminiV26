@@ -10,6 +10,11 @@ using System;
 
 namespace GeminiV26.Core.Entry
 {
+    public sealed class EntryContextFlags
+    {
+        public bool IsDeadMarketBlocked { get; set; }
+    }
+
     public class EntryContext
     {
         // =========================
@@ -24,6 +29,7 @@ namespace GeminiV26.Core.Entry
             set => TempId = value;
         }
         public Action<string> Log { get; set; }
+        public EntryContextFlags Flags { get; set; } = new EntryContextFlags();
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
         public Robot Bot { get; }
