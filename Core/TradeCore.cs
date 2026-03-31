@@ -2736,15 +2736,15 @@ namespace GeminiV26.Core
                     candidate.TriggerConfirmed = false;
                 }
 
-                bool continuationFilterApplied = false;
+                bool transitionFilterApplied = false;
 
-                if (!ApplyContinuationTransitionNoMomentumFilter(ctx, candidate, out continuationFilterApplied))
+                if (!ApplyContinuationTransitionNoMomentumFilter(ctx, candidate, out transitionFilterApplied))
                 {
                     ClearArmedSetup(candidate);
                     continue;
                 }
 
-                if (continuationFilterApplied)
+                if (transitionFilterApplied)
                 {
                     string instrument = candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName;
                     GlobalLogger.Log(_bot,
@@ -2985,30 +2985,46 @@ namespace GeminiV26.Core
             bool isTransition = ctx.IsTransition_M5;
             bool? hasMomentum = ctx.MarketState?.IsMomentum;
             string instrument = candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName;
-
-            if (!hasMomentum.HasValue)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=none momentum=missing transition={isTransition.ToString().ToLowerInvariant()}");
-                return true;
-            }
-
-            if (!isTransition || hasMomentum.Value)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=none momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
-                return true;
-            }
-
-            var instrumentClass = SymbolRouting.ResolveInstrumentClass(instrument);
-            int penalty = 0;
-            bool block = false;
             TransitionEvaluation transition = candidate.Direction == TradeDirection.Long
                 ? ctx.TransitionLong
                 : candidate.Direction == TradeDirection.Short
                     ? ctx.TransitionShort
                     : ctx.Transition;
             double transitionQuality = transition?.QualityScore ?? ctx.Transition?.QualityScore ?? 0.0;
+
+            if (!hasMomentum.HasValue)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum=missing transition={isTransition.ToString().ToLowerInvariant()}");
+                return true;
+            }
+
+            if (!isTransition || hasMomentum.Value)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                return true;
+            }
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(instrument);
+            int penalty = 0;
+            bool block = false;
+
+            if (instrumentClass == InstrumentClass.INDEX && IsContinuationMomentumType(candidate.Type))
+            {
+                filterApplied = true;
+                candidate.IsValid = false;
+                candidate.TriggerConfirmed = false;
+                candidate.State = EntryState.NONE;
+                candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                    ? "[NO_MOMENTUM_INDEX_BLOCK]"
+                    : $"{candidate.Reason} [NO_MOMENTUM_INDEX_BLOCK]";
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][BLOCK][NO_MOMENTUM_INDEX] symbol={instrument} entryType={candidate.Type}");
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                return false;
+            }
 
             switch (instrumentClass)
             {
@@ -3038,7 +3054,7 @@ namespace GeminiV26.Core
                     ? "[TRANSITION_NO_MOMENTUM_BLOCK]"
                     : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_BLOCK]";
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=block momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} transitionQuality={transitionQuality:0.00}");
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
                 return false;
             }
 
@@ -3048,7 +3064,7 @@ namespace GeminiV26.Core
                 ? "[TRANSITION_NO_MOMENTUM_PENALTY]"
                 : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_PENALTY]";
             GlobalLogger.Log(_bot,
-                $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=penalty momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} transitionQuality={transitionQuality:0.00} score={scoreBefore}->{candidate.Score} penalty={penalty}");
+                $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=penalty instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} score={scoreBefore}->{candidate.Score} penalty={penalty}");
             return true;
         }
 
@@ -3102,6 +3118,23 @@ namespace GeminiV26.Core
                     break;
             }
 
+            if (IsFlagEntryType(candidate.Type))
+            {
+                int flagBars = GetFlagBarsForCandidate(ctx, candidate, transition);
+                if (flagBars < 2)
+                {
+                    candidate.IsValid = false;
+                    candidate.TriggerConfirmed = false;
+                    candidate.State = EntryState.NONE;
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[INVALID_FLAG]"
+                        : $"{candidate.Reason} [INVALID_FLAG]";
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][BLOCK][INVALID_FLAG] symbol={instrument} flagBars={flagBars} entryType={candidate.Type}");
+                    return false;
+                }
+            }
+
             if (!transition.HasImpulse)
             {
                 if (instrumentClass == InstrumentClass.CRYPTO)
@@ -3113,8 +3146,15 @@ namespace GeminiV26.Core
                         ? "[NO_IMPULSE_BLOCK]"
                         : $"{candidate.Reason} [NO_IMPULSE_BLOCK]";
                     GlobalLogger.Log(_bot,
-                        $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrument} entryType={candidate.Type} action=block");
+                        $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrumentClass} entryType={candidate.Type} action=block");
                     return false;
+                }
+
+                if (instrumentClass == InstrumentClass.INDEX)
+                {
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrumentClass} entryType={candidate.Type} action=none");
+                    return true;
                 }
 
                 int impulseScoreBefore = candidate.Score;
@@ -3123,7 +3163,7 @@ namespace GeminiV26.Core
                     ? "[NO_IMPULSE_PENALTY]"
                     : $"{candidate.Reason} [NO_IMPULSE_PENALTY]";
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrument} entryType={candidate.Type} action=penalty score={impulseScoreBefore}->{candidate.Score} penalty={penalty}");
+                    $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrumentClass} entryType={candidate.Type} action=penalty score={impulseScoreBefore}->{candidate.Score} penalty={penalty}");
                 return true;
             }
 
@@ -3159,6 +3199,40 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot,
                 $"[ENTRY][FILTER][WEAK_STRUCTURE] instrument={instrument} entryType={candidate.Type} flagQuality={flagQuality:0.00} impulseStrength={impulseStrength:0.00} action=penalty score={scoreBefore}->{candidate.Score} penalty={penalty}");
             return true;
+        }
+
+        private static bool IsContinuationMomentumType(EntryType type)
+        {
+            switch (type)
+            {
+                case EntryType.Index_Flag:
+                case EntryType.Index_Breakout:
+                case EntryType.FX_FlagContinuation:
+                case EntryType.FX_MicroContinuation:
+                case EntryType.FX_ImpulseContinuation:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool IsFlagEntryType(EntryType type)
+        {
+            string typeName = type.ToString();
+            return typeName.IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static int GetFlagBarsForCandidate(EntryContext ctx, EntryEvaluation candidate, TransitionEvaluation transition)
+        {
+            if (transition != null && transition.FlagBars > 0)
+                return transition.FlagBars;
+
+            if (candidate.Direction == TradeDirection.Long)
+                return ctx.FlagBarsLong_M5;
+            if (candidate.Direction == TradeDirection.Short)
+                return ctx.FlagBarsShort_M5;
+
+            return Math.Max(ctx.FlagBarsLong_M5, ctx.FlagBarsShort_M5);
         }
 
         private static bool IsStrictContinuationType(EntryType type)
