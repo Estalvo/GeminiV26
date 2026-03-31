@@ -219,9 +219,24 @@ namespace GeminiV26.EntryTypes
             {
                 bool noTrend = !ctx.MarketState.IsTrend;
                 bool noMomentum = !ctx.MarketState.IsMomentum;
+                var style = ResolveStyle(request?.TypeTag);
 
-                if (noTrend && noMomentum)
-                    score = Math.Min(score, 55);
+                bool isContinuation =
+                    style == EntryStyle.Pullback ||
+                    style == EntryStyle.Flag ||
+                    style == EntryStyle.Breakout;
+
+                if (isContinuation && noTrend && noMomentum)
+                {
+                    int cap = EntryDecisionPolicy.MinScoreThreshold - 1;
+
+                    Log.Debug(
+                        "[ENTRY][QUALITY][DEAD_MARKET_BLOCK] continuation + noTrend + noMomentum → score capped below threshold ({0})",
+                        cap
+                    );
+
+                    score = Math.Min(score, cap);
+                }
 
                 if (ctx.MarketState.IsLowVol || !ctx.IsAtrExpanding_M5)
                     score = Math.Min(score, 60);
