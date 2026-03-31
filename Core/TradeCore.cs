@@ -3388,7 +3388,7 @@ namespace GeminiV26.Core
                     OpenTimeUtc = pos.EntryTime.ToUniversalTime(),
                     CloseTimeUtc = _bot.Server.Time.ToUniversalTime(),
                     Score = null,
-                    Confidence = meta?.EntryScore,
+                    Confidence = ctx?.FinalConfidence ?? meta?.EntryScore,
                     SetupType = ResolveSetupType(meta?.EntryType),
                     EntryType = meta?.EntryType ?? ctx?.EntryType ?? "UNKNOWN",
                     MarketRegime = ResolveMarketRegime(entryCtx),
