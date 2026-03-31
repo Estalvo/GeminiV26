@@ -58,7 +58,7 @@ namespace GeminiV26.Data
 
                         // --- NEW ---
                         "RiskPercent,SlAtrMult,Tp1R,Tp2R,LotCapHit," +
-                        "BeActivated,TrailingActivated,ExitMode," +
+                        "BeActivated,TrailingActivated,PostTp1MaxR,PostTp1GivebackR,Tp1ProtectExitHit,Tp1ProtectExitR,Tp1ProtectScoreAtExit,Tp1ProtectMode,ExitMode," +
 
                         "ExitReason,NetProfit,GrossProfit,Commissions,Swap,Pips"
                     );
@@ -95,6 +95,12 @@ namespace GeminiV26.Data
                     t.LotCapHit?.ToString() ?? "",
                     t.BeActivated?.ToString() ?? "",
                     t.TrailingActivated?.ToString() ?? "",
+                    t.PostTp1MaxR?.ToString(CultureInfo.InvariantCulture) ?? "",
+                    t.PostTp1GivebackR?.ToString(CultureInfo.InvariantCulture) ?? "",
+                    t.Tp1ProtectExitHit?.ToString() ?? "",
+                    t.Tp1ProtectExitR?.ToString(CultureInfo.InvariantCulture) ?? "",
+                    t.Tp1ProtectScoreAtExit?.ToString(CultureInfo.InvariantCulture) ?? "",
+                    Escape(t.Tp1ProtectMode),
                     Escape(t.ExitMode),
                     Escape(t.ExitReason),
                     t.NetProfit.ToString(CultureInfo.InvariantCulture),

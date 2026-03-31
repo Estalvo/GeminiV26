@@ -53,6 +53,12 @@ namespace GeminiV26.Data.Models
         // --- Exit diagnostics ---
         public bool? BeActivated { get; set; }
         public bool? TrailingActivated { get; set; }
+        public double? PostTp1MaxR { get; set; }
+        public double? PostTp1GivebackR { get; set; }
+        public bool? Tp1ProtectExitHit { get; set; }
+        public double? Tp1ProtectExitR { get; set; }
+        public int? Tp1ProtectScoreAtExit { get; set; }
+        public string Tp1ProtectMode { get; set; } = string.Empty;
         public string ExitMode { get; set; } // TP1 / TP2 / BE / TRAIL / HARDLOSS / SL
 
     }

@@ -37,6 +37,12 @@ namespace GeminiV26.Core.Logging
         public double? Commissions { get; set; }
         public double? Swap { get; set; }
         public double? Pips { get; set; }
+        public double? PostTp1MaxR { get; set; }
+        public double? PostTp1GivebackR { get; set; }
+        public bool? Tp1ProtectExitHit { get; set; }
+        public double? Tp1ProtectExitR { get; set; }
+        public int? Tp1ProtectScoreAtExit { get; set; }
+        public string Tp1ProtectMode { get; set; }
     }
 
     public sealed class CompositeTradeLogger : ITradeLogger

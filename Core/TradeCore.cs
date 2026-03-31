@@ -3542,7 +3542,11 @@ namespace GeminiV26.Core
                     GrossProfit = pos.GrossProfit,
                     Commissions = pos.Commissions,
                     Swap = pos.Swap,
-                    Pips = pos.Pips
+                    Pips = pos.Pips,
+                    PostTp1MaxR = ctx?.PostTp1MaxR,
+                    PostTp1GivebackR = ctx?.PostTp1GivebackR,
+                    Tp1ProtectExitHit = ctx?.Tp1ProtectExitHit,
+                    Tp1ProtectExitR = ctx?.Tp1ProtectExitR
                 });
 
             _statsTracker.RegisterTradeClose(
