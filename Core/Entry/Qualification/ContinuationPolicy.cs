@@ -24,25 +24,26 @@ namespace GeminiV26.Core.Entry.Qualification
                 }
             }
 
-            bool hasMomentum = ctx.HasMomentum;
             double transitionQuality = ctx.Transition?.QualityScore ?? 0.0;
             bool hasTransition = transitionQuality >= 0.55;
             bool hasImpulse = ctx.HasImpulse_M5 || ctx.HasImpulseLong_M5 || ctx.HasImpulseShort_M5;
-            bool hasTrend =
-                ctx.LogicBiasDirection != TradeDirection.None ||
-                ctx.ActiveHtfDirection != TradeDirection.None ||
-                ctx.TrendDirection != TradeDirection.None;
+            bool hasDirectionalBias = ctx.LogicBiasDirection != TradeDirection.None;
+            bool hasStructure = hasImpulse || transitionQuality >= 0.55;
+            bool hasTrend = hasDirectionalBias && hasStructure;
+            bool hasMomentum = hasImpulse || transitionQuality >= 0.60;
 
-            if (instrumentClass == InstrumentClass.INDEX && !hasMomentum)
+            Log(ctx,
+                "[ENTRY][STATE][TREND_EVAL]",
+                $"bias={hasDirectionalBias.ToString().ToLowerInvariant()} structure={hasStructure.ToString().ToLowerInvariant()} result={hasTrend.ToString().ToLowerInvariant()}");
+            Log(ctx,
+                "[ENTRY][STATE][MOMENTUM_EVAL]",
+                $"impulse={hasImpulse.ToString().ToLowerInvariant()} TQ={transitionQuality:0.00} result={hasMomentum.ToString().ToLowerInvariant()}");
+
+            bool isDeadMarket = !hasTrend && !hasMomentum;
+            if (isDeadMarket)
             {
-                if (!hasTrend)
-                {
-                    Log(ctx, "[ENTRY][BLOCK][NO_MOMENTUM_INDEX]", "no_trend");
-                    return EntryDecision.Block("NO_MOMENTUM_INDEX");
-                }
-
-                Log(ctx, "[ENTRY][PENALTY][NO_MOMENTUM_INDEX]", "trend_present");
-                return EntryDecision.Penalize(0.20, "NO_MOMENTUM_INDEX");
+                Log(ctx, "[ENTRY][BLOCK][DEAD_MARKET_STRICT]", string.Empty);
+                return EntryDecision.Block("DEAD_MARKET_STRICT");
             }
 
             if (instrumentClass == InstrumentClass.CRYPTO && !hasImpulse)
@@ -51,10 +52,17 @@ namespace GeminiV26.Core.Entry.Qualification
                 return EntryDecision.Block("NO_IMPULSE_CRYPTO");
             }
 
-            if (!hasMomentum && !hasTrend)
+            bool isWeakContinuation = transitionQuality < 0.55 && !ctx.HasImpulse_M5;
+            if (isWeakContinuation)
             {
-                Log(ctx, "[ENTRY][BLOCK][DEAD_MARKET]", string.Empty);
-                return EntryDecision.Block("DEAD_MARKET");
+                Log(ctx,
+                    "[ENTRY][FILTER][WEAK_CONTINUATION]",
+                    $"TQ={transitionQuality:0.00} impulse={ctx.HasImpulse_M5.ToString().ToLowerInvariant()}");
+
+                if (instrumentClass == InstrumentClass.CRYPTO)
+                    return EntryDecision.Block("WEAK_CONTINUATION_CRYPTO");
+
+                return EntryDecision.Penalize(0.20, "WEAK_CONTINUATION");
             }
 
             if (transitionQuality < 0.30)

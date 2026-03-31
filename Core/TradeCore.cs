@@ -1478,24 +1478,45 @@ namespace GeminiV26.Core
                 }
 
                 _ctx.FinalDirection = selected.Direction;
-                const double deadMarketMomentumThreshold = 0.55;
                 double transitionQuality = _ctx.Transition?.QualityScore ?? 0.0;
-                bool hasTrend =
-                    _ctx.FinalDirection != TradeDirection.None &&
-                    _ctx.ActiveHtfDirection == _ctx.FinalDirection;
-                bool hasMomentum = transitionQuality >= deadMarketMomentumThreshold;
+                bool hasImpulse = _ctx.HasImpulse_M5 || _ctx.HasImpulseLong_M5 || _ctx.HasImpulseShort_M5;
+                bool hasDirectionalBias = _ctx.LogicBiasDirection != TradeDirection.None;
+                bool hasStructure = hasImpulse || transitionQuality >= 0.55;
+                bool hasTrend = hasDirectionalBias && hasStructure;
+                bool hasMomentum = hasImpulse || transitionQuality >= 0.60;
                 bool isDeadMarket = !hasTrend && !hasMomentum;
 
-                bool isContinuation =
-                    selected.Type.ToString().IndexOf("Pullback", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    selected.Type.ToString().IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    selected.Type.ToString().IndexOf("Breakout", StringComparison.OrdinalIgnoreCase) >= 0;
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][STATE][TREND_EVAL] bias={hasDirectionalBias.ToString().ToLowerInvariant()} structure={hasStructure.ToString().ToLowerInvariant()} result={hasTrend.ToString().ToLowerInvariant()}");
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][STATE][MOMENTUM_EVAL] impulse={hasImpulse.ToString().ToLowerInvariant()} TQ={transitionQuality:F2} result={hasMomentum.ToString().ToLowerInvariant()}");
 
-                if (isDeadMarket && isContinuation)
+                if (_instrumentClass == InstrumentClass.INDEX)
+                {
+                    if (!hasTrend && !hasMomentum)
+                    {
+                        GlobalLogger.Log(_bot, "[ENTRY][INDEX][EVAL] trend=false momentum=false action=block");
+                    }
+                    else if (hasTrend && !hasMomentum)
+                    {
+                        int scoreBeforeIndexPenalty = selected.Score;
+                        const int indexNoMomentumPenalty = 25;
+                        selected.Score = Math.Max(0, selected.Score - indexNoMomentumPenalty);
+                        GlobalLogger.Log(_bot, "[ENTRY][INDEX][EVAL] trend=true momentum=false action=penalty");
+                        GlobalLogger.Log(_bot,
+                            $"[ENTRY][QUALIFICATION][PENALTY] INDEX_TREND_NO_MOMENTUM penalty=0.25 score={scoreBeforeIndexPenalty}->{selected.Score}");
+                    }
+                    else
+                    {
+                        GlobalLogger.Log(_bot,
+                            $"[ENTRY][INDEX][EVAL] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} action=pass");
+                    }
+                }
+
+                if (isDeadMarket)
                 {
                     _ctx.Flags.IsDeadMarketBlocked = true;
-                    GlobalLogger.Log(_bot,
-                        $"[ENTRY][BLOCK][DEAD_MARKET] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} TQ={transitionQuality:F2}");
+                    GlobalLogger.Log(_bot, "[ENTRY][BLOCK][DEAD_MARKET_STRICT]");
                 }
 
                 if (_ctx.Flags.IsDeadMarketBlocked)
@@ -1508,6 +1529,7 @@ namespace GeminiV26.Core
                 if (qualificationDecision.Type == EntryDecisionType.Block)
                 {
                     GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
+                    GlobalLogger.Log(_bot, "[ROUTER][ABORT][QUALIFICATION_BLOCK]");
                     return;
                 }
 
