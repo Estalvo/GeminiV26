@@ -1,0 +1,5 @@
+positionId,symbol,entryTime,entryType,FinalDirection,entryPrice,exitTime,exitPrice,exitReason,exitDecisionDetail,tp1Hit,mfeR,maeR,R,confidence,regime
+249952247,XAUUSD,2026-03-30T17:35:00.7040000Z,XAU_Impulse,Short,4516.73,2026-03-30T17:50:19.2720000Z,4515.07,StopLoss,broker_closed_event,true,0.11,-0.68,0.09,73.0,
+249958810,XAUUSD,2026-03-30T18:00:01.0130000Z,XAU_Pullback,Short,4515.15,2026-03-30T18:32:51.3490000Z,4513.43,StopLoss,broker_closed_event,true,0.19,-0.15,0.1,77.0,
+249961312,US 30,2026-03-30T18:15:00.6890000Z,Index_Pullback,Long,45337.4,2026-03-30T18:40:01.2280000Z,45287.8,Closed,broker_closed_event,false,0.31,0.48,-0.48,47.0,
+249972427,XAUUSD,2026-03-30T19:15:00.4450000Z,XAU_Impulse,Short,4497.99,2026-03-30T19:35:00.8680000Z,4509.17,Closed,broker_closed_event,false,0.36,0.84,-0.83,83.0,Trend
