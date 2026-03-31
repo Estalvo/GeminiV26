@@ -1198,11 +1198,23 @@ namespace GeminiV26.Core
             ApplyTransitionScoreBoost(_ctx, symbolSignals);
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DBG ENTRY] total candidates={symbolSignals.Count}", _ctx));
+            var fxCreatedScores = new Dictionary<EntryEvaluation, int>();
+            var fxPreviousValidity = new Dictionary<EntryEvaluation, bool>();
+            int fxCreatedCount = 0;
+            int fxValidAfterMatrixCount = 0;
+            int fxValidFinalCount = 0;
 
             foreach (var e in symbolSignals)
             {
                 StampEntrySourceHtfTrace(_ctx, e);
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTER_CAND] sym={_bot.SymbolName} type={e?.Type} valid={e?.IsValid} score={e?.Score} dir={e?.Direction} reason={e?.Reason}", _ctx));
+                if (isFxSymbol && IsFxCandidate(e))
+                {
+                    fxCreatedCount++;
+                    fxCreatedScores[e] = e.Score;
+                    fxPreviousValidity[e] = e.IsValid;
+                    LogFxEntryPipelineStage(_ctx, e, "CREATED");
+                }
                 LogHtfFlowStage(_ctx, e, "ENTRY_EVALUATION", "_entryRouter.Evaluate");
                 if (e != null)
                 {
@@ -1245,10 +1257,61 @@ namespace GeminiV26.Core
             ApplyHtfBiasScoreOnly(symbolSignals, bias, "INDEX");
         }
                 foreach (var e in symbolSignals)
+                {
+                    if (isFxSymbol && IsFxCandidate(e))
+                    {
+                        bool wasValidBeforeStage = fxPreviousValidity.TryGetValue(e, out var prevValid) ? prevValid : e.IsValid;
+                        LogFxEntryPipelineStage(_ctx, e, "AFTER_MATRIX");
+                        if (e.IsValid)
+                            fxValidAfterMatrixCount++;
+                        LogFxRejectTransition(_ctx, e, "Matrix", wasValidBeforeStage);
+                        fxPreviousValidity[e] = e.IsValid;
+                    }
                     LogHtfFlowStage(_ctx, e, "ENTRY_FILTER", nameof(ApplyHtfBiasScoreOnly));
+                }
 
                 UpdateExecutionStateMachine(_ctx, symbolSignals);
+                if (isFxSymbol)
+                {
+                    foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
+                    {
+                        bool wasValidBeforeStage = fxPreviousValidity.TryGetValue(e, out var prevValid) ? prevValid : e.IsValid;
+                        LogFxEntryPipelineStage(_ctx, e, "AFTER_STRUCTURE");
+                        LogFxRejectTransition(_ctx, e, "Structure", wasValidBeforeStage);
+                        fxPreviousValidity[e] = e.IsValid;
+                    }
+                }
                 ApplyRestartProtection(_ctx, symbolSignals);
+                if (isFxSymbol)
+                {
+                    foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
+                    {
+                        bool wasValidBeforeStage = fxPreviousValidity.TryGetValue(e, out var prevValid) ? prevValid : e.IsValid;
+                        LogFxEntryPipelineStage(_ctx, e, "AFTER_REGIME");
+                        LogFxRejectTransition(_ctx, e, "Regime", wasValidBeforeStage);
+                        fxPreviousValidity[e] = e.IsValid;
+                    }
+
+                    const int fxPenaltyCap = 10;
+                    foreach (var e in symbolSignals.Where(x => IsFxCandidate(x) && x != null && fxCreatedScores.ContainsKey(x)))
+                    {
+                        int createdScore = fxCreatedScores[e];
+                        int totalPenalty = Math.Max(0, createdScore - e.Score);
+                        int cappedPenalty = Math.Min(totalPenalty, fxPenaltyCap);
+                        int boundedScore = Math.Max(0, createdScore - cappedPenalty);
+                        if (boundedScore != e.Score)
+                        {
+                            int beforeCap = e.Score;
+                            e.Score = boundedScore;
+                            e.Reason = string.IsNullOrWhiteSpace(e.Reason)
+                                ? "[FX_PENALTY_CAP]"
+                                : $"{e.Reason} [FX_PENALTY_CAP]";
+                            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
+                                $"[FX][PENALTY_CAP] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} createdScore={createdScore} score={beforeCap}->{e.Score} totalPenalty={totalPenalty} cap={fxPenaltyCap}",
+                                _ctx));
+                        }
+                    }
+                }
                 foreach (var e in symbolSignals)
                 {
                     if (e != null)
@@ -1289,6 +1352,16 @@ namespace GeminiV26.Core
                 // ROUTER
                 // =====================================================
                 var selected = _router.SelectEntry(symbolSignals, _ctx);
+                if (isFxSymbol)
+                {
+                    foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
+                    {
+                        bool wasValidBeforeStage = fxPreviousValidity.TryGetValue(e, out var prevValid) ? prevValid : e.IsValid;
+                        LogFxEntryPipelineStage(_ctx, e, "AFTER_ROUTER");
+                        LogFxRejectTransition(_ctx, e, "Router", wasValidBeforeStage);
+                        fxPreviousValidity[e] = e.IsValid;
+                    }
+                }
                 bool hasWinner = selected != null;
                 double topCandidateScore = symbolSignals
                     .Where(x => x != null)
@@ -1327,6 +1400,12 @@ namespace GeminiV26.Core
 
                 if (selected == null)
                 {
+                    if (isFxSymbol)
+                    {
+                        fxValidFinalCount = symbolSignals.Count(x => IsFxCandidate(x) && x != null && x.IsValid);
+                        GlobalLogger.Log(_bot, $"[FX][TOTAL_REJECTION] symbol={_bot.SymbolName} candidates={fxCreatedCount} reason=ALL_INVALID");
+                        GlobalLogger.Log(_bot, $"[FX][ENTRY_STATS] created={fxCreatedCount} validAfterMatrix={fxValidAfterMatrixCount} validFinal={fxValidFinalCount}");
+                    }
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA classification=HTF_NO_DIRECTION " +
                         $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY",
@@ -1340,6 +1419,18 @@ namespace GeminiV26.Core
                     $"[ENTRY_TRACE][FINAL] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} stage=FINAL candidateDirection={GetEntryTraceCandidateDirection(selected)} score={selected.Score} " +
                     $"classification={selected.HtfClassification} finalCandidateDirection={selected.Direction} finalScore={selected.Score} blocked={(!selected.IsValid).ToString().ToLowerInvariant()} finalReason={selected.Reason ?? "NA"}",
                     _ctx));
+                if (isFxSymbol)
+                {
+                    foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
+                    {
+                        LogFxEntryPipelineStage(_ctx, e, "FINAL");
+                        GlobalLogger.Log(_bot,
+                            $"[FX][ENTRY_PIPELINE_FINAL] symbol={e.Symbol ?? _bot.SymbolName} entryType={e.Type} isValid={e.IsValid.ToString().ToLowerInvariant()} finalScore={e.Score} finalConfidence={e.LogicConfidence:0.##}");
+                        if (e.IsValid)
+                            fxValidFinalCount++;
+                    }
+                    GlobalLogger.Log(_bot, $"[FX][ENTRY_STATS] created={fxCreatedCount} validAfterMatrix={fxValidAfterMatrixCount} validFinal={fxValidFinalCount}");
+                }
 
 
                 // =====================================================
@@ -1794,6 +1885,38 @@ namespace GeminiV26.Core
             return ctx != null
                 && ctx.RoutedDirection != TradeDirection.None
                 && ctx.FinalDirection != TradeDirection.None;
+        }
+
+        private static bool IsFxCandidate(EntryEvaluation candidate)
+        {
+            return candidate != null &&
+                   candidate.Type.ToString().StartsWith("FX_", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void LogFxEntryPipelineStage(EntryContext ctx, EntryEvaluation candidate, string stage)
+        {
+            if (ctx == null || !IsFxCandidate(candidate))
+                return;
+
+            GlobalLogger.Log(
+                $"[FX][ENTRY_PIPELINE] symbol={candidate.Symbol ?? ctx.Symbol} entryType={candidate.Type} stage={stage} score={candidate.Score} confidence={candidate.LogicConfidence:0.##} isValid={candidate.IsValid.ToString().ToLowerInvariant()}");
+        }
+
+        private static void LogFxRejectReason(EntryContext ctx, EntryEvaluation candidate, string stage, string reason)
+        {
+            if (ctx == null || !IsFxCandidate(candidate) || candidate.IsValid)
+                return;
+
+            GlobalLogger.Log(
+                $"[FX][REJECT_REASON] symbol={candidate.Symbol ?? ctx.Symbol} entryType={candidate.Type} stage={stage} reason={reason ?? candidate.Reason ?? "UNKNOWN"} score={candidate.Score} confidence={candidate.LogicConfidence:0.##}");
+        }
+
+        private static void LogFxRejectTransition(EntryContext ctx, EntryEvaluation candidate, string stage, bool wasValidBeforeStage)
+        {
+            if (!wasValidBeforeStage || candidate == null || candidate.IsValid)
+                return;
+
+            LogFxRejectReason(ctx, candidate, stage, candidate.Reason);
         }
 
         private EntryTraceSummary GetEntryTraceSummary(string symbol)
@@ -3764,7 +3887,22 @@ namespace GeminiV26.Core
                     candidate.Score += 5;
 
                 if (misaligned)
-                    candidate.Score -= 10;
+                {
+                    int htfPenalty = 10;
+                    bool fxHtfAlreadyPunished =
+                        string.Equals(assetTag, "FX", StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(candidate.Reason) &&
+                        candidate.Reason.IndexOf("HTF", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if (fxHtfAlreadyPunished)
+                    {
+                        htfPenalty = 4;
+                        GlobalLogger.Log(_bot,
+                            $"[FX][HTF_DOUBLE_GUARD] symbol={candidate.Symbol ?? _bot.SymbolName} entryType={candidate.Type} scorePenalty={htfPenalty} reason=existing_htf_penalty_detected");
+                    }
+
+                    candidate.Score -= htfPenalty;
+                }
 
                 candidate.Score = Math.Max(0, Math.Min(100, candidate.Score));
 
