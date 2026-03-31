@@ -46,6 +46,12 @@ namespace GeminiV26.Core.Risk.PositionSizing
                 $"rawUnits={rawUnits:F0} " +
                 $"capUnits={capUnits:F0} normalized={normalized}");
 
+            bool capped = rawUnits > capUnits;
+            double riskDeviationPercent = riskAmount > 0
+                ? ((riskAmount - (Math.Min(rawUnits, capUnits) * slPips * pipValuePerUnit)) / riskAmount) * 100.0
+                : 0.0;
+            GlobalLogger.Log(bot, $"[SCALING][LOTCAP] accountSize={bot.Account.Balance:0.##} desiredVolume={rawUnits:0.####} actualVolume={finalUnits:0.####} capped={capped.ToString().ToLowerInvariant()} riskDeviationPercent={riskDeviationPercent:0.####}");
+
             if (normalized < bot.Symbol.VolumeInUnitsMin)
                 return 0;
 
