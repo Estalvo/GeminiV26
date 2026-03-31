@@ -5,7 +5,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
 {
     public static class CryptoPositionSizer
     {
-        public static long Calculate(
+        public static double Calculate(
             Robot bot,
             double riskPercent,
             double slPriceDistance,
@@ -24,15 +24,15 @@ namespace GeminiV26.Core.Risk.PositionSizing
             double finalUnits = Math.Min(rawUnits, capUnits);
             string symbol = bot.SymbolName ?? "UNKNOWN";
 
-            long normalized =
-                (long)bot.Symbol.NormalizeVolumeInUnits(
+            double normalized =
+                bot.Symbol.NormalizeVolumeInUnits(
                     finalUnits,
                     RoundingMode.Down);
 
             if (execCtx)
             {
                 GlobalLogger.Log(bot, $"[CRYPTO SIZE RAW] symbol={symbol} balance={balance:0.##} riskPercent={riskPercent:0.###} riskAmount={riskAmount:0.###} slDistance={slPriceDistance:0.########} rawUnits={rawUnits:0.###} capUnits={capUnits:0.###} finalUnits={finalUnits:0.###}");
-                GlobalLogger.Log(bot, $"[CRYPTO SIZE NORMALIZED] symbol={symbol} normalizedUnits={normalized} minVolume={bot.Symbol.VolumeInUnitsMin} step={bot.Symbol.VolumeInUnitsStep} lotSize={bot.Symbol.LotSize}");
+                GlobalLogger.Log(bot, $"[CRYPTO SIZE NORMALIZED] symbol={symbol} normalizedUnits={normalized:0.########} minVolume={bot.Symbol.VolumeInUnitsMin:0.########} step={bot.Symbol.VolumeInUnitsStep:0.########} lotSize={bot.Symbol.LotSize:0.########}");
                 bool capped = rawUnits > capUnits;
                 double effectiveRisk = Math.Min(rawUnits, capUnits) * slPriceDistance;
                 double riskDeviationPercent = riskAmount > 0
@@ -45,7 +45,7 @@ namespace GeminiV26.Core.Risk.PositionSizing
             {
                 if (execCtx)
                 {
-                    GlobalLogger.Log(bot, $"[CRYPTO SIZE ZERO] symbol={symbol} reason=below_min_after_normalization finalUnits={finalUnits:0.###} normalizedUnits={normalized} minVolume={bot.Symbol.VolumeInUnitsMin} step={bot.Symbol.VolumeInUnitsStep} riskPercent={riskPercent:0.###} slDistance={slPriceDistance:0.########}");
+                    GlobalLogger.Log(bot, $"[CRYPTO SIZE ZERO] symbol={symbol} reason=below_min_after_normalization finalUnits={finalUnits:0.###} normalizedUnits={normalized:0.########} minVolume={bot.Symbol.VolumeInUnitsMin:0.########} step={bot.Symbol.VolumeInUnitsStep:0.########} riskPercent={riskPercent:0.###} slDistance={slPriceDistance:0.########}");
                 }
 
                 return 0;
