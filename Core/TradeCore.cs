@@ -2649,6 +2649,8 @@ namespace GeminiV26.Core
                 if (candidate == null)
                     continue;
 
+                bool upstreamTriggerState = candidate.TriggerConfirmed;
+                EntryState upstreamState = candidate.State;
                 candidate.TriggerConfirmed = false;
                 candidate.State = EntryState.NONE;
 
@@ -2679,6 +2681,20 @@ namespace GeminiV26.Core
                 candidate.HasStrongTrigger = trigger.TriggerConfirmed;
                 candidate.HasStrongStructure = HasStrongStructure(ctx, candidate.Direction);
 
+                if (HasInvalidTriggerIntegrity(candidate, trigger, upstreamTriggerState, upstreamState, out string triggerInvalidReason))
+                {
+                    candidate.IsValid = false;
+                    candidate.TriggerConfirmed = false;
+                    candidate.State = EntryState.NONE;
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[TRIGGER_INVALID]"
+                        : $"{candidate.Reason} [TRIGGER_INVALID]";
+                    ClearArmedSetup(candidate);
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][BLOCK][TRIGGER_INVALID]\nreason={triggerInvalidReason}\nentryType={candidate.Type}\ninstrument={candidate.Symbol ?? ctx?.Symbol ?? _bot.SymbolName}");
+                    continue;
+                }
+
                 if (ShouldRejectEarlyNoStructure(ctx, candidate, candidate.HasStrongTrigger))
                 {
                     MovePhase movePhase;
@@ -2707,19 +2723,7 @@ namespace GeminiV26.Core
                 }
 
                 GlobalLogger.Log(_bot, $"[TRIGGER] type={candidate.Type} confirmed={trigger.TriggerConfirmed}");
-                if (candidate.TriggerConfirmed != trigger.TriggerConfirmed)
-                {
-                    GlobalLogger.Log(_bot, $"[INTEGRITY ERROR] Trigger mismatch | candidate={candidate.TriggerConfirmed} trigger={trigger.TriggerConfirmed} type={candidate.Type}");
-
-                    // HARD FIX – enforce trigger truth
-                    candidate.TriggerConfirmed = trigger.TriggerConfirmed;
-
-                    GlobalLogger.Log(_bot, $"[TRIGGER STATE FIX] type={candidate.Type} enforcedTrigger={candidate.TriggerConfirmed}");
-                }
-                else
-                {
-                    candidate.TriggerConfirmed = trigger.TriggerConfirmed;
-                }
+                candidate.TriggerConfirmed = trigger.TriggerConfirmed;
                 GlobalLogger.Log(_bot, $"[TRIGGER STATE] candidate={candidate.TriggerConfirmed}");
 
                 int currentBarIndex = ctx.M5?.Count - 1 ?? -1;
@@ -2730,6 +2734,18 @@ namespace GeminiV26.Core
                 {
                     GlobalLogger.Log(_bot, "[TRIGGER BLOCK] Stale trigger");
                     candidate.TriggerConfirmed = false;
+                }
+
+                if (!ApplyContinuationTransitionNoMomentumFilter(ctx, candidate))
+                {
+                    ClearArmedSetup(candidate);
+                    continue;
+                }
+
+                if (!ApplyContinuationWeakStructureFilter(ctx, candidate))
+                {
+                    ClearArmedSetup(candidate);
+                    continue;
                 }
 
                 if (!trigger.IsManaged)
@@ -2903,6 +2919,211 @@ namespace GeminiV26.Core
                 default:
                     return false;
             }
+        }
+
+        private static bool HasInvalidTriggerIntegrity(
+            EntryEvaluation candidate,
+            TriggerDiagnostics trigger,
+            bool upstreamTriggerState,
+            EntryState upstreamState,
+            out string reason)
+        {
+            reason = null;
+            if (candidate == null || trigger == null)
+            {
+                reason = "missing_candidate_or_trigger";
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(candidate.Reason) &&
+                (candidate.Reason.IndexOf("forced", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 candidate.Reason.IndexOf("enforced", StringComparison.OrdinalIgnoreCase) >= 0))
+            {
+                reason = "forced_trigger_marker_detected";
+                return true;
+            }
+
+            if (upstreamState == EntryState.TRIGGERED && !trigger.TriggerConfirmed)
+            {
+                reason = "state_triggered_without_valid_trigger";
+                return true;
+            }
+
+            if (upstreamTriggerState && !trigger.TriggerConfirmed)
+            {
+                reason = "upstream_trigger_true_but_runtime_trigger_false";
+                return true;
+            }
+
+            if (candidate.Direction == TradeDirection.None)
+            {
+                reason = "invalid_direction_for_trigger";
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ApplyContinuationTransitionNoMomentumFilter(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (ctx == null || candidate == null)
+                return true;
+
+            if (!IsStrictContinuationType(candidate.Type))
+                return true;
+
+            bool isTransition = ctx.IsTransition_M5;
+            bool? hasMomentum = ctx.MarketState?.IsMomentum;
+            string instrument = candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName;
+
+            if (!hasMomentum.HasValue)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=none momentum=missing transition={isTransition.ToString().ToLowerInvariant()}");
+                return true;
+            }
+
+            if (!isTransition || hasMomentum.Value)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=none momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                return true;
+            }
+
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(instrument);
+            int penalty = 0;
+            bool block = false;
+
+            switch (instrumentClass)
+            {
+                case InstrumentClass.CRYPTO:
+                    block = true;
+                    break;
+                case InstrumentClass.INDEX:
+                    block = true;
+                    break;
+                case InstrumentClass.FX:
+                    penalty = 8;
+                    break;
+                case InstrumentClass.METAL:
+                    penalty = 4;
+                    break;
+            }
+
+            if (block)
+            {
+                candidate.IsValid = false;
+                candidate.TriggerConfirmed = false;
+                candidate.State = EntryState.NONE;
+                candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                    ? "[TRANSITION_NO_MOMENTUM_BLOCK]"
+                    : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_BLOCK]";
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=block momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
+            int scoreBefore = candidate.Score;
+            candidate.Score = Math.Max(0, candidate.Score - penalty);
+            candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                ? "[TRANSITION_NO_MOMENTUM_PENALTY]"
+                : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_PENALTY]";
+            GlobalLogger.Log(_bot,
+                $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] instrument={instrument} entryType={candidate.Type} action=penalty momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} score={scoreBefore}->{candidate.Score} penalty={penalty}");
+            return true;
+        }
+
+        private bool ApplyContinuationWeakStructureFilter(EntryContext ctx, EntryEvaluation candidate)
+        {
+            if (ctx == null || candidate == null)
+                return true;
+
+            if (!IsStrictContinuationType(candidate.Type))
+                return true;
+
+            TransitionEvaluation transition = candidate.Direction == TradeDirection.Long
+                ? ctx.TransitionLong
+                : candidate.Direction == TradeDirection.Short
+                    ? ctx.TransitionShort
+                    : null;
+            string instrument = candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName;
+
+            if (transition == null)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][WEAK_STRUCTURE] instrument={instrument} entryType={candidate.Type} flagQuality=missing impulseStrength=missing action=none");
+                return true;
+            }
+
+            double flagQuality = transition.CompressionScore;
+            double impulseStrength = transition.QualityScore;
+            var instrumentClass = SymbolRouting.ResolveInstrumentClass(instrument);
+
+            double qualityThreshold = 0.35;
+            double flagThreshold = 0.25;
+            int penalty = 3;
+            bool block = false;
+
+            switch (instrumentClass)
+            {
+                case InstrumentClass.CRYPTO:
+                    qualityThreshold = 0.55;
+                    flagThreshold = 0.45;
+                    block = true;
+                    break;
+                case InstrumentClass.INDEX:
+                    qualityThreshold = 0.45;
+                    flagThreshold = 0.35;
+                    penalty = 6;
+                    break;
+                case InstrumentClass.METAL:
+                    qualityThreshold = 0.40;
+                    flagThreshold = 0.30;
+                    penalty = 2;
+                    break;
+            }
+
+            bool weakStructure =
+                !transition.HasImpulse ||
+                impulseStrength < qualityThreshold ||
+                flagQuality < flagThreshold;
+
+            if (!weakStructure)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][WEAK_STRUCTURE] instrument={instrument} entryType={candidate.Type} flagQuality={flagQuality:0.00} impulseStrength={impulseStrength:0.00} action=none");
+                return true;
+            }
+
+            if (block)
+            {
+                candidate.IsValid = false;
+                candidate.TriggerConfirmed = false;
+                candidate.State = EntryState.NONE;
+                candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                    ? "[WEAK_STRUCTURE_BLOCK]"
+                    : $"{candidate.Reason} [WEAK_STRUCTURE_BLOCK]";
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][FILTER][WEAK_STRUCTURE] instrument={instrument} entryType={candidate.Type} flagQuality={flagQuality:0.00} impulseStrength={impulseStrength:0.00} action=block");
+                return false;
+            }
+
+            int scoreBefore = candidate.Score;
+            candidate.Score = Math.Max(0, candidate.Score - penalty);
+            candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                ? "[WEAK_STRUCTURE_PENALTY]"
+                : $"{candidate.Reason} [WEAK_STRUCTURE_PENALTY]";
+            GlobalLogger.Log(_bot,
+                $"[ENTRY][FILTER][WEAK_STRUCTURE] instrument={instrument} entryType={candidate.Type} flagQuality={flagQuality:0.00} impulseStrength={impulseStrength:0.00} action=penalty score={scoreBefore}->{candidate.Score} penalty={penalty}");
+            return true;
+        }
+
+        private static bool IsStrictContinuationType(EntryType type)
+        {
+            string typeName = type.ToString();
+            return typeName.IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   typeName.IndexOf("Pullback", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   typeName.IndexOf("Breakout", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static bool ShouldRejectEarlyNoStructure(
