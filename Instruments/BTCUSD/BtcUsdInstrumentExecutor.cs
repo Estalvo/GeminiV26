@@ -158,16 +158,36 @@ namespace GeminiV26.Instruments.BTCUSD
 
             double riskPercent = _riskSizer.GetRiskPercent(adjustedRiskConfidence);
             riskPercent *= quality.RiskMultiplier;
-            long volumeUnits = CryptoPositionSizer.Calculate(
+            double accountBalance = _bot.Account.Balance;
+            double accountEquity = _bot.Account.Equity;
+            double riskAmountUsd = accountBalance * (riskPercent / 100.0);
+
+            GlobalLogger.Log(_bot,
+                $"[BTC][RISK_INPUT] balance={accountBalance:0.##} equity={accountEquity:0.##} confidence={adjustedRiskConfidence} riskPercent={riskPercent:0.####} riskAmountUsd={riskAmountUsd:0.######}");
+
+            double lotCap = _riskSizer.GetLotCap(adjustedRiskConfidence);
+            double rawUnits = riskAmountUsd / slPriceDist;
+            double capUnits = lotCap * _bot.Symbol.LotSize;
+            double preNormalizeUnits = Math.Min(rawUnits, capUnits);
+            double normalizedPreview = _bot.Symbol.NormalizeVolumeInUnits(preNormalizeUnits, RoundingMode.Down);
+            GlobalLogger.Log(_bot, $"[BTC][VOLUME_RAW] rawUnits={rawUnits:0.########} capUnits={capUnits:0.########} preNormalizeUnits={preNormalizeUnits:0.########}");
+            GlobalLogger.Log(_bot, $"[BTC][VOLUME_NORMALIZE] minUnits={_bot.Symbol.VolumeInUnitsMin:0.########} stepUnits={_bot.Symbol.VolumeInUnitsStep:0.########} maxUnits={_bot.Symbol.VolumeInUnitsMax:0.########} normalizedUnits={normalizedPreview:0.########}");
+
+            double volumeUnits = CryptoPositionSizer.Calculate(
                 _bot,
                 riskPercent,
                 slPriceDist,
-                _riskSizer.GetLotCap(adjustedRiskConfidence),
+                lotCap,
                 isExecutionContext: true);
 
             if (volumeUnits < _bot.Symbol.VolumeInUnitsMin)
             {
-                GlobalLogger.Log(_bot, $"[BTCUSD][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=volume_below_min volume={volumeUnits} minVolume={_bot.Symbol.VolumeInUnitsMin} riskPercent={riskPercent:0.##} slDistance={slPriceDist:0.########}");
+                double requiredMinUnits = _bot.Symbol.VolumeInUnitsMin;
+                double shortfall = requiredMinUnits - volumeUnits;
+                double minRiskAmountNeeded = requiredMinUnits * slPriceDist;
+                double minRiskPercentNeeded = accountBalance > 0 ? (minRiskAmountNeeded / accountBalance) * 100.0 : 0.0;
+                GlobalLogger.Log(_bot, $"[BTC][VOLUME_ABORT] reason=volume_below_min requiredMinUnits={requiredMinUnits:0.########} shortfall={shortfall:0.########} minRiskAmountNeededUsd={minRiskAmountNeeded:0.######} minRiskPercentNeeded={minRiskPercentNeeded:0.######}");
+                GlobalLogger.Log(_bot, $"[BTCUSD][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=volume_below_min volume={volumeUnits:0.########} minVolume={_bot.Symbol.VolumeInUnitsMin:0.########} riskPercent={riskPercent:0.##} slDistance={slPriceDist:0.########}");
                 GlobalLogger.Log(_bot, $"[ENTRY][EXEC][ABORT] symbol={_bot.SymbolName} entryType={entry.Type} reason=volume_below_min");
                 return;
             }
@@ -186,6 +206,13 @@ namespace GeminiV26.Instruments.BTCUSD
                 tradeType == TradeType.Buy
                     ? _bot.Symbol.Ask
                     : _bot.Symbol.Bid;
+            double stopLossPrice =
+                tradeType == TradeType.Buy
+                    ? entryPrice - slPriceDist
+                    : entryPrice + slPriceDist;
+            double slPoints = _bot.Symbol.TickSize > 0 ? slPriceDist / _bot.Symbol.TickSize : 0;
+            GlobalLogger.Log(_bot,
+                $"[BTC][SL_INPUT] entry={entryPrice:0.########} stopLoss={stopLossPrice:0.########} stopDistancePrice={slPriceDist:0.########} stopDistancePipsOrPoints={slPips:0.########} stopDistancePoints={slPoints:0.########}");
 
             double tp2Price =
                 tradeType == TradeType.Buy
@@ -210,6 +237,7 @@ namespace GeminiV26.Instruments.BTCUSD
             // =========================================================
             // SEND ORDER
             // =========================================================
+            GlobalLogger.Log(_bot, $"[BTC][EXEC_SUBMIT] finalUnits={volumeUnits:0.########}");
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY][EXEC][REQUEST] symbol={entry.Symbol ?? entryContext.Symbol ?? _bot.SymbolName} entryType={entry.Type} pipelineId={entryContext.TempId} side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
