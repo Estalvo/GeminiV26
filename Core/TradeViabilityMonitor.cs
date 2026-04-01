@@ -80,13 +80,13 @@ namespace GeminiV26.Core
             bool compressionDetected = IsCompressionState(pos.TradeType, m5);
             bool noProgress =
                 ctx.MfeR < 0.25
-                && ctx.TimeInTradeBars >= 6;
+                && ctx.BarsSinceEntryM5 >= 6;
             bool baseValid =
                 !structureBreakDetected &&
                 !strongOppositeImpulseDetected &&
                 !strongHtfConflictDetected;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
-                $"[TVM][PROGRESS] mfe={ctx.MfeR:0.00} bars={ctx.TimeInTradeBars} noProgress={noProgress}", ctx));
+                $"[TVM][PROGRESS] mfe={ctx.MfeR:0.00} bars={ctx.BarsSinceEntryM5} noProgress={noProgress}", ctx));
 
             if (!baseValid && noProgress)
             {
@@ -702,7 +702,7 @@ namespace GeminiV26.Core
             bool weakProgress =
                 _activeContext != null &&
                 _activeContext.MfeR < 0.25
-                && _activeContext.TimeInTradeBars >= 6;
+                && _activeContext.BarsSinceEntryM5 >= 6;
             bool detected =
                 rangeShrinking &&
                 !IsStrongOppositeImpulse(tradeType, m5) &&
