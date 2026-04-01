@@ -400,7 +400,7 @@ namespace GeminiV26.Instruments.AUDUSD
             ctx.Tp1Hit = true;
             GlobalLogger.Log(_bot, "[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
-            ctx.Tp1HitBarIndex = ctx.BarsSinceEntryM5;
+            ctx.SetTp1HitBarIndex(ctx.BarsSinceEntryM5);
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
             var live = _bot.Positions.Find(pos.Label, pos.SymbolName, pos.TradeType);
@@ -677,8 +677,8 @@ namespace GeminiV26.Instruments.AUDUSD
             if (trailingConflict)
                 return false;
 
-            int barsSinceTp1 = ctx.Tp1HitBarIndex >= 0
-                ? Math.Max(0, ctx.BarsSinceEntryM5 - ctx.Tp1HitBarIndex)
+            int barsSinceTp1 = ctx.GetTp1HitBarIndex() >= 0
+                ? Math.Max(0, ctx.BarsSinceEntryM5 - ctx.GetTp1HitBarIndex())
                 : 0;
 
             ctx.Tp1ProtectExitHit = true;
@@ -686,11 +686,11 @@ namespace GeminiV26.Instruments.AUDUSD
             ctx.Tp1ProtectScoreAtExit = momentumSignals;
             ctx.Tp1ProtectMode = "TP1_SMART";
             ctx.PostTp1GivebackR = Math.Max(0, ctx.PostTp1MaxR - currentR);
-            ctx.Tp1SmartExitHit = true;
-            ctx.Tp1SmartExitType = "TP1_SMART";
-            ctx.Tp1SmartExitReason = "TREND_COLLAPSE";
-            ctx.Tp1SmartExitR = currentR;
-            ctx.Tp1SmartBarsSinceTp1 = barsSinceTp1;
+            ctx.SetTp1SmartExitHit(true);
+            ctx.SetTp1SmartExitType("TP1_SMART");
+            ctx.SetTp1SmartExitReason("TREND_COLLAPSE");
+            ctx.SetTp1SmartExitR(currentR);
+            ctx.SetTp1SmartBarsSinceTp1(barsSinceTp1);
             ctx.IsFullyClosing = true;
 
             GlobalLogger.Log(_bot,
