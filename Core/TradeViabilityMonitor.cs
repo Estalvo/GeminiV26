@@ -8,6 +8,7 @@ namespace GeminiV26.Core
     public class TradeViabilityMonitor
     {
         private readonly Robot _bot;
+        private PositionContext _activeContext;
         public int TVM_MinBarsBeforeEvaluation { get; set; } = 4;
         public double TVM_MinAdverseMoveR { get; set; } = 0.20;
         public int TVM_RecoveryLookbackBars { get; set; } = 2;
@@ -55,6 +56,7 @@ namespace GeminiV26.Core
             if (barsSinceEntry <= 0)
                 return false;
 
+            _activeContext = ctx;
             UpdateMfeMae(ctx, pos, risk);
 
             bool reversalDetected = IsReversalState(pos.TradeType, m5, ctx);
@@ -76,22 +78,40 @@ namespace GeminiV26.Core
             bool strongHtfConflictDetected = IsStrongHtfConflict(pos.TradeType, m15);
             bool noRecoveryInWindow = !RecentRecoveryDetected(pos.TradeType, m5, TVM_RecoveryLookbackBars);
             bool compressionDetected = IsCompressionState(pos.TradeType, m5);
+            bool noProgress =
+                ctx.MfeR < 0.25
+                && ctx.TimeInTradeBars >= 6;
             bool baseValid =
                 !structureBreakDetected &&
                 !strongOppositeImpulseDetected &&
                 !strongHtfConflictDetected;
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
+                $"[TVM][PROGRESS] mfe={ctx.MfeR:0.00} bars={ctx.TimeInTradeBars} noProgress={noProgress}", ctx));
+
+            if (!baseValid && noProgress)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "NO_PROGRESS";
+
+                GlobalLogger.Log(_bot,
+                    TradeLogIdentity.WithPositionIds("[TVM][EXIT][NO_PROGRESS]", ctx));
+
+                return true;
+            }
+
             bool persistenceAlive = TrendPersistenceAlive(ctx, m5, pos.TradeType);
             bool stillValid =
                 baseValid &&
                 (
-                    persistenceAlive
-                    || compressionDetected
+                    (persistenceAlive
+                    || compressionDetected)
+                    && !noProgress
                 );
             bool slowSetup = IsSlowDevelopmentSetup(ctx?.EntryType);
             bool breakoutSetup = IsBreakoutSetup(ctx?.EntryType);
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
-                $"[TVM][STATE] baseValid={baseValid} persistence={persistenceAlive} compression={compressionDetected} stillValid={stillValid}", ctx));
+                $"[TVM][STATE] baseValid={baseValid} persistence={persistenceAlive} compression={compressionDetected} noProgress={noProgress} stillValid={stillValid}", ctx));
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[TVM][EVAL] BarsSinceEntry={barsSinceEntry} UnrealizedR={unrealizedR:0.00} MomentumState={momentumState} " +
@@ -679,10 +699,17 @@ namespace GeminiV26.Core
                 (m5.HighPrices.Last(5) - m5.LowPrices.Last(5));
 
             bool rangeShrinking = recent < previous;
+            bool weakProgress =
+                _activeContext != null &&
+                _activeContext.MfeR < 0.25
+                && _activeContext.TimeInTradeBars >= 6;
             bool detected =
                 rangeShrinking &&
                 !IsStrongOppositeImpulse(tradeType, m5) &&
-                !IsStructureWeakening(tradeType, m5);
+                !IsStructureWeakening(tradeType, m5) &&
+                !weakProgress;
+
+            GlobalLogger.Log(_bot, $"[TVM][COMPRESSION] shrinking={rangeShrinking} weakProgress={weakProgress}");
 
             GlobalLogger.Log(_bot, $"[TVM][STATE][COMPRESSION] detected={detected}");
             return detected;
@@ -698,8 +725,20 @@ namespace GeminiV26.Core
 
             bool structureBreak = IsStructureWeakening(tradeType, m5);
             bool strongOppImpulse = IsStrongOppositeImpulse(tradeType, m5);
-            bool adverseMove = ctx != null && ctx.MaeR >= 0.30;
-            bool detected = structureBreak && strongOppImpulse && adverseMove;
+            bool fastReversal =
+                structureBreak
+                && strongOppImpulse
+                && ctx != null
+                && ctx.MaeR >= 0.15;
+            bool classicReversal =
+                structureBreak
+                && strongOppImpulse
+                && ctx != null
+                && ctx.MaeR >= 0.30;
+            bool detected = fastReversal || classicReversal;
+
+            double mae = ctx != null ? ctx.MaeR : 0.0;
+            GlobalLogger.Log(_bot, $"[TVM][REVERSAL] fast={fastReversal} classic={classicReversal} mae={mae:0.00}");
 
             GlobalLogger.Log(_bot, $"[TVM][STATE][REVERSAL] detected={detected}");
             return detected;
