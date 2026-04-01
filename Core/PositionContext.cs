@@ -403,6 +403,11 @@ namespace GeminiV26.Core
         /// </summary>
         public bool RehydratedWithoutConfidence { get; set; }
 
+        public bool IsSafeMode()
+        {
+            return RehydratedWithoutConfidence;
+        }
+
         /// <summary>
         /// Rehydrate meta timestamp UTC-ban.
         /// Restart audit / debug.

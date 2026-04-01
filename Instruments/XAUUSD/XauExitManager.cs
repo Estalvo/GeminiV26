@@ -758,8 +758,15 @@ namespace GeminiV26.Instruments.XAUUSD
                 // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
                 ctx.ComputeFinalConfidence();
 
-                // TP1R becslés rehydrate-nél (nincs FC, ezért normal bucket)
-                ctx.Tp1R = _profile.Tp1R_Normal;
+                if (ctx.RehydratedWithoutConfidence)
+                {
+                    ctx.Tp1R = _profile.Tp1R_Low;
+                    GlobalLogger.Log(_bot, "[REHYDRATE][SAFE_MODE][TP1] conservative_bootstrap");
+                }
+                else
+                {
+                    ctx.Tp1R = _profile.Tp1R_Normal;
+                }
                 ctx.Tp1CloseFraction = 0.40;
 
                 RegisterContext(ctx);
