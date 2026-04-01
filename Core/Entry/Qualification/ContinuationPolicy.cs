@@ -104,6 +104,12 @@ namespace GeminiV26.Core.Entry.Qualification
                     flagBars,
                     barsSinceImpulse);
 
+                if (isBreakoutEntry)
+                {
+                    Log(ctx, "[ENTRY][WARN][BREAKOUT_TIMING_DUPLICATION]",
+                        $"barsSinceImpulse={barsSinceImpulse} layer=qualification");
+                }
+
                 Log(ctx, "[ENTRY][STRUCTURE_ZONE]",
                     $"symbol={ctx.Symbol} type={entryTypeName} zone={structureZone} metrics={metrics}");
 
