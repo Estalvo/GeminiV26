@@ -1,11 +1,19 @@
 using Gemini.Memory;
 using GeminiV26.Instruments;
+using GeminiV26.Core.Logging;
 using System;
 
 namespace GeminiV26.Core.Entry.Qualification
 {
     public static class ContinuationPolicy
     {
+        private enum StructureQualityZone
+        {
+            HardBlock,
+            Weak,
+            Valid
+        }
+
         public static EntryDecision Evaluate(EntryContext ctx, EntryType entryType)
         {
             if (ctx == null)
@@ -76,57 +84,52 @@ namespace GeminiV26.Core.Entry.Qualification
             double flagToImpulseRatio = ResolveFlagToImpulseRatio(ctx);
             int barsSinceImpulse = ctx.Memory?.BarsSinceImpulse ?? ctx.BarsSinceImpulse_M5;
 
-            if (isFlagEntry && flagToImpulseRatio > 0 && flagToImpulseRatio < 0.15)
+            if (isPullbackEntry || isFlagEntry || isBreakoutEntry)
             {
-                Log(ctx, "[ENTRY][BLOCK][ULTRA_FLAT_FLAG]",
-                    $"symbol={ctx.Symbol} type={entryTypeName} ratio={flagToImpulseRatio:0.00}");
-                return EntryDecision.Block("ULTRA_FLAT_FLAG");
-            }
+                var structureZone = ResolveStructureZone(
+                    isPullbackEntry,
+                    isFlagEntry,
+                    isBreakoutEntry,
+                    pullbackDepth,
+                    flagToImpulseRatio,
+                    flagBars,
+                    barsSinceImpulse);
 
-            if (isPullbackEntry && pullbackDepth < 0.20)
-            {
-                Log(ctx, "[ENTRY][BLOCK][PULLBACK_TOO_SHALLOW]",
-                    $"symbol={ctx.Symbol} type={entryTypeName} depth={pullbackDepth:0.00}");
-                return EntryDecision.Block("PULLBACK_TOO_SHALLOW");
-            }
+                string metrics = ResolveStructureMetrics(
+                    isPullbackEntry,
+                    isFlagEntry,
+                    isBreakoutEntry,
+                    pullbackDepth,
+                    flagToImpulseRatio,
+                    flagBars,
+                    barsSinceImpulse);
 
-            if (isBreakoutEntry && barsSinceImpulse > 8)
-            {
-                Log(ctx, "[ENTRY][BLOCK][BREAKOUT_TOO_LATE]",
-                    $"symbol={ctx.Symbol} type={entryTypeName} barsSinceImpulse={barsSinceImpulse}");
-                return EntryDecision.Block("BREAKOUT_TOO_LATE");
-            }
+                Log(ctx, "[ENTRY][STRUCTURE_ZONE]",
+                    $"symbol={ctx.Symbol} type={entryTypeName} zone={structureZone} metrics={metrics}");
 
-            bool weakStructure = false;
-            string weakReason = string.Empty;
+                if (structureZone == StructureQualityZone.HardBlock)
+                {
+                    string hardBlockReason = ResolveHardBlockReason(isPullbackEntry, isFlagEntry, isBreakoutEntry);
+                    Log(ctx, "[ENTRY][BLOCK][STRUCTURE_HARD_BLOCK]",
+                        $"symbol={ctx.Symbol} type={entryTypeName} reason={hardBlockReason}");
+                    return EntryDecision.Block(hardBlockReason);
+                }
 
-            if (isFlagEntry && flagBars < 2)
-            {
-                weakStructure = true;
-                weakReason = "FLAG_TOO_SHORT";
-            }
+                if (structureZone == StructureQualityZone.Weak)
+                {
+                    string weakReason = ResolveWeakReason(isPullbackEntry, isFlagEntry, isBreakoutEntry);
 
-            if (isPullbackEntry && pullbackDepth < 0.25)
-            {
-                weakStructure = true;
-                weakReason = "PULLBACK_TOO_SHALLOW";
-            }
+                    if (instrumentClass == InstrumentClass.CRYPTO)
+                    {
+                        Log(ctx, "[ENTRY][BLOCK][STRUCTURE_WEAK_CRYPTO]",
+                            $"symbol={ctx.Symbol} type={entryTypeName} reason={weakReason}");
+                        return EntryDecision.Block(weakReason);
+                    }
 
-            if (isBreakoutEntry && barsSinceImpulse > 5)
-            {
-                weakStructure = true;
-                weakReason = "BREAKOUT_TOO_LATE";
-            }
-
-            if (weakStructure)
-            {
-                Log(ctx, "[ENTRY][FILTER][WEAK_STRUCTURE]",
-                    $"symbol={ctx.Symbol} type={entryTypeName} reason={weakReason}");
-
-                if (instrumentClass == InstrumentClass.CRYPTO)
-                    return EntryDecision.Block(weakReason);
-
-                return EntryDecision.Penalize(0.20, weakReason);
+                    Log(ctx, "[ENTRY][FILTER][WEAK_STRUCTURE]",
+                        $"symbol={ctx.Symbol} type={entryTypeName} reason={weakReason}");
+                    return EntryDecision.Penalize(0.20, weakReason);
+                }
             }
 
             SymbolMemoryState memory = ctx.Memory;
@@ -173,6 +176,109 @@ namespace GeminiV26.Core.Entry.Qualification
             return 0.0;
         }
 
+        private static StructureQualityZone ResolveStructureZone(
+            bool isPullbackEntry,
+            bool isFlagEntry,
+            bool isBreakoutEntry,
+            double pullbackDepth,
+            double flagToImpulseRatio,
+            int flagBars,
+            int barsSinceImpulse)
+        {
+            if (isPullbackEntry)
+                return ResolvePullbackZone(pullbackDepth);
+
+            if (isFlagEntry)
+                return ResolveFlagZone(flagToImpulseRatio, flagBars);
+
+            if (isBreakoutEntry)
+                return ResolveBreakoutZone(barsSinceImpulse);
+
+            return StructureQualityZone.Valid;
+        }
+
+        private static StructureQualityZone ResolvePullbackZone(double pullbackDepth)
+        {
+            if (pullbackDepth < 0.20)
+                return StructureQualityZone.HardBlock;
+
+            if (pullbackDepth < 0.25)
+                return StructureQualityZone.Weak;
+
+            return StructureQualityZone.Valid;
+        }
+
+        private static StructureQualityZone ResolveFlagZone(double flagToImpulseRatio, int flagBars)
+        {
+            if (flagToImpulseRatio > 0 && flagToImpulseRatio < 0.15)
+                return StructureQualityZone.HardBlock;
+
+            if (flagBars < 2)
+                return StructureQualityZone.Weak;
+
+            return StructureQualityZone.Valid;
+        }
+
+        private static StructureQualityZone ResolveBreakoutZone(int barsSinceImpulse)
+        {
+            if (barsSinceImpulse > 8)
+                return StructureQualityZone.HardBlock;
+
+            if (barsSinceImpulse > 5)
+                return StructureQualityZone.Weak;
+
+            return StructureQualityZone.Valid;
+        }
+
+        private static string ResolveStructureMetrics(
+            bool isPullbackEntry,
+            bool isFlagEntry,
+            bool isBreakoutEntry,
+            double pullbackDepth,
+            double flagToImpulseRatio,
+            int flagBars,
+            int barsSinceImpulse)
+        {
+            if (isPullbackEntry)
+                return $"depth={pullbackDepth:0.00}";
+
+            if (isFlagEntry)
+                return $"ratio={flagToImpulseRatio:0.00} flagBars={flagBars}";
+
+            if (isBreakoutEntry)
+                return $"barsSinceImpulse={barsSinceImpulse}";
+
+            return "n/a";
+        }
+
+        private static string ResolveHardBlockReason(bool isPullbackEntry, bool isFlagEntry, bool isBreakoutEntry)
+        {
+            if (isPullbackEntry)
+                return "PULLBACK_TOO_SHALLOW";
+
+            if (isFlagEntry)
+                return "ULTRA_FLAT_FLAG";
+
+            if (isBreakoutEntry)
+                return "BREAKOUT_TOO_LATE";
+
+            return "STRUCTURE_HARD_BLOCK";
+        }
+
+        private static string ResolveWeakReason(bool isPullbackEntry, bool isFlagEntry, bool isBreakoutEntry)
+        {
+            if (isPullbackEntry)
+                return "PULLBACK_TOO_SHALLOW";
+
+            if (isFlagEntry)
+                return "FLAG_TOO_SHORT";
+
+            if (isBreakoutEntry)
+                return "BREAKOUT_TOO_LATE";
+
+            return "WEAK_STRUCTURE";
+        }
+
         private static InstrumentClass ResolveInstrumentClass(EntryContext ctx)
         {
             string symbol = ctx.Symbol ?? string.Empty;
@@ -197,13 +303,7 @@ namespace GeminiV26.Core.Entry.Qualification
 
         private static void Log(EntryContext ctx, string tag, string details)
         {
-            if (ctx.Log != null)
-            {
-                ctx.Log($"{tag} symbol={ctx.Symbol} {details}".TrimEnd());
-                return;
-            }
-
-            Console.WriteLine($"{tag} symbol={ctx.Symbol} {details}".TrimEnd());
+            GlobalLogger.Log($"{tag} symbol={ctx.Symbol} {details}".TrimEnd(), ctx?.Bot);
         }
     }
 }
