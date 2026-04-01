@@ -57,18 +57,41 @@ namespace GeminiV26.Core
 
             UpdateMfeMae(ctx, pos, risk);
 
+            bool reversalDetected = IsReversalState(pos.TradeType, m5, ctx);
+            if (reversalDetected)
+            {
+                ctx.IsDeadTrade = true;
+                ctx.DeadTradeReason = "REVERSAL";
+
+                GlobalLogger.Log(_bot,
+                    TradeLogIdentity.WithPositionIds("[TVM][EXIT][REVERSAL]", ctx));
+
+                return true;
+            }
+
             double unrealizedR = ComputeUnrealizedR(pos, risk);
             string momentumState = IsMomentumDecaying(m5, 4) ? "DECAYING" : "STABLE";
             bool structureBreakDetected = IsStructuredBreak(pos.TradeType, m5, ctx);
             bool strongOppositeImpulseDetected = IsStrongOppositeImpulse(pos.TradeType, m5);
             bool strongHtfConflictDetected = IsStrongHtfConflict(pos.TradeType, m15);
             bool noRecoveryInWindow = !RecentRecoveryDetected(pos.TradeType, m5, TVM_RecoveryLookbackBars);
-            bool stillValid =
+            bool compressionDetected = IsCompressionState(pos.TradeType, m5);
+            bool baseValid =
                 !structureBreakDetected &&
                 !strongOppositeImpulseDetected &&
                 !strongHtfConflictDetected;
+            bool persistenceAlive = TrendPersistenceAlive(ctx, m5, pos.TradeType);
+            bool stillValid =
+                baseValid &&
+                (
+                    persistenceAlive
+                    || compressionDetected
+                );
             bool slowSetup = IsSlowDevelopmentSetup(ctx?.EntryType);
             bool breakoutSetup = IsBreakoutSetup(ctx?.EntryType);
+
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
+                $"[TVM][STATE] baseValid={baseValid} persistence={persistenceAlive} compression={compressionDetected} stillValid={stillValid}", ctx));
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds(
                 $"[TVM][EVAL] BarsSinceEntry={barsSinceEntry} UnrealizedR={unrealizedR:0.00} MomentumState={momentumState} " +
@@ -634,6 +657,52 @@ namespace GeminiV26.Core
                 return c0 < c1 && c1 < c2;
 
             return c0 > c1 && c1 > c2;
+        }
+
+        private bool IsCompressionState(TradeType tradeType, Bars m5)
+        {
+            if (m5 == null || m5.Count < 8)
+            {
+                GlobalLogger.Log(_bot, "[TVM][STATE][COMPRESSION] detected=false");
+                return false;
+            }
+
+            AuditIndexPrecheck(null, "IsCompressionState", "m5.HighPrices/LowPrices.Last", m5.Count, 6, null);
+            double recent =
+                (m5.HighPrices.Last(0) - m5.LowPrices.Last(0)) +
+                (m5.HighPrices.Last(1) - m5.LowPrices.Last(1)) +
+                (m5.HighPrices.Last(2) - m5.LowPrices.Last(2));
+
+            double previous =
+                (m5.HighPrices.Last(3) - m5.LowPrices.Last(3)) +
+                (m5.HighPrices.Last(4) - m5.LowPrices.Last(4)) +
+                (m5.HighPrices.Last(5) - m5.LowPrices.Last(5));
+
+            bool rangeShrinking = recent < previous;
+            bool detected =
+                rangeShrinking &&
+                !IsStrongOppositeImpulse(tradeType, m5) &&
+                !IsStructureWeakening(tradeType, m5);
+
+            GlobalLogger.Log(_bot, $"[TVM][STATE][COMPRESSION] detected={detected}");
+            return detected;
+        }
+
+        private bool IsReversalState(TradeType tradeType, Bars m5, PositionContext ctx)
+        {
+            if (m5 == null || m5.Count < 5)
+            {
+                GlobalLogger.Log(_bot, "[TVM][STATE][REVERSAL] detected=false");
+                return false;
+            }
+
+            bool structureBreak = IsStructureWeakening(tradeType, m5);
+            bool strongOppImpulse = IsStrongOppositeImpulse(tradeType, m5);
+            bool adverseMove = ctx != null && ctx.MaeR >= 0.30;
+            bool detected = structureBreak && strongOppImpulse && adverseMove;
+
+            GlobalLogger.Log(_bot, $"[TVM][STATE][REVERSAL] detected={detected}");
+            return detected;
         }
 
         private bool TrendPersistenceAlive(PositionContext ctx, Bars m5, TradeType tradeType)
