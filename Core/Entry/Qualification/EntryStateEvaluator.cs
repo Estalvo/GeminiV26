@@ -1,4 +1,5 @@
 using System;
+using GeminiV26.Core.Logging;
 
 namespace GeminiV26.Core.Entry.Qualification
 {
@@ -40,23 +41,25 @@ namespace GeminiV26.Core.Entry.Qualification
             // -------------------------
             // TRANSITION
             // -------------------------
-            state.TransitionQuality = ctx.Transition?.QualityScore ?? 0.0;
+            double rawTQ = ctx.Transition?.QualityScore ?? 0.0;
+            double tq = rawTQ > 1.0 ? rawTQ / 100.0 : rawTQ;
+            state.TransitionQuality = tq;
 
-            state.HasTransition = state.TransitionQuality >= 0.55;
+            state.HasTransition = tq >= 0.55;
 
             // -------------------------
             // MOMENTUM (STRICT)
             // -------------------------
             state.HasMomentum =
                 state.HasImpulse ||
-                state.TransitionQuality >= 0.60;
+                tq >= 0.60;
 
             // -------------------------
             // STRUCTURE (STRICTER THAN BEFORE)
             // -------------------------
             state.HasStructure =
                 state.HasImpulse ||
-                state.TransitionQuality >= 0.65;
+                tq >= 0.65;
 
             // -------------------------
             // TREND (STRICT)
@@ -64,6 +67,11 @@ namespace GeminiV26.Core.Entry.Qualification
             state.HasTrend =
                 state.HasDirectionalBias &&
                 state.HasStructure;
+
+            Log(ctx,
+                $"[ENTRY][STATE][TREND_EVAL] rawTQ={rawTQ:0.00} tq={tq:0.00} trend={state.HasTrend.ToString().ToLowerInvariant()}");
+            Log(ctx,
+                $"[ENTRY][STATE][MOMENTUM_EVAL] rawTQ={rawTQ:0.00} tq={tq:0.00} momentum={state.HasMomentum.ToString().ToLowerInvariant()}");
 
             // -------------------------
             // DEAD MARKET
@@ -73,6 +81,18 @@ namespace GeminiV26.Core.Entry.Qualification
                 !state.HasMomentum;
 
             return state;
+        }
+
+        private static void Log(EntryContext ctx, string message)
+        {
+            if (ctx?.Log != null)
+            {
+                ctx.Log(message);
+                return;
+            }
+
+            if (ctx?.Bot != null)
+                GlobalLogger.Log(ctx.Bot, message);
         }
     }
 }

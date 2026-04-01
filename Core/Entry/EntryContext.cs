@@ -30,6 +30,7 @@ namespace GeminiV26.Core.Entry
         }
         public Action<string> Log { get; set; }
         public EntryContextFlags Flags { get; set; } = new EntryContextFlags();
+        public GeminiV26.Core.Entry.Qualification.EntryState QualificationState { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
         public Robot Bot { get; }

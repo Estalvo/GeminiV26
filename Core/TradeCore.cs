@@ -1477,18 +1477,15 @@ namespace GeminiV26.Core
                 }
 
                 _ctx.FinalDirection = selected.Direction;
-                double transitionQuality = _ctx.Transition?.QualityScore ?? 0.0;
-                bool hasImpulse = _ctx.HasImpulse_M5 || _ctx.HasImpulseLong_M5 || _ctx.HasImpulseShort_M5;
-                bool hasDirectionalBias = _ctx.LogicBiasDirection != TradeDirection.None;
-                bool hasStructure = hasImpulse || transitionQuality >= 0.55;
-                bool hasTrend = hasDirectionalBias && hasStructure;
-                bool hasMomentum = hasImpulse || transitionQuality >= 0.60;
-                bool isDeadMarket = !hasTrend && !hasMomentum;
+                var qualificationDecision = GeminiV26.Core.Entry.Qualification.EntryQualificationEngine.Evaluate(_ctx, selected.Type);
+                var qState = _ctx.QualificationState;
+                bool hasTrend = qState != null && qState.HasTrend;
+                bool hasMomentum = qState != null && qState.HasMomentum;
+                bool hasStructure = qState != null && qState.HasStructure;
+                bool isDeadMarket = qState != null && qState.IsDeadMarket;
 
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][STATE][TREND_EVAL] bias={hasDirectionalBias.ToString().ToLowerInvariant()} structure={hasStructure.ToString().ToLowerInvariant()} result={hasTrend.ToString().ToLowerInvariant()}");
-                GlobalLogger.Log(_bot,
-                    $"[ENTRY][STATE][MOMENTUM_EVAL] impulse={hasImpulse.ToString().ToLowerInvariant()} TQ={transitionQuality:F2} result={hasMomentum.ToString().ToLowerInvariant()}");
+                    $"[TRADECORE][STATE_DELEGATED] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} structure={hasStructure.ToString().ToLowerInvariant()} dead={isDeadMarket.ToString().ToLowerInvariant()}");
 
                 if (_instrumentClass == InstrumentClass.INDEX)
                 {
@@ -1524,7 +1521,6 @@ namespace GeminiV26.Core
                     return;
                 }
 
-                var qualificationDecision = GeminiV26.Core.Entry.Qualification.EntryQualificationEngine.Evaluate(_ctx, selected.Type);
                 if (qualificationDecision.Type == GeminiV26.Core.Entry.Qualification.EntryDecisionType.Block)
                 {
                     GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
