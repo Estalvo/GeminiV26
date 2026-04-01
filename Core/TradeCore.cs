@@ -1466,16 +1466,64 @@ namespace GeminiV26.Core
                 {
                     xauState = _xauMarketStateDetector.Evaluate();
 
-                    if (xauState != null && xauState.IsRange && !xauState.IsTrend)
+                    if (xauState != null)
                     {
-                        LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, true, "XAU_RANGE_REGIME");
-                        GlobalLogger.Log(_bot, 
-                            $"[TC] ENTRY BLOCKED: XAU RANGE REGIME" +
-                            $"Width={xauState.RangeWidth:F2} " +
-                            $"ADX={xauState.Adx:F1} " +
-                            $"ATR={xauState.Atr:F2}"
-                        );
-                        return;
+                        bool isChop = xauState.IsRange && !xauState.IsTrend;
+
+                        bool hasDirectionalImpulse =
+                            selected.Direction == TradeDirection.Long
+                                ? _ctx.HasImpulseLong_M5
+                                : selected.Direction == TradeDirection.Short
+                                    ? _ctx.HasImpulseShort_M5
+                                    : false;
+
+                        int barsSinceImpulse =
+                            selected.Direction == TradeDirection.Long
+                                ? _ctx.BarsSinceImpulseLong_M5
+                                : selected.Direction == TradeDirection.Short
+                                    ? _ctx.BarsSinceImpulseShort_M5
+                                    : 999;
+
+                        double transitionQuality =
+                            _ctx.Transition?.QualityScore01 > 0
+                                ? _ctx.Transition.QualityScore01
+                                : _ctx.Transition?.QualityScore ?? 0.0;
+
+                        bool hasRecentImpulse =
+                            hasDirectionalImpulse &&
+                            transitionQuality >= 0.60 &&
+                            barsSinceImpulse <= 5;
+
+                        bool isCompressionStructure =
+                            _ctx.Transition != null &&
+                            transitionQuality >= 0.50 &&
+                            xauState.RangeWidthAtr < 0.50;
+
+                        bool isFlagLike = hasRecentImpulse && isCompressionStructure;
+
+                        GlobalLogger.Log(_bot,
+                            $"[XAU][REGIME][STATE] chop={isChop.ToString().ToLowerInvariant()} impulse={hasRecentImpulse.ToString().ToLowerInvariant()} compression={isCompressionStructure.ToString().ToLowerInvariant()}");
+
+                        if (isChop)
+                        {
+                            if (isFlagLike)
+                            {
+                                GlobalLogger.Log(_bot,
+                                    $"[XAU][REGIME][FLAG_ALLOW] impulse={hasRecentImpulse.ToString().ToLowerInvariant()} compression={isCompressionStructure.ToString().ToLowerInvariant()} tq={transitionQuality:F2}");
+                                LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, false, "XAU_FLAG_ALLOW");
+                            }
+                            else
+                            {
+                                bool noImpulse = !hasRecentImpulse;
+                                bool noCompression = !isCompressionStructure;
+                                LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, true, "XAU_CHOP_NO_FLAG");
+                                GlobalLogger.Log(_bot,
+                                    $"[XAU][REGIME][CHOP_BLOCK] noImpulse={noImpulse.ToString().ToLowerInvariant()} noCompression={noCompression.ToString().ToLowerInvariant()}");
+                                GlobalLogger.Log(_bot,
+                                    $"[TC] ENTRY BLOCKED: XAU RANGE REGIME Width={xauState.RangeWidth:F2} ADX={xauState.Adx:F1} ATR={xauState.Atr:F2}");
+                                return;
+                            }
+                        }
                     }
 
                     LogEntryTraceGate(_ctx, selected, "MarketStateGate", selected.Direction, false, "PASS");
