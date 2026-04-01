@@ -379,7 +379,11 @@ namespace GeminiV26.Instruments.XAUUSD
                             continue;
                         }
 
-                        if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
+                        if (ctx.RehydratedWithoutConfidence)
+                        {
+                            GlobalLogger.Log(_bot, $"[EXIT][SAFE_MODE] symbol={pos.SymbolName} positionId={pos.Id} confidence_exit_disabled=true");
+                        }
+                        else if (_tvm.ShouldEarlyExit(ctx, pos, m5, m15))
                         {
                             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT][DECISION]\nreason={ctx.DeadTradeReason}\ndetail=tvm_early_exit", ctx, pos));
                             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds("[EXIT SNAPSHOT]\n" +
@@ -663,13 +667,13 @@ namespace GeminiV26.Instruments.XAUUSD
             if (ctx.Tp1R > 0)
                 return ctx.Tp1R;
 
-            int confidence = ctx.AdjustedRiskConfidence;
-
-            if (confidence <= 0)
+            if (ctx.RehydratedWithoutConfidence)
             {
-                confidence = ctx.FinalConfidence;
-                GlobalLogger.Log(_bot, "[CONF][EXIT_FALLBACK] using FinalConfidence");
+                GlobalLogger.Log(_bot, $"[EXIT][SAFE_MODE] symbol={ctx.Symbol} positionId={ctx.PositionId} profile=tp1_conservative");
+                return _profile.Tp1R_Low;
             }
+
+            int confidence = ctx.AdjustedRiskConfidence;
 
             // Profil bucket
             if (confidence >= 85) return _profile.Tp1R_High;

@@ -132,7 +132,12 @@ namespace GeminiV26.Core.Logging
             else if (ctx.FinalDirection == TradeDirection.Short)
                 pnlPips = (pos.EntryPrice - symbol.Ask) / symbol.PipSize;
 
-            return "[STATE]\n" +
+            string safeModeTrace = ctx.RehydratedWithoutConfidence
+                ? "[CTX][SAFE_MODE] active=true\n"
+                : string.Empty;
+
+            return safeModeTrace +
+                   "[STATE]\n" +
                    $"barsOpen={ctx.BarsSinceEntryM5}\n" +
                    $"pnlPips={pnlPips:0.##}\n" +
                    $"mfeR={ctx.MfeR:0.##}\n" +
