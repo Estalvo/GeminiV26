@@ -2021,9 +2021,29 @@ namespace GeminiV26.Core
                 return false;
             }
 
+            if (entry.Direction == TradeDirection.None || entryContext.FinalDirection == TradeDirection.None)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=direction_none entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
+                return false;
+            }
+
+            if (entryContext.RoutedDirection != TradeDirection.None &&
+                entryContext.RoutedDirection != entryContext.FinalDirection)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=routed_final_mismatch routedDir={entryContext.RoutedDirection} finalDir={entryContext.FinalDirection}");
+                GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
+                return false;
+            }
+
             if (entry.Direction != entryContext.FinalDirection)
             {
-                GlobalLogger.Log(_bot, $"[DIR][EXEC_MISMATCH] sym={_bot.SymbolName} entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                GlobalLogger.Log(_bot,
+                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=entry_final_mismatch entryDir={entry.Direction} finalDir={entryContext.FinalDirection} routedDir={entryContext.RoutedDirection}");
+                GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
+                return false;
             }
 
             return true;
