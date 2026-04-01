@@ -258,11 +258,6 @@ namespace GeminiV26.Core
         private IndexMarketStateDetector _indexMarketStateDetector;
         private IndexHtfBiasEngine _indexBias;
 
-        private bool isFxSymbol;
-        private bool isCryptoSymbol;
-        private bool isMetalSymbol;
-        private bool isIndexSymbol;
-
         private GlobalSessionGate _globalSessionGate;
         private SessionMatrix _sessionMatrix;
         private readonly GeminiRiskConfig _riskConfig;
@@ -4401,14 +4396,6 @@ namespace GeminiV26.Core
         {
             return SymbolRouting.ResolveInstrumentClass(symbol).ToString();
         }
-
-        private static bool IsIndexSymbol(string symbol)
-        {
-            return IsNasSymbol(symbol)
-                || IsUs30(symbol)
-                || IsGer40(symbol);
-        }
-
 
         private bool IsSymbol(string canonical)
         {
