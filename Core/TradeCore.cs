@@ -1212,6 +1212,7 @@ namespace GeminiV26.Core
             }
 
             int countBefore = symbolSignals?.Count ?? 0;
+            LogIndexFunnelStage(_ctx, symbolSignals, "BUILT");
             if (isMetalSymbol)
                 GlobalLogger.Log(_bot, $"[TC][XAU] candidates BEFORE filter: {countBefore}");
 
@@ -1291,6 +1292,7 @@ namespace GeminiV26.Core
                 }
 
                 UpdateExecutionStateMachine(_ctx, symbolSignals);
+                LogIndexFunnelStage(_ctx, symbolSignals, "AFTER_TRANSITION");
                 if (isFxSymbol)
                 {
                     foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
@@ -1302,6 +1304,7 @@ namespace GeminiV26.Core
                     }
                 }
                 ApplyRestartProtection(_ctx, symbolSignals);
+                LogIndexFunnelStage(_ctx, symbolSignals, "AFTER_FLAG");
                 if (isFxSymbol)
                 {
                     foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
@@ -1372,6 +1375,8 @@ namespace GeminiV26.Core
                 // ROUTER
                 // =====================================================
                 var selected = _router.SelectEntry(symbolSignals, _ctx);
+                if (isIndexSymbol)
+                    GlobalLogger.Log(_bot, $"[INDEX][FUNNEL] stage=AFTER_ROUTER count={(selected != null ? 1 : 0)}");
                 if (isFxSymbol)
                 {
                     foreach (var e in symbolSignals.Where(x => IsFxCandidate(x)))
@@ -1523,6 +1528,8 @@ namespace GeminiV26.Core
 
                 if (qualificationDecision.Type == GeminiV26.Core.Entry.Qualification.EntryDecisionType.Block)
                 {
+                    if (isIndexSymbol)
+                        GlobalLogger.Log(_bot, "[INDEX][FUNNEL] stage=AFTER_QUALIFICATION count=0");
                     GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
                     GlobalLogger.Log(_bot, $"[ROUTER][ABORT][QUALIFICATION_BLOCK] {qualificationDecision.Reason}");
                     return;
@@ -1536,6 +1543,8 @@ namespace GeminiV26.Core
                     GlobalLogger.Log(_bot,
                         $"[ENTRY][QUALIFICATION][PENALTY] {qualificationDecision.Reason} penalty={qualificationDecision.Penalty:0.##} score={scoreBeforePenalty}->{selected.Score}");
                 }
+                if (isIndexSymbol)
+                    GlobalLogger.Log(_bot, $"[INDEX][FUNNEL] stage=AFTER_QUALIFICATION count={(selected != null ? 1 : 0)}");
 
 
                 // =====================================================
@@ -1562,6 +1571,8 @@ namespace GeminiV26.Core
                 );
 
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[TC] ENTRY WINNER {selected.Type} dir={selected.Direction} score={selected.Score}", _ctx));
+                if (isIndexSymbol)
+                    GlobalLogger.Log(_bot, "[INDEX][FUNNEL] stage=EXECUTED count=1");
                 GlobalLogger.Log(_bot, $"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
                 GlobalLogger.Log(_bot, $"[ENTRY][WINNER] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=0 pipelineId={_ctx?.TempId} score={selected.Score:0.##} confidence={selected.LogicConfidence:0.##}");
@@ -1981,6 +1992,22 @@ namespace GeminiV26.Core
         {
             return candidate != null &&
                    candidate.Type.ToString().StartsWith("FX_", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsIndexContinuationCandidate(EntryEvaluation candidate)
+        {
+            return candidate != null &&
+                   candidate.Type.ToString().StartsWith("Index_", StringComparison.OrdinalIgnoreCase) &&
+                   IsStrictContinuationType(candidate.Type);
+        }
+
+        private void LogIndexFunnelStage(EntryContext ctx, IReadOnlyCollection<EntryEvaluation> candidates, string stage)
+        {
+            if (_instrumentClass != InstrumentClass.INDEX || candidates == null)
+                return;
+
+            int count = candidates.Count(x => IsIndexContinuationCandidate(x) && x.IsValid);
+            GlobalLogger.Log(_bot, $"[INDEX][FUNNEL] stage={stage} count={count}");
         }
 
         private static void LogFxEntryPipelineStage(EntryContext ctx, EntryEvaluation candidate, string stage)
@@ -3022,6 +3049,14 @@ namespace GeminiV26.Core
             if (ctx == null || candidate == null)
                 return true;
 
+            if (!candidate.IsValid)
+            {
+                filterApplied = true;
+                GlobalLogger.Log(_bot,
+                    $"[FILTER][SKIPPED_ALREADY_INVALID] symbol={candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName} entryType={candidate.Type} filter=TRANSITION_NO_MOMENTUM");
+                return true;
+            }
+
             if (!IsStrictContinuationType(candidate.Type))
                 return true;
 
@@ -3057,17 +3092,42 @@ namespace GeminiV26.Core
             if (instrumentClass == InstrumentClass.INDEX && IsContinuationMomentumType(candidate.Type))
             {
                 filterApplied = true;
-                candidate.IsValid = false;
-                candidate.TriggerConfirmed = false;
-                candidate.State = EntryState.NONE;
+                bool hasTrend = ctx.QualificationState?.HasTrend == true;
+                bool isMomentum = hasMomentum.Value;
+                bool isLowVol = ctx.MarketState?.IsLowVol == true;
+                bool shouldHardBlock =
+                    !hasTrend &&
+                    !isMomentum &&
+                    isLowVol &&
+                    transitionQuality < 0.40;
+
+                GlobalLogger.Log(_bot,
+                    $"[INDEX][NO_MOMENTUM] tq={transitionQuality:0.00} hasTrend={hasTrend.ToString().ToLowerInvariant()} isMomentum={isMomentum.ToString().ToLowerInvariant()} isLowVol={isLowVol.ToString().ToLowerInvariant()} action={(shouldHardBlock ? "block" : "penalty")}");
+
+                if (shouldHardBlock)
+                {
+                    candidate.IsValid = false;
+                    candidate.TriggerConfirmed = false;
+                    candidate.State = EntryState.NONE;
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[NO_MOMENTUM_INDEX_BLOCK]"
+                        : $"{candidate.Reason} [NO_MOMENTUM_INDEX_BLOCK]";
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][BLOCK][NO_MOMENTUM_INDEX] symbol={instrument} entryType={candidate.Type}");
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                    return false;
+                }
+
+                int scoreBeforeIndexPenalty = candidate.Score;
+                const int noMomentumIndexPenalty = 10;
+                candidate.Score = Math.Max(0, candidate.Score - noMomentumIndexPenalty);
                 candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
-                    ? "[NO_MOMENTUM_INDEX_BLOCK]"
-                    : $"{candidate.Reason} [NO_MOMENTUM_INDEX_BLOCK]";
+                    ? "[NO_MOMENTUM_INDEX_PENALTY]"
+                    : $"{candidate.Reason} [NO_MOMENTUM_INDEX_PENALTY]";
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][BLOCK][NO_MOMENTUM_INDEX] symbol={instrument} entryType={candidate.Type}");
-                GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
-                return false;
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=penalty instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} score={scoreBeforeIndexPenalty}->{candidate.Score} penalty={noMomentumIndexPenalty}");
+                return true;
             }
 
             switch (instrumentClass)
@@ -3117,6 +3177,13 @@ namespace GeminiV26.Core
             if (ctx == null || candidate == null)
                 return true;
 
+            if (!candidate.IsValid)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[FILTER][SKIPPED_ALREADY_INVALID] symbol={candidate.Symbol ?? ctx.Symbol ?? _bot.SymbolName} entryType={candidate.Type} filter=WEAK_STRUCTURE");
+                return true;
+            }
+
             if (!IsStrictContinuationType(candidate.Type))
                 return true;
 
@@ -3165,17 +3232,38 @@ namespace GeminiV26.Core
             if (IsFlagEntryType(candidate.Type))
             {
                 int flagBars = GetFlagBarsForCandidate(ctx, candidate, transition);
+                bool hasValidFlagContext = transition.HasFlag ||
+                                           transition.FlagBars > 0 ||
+                                           (ctx.FlagHigh > ctx.FlagLow) ||
+                                           ctx.FlagAtr_M5 > 0 ||
+                                           Math.Max(ctx.FlagBarsLong_M5, ctx.FlagBarsShort_M5) > 0;
                 if (flagBars < 2)
                 {
-                    candidate.IsValid = false;
-                    candidate.TriggerConfirmed = false;
-                    candidate.State = EntryState.NONE;
-                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
-                        ? "[INVALID_FLAG]"
-                        : $"{candidate.Reason} [INVALID_FLAG]";
+                    bool shouldHardBlock = flagBars == 0 || !hasValidFlagContext;
                     GlobalLogger.Log(_bot,
-                        $"[ENTRY][BLOCK][INVALID_FLAG] symbol={instrument} flagBars={flagBars} entryType={candidate.Type}");
-                    return false;
+                        $"[INDEX][FLAG_CHECK] flagBars={flagBars} action={(shouldHardBlock ? "block" : "penalty")}");
+
+                    if (shouldHardBlock)
+                    {
+                        candidate.IsValid = false;
+                        candidate.TriggerConfirmed = false;
+                        candidate.State = EntryState.NONE;
+                        candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                            ? "[INVALID_FLAG]"
+                            : $"{candidate.Reason} [INVALID_FLAG]";
+                        GlobalLogger.Log(_bot,
+                            $"[ENTRY][BLOCK][INVALID_FLAG] symbol={instrument} flagBars={flagBars} entryType={candidate.Type}");
+                        return false;
+                    }
+
+                    int flagPenaltyBefore = candidate.Score;
+                    const int weakFlagPenalty = 8;
+                    candidate.Score = Math.Max(0, candidate.Score - weakFlagPenalty);
+                    candidate.Reason = string.IsNullOrWhiteSpace(candidate.Reason)
+                        ? "[WEAK_FLAG_STRUCTURE]"
+                        : $"{candidate.Reason} [WEAK_FLAG_STRUCTURE]";
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][FILTER][INVALID_FLAG] symbol={instrument} flagBars={flagBars} entryType={candidate.Type} action=penalty score={flagPenaltyBefore}->{candidate.Score} penalty={weakFlagPenalty}");
                 }
             }
 

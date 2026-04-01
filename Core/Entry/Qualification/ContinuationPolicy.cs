@@ -31,6 +31,8 @@ namespace GeminiV26.Core.Entry.Qualification
 
             if (state.IsDeadMarket)
             {
+                if (instrumentClass == InstrumentClass.INDEX)
+                    Log(ctx, "[QUAL][INDEX]", "reason=DEAD_MARKET action=block");
                 Log(ctx, "[ENTRY][BLOCK][DEAD_MARKET_STRICT]", string.Empty);
                 return EntryDecision.Block("DEAD_MARKET");
             }
@@ -73,6 +75,8 @@ namespace GeminiV26.Core.Entry.Qualification
 
             if (state.TransitionQuality < TransitionCollapseThreshold)
             {
+                if (instrumentClass == InstrumentClass.INDEX)
+                    Log(ctx, "[QUAL][INDEX]", "reason=TRANSITION_COLLAPSE action=block");
                 Log(ctx, "[ENTRY][BLOCK][TRANSITION_COLLAPSE]", $"TQ={state.TransitionQuality:0.00}");
                 return EntryDecision.Block("TRANSITION_COLLAPSE");
             }
@@ -119,6 +123,16 @@ namespace GeminiV26.Core.Entry.Qualification
                 if (structureZone == StructureQualityZone.HardBlock)
                 {
                     string hardBlockReason = ResolveHardBlockReason(isPullbackEntry, isFlagEntry, isBreakoutEntry);
+                    if (instrumentClass == InstrumentClass.INDEX &&
+                        string.Equals(hardBlockReason, "PULLBACK_TOO_SHALLOW", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Log(ctx, "[QUAL][INDEX]", $"reason={hardBlockReason} action=penalty");
+                        Log(ctx, "[ENTRY][FILTER][STRUCTURE_WEAK]",
+                            $"symbol={ctx.Symbol} type={entryTypeName} reason={hardBlockReason}");
+                        return EntryDecision.Penalize(0.20, hardBlockReason);
+                    }
+
+                    Log(ctx, "[QUAL][INDEX]", $"reason={hardBlockReason} action=block");
                     Log(ctx, "[ENTRY][BLOCK][STRUCTURE_HARD_BLOCK]",
                         $"symbol={ctx.Symbol} type={entryTypeName} reason={hardBlockReason}");
                     return EntryDecision.Block(hardBlockReason);
@@ -146,6 +160,13 @@ namespace GeminiV26.Core.Entry.Qualification
             {
                 if (memory.BarsSinceImpulse < 2)
                 {
+                    if (instrumentClass == InstrumentClass.INDEX)
+                    {
+                        Log(ctx, "[QUAL][INDEX]", "reason=TOO_EARLY action=penalty");
+                        Log(ctx, "[ENTRY][FILTER][TOO_EARLY_INDEX]", string.Empty);
+                        return EntryDecision.Penalize(0.20, "TOO_EARLY");
+                    }
+
                     Log(ctx, "[ENTRY][BLOCK][TOO_EARLY]", string.Empty);
                     return EntryDecision.Block("TOO_EARLY");
                 }
