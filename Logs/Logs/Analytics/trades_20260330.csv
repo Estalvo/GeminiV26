@@ -1,3 +1,0 @@
-Symbol,PositionId,SetupType,EntryType,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,Confidence,Profit,OpenTimeUtc,CloseTimeUtc
-XAUUSD,249972427,XAU_Impulse,XAU_Impulse,Trend,0.3585,-0.8372,-0.835,0,84,-338.46,2026-03-30T19:15:00.8190000Z,2026-03-30T19:35:00.8680000Z
-ETHUSD,249997860,Flag,Crypto_Flag,Trend,2.0872,-0.3268,0.9342,0,85,71.4,2026-03-30T22:50:01.4460000Z,2026-03-30T23:18:46.0100000Z

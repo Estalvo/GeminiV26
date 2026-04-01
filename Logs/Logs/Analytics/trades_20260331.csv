@@ -1,2 +1,0 @@
-Symbol,PositionId,SetupType,EntryType,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,Confidence,Profit,OpenTimeUtc,CloseTimeUtc
-ETHUSD,250039416,Pullback,Crypto_Pullback,,0.3731,-0.0411,0.0406,0,67,3.69,2026-03-31T01:55:00.4860000Z,2026-03-31T02:32:00.8690000Z
