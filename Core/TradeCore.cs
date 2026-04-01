@@ -2016,15 +2016,15 @@ namespace GeminiV26.Core
         {
             if (entryContext == null || entry == null)
             {
-                GlobalLogger.Log(_bot, $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=null_context_or_entry");
+                GlobalLogger.Log(_bot, $"[DIR][FATAL_MISMATCH] type=null_context_or_entry sym={_bot.SymbolName}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
                 return false;
             }
 
-            if (entry.Direction == TradeDirection.None || entryContext.FinalDirection == TradeDirection.None)
+            if (entryContext.FinalDirection == TradeDirection.None)
             {
                 GlobalLogger.Log(_bot,
-                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=direction_none entryDir={entry.Direction} finalDir={entryContext.FinalDirection}");
+                    $"[DIR][FATAL_MISMATCH] type=final_none sym={_bot.SymbolName}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
                 return false;
             }
@@ -2033,7 +2033,7 @@ namespace GeminiV26.Core
                 entryContext.RoutedDirection != entryContext.FinalDirection)
             {
                 GlobalLogger.Log(_bot,
-                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=routed_final_mismatch routedDir={entryContext.RoutedDirection} finalDir={entryContext.FinalDirection}");
+                    $"[DIR][FATAL_MISMATCH] type=routed_vs_final sym={_bot.SymbolName} routed={entryContext.RoutedDirection} final={entryContext.FinalDirection}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
                 return false;
             }
@@ -2041,9 +2041,7 @@ namespace GeminiV26.Core
             if (entry.Direction != entryContext.FinalDirection)
             {
                 GlobalLogger.Log(_bot,
-                    $"[DIR][FATAL_MISMATCH] sym={_bot.SymbolName} reason=entry_final_mismatch entryDir={entry.Direction} finalDir={entryContext.FinalDirection} routedDir={entryContext.RoutedDirection}");
-                GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
-                return false;
+                    $"[DIR][ENTRY_MISMATCH] entry={entry.Direction.ToString().ToUpperInvariant()} final={entryContext.FinalDirection.ToString().ToUpperInvariant()} sym={_bot.SymbolName}");
             }
 
             return true;
