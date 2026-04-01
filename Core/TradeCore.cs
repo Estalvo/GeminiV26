@@ -3517,16 +3517,21 @@ namespace GeminiV26.Core
             bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
             bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
             const int timingBlockThreshold = -20;
+            const int severeTimingBlockThreshold = -35;
+            bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
 
             double timingMultiplier = 1.0 + (recommendedTimingPenalty / 100.0);
             timingMultiplier = Math.Max(0.5, Math.Min(1.0, timingMultiplier));
             double adjustedConfidence = ctx.LogicBiasConfidence * timingMultiplier;
+            int finalScore = PositionContext.ClampRiskConfidence(eval.Score + recommendedTimingPenalty);
+            GlobalLogger.Log(_bot, $"[FINAL][STATE] score={eval.Score:0.##} timingPenalty={recommendedTimingPenalty} statePenalty=0 finalScore={finalScore}");
 
             GlobalLogger.Log(_bot, $"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
 
             bool timingOverride = false;
             string timingOverrideReason = "none";
             bool timingBlocked = recommendedTimingPenalty <= timingBlockThreshold;
+            string timingDecisionReason = "pass";
 
             if (eval.Score >= 70 && recommendedTimingPenalty > timingBlockThreshold)
             {
@@ -3541,6 +3546,24 @@ namespace GeminiV26.Core
                 timingBlocked = false;
             }
 
+            if (timingBlocked)
+            {
+                if (recommendedTimingPenalty <= severeTimingBlockThreshold)
+                {
+                    timingDecisionReason = "TIMING_EXTREME";
+                }
+                else if (weakSetup && finalScore < EntryDecisionPolicy.MinScoreThreshold)
+                {
+                    timingDecisionReason = "TIMING_WEAK_COMBINED";
+                }
+                else
+                {
+                    timingBlocked = false;
+                    timingOverride = true;
+                    timingOverrideReason = "timing_soft_only";
+                }
+            }
+
             string timingDecision = timingBlocked ? "block" : "allow";
             GlobalLogger.Log(_bot, $"[TIMING DECISION] symbol={ctx.Symbol ?? _bot.SymbolName} score={eval.Score:0.##} penalty={recommendedTimingPenalty} threshold={timingBlockThreshold} override={timingOverride.ToString().ToLowerInvariant()} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} finalDecision={timingDecision} reason={timingOverrideReason} adjustedConfidence={adjustedConfidence:0.##}");
 
@@ -3552,6 +3575,7 @@ namespace GeminiV26.Core
                     ctx.LastLoggedStateFingerprint = timingFingerprint;
                     GlobalLogger.Log(_bot, $"[TIMING BLOCK] stage=final_acceptance symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} confidence={ctx.LogicBiasConfidence:0.##} adjustedConfidence={adjustedConfidence:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} threshold={timingBlockThreshold}");
                 }
+                GlobalLogger.Log(_bot, $"[FINAL][DECISION] decision=BLOCK reason={timingDecisionReason}");
                 return false;
             }
 
@@ -3560,6 +3584,7 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     "[RESTART BLOCK] HARD phase requires higher confidence",
                     ctx));
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=RESTART");
                 return false;
             }
 
@@ -3585,6 +3610,7 @@ namespace GeminiV26.Core
                     GlobalLogger.Log(_bot,
                         $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
                         $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=HTF");
                     return false;
                 }
 
@@ -3594,6 +3620,7 @@ namespace GeminiV26.Core
                     GlobalLogger.Log(_bot,
                         $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
                         $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=TIMING");
                     return false;
                 }
 
@@ -3603,6 +3630,7 @@ namespace GeminiV26.Core
                     GlobalLogger.Log(_bot,
                         $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
                         $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
+                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=STRUCTURE");
                     return false;
                 }
 
@@ -3617,10 +3645,10 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][OVEREXT] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=STRUCTURE");
                 return false;
             }
 
-            bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
             bool lateContinuationInDirection =
                 (isLong && ctx.HasLateContinuationLong) ||
                 (isShort && ctx.HasLateContinuationShort);
@@ -3632,6 +3660,7 @@ namespace GeminiV26.Core
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[FINAL][REJECT][LATE] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                         ctx));
+                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=COMBINED");
                     return false;
                 }
             }
@@ -3645,6 +3674,7 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][TREND] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=HTF");
                 return false;
             }
 
@@ -3655,9 +3685,11 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                     $"[FINAL][REJECT][WEAK] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
                     ctx));
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=STRUCTURE");
                 return false;
             }
 
+            GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=ALLOW reason=PASS");
             GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=0 pipelineId={(ctx?.TempId ?? "NA")} score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
             GlobalLogger.Log(_bot, $"[ENTRY][READY] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} pipelineId={(ctx?.TempId ?? "NA")} side={eval.Direction}");
             return true;
