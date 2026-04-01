@@ -768,7 +768,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (ctx == null || !ctx.Tp1Hit || rDist <= 0)
                 return;
 
-            double currentR = Math.Abs(currentPrice - ctx.EntryPrice) / rDist;
+            double currentR = (IsLong(ctx) ? (currentPrice - ctx.EntryPrice) : (ctx.EntryPrice - currentPrice)) / rDist;
             if (currentR > ctx.PostTp1MaxR)
             {
                 ctx.PostTp1MaxR = currentR;
@@ -802,7 +802,7 @@ namespace GeminiV26.Instruments.XAUUSD
             if (rDist <= 0)
                 return false;
 
-            double currentR = Math.Abs(currentPrice - ctx.EntryPrice) / rDist;
+            double currentR = (IsLong(ctx) ? (currentPrice - ctx.EntryPrice) : (ctx.EntryPrice - currentPrice)) / rDist;
             if (currentR < Tp1ProtectMinR)
             {
                 GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=insufficient_profit_threshold swingBroken=false noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
@@ -826,24 +826,20 @@ namespace GeminiV26.Instruments.XAUUSD
             double tickSize = _bot.Symbols.GetSymbol(pos.SymbolName)?.TickSize ?? 1e-5;
             double eps = Math.Max(1e-8, tickSize * 0.5);
 
-            int swingStart = Math.Max(1, last - Tp1ProtectSwingLookback + 1);
-            if (last - swingStart + 1 < 3)
+            var structure = _structureTracker.GetSnapshot();
+            double? structuralSwingRef = IsLong(ctx)
+                ? structure?.LastSwingLow?.Price
+                : structure?.LastSwingHigh?.Price;
+
+            if (!structuralSwingRef.HasValue || structuralSwingRef.Value <= 0)
             {
                 GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=missing_safe_swing_reference swingBroken=false noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
                 return false;
             }
 
-            double lastSwingLow = double.MaxValue;
-            double lastSwingHigh = double.MinValue;
-            for (int i = swingStart; i <= last; i++)
-            {
-                if (m1.LowPrices[i] < lastSwingLow) lastSwingLow = m1.LowPrices[i];
-                if (m1.HighPrices[i] > lastSwingHigh) lastSwingHigh = m1.HighPrices[i];
-            }
-
             bool swingBroken = IsLong(ctx)
-                ? currentPrice < (lastSwingLow - eps)
-                : currentPrice > (lastSwingHigh + eps);
+                ? currentPrice < (structuralSwingRef.Value - eps)
+                : currentPrice > (structuralSwingRef.Value + eps);
             if (!swingBroken)
                 return false;
 
@@ -923,13 +919,13 @@ namespace GeminiV26.Instruments.XAUUSD
             if (impulseWeakening) momentumSignals++;
             if (compressionStall) momentumSignals++;
 
-            if (momentumSignals == 0)
+            if (momentumSignals < 2)
             {
                 GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=no_collapse_confirmation swingBroken={swingBroken.ToString().ToLowerInvariant()} noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
                 return false;
             }
 
-            bool momentumWeakening = momentumSignals >= 1;
+            bool momentumWeakening = momentumSignals >= 2;
 
             if (!TryResolveExitSymbol(pos, out var liveSymbol, ctx))
                 return false;
