@@ -230,8 +230,7 @@ namespace GeminiV26.Core.Runtime
                     EntryType = "REHYDRATED",
                     EntryReason = "Startup rehydrate from live open position",
                     FinalDirection = position.TradeType == TradeType.Buy ? TradeDirection.Long : TradeDirection.Short,
-                    EntryScore = 50,
-                    LogicConfidence = 50,
+                    RehydratedWithoutConfidence = true,
                     EntryTime = position.EntryTime,
                     EntryTimeUtc = position.EntryTime.ToUniversalTime(),
                     EntryPrice = position.EntryPrice,
@@ -246,6 +245,8 @@ namespace GeminiV26.Core.Runtime
                     MarketTrend = true,
                     Adx_M5 = 0
                 };
+                GlobalLogger.Log(_bot, $"[REHYDRATE][CONFIDENCE_MISSING] pos={positionKey} symbol={position.SymbolName} reason=resolver_failed_no_persisted_confidence");
+                GlobalLogger.Log(_bot, $"[REHYDRATE][SAFE_MODE] pos={positionKey} symbol={position.SymbolName} mode=rehydrated_without_confidence");
                 unresolvedContext.ComputeFinalConfidence();
                 result.Context = unresolvedContext;
                 result.UsedFallback = true;
@@ -387,11 +388,7 @@ namespace GeminiV26.Core.Runtime
                 EntryType = "REHYDRATED",
                 EntryReason = "Startup rehydrate from live open position",
                 FinalDirection = direction,
-                // Ambiguity note:
-                // original entry evaluation is runtime-only and cannot be recovered safely after restart,
-                // so we restore with neutral placeholders and keep FinalConfidence deterministic via ComputeFinalConfidence().
-                EntryScore = 50,
-                LogicConfidence = 50,
+                RehydratedWithoutConfidence = true,
                 EntryTime = position.EntryTime,
                 EntryTimeUtc = position.EntryTime.ToUniversalTime(),
                 EntryPrice = entryPrice,
@@ -419,6 +416,8 @@ namespace GeminiV26.Core.Runtime
                 Adx_M5 = 0,
                 RuntimeSymbolAvailable = true
             };
+            GlobalLogger.Log(_bot, $"[REHYDRATE][CONFIDENCE_MISSING] pos={positionKey} symbol={position.SymbolName} reason=no_persisted_confidence_inputs");
+            GlobalLogger.Log(_bot, $"[REHYDRATE][SAFE_MODE] pos={positionKey} symbol={position.SymbolName} mode=rehydrated_without_confidence");
 
             if (!ctx.InitialStopLossPrice.HasValue && stopLoss != null)
             {
