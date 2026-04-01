@@ -7,6 +7,9 @@ namespace GeminiV26.Core.Entry.Qualification
 {
     public static class ContinuationPolicy
     {
+        private const double WeakContinuationThreshold = 0.45;
+        private const double TransitionCollapseThreshold = 0.30;
+
         private enum StructureQualityZone
         {
             HardBlock,
@@ -54,7 +57,7 @@ namespace GeminiV26.Core.Entry.Qualification
             }
 
             bool weakContinuation =
-                state.TransitionQuality < 0.55 &&
+                state.TransitionQuality < WeakContinuationThreshold &&
                 !state.HasImpulse;
 
             if (weakContinuation)
@@ -68,7 +71,7 @@ namespace GeminiV26.Core.Entry.Qualification
                 return EntryDecision.Penalize(0.20, "WEAK_CONTINUATION");
             }
 
-            if (state.TransitionQuality < 0.30)
+            if (state.TransitionQuality < TransitionCollapseThreshold)
             {
                 Log(ctx, "[ENTRY][BLOCK][TRANSITION_COLLAPSE]", $"TQ={state.TransitionQuality:0.00}");
                 return EntryDecision.Block("TRANSITION_COLLAPSE");
