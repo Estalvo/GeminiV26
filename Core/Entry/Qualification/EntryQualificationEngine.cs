@@ -9,6 +9,8 @@ namespace GeminiV26.Core.Entry.Qualification
             if (ctx == null)
                 return EntryDecision.Pass();
 
+            ctx.QualificationState = EntryStateEvaluator.Evaluate(ctx);
+
             if (IsContinuationEntry(entryType))
                 return ContinuationPolicy.Evaluate(ctx, entryType);
 

@@ -12,7 +12,8 @@ namespace GeminiV26.Core.Entry.Qualification
                 return EntryDecision.Pass();
 
             InstrumentClass instrumentClass = ResolveInstrumentClass(ctx);
-            var state = EntryStateEvaluator.Evaluate(ctx);
+            var state = ctx.QualificationState ?? EntryStateEvaluator.Evaluate(ctx);
+            ctx.QualificationState = state;
 
             Log(ctx, "[ENTRY][STATE][SUMMARY]",
                 $"trend={state.HasTrend.ToString().ToLowerInvariant()} momentum={state.HasMomentum.ToString().ToLowerInvariant()} TQ={state.TransitionQuality:0.00}");
