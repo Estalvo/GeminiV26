@@ -738,9 +738,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     RemainingVolumeInUnits = pos.VolumeInUnits,
                     InitialVolumeInUnits = pos.VolumeInUnits,
 
-                    // Neutral confidence placeholders (same rehydrate convention as RehydrateService).
-                    EntryScore = 50,
-                    LogicConfidence = 50,
+                    RehydratedWithoutConfidence = true,
 
                     // SSOT snapshot
                     RiskPriceDistance = rDist,
@@ -750,6 +748,8 @@ namespace GeminiV26.Instruments.XAUUSD
                     Tp1Hit = false,
                     IsRehydrated = true
                 };
+                GlobalLogger.Log(_bot, $"[REHYDRATE][CONFIDENCE_MISSING] pos={pos.Id} symbol={pos.SymbolName} reason=xau_live_rehydrate_no_persisted_confidence");
+                GlobalLogger.Log(_bot, $"[REHYDRATE][SAFE_MODE] pos={pos.Id} symbol={pos.SymbolName} mode=rehydrated_without_confidence");
 
                 // AGENTS rule: PositionContext létrehozás után azonnal számoljuk a FinalConfidence-t.
                 ctx.ComputeFinalConfidence();

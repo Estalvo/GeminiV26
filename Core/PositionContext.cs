@@ -339,7 +339,14 @@ namespace GeminiV26.Core
                 return;
 
             FinalConfidence = ComputeFinalConfidenceValue(EntryScore, LogicConfidence);
-            if (AdjustedRiskConfidence <= 0)
+            if (RehydratedWithoutConfidence)
+            {
+                // Rehydrate SAFE MODE:
+                // confidence-dependent branching must observe disabled risk confidence.
+                AdjustedRiskConfidence = 0;
+                GlobalLogger.Log(Bot, "[REHYDRATE][SAFE_MODE] confidence_dependent_logic_disabled=true");
+            }
+            else if (AdjustedRiskConfidence <= 0)
             {
                 // Failsafe fallback – MUST be visible
                 AdjustedRiskConfidence = FinalConfidence;
@@ -389,6 +396,12 @@ namespace GeminiV26.Core
         /// Csak meta / debug cél.
         /// </summary>
         public bool IsRehydrated { get; set; }
+
+        /// <summary>
+        /// Rehydrate restored lifecycle state but no persisted confidence inputs were available.
+        /// SAFE MODE must avoid synthetic confidence assumptions.
+        /// </summary>
+        public bool RehydratedWithoutConfidence { get; set; }
 
         /// <summary>
         /// Rehydrate meta timestamp UTC-ban.
