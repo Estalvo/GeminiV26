@@ -173,16 +173,16 @@ namespace GeminiV26.Core.Entry.Qualification
 
                 if (memory.MoveAgeBars > 20)
                 {
-                    bool hardStale = memory.MoveAgeBars > 30 || memory.Freshness <= 0.20;
+                    bool hardStale = memory.MoveAgeBars > 30 || memory.ContinuationFreshnessScore <= 0.20;
                     if (hardStale)
                     {
                         Log(ctx, "[ENTRY][TIMING_STALE_BLOCK]",
-                            $"age={memory.MoveAgeBars} freshness={memory.Freshness:0.00} reason=expired_move_phase");
+                            $"age={memory.MoveAgeBars} freshness={memory.ContinuationFreshnessScore:0.00} reason=expired_move_phase");
                         return EntryDecision.Block("TOO_LATE_STALE");
                     }
 
                     Log(ctx, "[ENTRY][TIMING_LATE_SOFT]",
-                        $"age={memory.MoveAgeBars} freshness={memory.Freshness:0.00} penalty=applied");
+                        $"age={memory.MoveAgeBars} freshness={memory.ContinuationFreshnessScore:0.00} penalty=applied");
                     return EntryDecision.Penalize(0.15, "TOO_LATE_SOFT");
                 }
             }
