@@ -1769,13 +1769,13 @@ namespace GeminiV26.Core
 
             else if (IsSymbol("EURUSD"))
             {
-                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurUsdSessionGate == null || _eurUsdSessionGate.AllowEntry(gateDir), "EUR SessionGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "SessionGate", () => _eurUsdSessionGate?.AllowEntry(gateDir) ?? false, "EUR SessionGate"))
                 {
                     GlobalLogger.Log(_bot, "[TC] BLOCKED: EUR SessionGate");
                     return;
                 }
 
-                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurUsdImpulseGate == null || _eurUsdImpulseGate.AllowEntry(gateDir), "EUR ImpulseGate"))
+                if (!EvaluateEntryGate(_ctx, selected, "ImpulseGate", () => _eurUsdImpulseGate?.AllowEntry(gateDir) ?? false, "EUR ImpulseGate"))
                 {
                     GlobalLogger.Log(_bot, "[TC] BLOCKED: EUR ImpulseGate");
                     return;
