@@ -3858,7 +3858,7 @@ namespace GeminiV26.Core
 
             if (ctx != null)
             {
-                if (ctx.Tp1SmartExitHit)
+                if (ctx.GetTp1SmartExitHit())
                     exitMode = "TP1_SMART";
                 else if (ctx.Tp2Hit > 0)
                     exitMode = "TP2";
@@ -3909,8 +3909,8 @@ namespace GeminiV26.Core
                 new TradeLogResult
                 {
                     ExitMode = exitMode,
-                    ExitReason = ctx?.Tp1SmartExitHit == true
-                        ? (string.IsNullOrWhiteSpace(ctx.Tp1SmartExitReason) ? "TREND_COLLAPSE" : ctx.Tp1SmartExitReason)
+                    ExitReason = ctx?.GetTp1SmartExitHit() == true
+                        ? (string.IsNullOrWhiteSpace(ctx.GetTp1SmartExitReason()) ? "TREND_COLLAPSE" : ctx.GetTp1SmartExitReason())
                         : args.Reason.ToString(),
                     ExitTimeUtc = _bot.Server.Time,
                     ExitPrice = exitPrice,
@@ -3925,11 +3925,11 @@ namespace GeminiV26.Core
                     Tp1ProtectExitR = ctx?.Tp1ProtectExitR,
                     Tp1ProtectScoreAtExit = ctx?.Tp1ProtectScoreAtExit,
                     Tp1ProtectMode = ctx?.Tp1ProtectMode,
-                    Tp1SmartExitHit = ctx?.Tp1SmartExitHit,
-                    Tp1SmartExitType = ctx?.Tp1SmartExitType,
-                    Tp1SmartExitReason = ctx?.Tp1SmartExitReason,
-                    Tp1SmartExitR = ctx?.Tp1SmartExitR,
-                    Tp1SmartBarsSinceTp1 = ctx?.Tp1SmartBarsSinceTp1
+                    Tp1SmartExitHit = ctx?.GetTp1SmartExitHit(),
+                    Tp1SmartExitType = ctx?.GetTp1SmartExitType(),
+                    Tp1SmartExitReason = ctx?.GetTp1SmartExitReason(),
+                    Tp1SmartExitR = ctx?.GetTp1SmartExitR(),
+                    Tp1SmartBarsSinceTp1 = ctx?.GetTp1SmartBarsSinceTp1()
                 });
 
             _statsTracker.RegisterTradeClose(
