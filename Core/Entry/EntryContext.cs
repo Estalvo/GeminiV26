@@ -353,6 +353,13 @@ namespace GeminiV26.Core.Entry
         [Obsolete("LEGACY – use LogicBiasConfidence")]
         public int LogicConfidence => LogicBiasConfidence;
 
+        [Obsolete("LEGACY – use RiskConfidence")]
+        public int AdjustedRiskConfidence
+        {
+            get => RiskConfidence;
+            set => RiskConfidence = value;
+        }
+
         [Obsolete("LEGACY – use ActiveHtfDirection")]
         public TradeDirection HtfDirection => ActiveHtfDirection;
 
