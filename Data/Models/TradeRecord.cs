@@ -59,6 +59,11 @@ namespace GeminiV26.Data.Models
         public double? Tp1ProtectExitR { get; set; }
         public int? Tp1ProtectScoreAtExit { get; set; }
         public string Tp1ProtectMode { get; set; } = string.Empty;
+        public bool? Tp1SmartExitHit { get; set; }
+        public string Tp1SmartExitType { get; set; } = string.Empty;
+        public string Tp1SmartExitReason { get; set; } = string.Empty;
+        public double? Tp1SmartExitR { get; set; }
+        public int? Tp1SmartBarsSinceTp1 { get; set; }
         public string ExitMode { get; set; } // TP1 / TP2 / BE / TRAIL / HARDLOSS / SL
 
     }

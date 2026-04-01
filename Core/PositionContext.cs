@@ -452,6 +452,18 @@ namespace GeminiV26.Core
 
         public double? PostTp1GivebackR { get; set; }
 
+        public bool Tp1SmartExitHit { get; set; }
+
+        public string Tp1SmartExitType { get; set; } = string.Empty;
+
+        public string Tp1SmartExitReason { get; set; } = string.Empty;
+
+        public double? Tp1SmartExitR { get; set; }
+
+        public int? Tp1SmartBarsSinceTp1 { get; set; }
+
+        public int Tp1HitBarIndex { get; set; } = -1;
+
         public double Tp2ExtensionMultiplierApplied { get; set; } = 1.0;
 
         public double? LastExtendedTp2 { get; set; }

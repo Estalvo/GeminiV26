@@ -18,7 +18,7 @@ namespace GeminiV26.Core.Logging
             "MFE_R","MAE_R","BarsInTrade","MinutesInTrade",
             "Tp1Hit","Tp2Hit","BeActivated","TrailingActivated",
             "PostTp1MaxR","PostTp1GivebackR","Tp1ProtectExitHit","Tp1ProtectExitR",
-            "Tp1ProtectScoreAtExit","Tp1ProtectMode",
+            "Tp1ProtectScoreAtExit","Tp1ProtectMode","Tp1SmartExitHit","Tp1SmartExitType","Tp1SmartExitReason","Tp1SmartExitR","Tp1SmartBarsSinceTp1",
             "ExitMode","ExitReason","ExitTime","ExitPrice",
             "NetProfit","GrossProfit","Commissions","Swap","Pips"
         };
@@ -112,6 +112,11 @@ namespace GeminiV26.Core.Logging
                     CsvNum(result?.Tp1ProtectExitR),
                     CsvInt(pctx?.Tp1ProtectExitHit == true ? pctx?.Tp1ProtectScoreAtExit : null),
                     Csv(pctx?.Tp1ProtectExitHit == true ? pctx?.Tp1ProtectMode : null),
+                    CsvBool(result?.Tp1SmartExitHit),
+                    Csv(result?.Tp1SmartExitType),
+                    Csv(result?.Tp1SmartExitReason),
+                    CsvNum(result?.Tp1SmartExitR),
+                    CsvInt(result?.Tp1SmartBarsSinceTp1),
 
                     Csv(result?.ExitMode),
                     Csv(result?.ExitReason),
