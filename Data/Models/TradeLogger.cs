@@ -58,7 +58,7 @@ namespace GeminiV26.Data
 
                         // --- NEW ---
                         "RiskPercent,SlAtrMult,Tp1R,Tp2R,LotCapHit," +
-                        "BeActivated,TrailingActivated,PostTp1MaxR,PostTp1GivebackR,Tp1ProtectExitHit,Tp1ProtectExitR,Tp1ProtectScoreAtExit,Tp1ProtectMode,ExitMode," +
+                        "BeActivated,TrailingActivated,PostTp1MaxR,PostTp1GivebackR,Tp1ProtectExitHit,Tp1ProtectExitR,Tp1ProtectScoreAtExit,Tp1ProtectMode,Tp1SmartExitHit,Tp1SmartExitType,Tp1SmartExitReason,Tp1SmartExitR,Tp1SmartBarsSinceTp1,ExitMode," +
 
                         "ExitReason,NetProfit,GrossProfit,Commissions,Swap,Pips"
                     );
@@ -101,6 +101,11 @@ namespace GeminiV26.Data
                     t.Tp1ProtectExitR?.ToString(CultureInfo.InvariantCulture) ?? "",
                     t.Tp1ProtectScoreAtExit?.ToString(CultureInfo.InvariantCulture) ?? "",
                     Escape(t.Tp1ProtectMode),
+                    t.Tp1SmartExitHit?.ToString() ?? "",
+                    Escape(t.Tp1SmartExitType),
+                    Escape(t.Tp1SmartExitReason),
+                    t.Tp1SmartExitR?.ToString(CultureInfo.InvariantCulture) ?? "",
+                    t.Tp1SmartBarsSinceTp1?.ToString(CultureInfo.InvariantCulture) ?? "",
                     Escape(t.ExitMode),
                     Escape(t.ExitReason),
                     t.NetProfit.ToString(CultureInfo.InvariantCulture),

@@ -26,7 +26,10 @@ namespace GeminiV26.Instruments.USDJPY
 
         private const double Tp1ProtectMinR = 0.8;
         private const int Tp1ProtectSwingLookback = 5;
-        private const int Tp1ProtectExtremeLookback = 3;
+        private const int Tp1SmartNoNewExtremeBars = 3;
+        private const int Tp1SmartRangeLookback = 6;
+        private const double Tp1SmartSpreadGuardFactor = 0.35;
+        private const double Tp1SmartVolatilitySpikeFactor = 2.2;
 
         public UsdJpyExitManager(Robot bot)
         {
@@ -397,6 +400,7 @@ namespace GeminiV26.Instruments.USDJPY
             ctx.Tp1Hit = true;
             GlobalLogger.Log(_bot, "[TP1] hit → MFE continues tracking");
             ctx.Tp1Executed = true;
+            ctx.Tp1HitBarIndex = ctx.BarsSinceEntryM5;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[TP1][EXECUTED]\ntp1={ctx.Tp1Price:0.#####}\nclosedUnits={closeUnits}", ctx, pos));
 
             var live = _bot.Positions.Find(pos.Label, pos.SymbolName, pos.TradeType);
@@ -501,11 +505,16 @@ namespace GeminiV26.Instruments.USDJPY
 
         private bool CheckPostTp1ProfitProtection(Position pos, PositionContext ctx, double currentPrice)
         {
-            if (ctx == null || pos == null)
+            if (ctx == null || pos == null || !ctx.Tp1Hit)
                 return false;
 
-            ctx.RemainingVolumeInUnits = pos.VolumeInUnits;
+            if (ctx.IsFullyClosing)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR=0 reason=TREND_COLLAPSE noAction=already_closing tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
 
+            ctx.RemainingVolumeInUnits = pos.VolumeInUnits;
             bool activation = ctx.Tp1ClosedVolumeInUnits > 0 && ctx.RemainingVolumeInUnits > 0;
             if (!activation)
                 return false;
@@ -515,129 +524,179 @@ namespace GeminiV26.Instruments.USDJPY
                 return false;
 
             double currentR = Math.Abs(currentPrice - ctx.EntryPrice) / rDist;
-            bool profitThreshold = currentR >= Tp1ProtectMinR;
+            if (currentR < Tp1ProtectMinR)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=insufficient_profit_threshold swingBroken=false noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
 
-            if (!TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) || m1 == null || m1.Count < 8)
+            if (!TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) || m1 == null || m1.Count < 12)
                 return false;
 
-            var bars = m1;
-            int last = bars.Count - 2;
-            if (last < 6)
+            int last = m1.Count - 2;
+            if (last < 8)
                 return false;
+
+            var livePos = FindPosition(ctx.PositionId);
+            if (livePos == null)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=position_not_found swingBroken=false noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
 
             double tickSize = _bot.Symbols.GetSymbol(pos.SymbolName)?.TickSize ?? 1e-5;
             double eps = Math.Max(1e-8, tickSize * 0.5);
 
             int swingStart = Math.Max(1, last - Tp1ProtectSwingLookback + 1);
+            if (last - swingStart + 1 < 3)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=missing_safe_swing_reference swingBroken=false noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
             double lastSwingLow = double.MaxValue;
             double lastSwingHigh = double.MinValue;
             for (int i = swingStart; i <= last; i++)
             {
-                if (bars.LowPrices[i] < lastSwingLow) lastSwingLow = bars.LowPrices[i];
-                if (bars.HighPrices[i] > lastSwingHigh) lastSwingHigh = bars.HighPrices[i];
+                if (m1.LowPrices[i] < lastSwingLow) lastSwingLow = m1.LowPrices[i];
+                if (m1.HighPrices[i] > lastSwingHigh) lastSwingHigh = m1.HighPrices[i];
             }
 
-            bool structureBreak = IsLong(ctx)
+            bool swingBroken = IsLong(ctx)
                 ? currentPrice < (lastSwingLow - eps)
                 : currentPrice > (lastSwingHigh + eps);
+            if (!swingBroken)
+                return false;
 
-            int recentStart = Math.Max(1, last - Tp1ProtectExtremeLookback + 1);
+            int recentStart = Math.Max(1, last - Tp1SmartNoNewExtremeBars + 1);
             int priorEnd = recentStart - 1;
-            int priorStart = Math.Max(1, priorEnd - Tp1ProtectExtremeLookback + 1);
+            int priorStart = Math.Max(1, priorEnd - Tp1SmartNoNewExtremeBars + 1);
+            if (priorEnd <= 0 || priorEnd - priorStart + 1 < Tp1SmartNoNewExtremeBars)
+                return false;
 
             double recentHigh = double.MinValue;
             double recentLow = double.MaxValue;
-            for (int i = recentStart; i <= last; i++)
-            {
-                if (bars.HighPrices[i] > recentHigh) recentHigh = bars.HighPrices[i];
-                if (bars.LowPrices[i] < recentLow) recentLow = bars.LowPrices[i];
-            }
-
             double priorHigh = double.MinValue;
             double priorLow = double.MaxValue;
+            for (int i = recentStart; i <= last; i++)
+            {
+                if (m1.HighPrices[i] > recentHigh) recentHigh = m1.HighPrices[i];
+                if (m1.LowPrices[i] < recentLow) recentLow = m1.LowPrices[i];
+            }
+
             for (int i = priorStart; i <= priorEnd; i++)
             {
-                if (bars.HighPrices[i] > priorHigh) priorHigh = bars.HighPrices[i];
-                if (bars.LowPrices[i] < priorLow) priorLow = bars.LowPrices[i];
+                if (m1.HighPrices[i] > priorHigh) priorHigh = m1.HighPrices[i];
+                if (m1.LowPrices[i] < priorLow) priorLow = m1.LowPrices[i];
             }
 
             bool noNewExtreme = IsLong(ctx)
                 ? recentHigh <= (priorHigh + eps)
                 : recentLow >= (priorLow - eps);
+            if (!noNewExtreme)
+                return false;
 
-            bool structureWeakening = IsLong(ctx)
-                ? (bars.HighPrices[last] < bars.HighPrices[last - 1] || Math.Abs(bars.HighPrices[last] - bars.HighPrices[last - 1]) <= eps)
-                : (bars.LowPrices[last] > bars.LowPrices[last - 1] || Math.Abs(bars.LowPrices[last] - bars.LowPrices[last - 1]) <= eps);
+            double currRange = Math.Max(m1.HighPrices[last] - m1.LowPrices[last], eps);
+            double prevRange = Math.Max(m1.HighPrices[last - 1] - m1.LowPrices[last - 1], eps);
+            double prev2Range = Math.Max(m1.HighPrices[last - 2] - m1.LowPrices[last - 2], eps);
 
-            double currOpen = bars.OpenPrices[last];
-            double currClose = bars.ClosePrices[last];
-            double prevOpen = bars.OpenPrices[last - 1];
-            double prevClose = bars.ClosePrices[last - 1];
-            double prev2Open = bars.OpenPrices[last - 2];
-            double prev2Close = bars.ClosePrices[last - 2];
+            double currOpen = m1.OpenPrices[last];
+            double currClose = m1.ClosePrices[last];
+            double prevOpen = m1.OpenPrices[last - 1];
+            double prevClose = m1.ClosePrices[last - 1];
+            double prev2Open = m1.OpenPrices[last - 2];
+            double prev2Close = m1.ClosePrices[last - 2];
 
             double currBody = Math.Abs(currClose - currOpen);
             double prevBody = Math.Abs(prevClose - prevOpen);
             double prev2Body = Math.Abs(prev2Close - prev2Open);
 
-            bool bodySmaller = currBody < prevBody;
-            bool twoWeakening = currBody < prevBody && prevBody < prev2Body;
+            bool transitionQualityWorse = currBody < prevBody;
+            bool impulseWeakening = currBody < prevBody && prevBody < prev2Body && currRange < prevRange;
 
-            double currRange = Math.Max(bars.HighPrices[last] - bars.LowPrices[last], eps);
-            double prevRange = Math.Max(bars.HighPrices[last - 1] - bars.LowPrices[last - 1], eps);
-            bool atrNormalizedShrink = (currBody / currRange) < (prevBody / prevRange);
+            int rangeStart = Math.Max(1, last - Tp1SmartRangeLookback + 1);
+            int mid = Math.Max(rangeStart + 1, rangeStart + (last - rangeStart + 1) / 2);
+            double recentRangeSum = 0;
+            int recentRangeCount = 0;
+            double priorRangeSum = 0;
+            int priorRangeCount = 0;
+            for (int i = rangeStart; i <= last; i++)
+            {
+                double range = Math.Max(m1.HighPrices[i] - m1.LowPrices[i], eps);
+                if (i >= mid)
+                {
+                    recentRangeSum += range;
+                    recentRangeCount++;
+                }
+                else
+                {
+                    priorRangeSum += range;
+                    priorRangeCount++;
+                }
+            }
 
-            bool strongOpposite = IsLong(ctx)
-                ? (currClose < currOpen && currBody > prevBody)
-                : (currClose > currOpen && currBody > prevBody);
+            double recentAvgRange = recentRangeCount > 0 ? recentRangeSum / recentRangeCount : currRange;
+            double priorAvgRange = priorRangeCount > 0 ? priorRangeSum / priorRangeCount : Math.Max(prevRange, prev2Range);
+            bool compressionStall = priorAvgRange > eps && recentAvgRange <= priorAvgRange * 0.70;
 
-            bool momentumCollapseStrong = strongOpposite;
-            bool momentumCollapse = bodySmaller || twoWeakening || atrNormalizedShrink || strongOpposite || momentumCollapseStrong;
+            int momentumSignals = 0;
+            if (transitionQualityWorse) momentumSignals++;
+            if (impulseWeakening) momentumSignals++;
+            if (compressionStall) momentumSignals++;
 
-            int protectScore = 0;
-            if (structureBreak) protectScore++;
-            if (noNewExtreme) protectScore++;
-            if (momentumCollapse) protectScore++;
-            if (structureWeakening) protectScore++;
+            if (momentumSignals == 0)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=no_collapse_confirmation swingBroken={swingBroken.ToString().ToLowerInvariant()} noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening=false tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
 
-            bool earlyProtect = profitThreshold && protectScore >= 2;
-            bool hardProtect = currentR >= 1.0 && protectScore >= 1;
+            bool momentumWeakening = momentumSignals >= 1;
 
-            GlobalLogger.Log(_bot,
-                $"[EXIT][TP1_PROTECT][SCORE]\n" +
-                $"symbol={pos.SymbolName}\n" +
-                $"positionId={pos.Id}\n" +
-                $"currentR={currentR:0.###}\n" +
-                $"protectScore={protectScore}\n" +
-                $"earlyProtect={earlyProtect}\n" +
-                $"hardProtect={hardProtect}");
-
-            if (!(earlyProtect || hardProtect))
+            if (!TryResolveExitSymbol(pos, out var liveSymbol, ctx))
                 return false;
 
-            bool trailingConflict = pos.StopLoss.HasValue &&
+            double currentSpread = Math.Abs(liveSymbol.Ask - liveSymbol.Bid);
+            if (currentSpread > recentAvgRange * Tp1SmartSpreadGuardFactor)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=spread_spike_guard swingBroken={swingBroken.ToString().ToLowerInvariant()} noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening={momentumWeakening.ToString().ToLowerInvariant()} tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
+            bool volatilitySpike = currRange > Math.Max(priorAvgRange, eps) * Tp1SmartVolatilitySpikeFactor;
+            if (volatilitySpike && momentumSignals < 2)
+            {
+                GlobalLogger.Log(_bot, $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE noAction=volatility_spike_guard swingBroken={swingBroken.ToString().ToLowerInvariant()} noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening={momentumWeakening.ToString().ToLowerInvariant()} tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
+            bool trailingConflict = livePos.StopLoss.HasValue &&
                 (IsLong(ctx)
-                    ? currentPrice < (pos.StopLoss.Value - eps)
-                    : currentPrice > (pos.StopLoss.Value + eps));
+                    ? currentPrice < (livePos.StopLoss.Value - eps)
+                    : currentPrice > (livePos.StopLoss.Value + eps));
 
             if (trailingConflict)
                 return false;
 
+            int barsSinceTp1 = ctx.Tp1HitBarIndex >= 0
+                ? Math.Max(0, ctx.BarsSinceEntryM5 - ctx.Tp1HitBarIndex)
+                : 0;
+
             ctx.Tp1ProtectExitHit = true;
             ctx.Tp1ProtectExitR = currentR;
-            ctx.Tp1ProtectScoreAtExit = protectScore;
-            ctx.Tp1ProtectMode = hardProtect ? "HARD" : "EARLY";
+            ctx.Tp1ProtectScoreAtExit = momentumSignals;
+            ctx.Tp1ProtectMode = "TP1_SMART";
             ctx.PostTp1GivebackR = Math.Max(0, ctx.PostTp1MaxR - currentR);
+            ctx.Tp1SmartExitHit = true;
+            ctx.Tp1SmartExitType = "TP1_SMART";
+            ctx.Tp1SmartExitReason = "TREND_COLLAPSE";
+            ctx.Tp1SmartExitR = currentR;
+            ctx.Tp1SmartBarsSinceTp1 = barsSinceTp1;
             ctx.IsFullyClosing = true;
 
             GlobalLogger.Log(_bot,
-                $"[EXIT][TP1_PROTECT][TRIGGER]\n" +
-                $"symbol={pos.SymbolName}\n" +
-                $"positionId={pos.Id}\n" +
-                $"exitPrice={currentPrice:0.#####}\n" +
-                $"currentR={currentR:0.###}");
+                $"[EXIT][TP1_SMART_EXIT] symbol={pos.SymbolName} side={(IsLong(ctx) ? "LONG" : "SHORT")} entry={ctx.EntryPrice:0.#####} currentPrice={currentPrice:0.#####} currentR={currentR:0.###} reason=TREND_COLLAPSE swingBroken={swingBroken.ToString().ToLowerInvariant()} noNewExtremeBars={Tp1SmartNoNewExtremeBars} momentumWeakening={momentumWeakening.ToString().ToLowerInvariant()} tp1Hit={ctx.Tp1Hit.ToString().ToLowerInvariant()} exitType=TP1_SMART exitReason=TREND_COLLAPSE exitR={currentR:0.###} barsSinceTP1={barsSinceTp1}");
 
-            _bot.ClosePosition(pos);
+            _bot.ClosePosition(livePos);
             return true;
         }
 
