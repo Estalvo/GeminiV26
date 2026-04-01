@@ -17,6 +17,10 @@ namespace GeminiV26.Core.Entry.Qualification
 
     public static class EntryStateEvaluator
     {
+        private const double TransitionThreshold = 0.42;
+        private const double MomentumThreshold = 0.47;
+        private const double StructureThreshold = 0.52;
+
         public static EntryState Evaluate(EntryContext ctx)
         {
             var state = new EntryState();
@@ -42,24 +46,24 @@ namespace GeminiV26.Core.Entry.Qualification
             // TRANSITION
             // -------------------------
             double rawTQ = ctx.Transition?.QualityScore ?? 0.0;
-            double tq = rawTQ > 1.0 ? rawTQ / 100.0 : rawTQ;
+            double tq = ctx.Transition?.QualityScore01 ?? 0.0;
             state.TransitionQuality = tq;
 
-            state.HasTransition = tq >= 0.55;
+            state.HasTransition = tq >= TransitionThreshold;
 
             // -------------------------
             // MOMENTUM (STRICT)
             // -------------------------
             state.HasMomentum =
                 state.HasImpulse ||
-                tq >= 0.60;
+                tq >= MomentumThreshold;
 
             // -------------------------
             // STRUCTURE (STRICTER THAN BEFORE)
             // -------------------------
             state.HasStructure =
                 state.HasImpulse ||
-                tq >= 0.65;
+                tq >= StructureThreshold;
 
             // -------------------------
             // TREND (STRICT)
@@ -72,6 +76,8 @@ namespace GeminiV26.Core.Entry.Qualification
                 $"[ENTRY][STATE][TREND_EVAL] rawTQ={rawTQ:0.00} tq={tq:0.00} trend={state.HasTrend.ToString().ToLowerInvariant()}");
             Log(ctx,
                 $"[ENTRY][STATE][MOMENTUM_EVAL] rawTQ={rawTQ:0.00} tq={tq:0.00} momentum={state.HasMomentum.ToString().ToLowerInvariant()}");
+            Log(ctx,
+                $"[QUAL][TQ] tq={tq:0.00} hasTransition={state.HasTransition.ToString().ToLowerInvariant()} hasMomentum={state.HasMomentum.ToString().ToLowerInvariant()} hasStructure={state.HasStructure.ToString().ToLowerInvariant()}");
 
             // -------------------------
             // DEAD MARKET

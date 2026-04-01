@@ -1565,13 +1565,22 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, $"[POS ?] [ENTRY] symbol={selected.Symbol ?? _bot.SymbolName} score={selected.Score} direction={selected.Direction}");
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][ROUTED] sym={_bot.SymbolName} type={selected.Type} routedDir={selected.Direction} score={selected.Score}", _ctx));
                 GlobalLogger.Log(_bot, $"[ENTRY][WINNER] symbol={selected.Symbol ?? _bot.SymbolName} entryType={selected.Type} positionId=0 pipelineId={_ctx?.TempId} score={selected.Score:0.##} confidence={selected.LogicConfidence:0.##}");
+                double finalRawTq = _ctx?.Transition?.QualityScore ?? 0.0;
+                double finalTq = _ctx?.Transition?.QualityScore01 ?? 0.0;
+                bool structureAligned = _ctx?.QualificationState?.HasStructure == true;
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][TQ_TRACE] symbol={selected.Symbol ?? _bot.SymbolName} type={selected.Type} rawTQ={finalRawTq:0.00} tq={finalTq:0.00} thresholds=transition:0.42,momentum:0.47,structure:0.52 structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=pending");
 
                 if (!PassFinalAcceptance(_ctx, selected))
                 {
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][TQ_TRACE] symbol={selected.Symbol ?? _bot.SymbolName} type={selected.Type} rawTQ={finalRawTq:0.00} tq={finalTq:0.00} thresholds=transition:0.42,momentum:0.47,structure:0.52 structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=block");
                     LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", nameof(PassFinalAcceptance));
                     GlobalLogger.Log(_bot, "BLOCK: final acceptance gate");
                     return;
                 }
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][TQ_TRACE] symbol={selected.Symbol ?? _bot.SymbolName} type={selected.Type} rawTQ={finalRawTq:0.00} tq={finalTq:0.00} thresholds=transition:0.42,momentum:0.47,structure:0.52 structureAligned={structureAligned.ToString().ToLowerInvariant()} decision=pass");
 
                 _ctx.RoutedDirection = selected.Direction;
                 _ctx.FinalDirection = selected.Direction;
@@ -3024,19 +3033,20 @@ namespace GeminiV26.Core
                 : candidate.Direction == TradeDirection.Short
                     ? ctx.TransitionShort
                     : ctx.Transition;
-            double transitionQuality = transition?.QualityScore ?? ctx.Transition?.QualityScore ?? 0.0;
+            double rawTransitionQuality = transition?.QualityScore ?? ctx.Transition?.QualityScore ?? 0.0;
+            double transitionQuality = transition?.QualityScore01 ?? ctx.Transition?.QualityScore01 ?? 0.0;
 
             if (!hasMomentum.HasValue)
             {
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum=missing transition={isTransition.ToString().ToLowerInvariant()}");
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum=missing transition={isTransition.ToString().ToLowerInvariant()}");
                 return true;
             }
 
             if (!isTransition || hasMomentum.Value)
             {
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=none instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
                 return true;
             }
 
@@ -3056,7 +3066,7 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot,
                     $"[ENTRY][BLOCK][NO_MOMENTUM_INDEX] symbol={instrument} entryType={candidate.Type}");
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
                 return false;
             }
 
@@ -3088,7 +3098,7 @@ namespace GeminiV26.Core
                     ? "[TRANSITION_NO_MOMENTUM_BLOCK]"
                     : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_BLOCK]";
                 GlobalLogger.Log(_bot,
-                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
+                    $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=block instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()}");
                 return false;
             }
 
@@ -3098,7 +3108,7 @@ namespace GeminiV26.Core
                 ? "[TRANSITION_NO_MOMENTUM_PENALTY]"
                 : $"{candidate.Reason} [TRANSITION_NO_MOMENTUM_PENALTY]";
             GlobalLogger.Log(_bot,
-                $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] TQ={transitionQuality:0.00} action=penalty instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} score={scoreBefore}->{candidate.Score} penalty={penalty}");
+                $"[ENTRY][FILTER][TRANSITION_NO_MOMENTUM] rawTQ={rawTransitionQuality:0.00} tq={transitionQuality:0.00} action=penalty instrument={instrument} entryType={candidate.Type} momentum={hasMomentum.Value.ToString().ToLowerInvariant()} transition={isTransition.ToString().ToLowerInvariant()} score={scoreBefore}->{candidate.Score} penalty={penalty}");
             return true;
         }
 
@@ -3125,7 +3135,7 @@ namespace GeminiV26.Core
             }
 
             double flagQuality = transition.CompressionScore;
-            double impulseStrength = transition.QualityScore;
+            double impulseStrength = transition.QualityScore01;
             var instrumentClass = SymbolRouting.ResolveInstrumentClass(instrument);
 
             double qualityThreshold = 0.35;
@@ -3955,9 +3965,7 @@ namespace GeminiV26.Core
                     MfeR = ctx?.MfeR ?? 0.0,
                     MaeR = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
                     RMultiple = ComputeRMultiple(pos, ctx, sym.PipSize),
-                    TransitionQuality = entryCtx?.TransitionValid == true
-                        ? entryCtx.Transition?.QualityScore ?? 0.0
-                        : 0.0,
+                    TransitionQuality = entryCtx?.Transition?.QualityScore01 ?? 0.0,
                     AccountBalanceAtEntry = entryBalance
                 });
 
@@ -3973,9 +3981,7 @@ namespace GeminiV26.Core
                 MFE = ctx?.MfeR ?? 0.0,
                 MAE = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
                 MarketRegime = ResolveMarketRegime(entryCtx),
-                TransitionQuality = entryCtx?.TransitionValid == true
-                    ? entryCtx.Transition?.QualityScore ?? 0.0
-                    : 0.0,
+                TransitionQuality = entryCtx?.Transition?.QualityScore01 ?? 0.0,
                 Confidence = ctx?.FinalConfidence ?? meta?.EntryScore ?? 0.0,
                 EntryTime = ctx?.EntryTime ?? pos.EntryTime,
                 ExitTime = _bot.Server.Time

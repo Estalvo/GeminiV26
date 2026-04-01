@@ -78,7 +78,7 @@ namespace GeminiV26.Core.Logging
 
                     Csv(context.PendingMeta?.EntryType ?? pctx?.EntryType),
                     CsvNum(pctx?.EntryScore),
-                    CsvNum(transition?.QualityScore),
+                    CsvNum(transition?.QualityScore01),
                     CsvNum(ectx?.TransitionScoreBonus),
 
                     CsvNum(ectx?.AdxSlope_M5),

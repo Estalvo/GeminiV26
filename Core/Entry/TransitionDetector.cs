@@ -89,7 +89,8 @@ namespace GeminiV26.Core.Entry
                 FlagBars = Math.Max(longSide.FlagBars, shortSide.FlagBars),
                 PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
                 CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
-                QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
+                QualityScore01 = Math.Max(longSide.QualityScore, shortSide.QualityScore),
+                QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore) * 100.0,
 
                 IsValid = false,
                 BonusScore = 0,
@@ -124,14 +125,14 @@ namespace GeminiV26.Core.Entry
                 $"impulse={longSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={longSide.BarsSinceImpulse} " +
                 $"pullback={longSide.HasPullback.ToString().ToLowerInvariant()} pbBars={longSide.PullbackBars} pbDepthR={longSide.PullbackDepthR:0.00} " +
                 $"flagState={longSide.HasFlag.ToString().ToLowerInvariant()} flagBars={longSide.FlagBars} comp={longSide.CompressionScore:0.00} " +
-                $"tradable={longSide.IsTradable.ToString().ToLowerInvariant()} score={longSide.QualityScore:0.00} bonus={longSide.BonusScore} reason={longSide.Reason}");
+                $"tradable={longSide.IsTradable.ToString().ToLowerInvariant()} score01={longSide.QualityScore:0.00} scoreLegacy={(longSide.QualityScore * 100.0):0.00} bonus={longSide.BonusScore} reason={longSide.Reason}");
 
             ctx.Log?.Invoke(
                 $"[TRANSITION][SHORT] phase={shortSide.Phase} " +
                 $"impulse={shortSide.HasImpulse.ToString().ToLowerInvariant()} barsSince={shortSide.BarsSinceImpulse} " +
                 $"pullback={shortSide.HasPullback.ToString().ToLowerInvariant()} pbBars={shortSide.PullbackBars} pbDepthR={shortSide.PullbackDepthR:0.00} " +
                 $"flagState={shortSide.HasFlag.ToString().ToLowerInvariant()} flagBars={shortSide.FlagBars} comp={shortSide.CompressionScore:0.00} " +
-                $"tradable={shortSide.IsTradable.ToString().ToLowerInvariant()} score={shortSide.QualityScore:0.00} bonus={shortSide.BonusScore} reason={shortSide.Reason}");
+                $"tradable={shortSide.IsTradable.ToString().ToLowerInvariant()} score01={shortSide.QualityScore:0.00} scoreLegacy={(shortSide.QualityScore * 100.0):0.00} bonus={shortSide.BonusScore} reason={shortSide.Reason}");
 
             ctx.Log?.Invoke(
                 $"[TRACE][TRANSITION_STATE] symbol={ctx.Symbol} " +
@@ -150,7 +151,8 @@ namespace GeminiV26.Core.Entry
                 FlagBars = Math.Max(longSide.FlagBars, shortSide.FlagBars),
                 PullbackDepthR = Math.Max(longSide.PullbackDepthR, shortSide.PullbackDepthR),
                 CompressionScore = Math.Max(longSide.CompressionScore, shortSide.CompressionScore),
-                QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore),
+                QualityScore01 = Math.Max(longSide.QualityScore, shortSide.QualityScore),
+                QualityScore = Math.Max(longSide.QualityScore, shortSide.QualityScore) * 100.0,
                 IsValid = longSide.IsTradable || shortSide.IsTradable,
                 BonusScore = Math.Max(longSide.BonusScore, shortSide.BonusScore),
                 Reason = longSide.IsTradable && shortSide.IsTradable
@@ -545,7 +547,8 @@ namespace GeminiV26.Core.Entry
                 FlagBars = side.FlagBars,
                 PullbackDepthR = side.PullbackDepthR,
                 CompressionScore = side.CompressionScore,
-                QualityScore = side.QualityScore,
+                QualityScore01 = side.QualityScore,
+                QualityScore = side.QualityScore * 100.0,
 
                 IsValid = false,
                 BonusScore = 0,
@@ -567,7 +570,8 @@ namespace GeminiV26.Core.Entry
                 FlagBars = side.FlagBars,
                 PullbackDepthR = side.PullbackDepthR,
                 CompressionScore = side.CompressionScore,
-                QualityScore = side.QualityScore,
+                QualityScore01 = side.QualityScore,
+                QualityScore = side.QualityScore * 100.0,
                 IsValid = side.IsTradable,
                 BonusScore = side.BonusScore,
                 Reason = side.Reason
@@ -800,6 +804,7 @@ namespace GeminiV26.Core.Entry
                 FlagBars = flagBars,
                 PullbackDepthR = pullbackDepthR,
                 CompressionScore = compressionScore,
+                QualityScore01 = 0.0,
                 QualityScore = 0.0,
                 IsValid = false,
                 BonusScore = 0,
