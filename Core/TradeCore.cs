@@ -328,16 +328,16 @@ namespace GeminiV26.Core
             {
                 _entryTypes = new List<IEntryType>
                 {
-                    new XAU_FlagEntry(),
-                    new XAU_PullbackEntry()
+                    // Phase 1 safe-mode runtime registration:
+                    // Metal entry types remain parked / non-executable.
                 };
             }
             else if (_instrumentClass == InstrumentClass.FX)
             {
                 _entryTypes = new List<IEntryType>
                 {
-                new FX_FlagContinuationEntry(),
-                new FX_ImpulseContinuationEntry(),   // ← ide
+                    // Phase 1 safe-mode runtime registration:
+                    // FX entry types remain disabled / non-executable.
                 };
             }
             else if (_instrumentClass == InstrumentClass.INDEX)
@@ -345,7 +345,6 @@ namespace GeminiV26.Core
                 _entryTypes = new List<IEntryType>
                 {
                     new Index_PullbackEntry(),
-                    new Index_BreakoutEntry(),
                     new Index_FlagEntry()
                 };
             }
