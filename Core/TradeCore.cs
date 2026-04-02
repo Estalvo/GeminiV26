@@ -1525,69 +1525,6 @@ namespace GeminiV26.Core
                 }
 
                 _ctx.FinalDirection = selected.Direction;
-                var qualificationDecision = GeminiV26.Core.Entry.Qualification.EntryQualificationEngine.Evaluate(_ctx, selected.Type);
-                var qState = _ctx.QualificationState;
-                bool hasTrend = qState != null && qState.HasTrend;
-                bool hasMomentum = qState != null && qState.HasMomentum;
-                bool hasStructure = qState != null && qState.HasStructure;
-                bool isDeadMarket = qState != null && qState.IsDeadMarket;
-
-                GlobalLogger.Log(_bot,
-                    $"[TRADECORE][STATE_DELEGATED] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} structure={hasStructure.ToString().ToLowerInvariant()} dead={isDeadMarket.ToString().ToLowerInvariant()}");
-
-                if (_instrumentClass == InstrumentClass.INDEX)
-                {
-                    if (!hasTrend && !hasMomentum)
-                    {
-                        GlobalLogger.Log(_bot, "[ENTRY][INDEX][EVAL] trend=false momentum=false action=block");
-                    }
-                    else if (hasTrend && !hasMomentum)
-                    {
-                        int scoreBeforeIndexPenalty = selected.Score;
-                        const int indexNoMomentumPenalty = 25;
-                        selected.Score = Math.Max(0, selected.Score - indexNoMomentumPenalty);
-                        GlobalLogger.Log(_bot, "[ENTRY][INDEX][EVAL] trend=true momentum=false action=penalty");
-                        GlobalLogger.Log(_bot,
-                            $"[ENTRY][QUALIFICATION][PENALTY] INDEX_TREND_NO_MOMENTUM penalty=0.25 score={scoreBeforeIndexPenalty}->{selected.Score}");
-                    }
-                    else
-                    {
-                        GlobalLogger.Log(_bot,
-                            $"[ENTRY][INDEX][EVAL] trend={hasTrend.ToString().ToLowerInvariant()} momentum={hasMomentum.ToString().ToLowerInvariant()} action=pass");
-                    }
-                }
-
-                if (isDeadMarket)
-                {
-                    _ctx.Flags.IsDeadMarketBlocked = true;
-                    GlobalLogger.Log(_bot, "[ENTRY][BLOCK][DEAD_MARKET_STRICT]");
-                }
-
-                if (_ctx.Flags.IsDeadMarketBlocked)
-                {
-                    GlobalLogger.Log(_bot, "[ROUTER][BLOCK][DEAD_MARKET]");
-                    return;
-                }
-
-                if (qualificationDecision.Type == GeminiV26.Core.Entry.Qualification.EntryDecisionType.Block)
-                {
-                    if (isIndexSymbol)
-                        GlobalLogger.Log(_bot, "[INDEX][FUNNEL] stage=AFTER_QUALIFICATION count=0");
-                    GlobalLogger.Log(_bot, $"[ENTRY][QUALIFICATION][BLOCK] {qualificationDecision.Reason}");
-                    GlobalLogger.Log(_bot, $"[ROUTER][ABORT][QUALIFICATION_BLOCK] {qualificationDecision.Reason}");
-                    return;
-                }
-
-                if (qualificationDecision.Type == GeminiV26.Core.Entry.Qualification.EntryDecisionType.Penalize)
-                {
-                    int scoreBeforePenalty = selected.Score;
-                    int scorePenalty = (int)Math.Round(qualificationDecision.Penalty * 100.0, MidpointRounding.AwayFromZero);
-                    selected.Score = Math.Max(0, selected.Score - scorePenalty);
-                    GlobalLogger.Log(_bot,
-                        $"[ENTRY][QUALIFICATION][PENALTY] {qualificationDecision.Reason} penalty={qualificationDecision.Penalty:0.##} score={scoreBeforePenalty}->{selected.Score}");
-                }
-                if (isIndexSymbol)
-                    GlobalLogger.Log(_bot, $"[INDEX][FUNNEL] stage=AFTER_QUALIFICATION count={(selected != null ? 1 : 0)}");
 
 
                 // =====================================================
