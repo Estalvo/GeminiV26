@@ -12,40 +12,58 @@ namespace GeminiV26.EntryTypes.Crypto
         protected abstract string SymbolTag { get; }
         protected abstract int MaxBarsSinceImpulse { get; }
         protected abstract double MaxPullbackDepth { get; }
+        protected virtual double MinFuelAtr => 0.30;
+        protected virtual double MinFuelImpulseStrength => 0.34;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             DirectionDebug.LogOnce(ctx);
 
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
-                return Reject(ctx, TradeDirection.None, "CTX_NOT_READY", "[ENTRY][CRYPTO_PB][BLOCK_CTX]");
+                return Reject(ctx, TradeDirection.None, "CTX_NOT_READY");
 
             TradeDirection dir = ResolveDirection(ctx);
             if (dir == TradeDirection.None)
-                return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION", "[DIR][CRYPTO_ENTRY][INVALID_NONE]");
+                return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION");
 
             if (!ctx.Structure.HasImpulse || !ctx.Structure.HasPullback)
-                return Reject(ctx, dir, "NO_PULLBACK_STRUCTURE", "[ENTRY][CRYPTO_PB][BLOCK_STRUCTURE]");
+                return Reject(ctx, dir, "NO_PULLBACK_STRUCTURE");
 
             int attempts = dir == TradeDirection.Long ? ctx.ContinuationAttemptCountLong : ctx.ContinuationAttemptCountShort;
             if (attempts > 0)
-                return Reject(ctx, dir, "REFIRE_BLOCK", "[ENTRY][CRYPTO_PB][REFIRE_BLOCK]");
+                return Reject(ctx, dir, "REFIRE_BLOCK");
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             if (barsSinceImpulse < 0 || barsSinceImpulse > MaxBarsSinceImpulse)
-                return Reject(ctx, dir, "STALE_PULLBACK", "[ENTRY][CRYPTO_PB][BLOCK_STALE]");
+                return Reject(ctx, dir, "STALE_PULLBACK");
 
-            bool unstableTransition = ctx.IsTransition_M5 && (!ctx.IsVolatilityAcceptable_Crypto || !ctx.IsAtrExpanding_M5);
+            TradeDirection impulseDirection = ctx.ImpulseDirection == TradeDirection.None ? dir : ctx.ImpulseDirection;
+            bool immediateCounter = barsSinceImpulse <= 0 && impulseDirection != dir;
+            if (immediateCounter)
+                return Reject(ctx, dir, "IMPULSE_LOCK_IMMEDIATE_COUNTER");
+
+            double fuelAtr = Math.Max(0.0, ctx.TotalMoveSinceBreakAtr);
+            bool hasFuel =
+                fuelAtr >= MinFuelAtr ||
+                ctx.Structure.ImpulseStrength >= MinFuelImpulseStrength ||
+                (ctx.IsAtrExpanding_M5 && ctx.Structure.ContinuationConfirmedSignal);
+            if (!hasFuel)
+                return Reject(ctx, dir, "CRYPTO_PULLBACK_NO_FUEL");
+
+            bool unstableTransition = ctx.IsTransition_M5 && !ctx.IsVolatilityAcceptable_Crypto && !ctx.IsAtrExpanding_M5;
             if (unstableTransition)
-                return Reject(ctx, dir, "VOL_TRANSITION_BLOCK", "[ENTRY][CRYPTO_PB][VOL_TRANSITION_BLOCK]");
+                return Reject(ctx, dir, "VOL_TRANSITION_BLOCK");
 
+            int maturitySignals = 0;
+            if (ctx.IsPullbackDecelerating_M5) maturitySignals++;
+            if (ctx.HasReactionCandle_M5) maturitySignals++;
+            if (ctx.LastClosedBarInTrendDirection) maturitySignals++;
             bool pullbackComplete =
                 ctx.Structure.PullbackConfirmedSignal ||
-                (ctx.IsPullbackDecelerating_M5 && ctx.HasReactionCandle_M5 && ctx.LastClosedBarInTrendDirection);
+                maturitySignals >= 2 ||
+                (barsSinceImpulse >= 3 && maturitySignals >= 1);
             if (!pullbackComplete)
-                return Reject(ctx, dir, "PULLBACK_NOT_COMPLETE", "[ENTRY][CRYPTO_PB][BLOCK_INCOMPLETE]");
-
-            ctx.Log?.Invoke("[ENTRY][CRYPTO_PB][COMPLETE_OK]");
+                return Reject(ctx, dir, "PULLBACK_NOT_MATURE");
 
             bool directionalBreak =
                 (dir == TradeDirection.Long && (ctx.Structure.FlagBreakoutUp || ctx.FlagBreakoutUpConfirmed || ctx.RangeBreakDirection == TradeDirection.Long)) ||
@@ -53,19 +71,19 @@ namespace GeminiV26.EntryTypes.Crypto
                 ctx.Structure.ContinuationConfirmedSignal;
 
             if (!directionalBreak)
-                return Reject(ctx, dir, "NO_DIRECTIONAL_CONTINUATION_BREAK", "[ENTRY][CRYPTO_PB][BLOCK_DIR_BREAK]");
-
-            ctx.Log?.Invoke("[ENTRY][CRYPTO_PB][DIR_BREAK_OK]");
+                return Reject(ctx, dir, "NO_DIRECTIONAL_CONTINUATION_BREAK");
 
             bool stackedOverlap =
                 ctx.Structure.PullbackConfirmedSignal &&
                 ctx.Structure.ContinuationConfirmedSignal &&
-                (ctx.RangeBreakDirection == dir);
+                (ctx.RangeBreakDirection == dir) &&
+                !ctx.M1TriggerInTrendDirection &&
+                !ctx.LastClosedBarInTrendDirection;
             if (stackedOverlap)
-                return Reject(ctx, dir, "OVERLAP_STACK_BLOCK", "[ENTRY][CRYPTO_PB][BLOCK_OVERLAP]");
+                return Reject(ctx, dir, "OVERLAP_STACK_BLOCK");
 
             if (ctx.Structure.PullbackDepth <= 0 || ctx.Structure.PullbackDepth > MaxPullbackDepth)
-                return Reject(ctx, dir, "PULLBACK_DEPTH_INVALID", "[ENTRY][CRYPTO_PB][BLOCK_DEPTH]");
+                return Reject(ctx, dir, "PULLBACK_DEPTH_INVALID");
 
             int score = 64;
             if (ctx.Structure.PullbackConfirmedSignal)
@@ -76,7 +94,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score += 6;
             score = Math.Max(0, Math.Min(100, score));
 
-            return new EntryEvaluation
+            var evaluation = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
@@ -85,6 +103,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 Score = score,
                 Reason = $"{SymbolTag}_PULLBACK_STRUCTURE_FIRST_OK"
             };
+            ctx.Log?.Invoke($"[ENTRY][CRYPTO_PB][RECOGNIZED] symbol={ctx.Symbol} dir={dir} reason={evaluation.Reason} barsSinceImpulse={barsSinceImpulse} fuelAtr={fuelAtr:0.00} impulseStrength={ctx.Structure.ImpulseStrength:0.00} maturitySignals={maturitySignals} pullbackDepth={ctx.Structure.PullbackDepth:0.00}");
+            return evaluation;
         }
 
         private TradeDirection ResolveDirection(EntryContext ctx)
@@ -110,9 +130,9 @@ namespace GeminiV26.EntryTypes.Crypto
             return inputLogic;
         }
 
-        protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason, string log)
+        protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason)
         {
-            ctx?.Log?.Invoke(log);
+            ctx?.Log?.Invoke($"[ENTRY][CRYPTO_PB][BLOCK] symbol={ctx?.Symbol} dir={dir} reason={reason}");
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,

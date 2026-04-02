@@ -13,39 +13,53 @@ namespace GeminiV26.EntryTypes.Crypto
         protected abstract int MaxBarsSinceImpulse { get; }
         protected abstract int MaxLateBreakoutBars { get; }
         protected abstract double MinImpulseStrength { get; }
+        protected virtual int MaxImpulseMemoryBars => MaxBarsSinceImpulse + 2;
+        protected virtual int MaxBreakoutPersistenceBars => MaxLateBreakoutBars + 1;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             DirectionDebug.LogOnce(ctx);
 
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < 20)
-                return Reject(ctx, TradeDirection.None, "CTX_NOT_READY", "[ENTRY][CRYPTO_FLAG][BLOCK_CTX]");
+                return Reject(ctx, TradeDirection.None, "CTX_NOT_READY");
 
             TradeDirection dir = ResolveDirection(ctx);
             if (dir == TradeDirection.None)
-                return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION", "[DIR][CRYPTO_ENTRY][INVALID_NONE]");
+                return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION");
 
             if (!ctx.Structure.HasImpulse || !ctx.Structure.HasFlag)
-                return Reject(ctx, dir, "NO_FLAG_STRUCTURE", "[ENTRY][CRYPTO_FLAG][BLOCK_STRUCTURE]");
+                return Reject(ctx, dir, "INVALID_STRUCTURE");
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
-            if (barsSinceImpulse < 0 || barsSinceImpulse > MaxBarsSinceImpulse)
-                return Reject(ctx, dir, "LATE_FLAG", "[ENTRY][CRYPTO_FLAG][LATE_BLOCK]");
+            if (barsSinceImpulse < 0)
+                return Reject(ctx, dir, "NO_RECENT_IMPULSE");
+
+            if (barsSinceImpulse > MaxImpulseMemoryBars)
+                return Reject(ctx, dir, "LATE_FLAG");
 
             bool breakoutConfirmed = dir == TradeDirection.Long
                 ? (ctx.FlagBreakoutUpConfirmed || ctx.Structure.FlagBreakoutUp)
                 : (ctx.FlagBreakoutDownConfirmed || ctx.Structure.FlagBreakoutDown);
 
             int breakoutBarsSince = dir == TradeDirection.Long ? ctx.BreakoutUpBarsSince : ctx.BreakoutDownBarsSince;
+            bool continuationSignal = ctx.Structure.ContinuationConfirmedSignal || ctx.RangeBreakDirection == dir;
+            bool hasTrendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection;
 
             bool persistenceOk =
-                breakoutConfirmed &&
-                breakoutBarsSince <= MaxLateBreakoutBars &&
-                ctx.LastClosedBarInTrendDirection &&
-                (ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection);
+                ((breakoutConfirmed && breakoutBarsSince <= MaxBreakoutPersistenceBars) ||
+                 (continuationSignal && breakoutBarsSince <= MaxLateBreakoutBars)) &&
+                hasTrendFollowThrough;
 
             if (!persistenceOk)
-                return Reject(ctx, dir, "BREAKOUT_NOT_PERSISTENT", "[ENTRY][CRYPTO_FLAG][LATE_BLOCK]");
+                return Reject(ctx, dir, "LATE_FLAG");
+
+            bool structureValid =
+                ctx.Structure.FlagCompression <= 0.62 ||
+                ctx.Structure.ContinuationConfirmedSignal ||
+                ctx.M1TriggerInTrendDirection ||
+                ctx.HasReactionCandle_M5;
+            if (!structureValid)
+                return Reject(ctx, dir, "INVALID_STRUCTURE");
 
             bool fakeBreak =
                 ctx.RangeFakeoutBars_M1 <= 2 ||
@@ -53,9 +67,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 (ctx.Structure.ImpulseStrength < MinImpulseStrength && !ctx.M1TriggerInTrendDirection);
 
             if (fakeBreak)
-                return Reject(ctx, dir, "FAKE_BREAKOUT", "[ENTRY][CRYPTO_FLAG][FAKEBREAK_BLOCK]");
-
-            ctx.Log?.Invoke("[ENTRY][CRYPTO_FLAG][PERSISTENCE_OK]");
+                return Reject(ctx, dir, "FAKE_BREAKOUT");
 
             int score = 62;
             if (ctx.Structure.ImpulseStrength >= 0.6)
@@ -66,7 +78,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 score += 8;
             score = Math.Max(0, Math.Min(100, score));
 
-            return new EntryEvaluation
+            var evaluation = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
@@ -75,6 +87,8 @@ namespace GeminiV26.EntryTypes.Crypto
                 Score = score,
                 Reason = $"{SymbolTag}_FLAG_STRUCTURE_FIRST_OK"
             };
+            ctx.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][RECOGNIZED] symbol={ctx.Symbol} dir={dir} reason={evaluation.Reason} barsSinceImpulse={barsSinceImpulse} breakoutBarsSince={breakoutBarsSince} impulseStrength={ctx.Structure.ImpulseStrength:0.00} compression={ctx.Structure.FlagCompression:0.00}");
+            return evaluation;
         }
 
         private TradeDirection ResolveDirection(EntryContext ctx)
@@ -100,9 +114,9 @@ namespace GeminiV26.EntryTypes.Crypto
             return inputLogic;
         }
 
-        protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason, string log)
+        protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason)
         {
-            ctx?.Log?.Invoke(log);
+            ctx?.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][BLOCK] symbol={ctx?.Symbol} dir={dir} reason={reason}");
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
