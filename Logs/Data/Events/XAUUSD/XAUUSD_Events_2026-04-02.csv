@@ -6,3 +6,5 @@ EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
 2026-04-02T14:31:25.8120000Z,XAUUSD,BotStart,0,,Started on Minute5,,
 2026-04-02T14:39:35.5350000Z,XAUUSD,BotStop,0,,,,
 2026-04-02T14:39:42.1810000Z,XAUUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T15:54:42.5190000Z,XAUUSD,BotStop,0,,,,
+2026-04-02T15:54:48.1590000Z,XAUUSD,BotStart,0,,Started on Minute5,,

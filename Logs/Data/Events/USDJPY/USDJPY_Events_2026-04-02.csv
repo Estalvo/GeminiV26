@@ -6,3 +6,5 @@ EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
 2026-04-02T14:31:25.8280000Z,USDJPY,BotStart,0,,Started on Minute5,,
 2026-04-02T14:39:35.5350000Z,USDJPY,BotStop,0,,,,
 2026-04-02T14:39:42.1340000Z,USDJPY,BotStart,0,,Started on Minute5,,
+2026-04-02T15:54:42.5190000Z,USDJPY,BotStop,0,,,,
+2026-04-02T15:54:48.0970000Z,USDJPY,BotStart,0,,Started on Minute5,,
