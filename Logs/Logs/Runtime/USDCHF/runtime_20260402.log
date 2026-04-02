@@ -4912,3 +4912,94 @@
 [2026-04-02 18:10:01.415] [MEMORY][UPDATE] symbol=USDCHF age=5 sinceImpulse=2
 [2026-04-02 18:10:01.416] [MEMORY] phase=Decay window=Late ext=Extended
 [2026-04-02 18:10:01.416] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=True exhausted=False chase=True timingPenalty=-40 trust=0.9
+[2026-04-02 18:15:00.531] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 18:15:00.532] [FX MSD] USDCHF | atrPips=2.08 adx=16.0 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 18:15:00.532] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=16.0
+[2026-04-02 18:15:00.532] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 18:15:00.532] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 18:15:00.533] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:15:00.534] [IMPULSE SRC] idx=2071 barsSince=2 range=0.00
+[2026-04-02 18:15:00.534] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 18:15:00.534] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:15:00.535] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00019999999999997797 atr=0.00023357142857142823
+[2026-04-02 18:15:00.535] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=DI_DOMINANCE_LONG trend=None diSpread=11.06 slopeM5=0.00009 slopeM15=-0.00001
+[2026-04-02 18:15:00.540] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=DI_DOMINANCE_LONG age=2 idx=2071 strength=0.77 range=0.00042
+[2026-04-02 18:15:00.541] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:15:00.542] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:15:00.542] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:15:00.542] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=DI_DOMINANCE_LONG impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:15:00.543] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:15:00.543] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 18:15:00.543] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 18:15:00.543] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 18:15:00.544] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 18:15:00.544] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Late extensionState=Extended impulseFreshness=0.41 continuationFreshness=0.69 triggerLateScore=0.40 chaseRisk=True timingPenalty=-40
+[2026-04-02 18:15:00.544] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=False late=True overextended=False freshness=0.69 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.40 distanceAtr=1.47
+[2026-04-02 18:15:00.545] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:15:00.545] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=16.0 atrPts=2.08
+[2026-04-02 18:15:00.545] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:15:00.546] [SESSION_CALENDAR] utc=2026-04-02T18:15:00.5340000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:15:00.546] [SESSION_GATE] symbol=USDCHF tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 18:15:00.546] [SESSION CHECK] time=2026-04-02T18:15:00.5340000Z symbol=USDCHF bucket=NewYork allow=True
+[2026-04-02 18:15:00.547] [SESSION_MATRIX] symbol=USDCHF bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:15:00.547] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:15:00.547] [USDCHF LOGIC] state=TREND_ONLY bias=Buy logicConf=43 | ema50=0.79872 ema200=0.79837 diff=0.00036 adx=16.0 atr=0.00021 pattern=none chop=False opp=False htfAlign=True
+[2026-04-02 18:15:00.547] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DIR][LOGIC] sym=USDCHF logicBias=Long logicConf=43
+[2026-04-02 18:15:00.548] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [CTX PROPAGATION] symbol=USDCHF bias=Long conf=43
+[2026-04-02 18:15:00.548] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:15:00.548] [DEBUG] M5.Count=2075
+[2026-04-02 18:15:00.549] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [PIPE][ENTRY_ROUTER_PASS] pass=6 symbol=USDCHF bar=2026-04-02T18:15:00.5500000Z
+[2026-04-02 18:15:00.549] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY START] symbol=USDCHF bias=Long
+[2026-04-02 18:15:00.556] [PIPE] symbol=USDCHF hasSignals=True count=2
+[2026-04-02 18:15:00.557] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DBG ENTRY] total candidates=2
+[2026-04-02 18:15:00.557] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DIR][ROUTER_CAND] sym=USDCHF type=FX_FlagContinuation valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:15:00.558] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDCHF asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.558] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][LOGIC] symbol=USDCHF entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=43 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 18:15:00.558] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DIR][ROUTER_CAND] sym=USDCHF type=FX_ImpulseContinuation valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:15:00.559] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDCHF asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.559] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][LOGIC] symbol=USDCHF entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=43 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 18:15:00.559] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DIR][HTF] sym=USDCHF allow=Long conf=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32
+[2026-04-02 18:15:00.559] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.90
+[2026-04-02 18:15:00.560] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:15:00.560] [HTF][CANDIDATE] asset=FX type=FX_ImpulseContinuation dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:15:00.560] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:15:00.561] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCHF asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.561] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCHF asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.562] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=true
+[2026-04-02 18:15:00.562] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=USDCHF type=FX_FlagContinuation dir=Long authority=False
+[2026-04-02 18:15:00.563] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=USDCHF type=FX_FlagContinuation dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.563] [TIMING][FX_ImpulseContinuation] barsSinceBreak=0 late=true
+[2026-04-02 18:15:00.564] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=USDCHF type=FX_ImpulseContinuation dir=Long authority=False
+[2026-04-02 18:15:00.564] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=USDCHF type=FX_ImpulseContinuation dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.565] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 18:15:00.565] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][GATE] symbol=USDCHF entryType=FX_FlagContinuation stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.565] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 18:15:00.566] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][GATE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.566] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][SCORE] symbol=USDCHF entryType=FX_FlagContinuation stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.567] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCHF asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.567] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][SCORE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.567] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCHF asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:15:00.568] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][CLASSIFICATION] symbol=USDCHF entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.568] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][CLASSIFICATION] symbol=USDCHF entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.568] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][GATES] symbol=USDCHF entryType=FX_FlagContinuation stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:15:00.568] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][GATES] symbol=USDCHF entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:15:00.569] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][SUMMARY] symbol=USDCHF totalEvaluations=12 logicProducedDirectionCount=12 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:15:00.569] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:15:00.569] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [CANDIDATE] type=FX_FlagContinuation dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.569] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.570] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [CANDIDATE] type=FX_ImpulseContinuation dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.570] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.570] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:15:00.571] [ENTRY][CANDIDATE] symbol=USDCHF entryType=FX_FlagContinuation score=30 confidence=43 trend=None fallback=true
+[2026-04-02 18:15:00.571] [TRACE] selected is null = True
+[2026-04-02 18:15:00.572] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:15:00.572] [FX][TOTAL_REJECTION] symbol=USDCHF candidates=2 reason=ALL_INVALID
+[2026-04-02 18:15:00.572] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 18:15:00.573] [USDCHF] attemptId=USD6YPYUU [ATTEMPT USD6YPYUU] [ENTRY_TRACE][FINAL] symbol=USDCHF entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:15:00.573] BLOCK: entry gate
+[2026-04-02 18:15:00.573] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:15:00.574] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=True exhausted=False chase=True timingPenalty=-40 trust=0.9
+[2026-04-02 18:15:00.574] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:15:00.575] [MEMORY][UPDATE] symbol=USDCHF age=6 sinceImpulse=3
+[2026-04-02 18:15:00.575] [MEMORY] phase=Decay window=Late ext=Extended
+[2026-04-02 18:15:00.575] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=True exhausted=False chase=True timingPenalty=-42 trust=0.9

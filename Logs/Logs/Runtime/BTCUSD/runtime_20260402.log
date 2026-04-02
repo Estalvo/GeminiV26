@@ -5781,3 +5781,93 @@
 [2026-04-02 18:10:00.447] [MEMORY][UPDATE] symbol=BTCUSD age=2 sinceImpulse=0
 [2026-04-02 18:10:00.448] [MEMORY] phase=Decay window=Fresh ext=Normal
 [2026-04-02 18:10:00.448] [MEMORY][ASSESSMENT] symbol=BTCUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-6 trust=0.9
+[2026-04-02 18:15:00.432] [ONBAR DBG] raw=BTCUSD canonical=BTCUSD
+[2026-04-02 18:15:00.432] [CRYPTO MSD] BTCUSD | ATR=132.5 ADX=22.7 HighVol=True LowVol=False Trend=True Momentum=False Expansion=False
+[2026-04-02 18:15:00.432] [CRYPTO MarketState] BTCUSD Trend=True Momentum=False LowVol=False ADX=22.7
+[2026-04-02 18:15:00.432] [MEMORY][CTX_ATTACH][START] symbol=BTCUSD
+[2026-04-02 18:15:00.433] [MEMORY][CTX_ATTACH] symbol=BTCUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 18:15:00.433] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:15:00.434] [IMPULSE SRC] idx=2075 barsSince=1 range=203.31
+[2026-04-02 18:15:00.434] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=203.31 comp=207.60/71.16 retr=0.00/93.88
+[2026-04-02 18:15:00.434] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:15:00.434] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=207.60000000000582 atr=156.47285714285786
+[2026-04-02 18:15:00.434] [STRUCT][DIR][SOURCE] symbol=BTCUSD dir=Short source=EMA_DI_CONFLUENCE_SHORT trend=None diSpread=-12.94 slopeM5=-68.65288 slopeM15=-2.00492
+[2026-04-02 18:15:00.435] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=EMA_DI_CONFLUENCE_SHORT age=1 idx=2075 strength=0.56 range=203.31000
+[2026-04-02 18:15:00.435] [STRUCT][PULLBACK][FAIL] symbol=BTCUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:15:00.435] [STRUCT][PULLBACK][FAIL] symbol=BTCUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:15:00.435] [STRUCT][FLAG][FAIL] symbol=BTCUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:15:00.435] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=EMA_DI_CONFLUENCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:15:00.435] [AUDIT][HTF FLOW][SOURCE] symbol=BTCUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 18:15:00.436] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=BTCUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.62
+[2026-04-02 18:15:00.436] [AUDIT][HTF CONTEXT] symbol=BTCUSD asset=CRYPTO allowedDirection=Short confidence=0.62 reason=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 activeDirection=Short activeConfidence=0.62
+[2026-04-02 18:15:00.436] [HTF][SNAPSHOT] dir=Short conf=0.62
+[2026-04-02 18:15:00.436] [CTX][MEMORY_READY] symbol=BTCUSD hasMemory=True
+[2026-04-02 18:15:00.436] [ENTRY][SNAPSHOT] symbol=BTCUSD movePhase=Decay continuationWindow=Fresh extensionState=Normal impulseFreshness=0.92 continuationFreshness=1.00 triggerLateScore=0.06 chaseRisk=False timingPenalty=-6
+[2026-04-02 18:15:00.437] [CTX][TIMING][SIDE] symbol=BTCUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=0 barsSinceBreak=1 attempts=0 triggerLate=0.06 distanceAtr=0.20
+[2026-04-02 18:15:00.437] [CTX][TIMING][SIDE] symbol=BTCUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:15:00.437] [ENTRY MARKETSTATE ASSIGN] sym=BTCUSD trend=True momentum=False lowVol=False adx=22.7 atrPts=132.49
+[2026-04-02 18:15:00.437] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DIR][CTX_BUILD] sym=BTCUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:15:00.438] [SESSION_CALENDAR] utc=2026-04-02T18:15:00.4250000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:15:00.438] [SESSION_GATE] symbol=BTCUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 18:15:00.438] [SESSION CHECK] time=2026-04-02T18:15:00.4250000Z symbol=BTCUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 18:15:00.438] [SESSION_MATRIX] symbol=BTCUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 18:15:00.438] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 18:15:00.439] [BTC][Logic] Weak impulse candle
+[2026-04-02 18:15:00.439] [BTC][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 18:15:00.439] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DIR][LOGIC] sym=BTCUSD logicBias=Short logicConf=55
+[2026-04-02 18:15:00.439] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [CTX PROPAGATION] symbol=BTCUSD bias=Short conf=55
+[2026-04-02 18:15:00.439] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:15:00.440] [DEBUG] M5.Count=2078
+[2026-04-02 18:15:00.440] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [PIPE][ENTRY_ROUTER_PASS] pass=6 symbol=BTCUSD bar=2026-04-02T18:15:00.4400000Z
+[2026-04-02 18:15:00.440] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY START] symbol=BTCUSD bias=Short
+[2026-04-02 18:15:00.442] [PIPE] symbol=BTCUSD hasSignals=True count=2
+[2026-04-02 18:15:00.443] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DBG ENTRY] total candidates=2
+[2026-04-02 18:15:00.443] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DIR][ROUTER_CAND] sym=BTCUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_IMPULSE
+[2026-04-02 18:15:00.443] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.444] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][LOGIC] symbol=BTCUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 18:15:00.444] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DIR][ROUTER_CAND] sym=BTCUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 18:15:00.444] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.444] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][LOGIC] symbol=BTCUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 18:15:00.444] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DIR][HTF] sym=BTCUSD allow=Short conf=0.62 reason=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34
+[2026-04-02 18:15:00.445] [HTF][BIAS] asset=CRYPTO direction=Short state=Neutral impact=ScoreOnly conf=0.62
+[2026-04-02 18:15:00.445] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=True misaligned=False score=0->5 state=Neutral
+[2026-04-02 18:15:00.445] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=True misaligned=False score=0->5 state=Neutral
+[2026-04-02 18:15:00.445] [HTF][APPLIED] asset=CRYPTO dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:15:00.446] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.446] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.446] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:15:00.446] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=BTCUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 18:15:00.446] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=BTCUSD type=Crypto_Flag dir=Short score=5->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.447] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:15:00.447] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=BTCUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 18:15:00.447] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=BTCUSD type=Crypto_Pullback dir=Short score=5->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.447] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 18:15:00.448] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][GATE] symbol=BTCUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.448] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 18:15:00.448] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][GATE] symbol=BTCUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.448] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][SCORE] symbol=BTCUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_OK baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.448] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.449] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][SCORE] symbol=BTCUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_OK baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.449] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=BTCUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF BEAR normal trend continuation, conf=0.62, adx=19.4, gapATR=1.51, slope21ATR=-0.17, slope50ATR=-0.10, distFastATR=0.34 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 18:15:00.449] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][CLASSIFICATION] symbol=BTCUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.449] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][CLASSIFICATION] symbol=BTCUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.449] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][GATES] symbol=BTCUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_OK
+[2026-04-02 18:15:00.450] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][GATES] symbol=BTCUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_OK
+[2026-04-02 18:15:00.450] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][SUMMARY] symbol=BTCUSD totalEvaluations=12 logicProducedDirectionCount=12 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:15:00.450] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:15:00.450] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.451] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=SETUP_DETECTED trigger=False score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.451] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.451] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=SETUP_DETECTED trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.451] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:15:00.451] [ENTRY][CANDIDATE] symbol=BTCUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 18:15:00.452] [TRACE] selected is null = True
+[2026-04-02 18:15:00.452] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:15:00.452] [BTCUSD] attemptId=BTC6YPYRT [ATTEMPT BTC6YPYRT] [ENTRY_TRACE][FINAL] symbol=BTCUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:15:00.452] BLOCK: entry gate
+[2026-04-02 18:15:00.452] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:15:00.453] [MEMORY][ASSESSMENT] symbol=BTCUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-6 trust=0.9
+[2026-04-02 18:15:00.453] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:15:00.454] [MEMORY][UPDATE] symbol=BTCUSD age=3 sinceImpulse=1
+[2026-04-02 18:15:00.454] [MEMORY] phase=Decay window=Fresh ext=Normal
+[2026-04-02 18:15:00.454] [MEMORY][ASSESSMENT] symbol=BTCUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9

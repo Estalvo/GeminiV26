@@ -3033,3 +3033,39 @@
 [2026-04-02 18:10:01.370] [TC] BLOCKED: Global SessionGate
 [2026-04-02 18:10:01.371] [MEMORY][ASSESSMENT] symbol=AUDNZD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.7
 [2026-04-02 18:10:01.371] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:15:00.504] [ONBAR DBG] raw=AUDNZD canonical=AUDNZD
+[2026-04-02 18:15:00.504] [FX MSD] AUDNZD | atrPips=1.89 adx=33.3 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 18:15:00.505] [FX MarketState] AUDNZD Trend=True Momentum=False LowVol=False ADX=33.3
+[2026-04-02 18:15:00.505] [MEMORY][CTX_ATTACH][START] symbol=AUDNZD
+[2026-04-02 18:15:00.505] [MEMORY][CTX_ATTACH] symbol=AUDNZD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 18:15:00.506] [PB] bars=1 depth=0.50 early=True
+[2026-04-02 18:15:00.508] [IMPULSE SRC] idx=2071 barsSince=2 range=0.00
+[2026-04-02 18:15:00.508] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 18:15:00.509] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:15:00.509] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=9.999999999998899E-05 atr=0.00019999999999997797
+[2026-04-02 18:15:00.510] [STRUCT][DIR][SOURCE] symbol=AUDNZD dir=Long source=TREND_DIRECTION trend=Long diSpread=10.53 slopeM5=0.00004 slopeM15=0.00032
+[2026-04-02 18:15:00.510] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=2069 strength=1.00 range=0.00030
+[2026-04-02 18:15:00.512] [STRUCT][PULLBACK][STANDARD_OK] depth=0.50 bars=1 micro=false
+[2026-04-02 18:15:00.512] [STRUCTURE][PULLBACK_RANGE] low=1.20740 high=1.20750
+[2026-04-02 18:15:00.512] [STRUCT][FLAG][STANDARD_OK] compression=0.50 bars=0
+[2026-04-02 18:15:00.513] [STRUCTURE][FLAG_RANGE] high=0.00000 low=0.00000
+[2026-04-02 18:15:00.513] [STRUCTURE][PULLBACK_EARLY_WEAK]
+[2026-04-02 18:15:00.513] [STRUCTURE][FLAG_BREAKOUT] dir=UP price=1.20740
+[2026-04-02 18:15:00.513] [AUDIT][HTF FLOW][SOURCE] symbol=AUDNZD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:15:00.514] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDNZD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.36
+[2026-04-02 18:15:00.514] [AUDIT][HTF CONTEXT] symbol=AUDNZD asset=FX allowedDirection=Long confidence=0.36 reason=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=2.92, adx=15.0, distATR=2.40 activeDirection=Long activeConfidence=0.36
+[2026-04-02 18:15:00.514] [HTF][SNAPSHOT] dir=Long conf=0.36
+[2026-04-02 18:15:00.514] [CTX][MEMORY_READY] symbol=AUDNZD hasMemory=True
+[2026-04-02 18:15:00.515] [ENTRY][SNAPSHOT] symbol=AUDNZD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 18:15:00.515] [CTX][TIMING][SIDE] symbol=AUDNZD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 18:15:00.515] [CTX][TIMING][SIDE] symbol=AUDNZD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:15:00.516] [ENTRY MARKETSTATE ASSIGN] sym=AUDNZD trend=True momentum=False lowVol=False adx=33.3 atrPts=1.89
+[2026-04-02 18:15:00.516] [AUDNZD] attemptId=AUD6YPYTZ [ATTEMPT AUD6YPYTZ] [DIR][CTX_BUILD] sym=AUDNZD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:15:00.516] [SESSION_CALENDAR] utc=2026-04-02T18:15:00.5030000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:15:00.516] [SESSION_FILTER] symbol=AUDNZD rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:15:00.517] [SESSION_GATE] symbol=AUDNZD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:15:00.517] [SESSION CHECK] time=2026-04-02T18:15:00.5190000Z symbol=AUDNZD bucket=NewYork allow=False
+[2026-04-02 18:15:00.517] BLOCK: session gate
+[2026-04-02 18:15:00.517] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:15:00.518] [MEMORY][ASSESSMENT] symbol=AUDNZD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.7
+[2026-04-02 18:15:00.518] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0

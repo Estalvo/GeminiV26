@@ -5319,3 +5319,94 @@
 [2026-04-02 18:10:00.220] [MEMORY][UPDATE] symbol=XAUUSD age=2 sinceImpulse=1
 [2026-04-02 18:10:00.220] [MEMORY] phase=Continuation window=Fresh ext=Normal
 [2026-04-02 18:10:00.221] [MEMORY][ASSESSMENT] symbol=XAUUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 18:15:00.280] [ONBAR DBG] raw=XAUUSD canonical=XAUUSD
+[2026-04-02 18:15:00.282] [XAU MSD] emaDistATR=0.32 atrPips=608.8 adx=11.3 widthATR=3.27 lowVol=False trend=False momentum=False hardRange=True wickRatio=0.00 chop=False
+[2026-04-02 18:15:00.283] [XAU MarketState] XAUUSD Range=True Trend=False Momentum=False ADX=11.3 HardRange=True
+[2026-04-02 18:15:00.284] [MEMORY][CTX_ATTACH][START] symbol=XAUUSD
+[2026-04-02 18:15:00.286] [MEMORY][CTX_ATTACH] symbol=XAUUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:15:00.289] [PB] bars=1 depth=0.08 early=False
+[2026-04-02 18:15:00.290] [IMPULSE SRC] idx=2073 barsSince=0 range=5.67
+[2026-04-02 18:15:00.291] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=5.67 comp=5.81/1.98 retr=0.55/2.84
+[2026-04-02 18:15:00.293] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 18:15:00.294] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=5.809999999999491 atr=7.006428571428581
+[2026-04-02 18:15:00.298] [STRUCT][DIR][SOURCE] symbol=XAUUSD dir=Long source=TREND_DIRECTION trend=Long diSpread=-0.47 slopeM5=-0.48862 slopeM15=0.69915
+[2026-04-02 18:15:00.299] [STRUCT][IMPULSE][FAIL] symbol=XAUUSD dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=0 bodyAtr=0.35 rangeAtr=0.81 adx=12.1
+[2026-04-02 18:15:00.299] [STRUCT][PULLBACK][FAIL] symbol=XAUUSD dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 18:15:00.300] [STRUCT][FLAG][FAIL] symbol=XAUUSD dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:15:00.302] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:15:00.305] [AUDIT][HTF FLOW][SOURCE] symbol=XAUUSD asset=METAL entryType=N/A stage=SOURCE module=METALHtfBiasEngine htfState=Transition allowedDirection=None align=false candidateDirection=None
+[2026-04-02 18:15:00.319] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=XAUUSD asset=METAL entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Transition allowedDirection=None align=false candidateDirection=None htfConfidence=0.00
+[2026-04-02 18:15:00.320] [AUDIT][HTF CONTEXT] symbol=XAUUSD asset=METAL allowedDirection=None confidence=0.00 reason=METAL_HTF TRANSITION (bull weak) adx=30.9 activeDirection=None activeConfidence=0.00
+[2026-04-02 18:15:00.331] [HTF][SNAPSHOT] dir=None conf=0.00
+[2026-04-02 18:15:00.332] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 18:15:00.332] [CTX][MEMORY_READY] symbol=XAUUSD hasMemory=True
+[2026-04-02 18:15:00.332] [ENTRY][SNAPSHOT] symbol=XAUUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.11 chaseRisk=False timingPenalty=-11
+[2026-04-02 18:15:00.333] [CTX][TIMING][SIDE] symbol=XAUUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.11 distanceAtr=0.56
+[2026-04-02 18:15:00.333] [CTX][TIMING][SIDE] symbol=XAUUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:15:00.333] [ENTRY MARKETSTATE ASSIGN] sym=XAUUSD trend=False momentum=False lowVol=False adx=11.3 atrPts=608.85
+[2026-04-02 18:15:00.334] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DIR][CTX_BUILD] sym=XAUUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:15:00.334] [SESSION_CALENDAR] utc=2026-04-02T18:15:00.3310000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:15:00.334] [SESSION_GATE] symbol=XAUUSD tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:15:00.335] [SESSION CHECK] time=2026-04-02T18:15:00.3310000Z symbol=XAUUSD bucket=NewYork allow=True
+[2026-04-02 18:15:00.335] [SESSION_MATRIX] symbol=XAUUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:15:00.335] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:15:00.335] [XAU LOGIC] bias=Sell conf=65 ema8=4653.69 ema21=4655.69 ema21HTF=4651.43
+[2026-04-02 18:15:00.336] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DIR][LOGIC] sym=XAUUSD logicBias=Short logicConf=65
+[2026-04-02 18:15:00.336] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [CTX PROPAGATION] symbol=XAUUSD bias=Short conf=65
+[2026-04-02 18:15:00.336] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:15:00.337] [DEBUG] M5.Count=2075
+[2026-04-02 18:15:00.337] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [PIPE][ENTRY_ROUTER_PASS] pass=6 symbol=XAUUSD bar=2026-04-02T18:15:00.3310000Z
+[2026-04-02 18:15:00.337] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY START] symbol=XAUUSD bias=Short
+[2026-04-02 18:15:00.346] [PIPE] symbol=XAUUSD hasSignals=True count=2
+[2026-04-02 18:15:00.346] [TC][XAU] candidates BEFORE filter: 2
+[2026-04-02 18:15:00.346] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DBG ENTRY] total candidates=2
+[2026-04-02 18:15:00.347] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DIR][ROUTER_CAND] sym=XAUUSD type=XAU_Flag valid=False score=0 dir=Short reason=[ROUTER] NO_STRUCTURE
+[2026-04-02 18:15:00.347] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=XAUUSD asset=METAL entryType=XAU_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.348] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][LOGIC] symbol=XAUUSD entryType=XAU_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=XAU_Flag
+[2026-04-02 18:15:00.348] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DIR][ROUTER_CAND] sym=XAUUSD type=XAU_Pullback valid=False score=0 dir=Short reason=[ROUTER] NO_IMPULSE_PULLBACK_STRUCTURE
+[2026-04-02 18:15:00.349] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=XAUUSD asset=METAL entryType=XAU_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.350] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][LOGIC] symbol=XAUUSD entryType=XAU_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=XAU_Pullback
+[2026-04-02 18:15:00.350] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DIR][HTF] sym=XAUUSD allow=None conf=0.00 reason=METAL_HTF TRANSITION (bull weak) adx=30.9
+[2026-04-02 18:15:00.350] [HTF][BIAS] asset=XAU direction=None state=Neutral impact=ScoreOnly conf=0.00
+[2026-04-02 18:15:00.351] [HTF][CANDIDATE] asset=XAU type=XAU_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:15:00.351] [HTF][CANDIDATE] asset=XAU type=XAU_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:15:00.352] [HTF][APPLIED] asset=XAU dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 18:15:00.352] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=XAUUSD asset=METAL entryType=XAU_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.352] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=XAUUSD asset=METAL entryType=XAU_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.352] [TIMING][XAU_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:15:00.353] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=XAUUSD type=XAU_Flag dir=Short authority=False
+[2026-04-02 18:15:00.353] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=XAUUSD type=XAU_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.353] [TIMING][XAU_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:15:00.353] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=XAUUSD type=XAU_Pullback dir=Short authority=False
+[2026-04-02 18:15:00.354] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=XAUUSD type=XAU_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:15:00.354] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [INTEGRITY] SKIP restart protect on invalid candidate: XAU_Flag
+[2026-04-02 18:15:00.354] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][GATE] symbol=XAUUSD entryType=XAU_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.354] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [INTEGRITY] SKIP restart protect on invalid candidate: XAU_Pullback
+[2026-04-02 18:15:00.354] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][GATE] symbol=XAUUSD entryType=XAU_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:15:00.355] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][SCORE] symbol=XAUUSD entryType=XAU_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.356] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=XAUUSD asset=METAL entryType=XAU_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.356] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][SCORE] symbol=XAUUSD entryType=XAU_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:15:00.356] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=XAUUSD asset=METAL entryType=XAU_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=METAL_HTF TRANSITION (bull weak) adx=30.9 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:15:00.357] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][CLASSIFICATION] symbol=XAUUSD entryType=XAU_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.357] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][CLASSIFICATION] symbol=XAUUSD entryType=XAU_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:15:00.357] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][GATES] symbol=XAUUSD entryType=XAU_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:15:00.357] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][GATES] symbol=XAUUSD entryType=XAU_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:15:00.358] [TC][XAU] candidates AFTER filter: 2
+[2026-04-02 18:15:00.358] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][SUMMARY] symbol=XAUUSD totalEvaluations=12 logicProducedDirectionCount=12 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:15:00.358] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:15:00.358] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [CANDIDATE] type=XAU_Flag dir=Short valid=false score=0 reason=[ROUTER] NO_STRUCTURE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.358] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [TR] RANK_ONLY_INPUT XAU_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_STRUCTURE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.359] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [CANDIDATE] type=XAU_Pullback dir=Short valid=false score=0 reason=[ROUTER] NO_IMPULSE_PULLBACK_STRUCTURE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.359] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [TR] RANK_ONLY_INPUT XAU_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_IMPULSE_PULLBACK_STRUCTURE [EARLY_BREAK_PENALTY]
+[2026-04-02 18:15:00.359] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:15:00.359] [ENTRY][CANDIDATE] symbol=XAUUSD entryType=XAU_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 18:15:00.360] [TRACE] selected is null = True
+[2026-04-02 18:15:00.360] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:15:00.360] [XAUUSD] attemptId=XAU6YPYNW [ATTEMPT XAU6YPYNW] [ENTRY_TRACE][FINAL] symbol=XAUUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:15:00.360] BLOCK: entry gate
+[2026-04-02 18:15:00.361] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:15:00.362] [MEMORY][ASSESSMENT] symbol=XAUUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 18:15:00.362] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:15:00.363] [MEMORY][UPDATE] symbol=XAUUSD age=3 sinceImpulse=2
+[2026-04-02 18:15:00.363] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 18:15:00.363] [MEMORY][ASSESSMENT] symbol=XAUUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-7 trust=0.9
