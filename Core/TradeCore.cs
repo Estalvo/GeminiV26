@@ -332,11 +332,9 @@ namespace GeminiV26.Core
                 }
                 else if (string.Equals(resolvedSymbol, "ETHUSD", StringComparison.OrdinalIgnoreCase))
                 {
-                    _entryTypes = new List<IEntryType>
-                    {
-                        new ETH_FlagEntry(),
-                        new ETH_PullbackEntry()
-                    };
+                    _entryTypes = new List<IEntryType>();
+                    TryAddCryptoEntryType(_entryTypes, "GeminiV26.EntryTypes.Crypto.ETH_FlagEntry");
+                    TryAddCryptoEntryType(_entryTypes, "GeminiV26.EntryTypes.Crypto.ETH_PullbackEntry");
 
                     _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
                 }
@@ -3472,6 +3470,32 @@ namespace GeminiV26.Core
                 default:
                     return false;
             }
+        }
+
+        private void TryAddCryptoEntryType(List<IEntryType> target, string typeName)
+        {
+            Type resolvedType =
+                Type.GetType(typeName) ??
+                Type.GetType($"{typeName}, GeminiV26") ??
+                AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .Select(a => a.GetType(typeName))
+                    .FirstOrDefault(t => t != null);
+
+            if (resolvedType == null)
+            {
+                _bot?.Print($"[ENTRY][REGISTER][CRYPTO][MISSING] type={typeName}");
+                return;
+            }
+
+            if (!typeof(IEntryType).IsAssignableFrom(resolvedType))
+            {
+                _bot?.Print($"[ENTRY][REGISTER][CRYPTO][INVALID] type={typeName} reason=NotIEntryType");
+                return;
+            }
+
+            if (Activator.CreateInstance(resolvedType) is IEntryType entry)
+                target.Add(entry);
         }
 
         private bool PassFinalAcceptance(EntryContext ctx, EntryEvaluation eval)
