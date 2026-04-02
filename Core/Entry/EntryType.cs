@@ -3,7 +3,7 @@
     public enum EntryType
     {
         // ===== METAL =====
-        XAU_Pullback,   // ⭐ EZ HIÁNYZIK
+        XAU_Pullback,
         XAU_Impulse,
         XAU_Flag,
         XAU_Reversal,
@@ -29,7 +29,7 @@
         Crypto_Pullback,
         Crypto_RangeBreakout,
 
-        // ===== LEGACY =====
+        // ===== LEGACY (compiled for compatibility, not part of active runtime routing) =====
         TC_Flag,
         TC_Pullback,
         BR_RangeBreakout,
