@@ -2560,3 +2560,403 @@
 [2026-04-02 17:10:00.683] [TC] BLOCKED: Global SessionGate
 [2026-04-02 17:10:00.684] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
 [2026-04-02 17:10:00.684] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:15:00.059] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:15:00.059] [FX MSD] GBPJPY | atrPips=7.34 adx=27.4 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:15:00.060] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=27.4
+[2026-04-02 17:15:00.060] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:15:00.062] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:15:00.063] [PB] bars=1 depth=0.38 early=True
+[2026-04-02 17:15:00.064] [IMPULSE SRC] idx=2061 barsSince=0 range=0.08
+[2026-04-02 17:15:00.064] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.08 comp=0.10/0.03 retr=0.03/0.04
+[2026-04-02 17:15:00.065] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:15:00.065] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.10000000000002274 atr=0.08321428571428109
+[2026-04-02 17:15:00.067] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:15:00.067] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:15:00.068] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:15:00.069] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:15:00.069] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:15:00.070] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:15:00.070] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:15:00.071] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:15:00.071] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=27.4 atrPts=7.34
+[2026-04-02 17:15:00.072] [GBPJPY] attemptId=GBP6WKSPM [ATTEMPT GBP6WKSPM] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:15:00.073] [SESSION_CALENDAR] utc=2026-04-02T17:15:00.0730000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:15:00.073] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:15:00.074] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:15:00.075] [SESSION CHECK] time=2026-04-02T17:15:00.0730000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:15:00.075] BLOCK: session gate
+[2026-04-02 17:15:00.076] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:15:00.077] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:15:00.078] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:20:00.199] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:20:00.200] [FX MSD] GBPJPY | atrPips=7.07 adx=27.5 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:20:00.201] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=27.5
+[2026-04-02 17:20:00.202] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:20:00.202] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:20:00.205] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:20:00.206] [IMPULSE SRC] idx=2061 barsSince=1 range=0.08
+[2026-04-02 17:20:00.207] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.08 comp=0.10/0.03 retr=0.00/0.04
+[2026-04-02 17:20:00.208] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:20:00.212] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.09699999999997999 atr=0.0803571428571388
+[2026-04-02 17:20:00.215] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:20:00.220] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:20:00.223] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:20:00.226] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:20:00.227] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:20:00.227] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:20:00.229] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:20:00.230] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:20:00.232] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=27.5 atrPts=7.07
+[2026-04-02 17:20:00.233] [GBPJPY] attemptId=GBP6WR8AU [ATTEMPT GBP6WR8AU] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:20:00.234] [SESSION_CALENDAR] utc=2026-04-02T17:20:00.2300000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:20:00.235] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:20:00.235] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:20:00.236] [SESSION CHECK] time=2026-04-02T17:20:00.2450000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:20:00.236] BLOCK: session gate
+[2026-04-02 17:20:00.243] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:20:00.248] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:20:00.249] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:25:00.681] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:25:00.682] [FX MSD] GBPJPY | atrPips=7.72 adx=29.2 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:25:00.682] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=29.2
+[2026-04-02 17:25:00.682] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:25:00.682] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:25:00.683] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:25:00.684] [IMPULSE SRC] idx=2063 barsSince=0 range=0.14
+[2026-04-02 17:25:00.684] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.14 comp=0.15/0.05 retr=0.00/0.05
+[2026-04-02 17:25:00.686] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:25:00.686] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.1490000000000009 atr=0.08721428571428394
+[2026-04-02 17:25:00.687] [STRUCTURE][IMPULSE] dir=Long strength=1.00 range=0.1
+[2026-04-02 17:25:00.688] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:25:00.688] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:25:00.689] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:25:00.689] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:25:00.690] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:25:00.691] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:25:00.691] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:25:00.691] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:25:00.692] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=29.2 atrPts=7.72
+[2026-04-02 17:25:00.692] [GBPJPY] attemptId=GBP6WXO5K [ATTEMPT GBP6WXO5K] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:25:00.692] [SESSION_CALENDAR] utc=2026-04-02T17:25:00.6950000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:25:00.692] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:25:00.693] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:25:00.693] [SESSION CHECK] time=2026-04-02T17:25:00.6950000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:25:00.694] BLOCK: session gate
+[2026-04-02 17:25:00.694] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:25:00.695] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:25:00.696] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:30:00.099] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:30:00.100] [FX MSD] GBPJPY | atrPips=7.53 adx=30.2 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:30:00.100] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=30.2
+[2026-04-02 17:30:00.100] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:30:00.100] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:30:00.101] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:30:00.101] [IMPULSE SRC] idx=2064 barsSince=0 range=0.07
+[2026-04-02 17:30:00.101] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.14/0.02 retr=0.00/0.04
+[2026-04-02 17:30:00.101] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:30:00.102] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.13800000000000523 atr=0.08300000000000043
+[2026-04-02 17:30:00.102] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:30:00.102] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:30:00.102] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:30:00.103] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:30:00.103] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:30:00.112] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:30:00.112] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:30:00.112] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:30:00.112] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=30.2 atrPts=7.53
+[2026-04-02 17:30:00.113] [GBPJPY] attemptId=GBP6X436V [ATTEMPT GBP6X436V] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:30:00.113] [SESSION_CALENDAR] utc=2026-04-02T17:30:00.1180000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:30:00.113] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:30:00.114] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:30:00.114] [SESSION CHECK] time=2026-04-02T17:30:00.1180000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:30:00.114] BLOCK: session gate
+[2026-04-02 17:30:00.115] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:30:00.115] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:30:00.116] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:35:00.519] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:35:00.521] [FX MSD] GBPJPY | atrPips=7.21 adx=29.5 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:35:00.521] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=29.5
+[2026-04-02 17:35:00.523] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:35:00.524] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:35:00.525] [PB] bars=1 depth=0.05 early=False
+[2026-04-02 17:35:00.526] [IMPULSE SRC] idx=2065 barsSince=0 range=0.06
+[2026-04-02 17:35:00.526] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.11/0.02 retr=0.00/0.03
+[2026-04-02 17:35:00.527] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:35:00.527] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.11100000000001842 atr=0.0826428571428579
+[2026-04-02 17:35:00.527] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:35:00.528] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:35:00.528] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:35:00.529] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:35:00.530] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:35:00.530] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:35:00.540] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:35:00.542] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:35:00.542] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=29.5 atrPts=7.21
+[2026-04-02 17:35:00.543] [GBPJPY] attemptId=GBP6XAIZP [ATTEMPT GBP6XAIZP] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:35:00.543] [SESSION_CALENDAR] utc=2026-04-02T17:35:00.5320000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:35:00.543] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:35:00.544] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:35:00.544] [SESSION CHECK] time=2026-04-02T17:35:00.5320000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:35:00.544] BLOCK: session gate
+[2026-04-02 17:35:00.545] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:35:00.545] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:35:00.545] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:40:00.940] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:40:00.940] [FX MSD] GBPJPY | atrPips=6.80 adx=28.9 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:40:00.941] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=False ADX=28.9
+[2026-04-02 17:40:00.942] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:40:00.945] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:40:00.948] [PB] bars=1 depth=0.33 early=True
+[2026-04-02 17:40:00.949] [IMPULSE SRC] idx=2065 barsSince=1 range=0.06
+[2026-04-02 17:40:00.950] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.08/0.02 retr=0.03/0.03
+[2026-04-02 17:40:00.953] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:40:00.960] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.08299999999999841 atr=0.07892857142857272
+[2026-04-02 17:40:00.961] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:40:00.961] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:40:00.961] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:40:00.962] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:40:00.962] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:40:00.963] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:40:00.964] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:40:00.965] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:40:00.972] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=False adx=28.9 atrPts=6.80
+[2026-04-02 17:40:00.972] [GBPJPY] attemptId=GBP6XGYSW [ATTEMPT GBP6XGYSW] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:40:00.973] [SESSION_CALENDAR] utc=2026-04-02T17:40:00.9760000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:40:00.973] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:40:00.973] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:40:00.974] [SESSION CHECK] time=2026-04-02T17:40:00.9760000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:40:00.974] BLOCK: session gate
+[2026-04-02 17:40:00.974] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:40:00.975] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:40:00.975] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:45:00.372] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:45:00.373] [FX MSD] GBPJPY | atrPips=6.43 adx=28.1 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 17:45:00.373] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=28.1
+[2026-04-02 17:45:00.373] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:45:00.373] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:45:00.374] [PB] bars=1 depth=0.34 early=True
+[2026-04-02 17:45:00.374] [IMPULSE SRC] idx=2065 barsSince=2 range=0.06
+[2026-04-02 17:45:00.374] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.06/0.02 retr=0.03/0.03
+[2026-04-02 17:45:00.374] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:45:00.374] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.06100000000000705 atr=0.0775000000000026
+[2026-04-02 17:45:00.375] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:45:00.375] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:45:00.375] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:45:00.375] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:45:00.375] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:45:00.376] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:45:00.376] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:45:00.376] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:45:00.377] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=28.1 atrPts=6.43
+[2026-04-02 17:45:00.377] [GBPJPY] attemptId=GBP6XNDU1 [ATTEMPT GBP6XNDU1] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:45:00.377] [SESSION_CALENDAR] utc=2026-04-02T17:45:00.3770000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:45:00.377] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:45:00.378] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:45:00.379] [SESSION CHECK] time=2026-04-02T17:45:00.3770000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:45:00.379] BLOCK: session gate
+[2026-04-02 17:45:00.380] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:45:00.381] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:45:00.381] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:46:39.543] GeminiV26Bot STOP
+[2026-04-02 17:46:47.122] ======================================
+[2026-04-02 17:46:47.130] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 17:46:47.133] ❌ NOT legacy Gemini
+[2026-04-02 17:46:47.135] 📊 Symbol: GBPJPY
+[2026-04-02 17:46:47.138] ⏱ Timeframe: Minute5
+[2026-04-02 17:46:47.141] ======================================
+[2026-04-02 17:46:47.149] [SYMBOL][CLASSIFY][FX] raw=GBPJPY normalized=GBPJPY resolved=FX
+[2026-04-02 17:46:47.151] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 17:46:47.933] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 17:46:48.042] [RESOLVER][INPUT] input=GBPJPY
+[2026-04-02 17:46:48.042] [RESOLVER][CANONICAL] input=GBPJPY canonical=GBPJPY
+[2026-04-02 17:46:48.042] [SYMBOL][CLASSIFY][FX] raw=GBPJPY normalized=GBPJPY resolved=FX
+[2026-04-02 17:46:48.043] [RESOLVER][RUNTIME] source=current_bot runtime=GBPJPY
+[2026-04-02 17:46:48.043] [RESOLVER][SUCCESS] input=GBPJPY canonical=GBPJPY runtime=GBPJPY
+[2026-04-02 17:46:48.058] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 17:46:48.060] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.061] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 17:46:48.061] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 17:46:48.070] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 17:46:48.071] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.072] [BOOT][REHYDRATE_START]
+[2026-04-02 17:46:48.077] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 17:46:48.078] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 17:46:48.122] [MEMORY][BUILD_START] symbol=GBPJPY bars=2068
+[2026-04-02 17:46:48.144] [MEMORY][DONE] symbol=GBPJPY mode=HistoricalReplay phase=Continuation age=3 pullbacks=0 sinceImpulse=2
+[2026-04-02 17:50:00.457] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:50:00.464] [FX MSD] GBPJPY | atrPips=6.29 adx=26.7 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 17:50:00.464] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=26.7
+[2026-04-02 17:50:00.464] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:50:00.464] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:50:00.466] [RESOLVER][INPUT] input=GBPJPY
+[2026-04-02 17:50:00.466] [RESOLVER][CANONICAL] input=GBPJPY canonical=GBPJPY
+[2026-04-02 17:50:00.466] [SYMBOL][CLASSIFY][FX] raw=GBPJPY normalized=GBPJPY resolved=FX
+[2026-04-02 17:50:00.466] [RESOLVER][RUNTIME] source=current_bot runtime=GBPJPY
+[2026-04-02 17:50:00.467] [RESOLVER][SUCCESS] input=GBPJPY canonical=GBPJPY runtime=GBPJPY
+[2026-04-02 17:50:00.552] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:50:00.552] [IMPULSE SRC] idx=2065 barsSince=3 range=0.06
+[2026-04-02 17:50:00.553] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.07/0.02 retr=0.00/0.03
+[2026-04-02 17:50:00.553] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:50:00.553] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.07499999999998863 atr=0.07714285714286007
+[2026-04-02 17:50:00.553] [STRUCT][DIR][SOURCE] symbol=GBPJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=6.80 slopeM5=0.00679 slopeM15=0.05760
+[2026-04-02 17:50:00.553] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=5 idx=2063 strength=1.13 range=0.13800
+[2026-04-02 17:50:00.554] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 17:50:00.554] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 17:50:00.554] [STRUCT][FLAG][FAIL] symbol=GBPJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:50:00.554] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:50:00.554] [RESOLVER][INPUT] input=GBPJPY
+[2026-04-02 17:50:00.554] [RESOLVER][CANONICAL] input=GBPJPY canonical=GBPJPY
+[2026-04-02 17:50:00.555] [SYMBOL][CLASSIFY][FX] raw=GBPJPY normalized=GBPJPY resolved=FX
+[2026-04-02 17:50:00.555] [RESOLVER][RUNTIME] source=current_bot runtime=GBPJPY
+[2026-04-02 17:50:00.555] [RESOLVER][SUCCESS] input=GBPJPY canonical=GBPJPY runtime=GBPJPY
+[2026-04-02 17:50:01.175] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:50:01.175] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:50:01.175] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:50:01.176] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:50:01.177] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:50:01.177] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:50:01.177] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:50:01.177] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.53
+[2026-04-02 17:50:01.178] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=26.7 atrPts=6.29
+[2026-04-02 17:50:01.178] [GBPJPY] attemptId=GBP6XTTE7 [ATTEMPT GBP6XTTE7] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:50:01.178] [SESSION_CALENDAR] utc=2026-04-02T17:50:01.1820000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:50:01.179] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:50:01.179] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:50:01.179] [SESSION CHECK] time=2026-04-02T17:50:01.1820000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:50:01.179] BLOCK: session gate
+[2026-04-02 17:50:01.180] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:50:01.180] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:50:01.181] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:55:01.373] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 17:55:01.374] [FX MSD] GBPJPY | atrPips=6.10 adx=25.5 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 17:55:01.374] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=25.5
+[2026-04-02 17:55:01.374] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 17:55:01.374] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:55:01.375] [PB] bars=2 depth=0.75 early=True
+[2026-04-02 17:55:01.376] [IMPULSE SRC] idx=2068 barsSince=1 range=0.06
+[2026-04-02 17:55:01.376] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=0.06 comp=0.07/0.02 retr=0.06/0.03
+[2026-04-02 17:55:01.376] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:55:01.376] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=True HL=False short=False long=False range=0.06999999999999318 atr=0.07592857142857261
+[2026-04-02 17:55:01.377] [STRUCT][DIR][SOURCE] symbol=GBPJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=5.23 slopeM5=0.00408 slopeM15=0.05760
+[2026-04-02 17:55:01.378] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=6 idx=2063 strength=1.15 range=0.13800
+[2026-04-02 17:55:01.378] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.75 bars=2 shallowDepth=false
+[2026-04-02 17:55:01.385] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=NO_VALID_PULLBACK depth=0.75 bars=2 pressure=true
+[2026-04-02 17:55:01.385] [STRUCT][FLAG][FAIL] symbol=GBPJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:55:01.385] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:55:01.386] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:55:01.386] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 17:55:01.386] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 17:55:01.386] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 17:55:01.387] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 17:55:01.387] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:55:01.387] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:55:01.387] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.53
+[2026-04-02 17:55:01.388] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=25.5 atrPts=6.10
+[2026-04-02 17:55:01.388] [GBPJPY] attemptId=GBP6Y09KQ [ATTEMPT GBP6Y09KQ] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:55:01.388] [SESSION_CALENDAR] utc=2026-04-02T17:55:01.3860000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:55:01.389] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:55:01.389] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:55:01.390] [SESSION CHECK] time=2026-04-02T17:55:01.3860000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 17:55:01.390] BLOCK: session gate
+[2026-04-02 17:55:01.390] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:55:01.391] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 17:55:01.391] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:00:00.255] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 18:00:00.255] [FX MSD] GBPJPY | atrPips=5.76 adx=24.9 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 18:00:00.255] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=24.9
+[2026-04-02 18:00:00.256] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 18:00:00.256] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:00:00.257] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:00:00.257] [IMPULSE SRC] idx=2068 barsSince=2 range=0.06
+[2026-04-02 18:00:00.257] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.08/0.02 retr=0.00/0.03
+[2026-04-02 18:00:00.257] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 18:00:00.258] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.07699999999999818 atr=0.07142857142857346
+[2026-04-02 18:00:00.258] [STRUCT][DIR][SOURCE] symbol=GBPJPY dir=Long source=EMA_DI_CONFLUENCE_LONG trend=None diSpread=6.56 slopeM5=0.00244 slopeM15=0.04545
+[2026-04-02 18:00:00.258] [STRUCT][IMPULSE][FAIL] symbol=GBPJPY dir=Long source=EMA_DI_CONFLUENCE_LONG code=NO_RECENT_IMPULSE age=7 bodyAtr=0.13 rangeAtr=0.53 adx=25.7
+[2026-04-02 18:00:00.258] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 18:00:00.259] [STRUCT][FLAG][FAIL] symbol=GBPJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:00:00.261] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=EMA_DI_CONFLUENCE_LONG impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:00:00.261] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:00:00.261] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 18:00:00.261] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 18:00:00.262] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 18:00:00.262] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 18:00:00.262] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 18:00:00.262] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:00:00.262] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.53
+[2026-04-02 18:00:00.262] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=24.9 atrPts=5.76
+[2026-04-02 18:00:00.263] [GBPJPY] attemptId=GBP6Y6O7A [ATTEMPT GBP6Y6O7A] [DIR][CTX_BUILD] sym=GBPJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:00:00.263] [SESSION_CALENDAR] utc=2026-04-02T18:00:00.2620000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:00:00.264] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:00:00.264] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:00:00.264] [SESSION CHECK] time=2026-04-02T18:00:00.2620000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 18:00:00.265] BLOCK: session gate
+[2026-04-02 18:00:00.265] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:00:00.265] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 18:00:00.266] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:05:00.085] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 18:05:00.085] [FX MSD] GBPJPY | atrPips=5.56 adx=24.9 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 18:05:00.086] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=24.9
+[2026-04-02 18:05:00.087] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 18:05:00.088] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:05:00.092] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:05:00.095] [IMPULSE SRC] idx=2071 barsSince=0 range=0.05
+[2026-04-02 18:05:00.096] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.06/0.02 retr=0.00/0.03
+[2026-04-02 18:05:00.097] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 18:05:00.097] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.06200000000001182 atr=0.07007142857143021
+[2026-04-02 18:05:00.099] [STRUCT][DIR][SOURCE] symbol=GBPJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=8.56 slopeM5=0.00913 slopeM15=0.04545
+[2026-04-02 18:05:00.100] [STRUCT][IMPULSE][FAIL] symbol=GBPJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=8 bodyAtr=0.70 rangeAtr=0.71 adx=25.3
+[2026-04-02 18:05:00.101] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 18:05:00.102] [STRUCT][FLAG][FAIL] symbol=GBPJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:05:00.102] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:05:00.102] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:05:00.103] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 18:05:00.103] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 18:05:00.104] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 18:05:00.105] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 18:05:00.106] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 18:05:00.107] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:05:00.107] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.53
+[2026-04-02 18:05:00.107] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=24.9 atrPts=5.56
+[2026-04-02 18:05:00.107] [GBPJPY] attemptId=GBP6YD3JX [ATTEMPT GBP6YD3JX] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:05:00.107] [SESSION_CALENDAR] utc=2026-04-02T18:05:00.1090000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:05:00.108] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:05:00.108] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:05:00.108] [SESSION CHECK] time=2026-04-02T18:05:00.1090000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 18:05:00.108] BLOCK: session gate
+[2026-04-02 18:05:00.109] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:05:00.109] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 18:05:00.111] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:10:00.161] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 18:10:00.165] [FX MSD] GBPJPY | atrPips=5.38 adx=25.4 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 18:10:00.166] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=25.4
+[2026-04-02 18:10:00.167] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 18:10:00.169] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:10:00.172] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:10:00.172] [IMPULSE SRC] idx=2071 barsSince=1 range=0.05
+[2026-04-02 18:10:00.172] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.09/0.02 retr=0.00/0.03
+[2026-04-02 18:10:00.173] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:10:00.173] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.08600000000001273 atr=0.0685000000000043
+[2026-04-02 18:10:00.173] [STRUCT][DIR][SOURCE] symbol=GBPJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=11.76 slopeM5=0.01475 slopeM15=0.04545
+[2026-04-02 18:10:00.173] [STRUCT][IMPULSE][FAIL] symbol=GBPJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.36 rangeAtr=0.67 adx=25.3
+[2026-04-02 18:10:00.173] [STRUCT][PULLBACK][FAIL] symbol=GBPJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 18:10:00.174] [STRUCT][FLAG][FAIL] symbol=GBPJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:10:00.174] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:10:00.174] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:10:00.174] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 18:10:00.175] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, pullback intact, conf=0.60, gapATR=0.17, adx=27.5, distATR=0.90 activeDirection=Long activeConfidence=0.60
+[2026-04-02 18:10:00.175] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 18:10:00.175] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 18:10:00.175] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 18:10:00.175] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:10:00.176] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.53
+[2026-04-02 18:10:00.176] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=25.4 atrPts=5.38
+[2026-04-02 18:10:00.176] [GBPJPY] attemptId=GBP6YJJ39 [ATTEMPT GBP6YJJ39] [DIR][CTX_BUILD] sym=GBPJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:10:00.177] [SESSION_CALENDAR] utc=2026-04-02T18:10:00.1810000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:10:00.177] [SESSION_FILTER] symbol=GBPJPY rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:10:00.177] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:10:00.178] [SESSION CHECK] time=2026-04-02T18:10:00.1810000Z symbol=GBPJPY bucket=NewYork allow=False
+[2026-04-02 18:10:00.178] BLOCK: session gate
+[2026-04-02 18:10:00.178] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:10:00.179] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 18:10:00.179] [FLAG_BREAKOUT][WAIT] no impulse

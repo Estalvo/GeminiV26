@@ -2610,3 +2610,400 @@
 [2026-04-02 17:10:02.102] [TC] BLOCKED: Global SessionGate
 [2026-04-02 17:10:02.103] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
 [2026-04-02 17:10:02.103] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:15:00.167] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:15:00.167] [FX MSD] AUDUSD | atrPips=4.01 adx=28.1 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:15:00.168] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=28.1
+[2026-04-02 17:15:00.168] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:15:00.169] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:15:00.169] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:15:00.170] [IMPULSE SRC] idx=2061 barsSince=0 range=0.00
+[2026-04-02 17:15:00.170] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:15:00.170] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:15:00.171] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.00048000000000003595 atr=0.00046642857142858193
+[2026-04-02 17:15:00.171] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:15:00.171] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:15:00.171] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:15:00.172] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:15:00.172] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:15:00.172] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:15:00.172] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:15:00.173] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:15:00.173] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=28.1 atrPts=4.01
+[2026-04-02 17:15:00.173] [AUDUSD] attemptId=AUD6WKSSN [ATTEMPT AUD6WKSSN] [DIR][CTX_BUILD] sym=AUDUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:15:00.173] [SESSION_CALENDAR] utc=2026-04-02T17:15:00.1830000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:15:00.174] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:15:00.174] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:15:00.174] [SESSION CHECK] time=2026-04-02T17:15:00.1830000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:15:00.174] BLOCK: session gate
+[2026-04-02 17:15:00.174] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:15:00.175] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:15:00.175] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:20:00.500] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:20:00.500] [FX MSD] AUDUSD | atrPips=3.89 adx=28.7 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:20:00.501] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=28.7
+[2026-04-02 17:20:00.501] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:20:00.501] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:20:00.502] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:20:00.503] [IMPULSE SRC] idx=2061 barsSince=1 range=0.00
+[2026-04-02 17:20:00.503] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:20:00.504] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:20:00.504] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0006500000000000394 atr=0.00045000000000000595
+[2026-04-02 17:20:00.505] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:20:00.505] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:20:00.505] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:20:00.506] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:20:00.506] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:20:00.507] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:20:00.507] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:20:00.508] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:20:00.508] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=28.7 atrPts=3.89
+[2026-04-02 17:20:00.509] [AUDUSD] attemptId=AUD6WR8JJ [ATTEMPT AUD6WR8JJ] [DIR][CTX_BUILD] sym=AUDUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:20:00.509] [SESSION_CALENDAR] utc=2026-04-02T17:20:00.5110000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:20:00.510] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:20:00.510] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:20:00.511] [SESSION CHECK] time=2026-04-02T17:20:00.5110000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:20:00.511] BLOCK: session gate
+[2026-04-02 17:20:00.511] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:20:00.512] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:20:00.513] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:25:01.259] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:25:01.259] [FX MSD] AUDUSD | atrPips=3.82 adx=28.8 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:25:01.260] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=28.8
+[2026-04-02 17:25:01.260] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:25:01.260] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:25:01.261] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:25:01.261] [IMPULSE SRC] idx=2063 barsSince=0 range=0.00
+[2026-04-02 17:25:01.261] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:25:01.261] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:25:01.261] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00036000000000002697 atr=0.0004485714285714331
+[2026-04-02 17:25:01.262] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:25:01.262] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:25:01.262] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:25:01.262] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:25:01.262] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:25:01.263] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:25:01.263] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:25:01.263] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:25:01.263] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=28.8 atrPts=3.82
+[2026-04-02 17:25:01.263] [AUDUSD] attemptId=AUD6WXOLM [ATTEMPT AUD6WXOLM] [DIR][CTX_BUILD] sym=AUDUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:25:01.264] [SESSION_CALENDAR] utc=2026-04-02T17:25:01.2580000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:25:01.264] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:25:01.264] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:25:01.264] [SESSION CHECK] time=2026-04-02T17:25:01.2580000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:25:01.264] BLOCK: session gate
+[2026-04-02 17:25:01.265] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:25:01.265] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:25:01.265] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:30:00.496] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:30:00.496] [FX MSD] AUDUSD | atrPips=3.68 adx=28.3 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:30:00.496] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=28.3
+[2026-04-02 17:30:00.496] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:30:00.497] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:30:00.498] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:30:00.498] [IMPULSE SRC] idx=2064 barsSince=0 range=0.00
+[2026-04-02 17:30:00.499] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:30:00.499] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:30:00.499] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00041000000000002146 atr=0.0004421428571428592
+[2026-04-02 17:30:00.500] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:30:00.500] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:30:00.500] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:30:00.500] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:30:00.501] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:30:00.501] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:30:00.501] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:30:00.501] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:30:00.502] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=28.3 atrPts=3.68
+[2026-04-02 17:30:00.502] [AUDUSD] attemptId=AUD6X43HP [ATTEMPT AUD6X43HP] [DIR][CTX_BUILD] sym=AUDUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:30:00.502] [SESSION_CALENDAR] utc=2026-04-02T17:30:00.5090000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:30:00.503] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:30:00.503] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:30:00.503] [SESSION CHECK] time=2026-04-02T17:30:00.5090000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:30:00.504] BLOCK: session gate
+[2026-04-02 17:30:00.504] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:30:00.505] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:30:00.505] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:35:00.256] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:35:00.257] [FX MSD] AUDUSD | atrPips=3.54 adx=26.2 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:35:00.257] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=26.2
+[2026-04-02 17:35:00.257] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:35:00.258] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:35:00.259] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:35:00.260] [IMPULSE SRC] idx=2065 barsSince=0 range=0.00
+[2026-04-02 17:35:00.260] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:35:00.261] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:35:00.261] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0006200000000000649 atr=0.0004250000000000087
+[2026-04-02 17:35:00.262] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:35:00.262] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:35:00.262] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:35:00.263] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:35:00.263] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:35:00.263] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:35:00.264] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:35:00.264] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:35:00.264] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=26.2 atrPts=3.54
+[2026-04-02 17:35:00.264] [AUDUSD] attemptId=AUD6XAISB [ATTEMPT AUD6XAISB] [DIR][CTX_BUILD] sym=AUDUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:35:00.265] [SESSION_CALENDAR] utc=2026-04-02T17:35:00.2510000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:35:00.265] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:35:00.265] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:35:00.265] [SESSION CHECK] time=2026-04-02T17:35:00.2510000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:35:00.266] BLOCK: session gate
+[2026-04-02 17:35:00.266] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:35:00.266] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:35:00.267] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:40:00.950] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:40:00.951] [FX MSD] AUDUSD | atrPips=3.35 adx=24.0 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:40:00.952] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=24.0
+[2026-04-02 17:40:00.952] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:40:00.954] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:40:00.955] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:40:00.956] [IMPULSE SRC] idx=2065 barsSince=1 range=0.00
+[2026-04-02 17:40:00.956] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:40:00.957] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:40:00.957] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00047000000000008146 atr=0.00040928571428572313
+[2026-04-02 17:40:00.957] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:40:00.960] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:40:00.960] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:40:00.960] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:40:00.961] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:40:00.961] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:40:00.961] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:40:00.962] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:40:00.963] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=24.0 atrPts=3.35
+[2026-04-02 17:40:00.971] [AUDUSD] attemptId=AUD6XGYSW [ATTEMPT AUD6XGYSW] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:40:00.971] [SESSION_CALENDAR] utc=2026-04-02T17:40:00.9760000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:40:00.971] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:40:00.974] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:40:00.975] [SESSION CHECK] time=2026-04-02T17:40:00.9760000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:40:00.975] BLOCK: session gate
+[2026-04-02 17:40:00.975] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:40:00.976] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:40:00.976] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:45:00.093] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:45:00.094] [FX MSD] AUDUSD | atrPips=3.17 adx=22.4 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:45:00.094] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=22.4
+[2026-04-02 17:45:00.095] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:45:00.095] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:45:00.097] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:45:00.097] [IMPULSE SRC] idx=2065 barsSince=2 range=0.00
+[2026-04-02 17:45:00.097] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:45:00.098] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:45:00.098] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00024999999999997247 atr=0.0003785714285714424
+[2026-04-02 17:45:00.099] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:45:00.099] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:45:00.100] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:45:00.100] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:45:00.101] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:45:00.101] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.54 chaseRisk=False timingPenalty=-64
+[2026-04-02 17:45:00.102] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:45:00.102] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.54 distanceAtr=0.26
+[2026-04-02 17:45:00.102] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=22.4 atrPts=3.17
+[2026-04-02 17:45:00.103] [AUDUSD] attemptId=AUD6XNDMO [ATTEMPT AUD6XNDMO] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:45:00.104] [SESSION_CALENDAR] utc=2026-04-02T17:45:00.0960000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:45:00.104] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:45:00.105] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:45:00.105] [SESSION CHECK] time=2026-04-02T17:45:00.0960000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:45:00.105] BLOCK: session gate
+[2026-04-02 17:45:00.106] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:45:00.107] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-64 trust=0.7
+[2026-04-02 17:45:00.108] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:46:39.540] GeminiV26Bot STOP
+[2026-04-02 17:46:47.125] ======================================
+[2026-04-02 17:46:47.130] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 17:46:47.131] ❌ NOT legacy Gemini
+[2026-04-02 17:46:47.134] 📊 Symbol: AUDUSD
+[2026-04-02 17:46:47.137] ⏱ Timeframe: Minute5
+[2026-04-02 17:46:47.141] ======================================
+[2026-04-02 17:46:47.152] [SYMBOL][CLASSIFY][FX] raw=AUDUSD normalized=AUDUSD resolved=FX
+[2026-04-02 17:46:47.154] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 17:46:47.932] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 17:46:48.041] [RESOLVER][INPUT] input=AUDUSD
+[2026-04-02 17:46:48.049] [RESOLVER][CANONICAL] input=AUDUSD canonical=AUDUSD
+[2026-04-02 17:46:48.072] [SYMBOL][CLASSIFY][FX] raw=AUDUSD normalized=AUDUSD resolved=FX
+[2026-04-02 17:46:48.074] [RESOLVER][RUNTIME] source=current_bot runtime=AUDUSD
+[2026-04-02 17:46:48.075] [RESOLVER][SUCCESS] input=AUDUSD canonical=AUDUSD runtime=AUDUSD
+[2026-04-02 17:46:48.076] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 17:46:48.076] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.077] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 17:46:48.077] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 17:46:48.077] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 17:46:48.077] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.078] [BOOT][REHYDRATE_START]
+[2026-04-02 17:46:48.080] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 17:46:48.087] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 17:46:48.096] [MEMORY][BUILD_START] symbol=AUDUSD bars=2068
+[2026-04-02 17:46:48.143] [MEMORY][DONE] symbol=AUDUSD mode=HistoricalReplay phase=Continuation age=3 pullbacks=0 sinceImpulse=2
+[2026-04-02 17:50:00.417] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:50:00.423] [FX MSD] AUDUSD | atrPips=3.26 adx=21.3 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:50:00.423] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=21.3
+[2026-04-02 17:50:00.424] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:50:00.424] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:50:00.425] [RESOLVER][INPUT] input=AUDUSD
+[2026-04-02 17:50:00.425] [RESOLVER][CANONICAL] input=AUDUSD canonical=AUDUSD
+[2026-04-02 17:50:00.426] [SYMBOL][CLASSIFY][FX] raw=AUDUSD normalized=AUDUSD resolved=FX
+[2026-04-02 17:50:00.426] [RESOLVER][RUNTIME] source=current_bot runtime=AUDUSD
+[2026-04-02 17:50:00.426] [RESOLVER][SUCCESS] input=AUDUSD canonical=AUDUSD runtime=AUDUSD
+[2026-04-02 17:50:00.531] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:50:00.532] [IMPULSE SRC] idx=2068 barsSince=0 range=0.00
+[2026-04-02 17:50:00.532] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:50:00.533] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:50:00.533] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.00041000000000002146 atr=0.00037714285714286955
+[2026-04-02 17:50:00.533] [STRUCT][DIR][SOURCE] symbol=AUDUSD dir=None source=NONE trend=None diSpread=-1.60 slopeM5=-0.00008 slopeM15=0.00030
+[2026-04-02 17:50:00.533] [STRUCT][IMPULSE][FAIL] symbol=AUDUSD dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=22.5
+[2026-04-02 17:50:00.533] [STRUCT][PULLBACK][FAIL] symbol=AUDUSD dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 17:50:00.534] [STRUCT][FLAG][FAIL] symbol=AUDUSD dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:50:00.534] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:50:00.534] [RESOLVER][INPUT] input=AUDUSD
+[2026-04-02 17:50:00.534] [RESOLVER][CANONICAL] input=AUDUSD canonical=AUDUSD
+[2026-04-02 17:50:00.535] [SYMBOL][CLASSIFY][FX] raw=AUDUSD normalized=AUDUSD resolved=FX
+[2026-04-02 17:50:00.535] [RESOLVER][RUNTIME] source=current_bot runtime=AUDUSD
+[2026-04-02 17:50:00.535] [RESOLVER][SUCCESS] input=AUDUSD canonical=AUDUSD runtime=AUDUSD
+[2026-04-02 17:50:01.163] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:50:01.164] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:50:01.164] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:50:01.164] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:50:01.164] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:50:01.165] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 17:50:01.165] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:50:01.166] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.08 distanceAtr=0.12
+[2026-04-02 17:50:01.166] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=21.3 atrPts=3.26
+[2026-04-02 17:50:01.166] [AUDUSD] attemptId=AUD6XTTDC [ATTEMPT AUD6XTTDC] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:50:01.166] [SESSION_CALENDAR] utc=2026-04-02T17:50:01.1660000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:50:01.166] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:50:01.167] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:50:01.167] [SESSION CHECK] time=2026-04-02T17:50:01.1660000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:50:01.167] BLOCK: session gate
+[2026-04-02 17:50:01.167] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:50:01.168] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.7
+[2026-04-02 17:50:01.168] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:55:00.767] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 17:55:00.768] [FX MSD] AUDUSD | atrPips=3.07 adx=20.2 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:55:00.768] [FX MarketState] AUDUSD Trend=True Momentum=False LowVol=False ADX=20.2
+[2026-04-02 17:55:00.769] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 17:55:00.769] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:55:00.770] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:55:00.771] [IMPULSE SRC] idx=2069 barsSince=0 range=0.00
+[2026-04-02 17:55:00.771] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:55:00.772] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:55:00.772] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00043000000000004146 atr=0.00034285714285716063
+[2026-04-02 17:55:00.773] [STRUCT][DIR][SOURCE] symbol=AUDUSD dir=None source=NONE trend=None diSpread=-1.89 slopeM5=-0.00008 slopeM15=0.00030
+[2026-04-02 17:55:00.773] [STRUCT][IMPULSE][FAIL] symbol=AUDUSD dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=21.3
+[2026-04-02 17:55:00.774] [STRUCT][PULLBACK][FAIL] symbol=AUDUSD dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 17:55:00.774] [STRUCT][FLAG][FAIL] symbol=AUDUSD dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:55:00.775] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:55:00.775] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:55:00.776] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 17:55:00.776] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 17:55:00.777] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 17:55:00.777] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 17:55:00.778] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 17:55:00.778] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:55:00.778] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.08 distanceAtr=0.12
+[2026-04-02 17:55:00.778] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=True momentum=False lowVol=False adx=20.2 atrPts=3.07
+[2026-04-02 17:55:00.779] [AUDUSD] attemptId=AUD6Y0949 [ATTEMPT AUD6Y0949] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:55:00.779] [SESSION_CALENDAR] utc=2026-04-02T17:55:00.7770000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:55:00.780] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 17:55:00.780] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 17:55:00.781] [SESSION CHECK] time=2026-04-02T17:55:00.7770000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 17:55:00.781] BLOCK: session gate
+[2026-04-02 17:55:00.782] [TC] BLOCKED: Global SessionGate
+[2026-04-02 17:55:00.782] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.7
+[2026-04-02 17:55:00.783] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:00:00.325] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 18:00:00.325] [FX MSD] AUDUSD | atrPips=3.11 adx=19.8 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 18:00:00.325] [FX MarketState] AUDUSD Trend=False Momentum=False LowVol=False ADX=19.8
+[2026-04-02 18:00:00.326] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 18:00:00.326] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:00:00.327] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:00:00.327] [IMPULSE SRC] idx=2069 barsSince=1 range=0.00
+[2026-04-02 18:00:00.328] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 18:00:00.328] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:00:00.328] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.00036000000000002697 atr=0.0003478571428571616
+[2026-04-02 18:00:00.329] [STRUCT][DIR][SOURCE] symbol=AUDUSD dir=None source=NONE trend=None diSpread=-3.32 slopeM5=-0.00010 slopeM15=0.00021
+[2026-04-02 18:00:00.329] [STRUCT][IMPULSE][FAIL] symbol=AUDUSD dir=None source=NONE code=DIRECTION_UNRESOLVED age=1 adx=20.5
+[2026-04-02 18:00:00.329] [STRUCT][PULLBACK][FAIL] symbol=AUDUSD dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 18:00:00.329] [STRUCT][FLAG][FAIL] symbol=AUDUSD dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:00:00.330] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:00:00.330] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 18:00:00.330] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 18:00:00.330] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 18:00:00.331] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 18:00:00.331] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 18:00:00.331] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 18:00:00.331] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:00:00.331] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.08 distanceAtr=0.12
+[2026-04-02 18:00:00.332] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=False momentum=False lowVol=False adx=19.8 atrPts=3.11
+[2026-04-02 18:00:00.332] [AUDUSD] attemptId=AUD6Y6O90 [ATTEMPT AUD6Y6O90] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:00:00.332] [SESSION_CALENDAR] utc=2026-04-02T18:00:00.3400000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:00:00.332] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:00:00.333] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:00:00.333] [SESSION CHECK] time=2026-04-02T18:00:00.3400000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 18:00:00.333] BLOCK: session gate
+[2026-04-02 18:00:00.333] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:00:00.334] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.7
+[2026-04-02 18:00:00.334] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:05:00.190] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 18:05:00.191] [FX MSD] AUDUSD | atrPips=2.96 adx=18.3 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 18:05:00.191] [FX MarketState] AUDUSD Trend=False Momentum=False LowVol=False ADX=18.3
+[2026-04-02 18:05:00.193] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 18:05:00.193] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:05:00.194] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:05:00.194] [IMPULSE SRC] idx=2071 barsSince=0 range=0.00
+[2026-04-02 18:05:00.194] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 18:05:00.195] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:05:00.195] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00045000000000006146 atr=0.0003378571428571675
+[2026-04-02 18:05:00.195] [STRUCT][DIR][SOURCE] symbol=AUDUSD dir=None source=NONE trend=None diSpread=-1.57 slopeM5=-0.00006 slopeM15=0.00021
+[2026-04-02 18:05:00.195] [STRUCT][IMPULSE][FAIL] symbol=AUDUSD dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=19.4
+[2026-04-02 18:05:00.195] [STRUCT][PULLBACK][FAIL] symbol=AUDUSD dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 18:05:00.195] [STRUCT][FLAG][FAIL] symbol=AUDUSD dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:05:00.196] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:05:00.196] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 18:05:00.196] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 18:05:00.196] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 18:05:00.197] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 18:05:00.197] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 18:05:00.197] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 18:05:00.197] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:05:00.197] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.08 distanceAtr=0.12
+[2026-04-02 18:05:00.198] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=False momentum=False lowVol=False adx=18.3 atrPts=2.96
+[2026-04-02 18:05:00.198] [AUDUSD] attemptId=AUD6YD3MY [ATTEMPT AUD6YD3MY] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:05:00.198] [SESSION_CALENDAR] utc=2026-04-02T18:05:00.2020000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:05:00.199] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:05:00.199] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:05:00.199] [SESSION CHECK] time=2026-04-02T18:05:00.2020000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 18:05:00.199] BLOCK: session gate
+[2026-04-02 18:05:00.199] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:05:00.200] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.7
+[2026-04-02 18:05:00.200] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:10:00.060] [ONBAR DBG] raw=AUDUSD canonical=AUDUSD
+[2026-04-02 18:10:00.061] [FX MSD] AUDUSD | atrPips=3.00 adx=17.6 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 18:10:00.061] [FX MarketState] AUDUSD Trend=False Momentum=False LowVol=False ADX=17.6
+[2026-04-02 18:10:00.062] [MEMORY][CTX_ATTACH][START] symbol=AUDUSD
+[2026-04-02 18:10:00.062] [MEMORY][CTX_ATTACH] symbol=AUDUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:10:00.064] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:10:00.065] [IMPULSE SRC] idx=2072 barsSince=0 range=0.00
+[2026-04-02 18:10:00.065] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 18:10:00.066] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:10:00.066] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00041999999999997595 atr=0.0003350000000000218
+[2026-04-02 18:10:00.067] [STRUCT][DIR][SOURCE] symbol=AUDUSD dir=None source=NONE trend=None diSpread=2.10 slopeM5=-0.00005 slopeM15=0.00021
+[2026-04-02 18:10:00.067] [STRUCT][IMPULSE][FAIL] symbol=AUDUSD dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=18.4
+[2026-04-02 18:10:00.068] [STRUCT][PULLBACK][FAIL] symbol=AUDUSD dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 18:10:00.069] [STRUCT][FLAG][FAIL] symbol=AUDUSD dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:10:00.069] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:10:00.069] [AUDIT][HTF FLOW][SOURCE] symbol=AUDUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 18:10:00.070] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 18:10:00.071] [AUDIT][HTF CONTEXT] symbol=AUDUSD asset=FX allowedDirection=Short confidence=0.90 reason=FX_HTF BEAR strong structure, conf=0.90, gapATR=1.67, adx=20.4, distATR=0.49 activeDirection=Short activeConfidence=0.90
+[2026-04-02 18:10:00.071] [HTF][SNAPSHOT] dir=Short conf=0.90
+[2026-04-02 18:10:00.072] [CTX][MEMORY_READY] symbol=AUDUSD hasMemory=True
+[2026-04-02 18:10:00.072] [ENTRY][SNAPSHOT] symbol=AUDUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 18:10:00.073] [CTX][TIMING][SIDE] symbol=AUDUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:10:00.073] [CTX][TIMING][SIDE] symbol=AUDUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.08 distanceAtr=0.12
+[2026-04-02 18:10:00.074] [ENTRY MARKETSTATE ASSIGN] sym=AUDUSD trend=False momentum=False lowVol=False adx=17.6 atrPts=3.00
+[2026-04-02 18:10:00.075] [AUDUSD] attemptId=AUD6YJJ08 [ATTEMPT AUD6YJJ08] [DIR][CTX_BUILD] sym=AUDUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:10:00.075] [SESSION_CALENDAR] utc=2026-04-02T18:10:00.0710000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:10:00.076] [SESSION_FILTER] symbol=AUDUSD rule=NY_FX_BLOCK allow=false
+[2026-04-02 18:10:00.076] [SESSION_GATE] symbol=AUDUSD tf=M5 tier=Intraday bucket=NewYork priority=Blocked allow=False reason=NY FX filter: AUD/NZD/JPY blocked
+[2026-04-02 18:10:00.077] [SESSION CHECK] time=2026-04-02T18:10:00.0710000Z symbol=AUDUSD bucket=NewYork allow=False
+[2026-04-02 18:10:00.077] BLOCK: session gate
+[2026-04-02 18:10:00.078] [TC] BLOCKED: Global SessionGate
+[2026-04-02 18:10:00.079] [MEMORY][ASSESSMENT] symbol=AUDUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.7
+[2026-04-02 18:10:00.080] [FLAG_BREAKOUT][WAIT] no impulse

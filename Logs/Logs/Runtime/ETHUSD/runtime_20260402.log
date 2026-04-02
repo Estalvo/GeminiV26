@@ -1679,3 +1679,1091 @@
 [2026-04-02 17:10:00.094] [MEMORY][IMPULSE] symbol=ETHUSD phase=Impulse
 [2026-04-02 17:10:00.094] [MEMORY] phase=Impulse window=Fresh ext=Normal
 [2026-04-02 17:10:00.094] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:15:00.368] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:15:00.368] [CRYPTO MSD] ETHUSD | ATR=5.2 ADX=20.2 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 17:15:00.368] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=20.2
+[2026-04-02 17:15:00.369] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:15:00.369] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:15:00.370] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:15:00.370] [IMPULSE SRC] idx=2063 barsSince=0 range=5.79
+[2026-04-02 17:15:00.370] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=5.79 comp=10.80/2.03 retr=0.00/2.89
+[2026-04-02 17:15:00.370] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 17:15:00.371] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=10.798999999999978 atr=5.6018571428571375
+[2026-04-02 17:15:00.371] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:15:00.371] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:15:00.371] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:15:00.372] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:15:00.372] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:15:00.372] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:15:00.373] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:15:00.373] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.92
+[2026-04-02 17:15:00.373] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:15:00.373] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=20.2 atrPts=5.21
+[2026-04-02 17:15:00.374] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DIR][CTX_BUILD] sym=ETHUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:15:00.374] [SESSION_CALENDAR] utc=2026-04-02T17:15:00.3700000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:15:00.374] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:15:00.374] [SESSION CHECK] time=2026-04-02T17:15:00.3700000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:15:00.374] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:15:00.375] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:15:00.375] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:15:00.375] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:15:00.376] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:15:00.376] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:15:00.376] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:15:00.376] [DEBUG] M5.Count=2065
+[2026-04-02 17:15:00.376] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [PIPE][ENTRY_ROUTER_PASS] pass=5 symbol=ETHUSD bar=2026-04-02T17:15:00.3860000Z
+[2026-04-02 17:15:00.376] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:15:00.379] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:15:00.379] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DBG ENTRY] total candidates=2
+[2026-04-02 17:15:00.379] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_IMPULSE
+[2026-04-02 17:15:00.380] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.380] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:15:00.380] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:15:00.381] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.381] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:15:00.381] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:15:00.381] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:15:00.381] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:15:00.382] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:15:00.382] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:15:00.382] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.382] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.382] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:15:00.383] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:15:00.383] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:15:00.383] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:15:00.383] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:15:00.384] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:15:00.384] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:15:00.385] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:15:00.385] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:15:00.386] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:15:00.386] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:15:00.386] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.387] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:15:00.387] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:15:00.388] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:15:00.388] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:15:00.389] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:15:00.389] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:15:00.389] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=10 logicProducedDirectionCount=10 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:15:00.390] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:15:00.390] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:15:00.390] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:15:00.390] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:15:00.390] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:15:00.391] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:15:00.391] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 17:15:00.391] [TRACE] selected is null = True
+[2026-04-02 17:15:00.391] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:15:00.391] [ETHUSD] attemptId=ETH6WKSYA [ATTEMPT ETH6WKSYA] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:15:00.392] BLOCK: entry gate
+[2026-04-02 17:15:00.392] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:15:00.393] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:15:00.393] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:15:00.394] [MEMORY][UPDATE] symbol=ETHUSD age=2 sinceImpulse=1
+[2026-04-02 17:15:00.394] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:15:00.395] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:20:00.657] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:20:00.657] [CRYPTO MSD] ETHUSD | ATR=5.4 ADX=21.1 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 17:20:00.658] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=21.1
+[2026-04-02 17:20:00.658] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:20:00.658] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:20:00.659] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:20:00.660] [IMPULSE SRC] idx=2064 barsSince=0 range=7.60
+[2026-04-02 17:20:00.660] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=7.60 comp=11.49/2.66 retr=0.00/3.51
+[2026-04-02 17:20:00.660] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 17:20:00.661] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=11.489999999999782 atr=5.8518571428571375
+[2026-04-02 17:20:00.661] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:20:00.661] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:20:00.661] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:20:00.662] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:20:00.662] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:20:00.662] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:20:00.662] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=0.98 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:20:00.662] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.98 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.14 distanceAtr=0.72
+[2026-04-02 17:20:00.663] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:20:00.663] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=21.1 atrPts=5.39
+[2026-04-02 17:20:00.663] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DIR][CTX_BUILD] sym=ETHUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:20:00.663] [SESSION_CALENDAR] utc=2026-04-02T17:20:00.6670000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:20:00.663] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:20:00.664] [SESSION CHECK] time=2026-04-02T17:20:00.6670000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:20:00.664] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:20:00.664] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:20:00.664] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:20:00.665] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:20:00.665] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:20:00.666] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:20:00.666] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:20:00.666] [DEBUG] M5.Count=2066
+[2026-04-02 17:20:00.666] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [PIPE][ENTRY_ROUTER_PASS] pass=6 symbol=ETHUSD bar=2026-04-02T17:20:00.6670000Z
+[2026-04-02 17:20:00.667] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:20:00.670] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:20:00.671] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DBG ENTRY] total candidates=2
+[2026-04-02 17:20:00.671] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_IMPULSE
+[2026-04-02 17:20:00.672] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.675] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:20:00.679] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:20:00.680] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.680] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:20:00.680] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:20:00.681] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:20:00.681] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:20:00.682] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:20:00.682] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:20:00.682] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.682] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.683] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:20:00.683] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:20:00.683] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:20:00.683] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:20:00.684] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:20:00.684] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:20:00.684] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:20:00.684] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:20:00.685] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:20:00.686] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:20:00.686] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:20:00.687] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.687] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:20:00.687] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:20:00.688] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:20:00.688] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:20:00.688] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:20:00.688] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:20:00.689] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=12 logicProducedDirectionCount=12 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:20:00.689] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:20:00.689] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:20:00.689] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:20:00.690] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:20:00.690] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:20:00.690] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:20:00.690] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 17:20:00.691] [TRACE] selected is null = True
+[2026-04-02 17:20:00.691] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:20:00.691] [ETHUSD] attemptId=ETH6WR8NV [ATTEMPT ETH6WR8NV] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:20:00.691] BLOCK: entry gate
+[2026-04-02 17:20:00.691] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:20:00.692] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:20:00.692] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:20:00.693] [MEMORY][UPDATE] symbol=ETHUSD age=3 sinceImpulse=2
+[2026-04-02 17:20:00.694] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:20:00.694] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9
+[2026-04-02 17:25:00.241] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:25:00.241] [CRYPTO MSD] ETHUSD | ATR=4.9 ADX=21.1 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 17:25:00.241] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=21.1
+[2026-04-02 17:25:00.241] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:25:00.242] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:25:00.242] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:25:00.242] [IMPULSE SRC] idx=2064 barsSince=1 range=7.60
+[2026-04-02 17:25:00.243] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=7.60 comp=7.60/2.66 retr=0.00/3.45
+[2026-04-02 17:25:00.243] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:25:00.243] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=7.599999999999909 atr=5.754071428571414
+[2026-04-02 17:25:00.243] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:25:00.243] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:25:00.244] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:25:00.244] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:25:00.244] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:25:00.244] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:25:00.244] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.13 chaseRisk=False timingPenalty=-13
+[2026-04-02 17:25:00.244] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.13 distanceAtr=0.47
+[2026-04-02 17:25:00.245] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:25:00.245] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=21.1 atrPts=4.91
+[2026-04-02 17:25:00.245] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DIR][CTX_BUILD] sym=ETHUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:25:00.245] [SESSION_CALENDAR] utc=2026-04-02T17:25:00.2420000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:25:00.245] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:25:00.246] [SESSION CHECK] time=2026-04-02T17:25:00.2420000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:25:00.246] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:25:00.246] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:25:00.246] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:25:00.247] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:25:00.247] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:25:00.247] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:25:00.248] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:25:00.248] [DEBUG] M5.Count=2067
+[2026-04-02 17:25:00.248] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [PIPE][ENTRY_ROUTER_PASS] pass=7 symbol=ETHUSD bar=2026-04-02T17:25:00.2420000Z
+[2026-04-02 17:25:00.248] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:25:00.251] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:25:00.252] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DBG ENTRY] total candidates=2
+[2026-04-02 17:25:00.252] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_IMPULSE
+[2026-04-02 17:25:00.252] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.252] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:25:00.252] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:25:00.253] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.253] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:25:00.253] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:25:00.253] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:25:00.253] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:25:00.254] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:25:00.254] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:25:00.254] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.254] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.254] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:25:00.255] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:25:00.255] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:25:00.255] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:25:00.255] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:25:00.255] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:25:00.256] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:25:00.256] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:25:00.256] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:25:00.256] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:25:00.256] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:25:00.257] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.257] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:25:00.257] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:25:00.257] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:25:00.257] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:25:00.258] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:25:00.258] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:25:00.258] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=14 logicProducedDirectionCount=14 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:25:00.258] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:25:00.258] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:25:00.259] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:25:00.259] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:25:00.259] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:25:00.259] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:25:00.259] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 17:25:00.260] [TRACE] selected is null = True
+[2026-04-02 17:25:00.260] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:25:00.260] [ETHUSD] attemptId=ETH6WXNTE [ATTEMPT ETH6WXNTE] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:25:00.260] BLOCK: entry gate
+[2026-04-02 17:25:00.260] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:25:00.261] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9
+[2026-04-02 17:25:00.261] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:25:00.262] [MEMORY][UPDATE] symbol=ETHUSD age=4 sinceImpulse=3
+[2026-04-02 17:25:00.262] [MEMORY] phase=Decay window=Early ext=Normal
+[2026-04-02 17:25:00.263] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-17 trust=0.9
+[2026-04-02 17:30:03.188] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:30:03.188] [CRYPTO MSD] ETHUSD | ATR=4.7 ADX=20.4 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 17:30:03.189] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=20.4
+[2026-04-02 17:30:03.189] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:30:03.189] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 17:30:03.190] [PB] bars=1 depth=0.02 early=False
+[2026-04-02 17:30:03.190] [IMPULSE SRC] idx=2066 barsSince=0 range=3.99
+[2026-04-02 17:30:03.190] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=3.99 comp=4.03/1.40 retr=0.09/1.99
+[2026-04-02 17:30:03.191] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:30:03.191] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=4.029999999999745 atr=5.7797857142856754
+[2026-04-02 17:30:03.191] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:30:03.191] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:30:03.192] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:30:03.192] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:30:03.193] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:30:03.193] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:30:03.194] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.53 continuationFreshness=1.00 triggerLateScore=0.17 chaseRisk=False timingPenalty=-17
+[2026-04-02 17:30:03.194] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=3 attempts=0 triggerLate=0.17 distanceAtr=0.58
+[2026-04-02 17:30:03.195] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:30:03.196] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=20.4 atrPts=4.72
+[2026-04-02 17:30:03.196] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DIR][CTX_BUILD] sym=ETHUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:30:03.197] [SESSION_CALENDAR] utc=2026-04-02T17:30:03.1960000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:30:03.198] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:30:03.198] [SESSION CHECK] time=2026-04-02T17:30:03.1960000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:30:03.198] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:30:03.199] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:30:03.200] [ETH][Logic] Strong impulse candle
+[2026-04-02 17:30:03.200] [ETH][Logic] Bias=Short LogicConfidence=70
+[2026-04-02 17:30:03.201] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=70
+[2026-04-02 17:30:03.202] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=70
+[2026-04-02 17:30:03.202] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:30:03.203] [DEBUG] M5.Count=2068
+[2026-04-02 17:30:03.203] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [PIPE][ENTRY_ROUTER_PASS] pass=8 symbol=ETHUSD bar=2026-04-02T17:30:03.1960000Z
+[2026-04-02 17:30:03.204] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:30:03.211] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:30:03.212] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DBG ENTRY] total candidates=2
+[2026-04-02 17:30:03.212] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_IMPULSE
+[2026-04-02 17:30:03.213] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.213] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:30:03.214] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:30:03.215] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.216] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:30:03.216] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:30:03.217] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:30:03.217] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:30:03.218] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:30:03.218] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:30:03.219] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.219] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.220] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:30:03.220] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:30:03.221] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:30:03.221] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:30:03.221] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:30:03.222] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:30:03.222] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:30:03.222] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:30:03.222] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:30:03.222] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:30:03.223] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:30:03.223] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.223] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:30:03.223] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:30:03.223] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:30:03.223] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:30:03.224] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:30:03.224] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:30:03.224] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=16 logicProducedDirectionCount=16 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:30:03.224] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:30:03.224] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:30:03.225] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_IMPULSE [EARLY_BREAK_PENALTY]
+[2026-04-02 17:30:03.225] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:30:03.225] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:30:03.225] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:30:03.225] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 17:30:03.225] [TRACE] selected is null = True
+[2026-04-02 17:30:03.226] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:30:03.226] [ETHUSD] attemptId=ETH6X45KS [ATTEMPT ETH6X45KS] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:30:03.226] BLOCK: entry gate
+[2026-04-02 17:30:03.226] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:30:03.227] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-17 trust=0.9
+[2026-04-02 17:30:03.227] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:30:03.227] [MEMORY][UPDATE] symbol=ETHUSD age=1 sinceImpulse=0
+[2026-04-02 17:30:03.228] [MEMORY][IMPULSE] symbol=ETHUSD phase=Impulse
+[2026-04-02 17:30:03.228] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:30:03.228] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:35:00.155] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:35:00.155] [CRYPTO MSD] ETHUSD | ATR=4.8 ADX=17.9 HighVol=False LowVol=True Trend=False Momentum=False Expansion=False
+[2026-04-02 17:35:00.155] [CRYPTO MarketState] ETHUSD Trend=False Momentum=False LowVol=True ADX=17.9
+[2026-04-02 17:35:00.155] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:35:00.156] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:35:00.156] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:35:00.157] [IMPULSE SRC] idx=2067 barsSince=0 range=6.20
+[2026-04-02 17:35:00.157] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.20 comp=9.56/2.17 retr=0.00/3.10
+[2026-04-02 17:35:00.157] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:35:00.158] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=9.558999999999742 atr=5.845428571428491
+[2026-04-02 17:35:00.158] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:35:00.159] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:35:00.159] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:35:00.159] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:35:00.159] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:35:00.160] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:35:00.160] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:35:00.160] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:35:00.160] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 17:35:00.160] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=False momentum=False lowVol=True adx=17.9 atrPts=4.84
+[2026-04-02 17:35:00.161] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DIR][CTX_BUILD] sym=ETHUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:35:00.161] [SESSION_CALENDAR] utc=2026-04-02T17:35:00.1570000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:35:00.161] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:35:00.161] [SESSION CHECK] time=2026-04-02T17:35:00.1570000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:35:00.162] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:35:00.162] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:35:00.162] [ETH][Logic] Strong impulse candle
+[2026-04-02 17:35:00.162] [ETH][Logic] Bias=Short LogicConfidence=75
+[2026-04-02 17:35:00.162] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=75
+[2026-04-02 17:35:00.163] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=75
+[2026-04-02 17:35:00.163] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:35:00.163] [DEBUG] M5.Count=2069
+[2026-04-02 17:35:00.163] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [PIPE][ENTRY_ROUTER_PASS] pass=9 symbol=ETHUSD bar=2026-04-02T17:35:00.1570000Z
+[2026-04-02 17:35:00.164] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:35:00.170] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:35:00.170] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DBG ENTRY] total candidates=2
+[2026-04-02 17:35:00.170] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 17:35:00.171] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.171] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=75 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:35:00.171] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:35:00.171] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.171] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=75 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:35:00.172] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:35:00.172] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:35:00.172] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:35:00.172] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:35:00.172] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:35:00.173] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.173] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.173] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:35:00.173] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:35:00.173] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:35:00.174] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:35:00.174] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:35:00.174] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:35:00.174] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:35:00.174] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:35:00.175] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:35:00.175] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:35:00.175] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:35:00.175] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.175] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:35:00.175] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:35:00.176] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:35:00.176] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:35:00.176] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:35:00.176] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:35:00.176] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=18 logicProducedDirectionCount=18 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:35:00.177] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:35:00.177] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:35:00.177] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:35:00.177] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:35:00.177] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:35:00.178] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:35:00.178] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=Long fallback=true
+[2026-04-02 17:35:00.178] [TRACE] selected is null = True
+[2026-04-02 17:35:00.178] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:35:00.178] [ETHUSD] attemptId=ETH6XAIPA [ATTEMPT ETH6XAIPA] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:35:00.179] BLOCK: entry gate
+[2026-04-02 17:35:00.179] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:35:00.179] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:35:00.180] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:35:00.180] [MEMORY][UPDATE] symbol=ETHUSD age=1 sinceImpulse=0
+[2026-04-02 17:35:00.180] [MEMORY][IMPULSE] symbol=ETHUSD phase=Impulse
+[2026-04-02 17:35:00.181] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:35:00.181] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:40:01.016] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:40:01.016] [CRYPTO MSD] ETHUSD | ATR=4.5 ADX=17.1 HighVol=False LowVol=True Trend=False Momentum=False Expansion=False
+[2026-04-02 17:40:01.016] [CRYPTO MarketState] ETHUSD Trend=False Momentum=False LowVol=True ADX=17.1
+[2026-04-02 17:40:01.016] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:40:01.017] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:40:01.018] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:40:01.018] [IMPULSE SRC] idx=2067 barsSince=1 range=6.20
+[2026-04-02 17:40:01.018] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.20 comp=7.85/2.17 retr=0.00/3.10
+[2026-04-02 17:40:01.019] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:40:01.019] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=7.848999999999705 atr=5.571071428571323
+[2026-04-02 17:40:01.019] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:40:01.019] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:40:01.020] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:40:01.020] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:40:01.020] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:40:01.021] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:40:01.021] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:40:01.021] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:40:01.021] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 17:40:01.021] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=False momentum=False lowVol=True adx=17.1 atrPts=4.50
+[2026-04-02 17:40:01.022] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:40:01.022] [SESSION_CALENDAR] utc=2026-04-02T17:40:01.0230000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:40:01.022] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:40:01.022] [SESSION CHECK] time=2026-04-02T17:40:01.0230000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:40:01.023] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:40:01.023] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:40:01.023] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:40:01.024] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:40:01.024] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:40:01.024] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:40:01.024] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:40:01.025] [DEBUG] M5.Count=2070
+[2026-04-02 17:40:01.025] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [PIPE][ENTRY_ROUTER_PASS] pass=10 symbol=ETHUSD bar=2026-04-02T17:40:01.0230000Z
+[2026-04-02 17:40:01.025] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:40:01.029] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:40:01.029] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DBG ENTRY] total candidates=2
+[2026-04-02 17:40:01.030] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 17:40:01.030] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.030] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:40:01.030] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:40:01.031] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.031] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:40:01.031] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:40:01.031] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:40:01.032] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:40:01.032] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:40:01.032] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:40:01.032] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.033] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.033] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:40:01.033] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:40:01.033] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:40:01.033] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:40:01.034] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:40:01.034] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:40:01.034] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:40:01.034] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:40:01.035] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:40:01.035] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:40:01.035] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:40:01.035] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.036] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:40:01.036] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:40:01.036] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:40:01.036] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:40:01.036] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:40:01.037] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:40:01.037] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=20 logicProducedDirectionCount=20 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:40:01.037] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:40:01.037] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:40:01.038] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:40:01.038] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:40:01.038] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:40:01.038] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:40:01.038] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:40:01.039] [TRACE] selected is null = True
+[2026-04-02 17:40:01.039] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:40:01.039] [ETHUSD] attemptId=ETH6XGYV3 [ATTEMPT ETH6XGYV3] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:40:01.039] BLOCK: entry gate
+[2026-04-02 17:40:01.040] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:40:01.040] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:40:01.041] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:40:01.041] [MEMORY][UPDATE] symbol=ETHUSD age=2 sinceImpulse=1
+[2026-04-02 17:40:01.041] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:40:01.042] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-7 trust=0.9
+[2026-04-02 17:45:10.249] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:45:10.250] [CRYPTO MSD] ETHUSD | ATR=4.4 ADX=16.5 HighVol=False LowVol=True Trend=False Momentum=False Expansion=False
+[2026-04-02 17:45:10.250] [CRYPTO MarketState] ETHUSD Trend=False Momentum=False LowVol=True ADX=16.5
+[2026-04-02 17:45:10.250] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:45:10.250] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:45:10.251] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:45:10.252] [IMPULSE SRC] idx=2067 barsSince=2 range=6.20
+[2026-04-02 17:45:10.252] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.20 comp=4.44/2.17 retr=0.00/3.10
+[2026-04-02 17:45:10.252] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:45:10.252] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=4.438999999999851 atr=5.334642857142724
+[2026-04-02 17:45:10.252] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:45:10.253] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:45:10.253] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:45:10.253] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:45:10.254] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:45:10.254] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:45:10.254] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.07 chaseRisk=False timingPenalty=-7
+[2026-04-02 17:45:10.254] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:45:10.254] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.07 distanceAtr=0.25
+[2026-04-02 17:45:10.255] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=False momentum=False lowVol=True adx=16.5 atrPts=4.41
+[2026-04-02 17:45:10.255] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:45:10.255] [SESSION_CALENDAR] utc=2026-04-02T17:45:10.2520000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:45:10.255] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:45:10.256] [SESSION CHECK] time=2026-04-02T17:45:10.2520000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:45:10.256] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:45:10.256] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:45:10.257] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:45:10.257] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:45:10.257] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:45:10.257] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:45:10.257] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:45:10.258] [DEBUG] M5.Count=2071
+[2026-04-02 17:45:10.258] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [PIPE][ENTRY_ROUTER_PASS] pass=11 symbol=ETHUSD bar=2026-04-02T17:45:10.2520000Z
+[2026-04-02 17:45:10.258] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:45:10.261] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:45:10.261] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DBG ENTRY] total candidates=2
+[2026-04-02 17:45:10.262] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 17:45:10.262] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.262] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:45:10.263] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:45:10.263] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.264] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:45:10.264] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:45:10.265] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:45:10.265] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:45:10.266] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:45:10.266] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:45:10.267] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.268] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.268] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:45:10.269] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:45:10.269] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:45:10.270] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:45:10.270] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:45:10.270] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:45:10.271] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:45:10.272] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:45:10.272] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:45:10.272] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:45:10.273] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:45:10.273] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.274] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:45:10.274] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:45:10.275] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:45:10.275] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:45:10.276] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:45:10.277] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:45:10.277] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=22 logicProducedDirectionCount=22 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:45:10.278] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:45:10.278] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:45:10.279] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:45:10.279] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:45:10.280] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:45:10.280] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:45:10.281] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:45:10.281] [TRACE] selected is null = True
+[2026-04-02 17:45:10.281] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:45:10.282] [ETHUSD] attemptId=ETH6XNLGC [ATTEMPT ETH6XNLGC] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:45:10.282] BLOCK: entry gate
+[2026-04-02 17:45:10.283] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:45:10.284] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-7 trust=0.9
+[2026-04-02 17:45:10.286] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:45:10.287] [MEMORY][UPDATE] symbol=ETHUSD age=3 sinceImpulse=0
+[2026-04-02 17:45:10.288] [MEMORY] phase=Decay window=Fresh ext=Normal
+[2026-04-02 17:45:10.289] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:46:39.539] GeminiV26Bot STOP
+[2026-04-02 17:46:47.123] ======================================
+[2026-04-02 17:46:47.129] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 17:46:47.133] ❌ NOT legacy Gemini
+[2026-04-02 17:46:47.135] 📊 Symbol: ETHUSD
+[2026-04-02 17:46:47.138] ⏱ Timeframe: Minute5
+[2026-04-02 17:46:47.148] ======================================
+[2026-04-02 17:46:47.151] [SYMBOL][CLASSIFY][CRYPTO] raw=ETHUSD normalized=ETHUSD resolved=CRYPTO
+[2026-04-02 17:46:47.933] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 17:46:48.048] [RESOLVER][INPUT] input=ETHUSD
+[2026-04-02 17:46:48.049] [RESOLVER][CANONICAL] input=ETHUSD canonical=ETHUSD
+[2026-04-02 17:46:48.071] [SYMBOL][CLASSIFY][CRYPTO] raw=ETHUSD normalized=ETHUSD resolved=CRYPTO
+[2026-04-02 17:46:48.072] [RESOLVER][RUNTIME] source=current_bot runtime=ETHUSD
+[2026-04-02 17:46:48.081] [RESOLVER][SUCCESS] input=ETHUSD canonical=ETHUSD runtime=ETHUSD
+[2026-04-02 17:46:48.094] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 17:46:48.094] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.094] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 17:46:48.095] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 17:46:48.095] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 17:46:48.095] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 17:46:48.095] [BOOT][REHYDRATE_START]
+[2026-04-02 17:46:48.095] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 17:46:48.096] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 17:46:48.120] [MEMORY][BUILD_START] symbol=ETHUSD bars=2070
+[2026-04-02 17:46:48.144] [MEMORY][DONE] symbol=ETHUSD mode=HistoricalReplay phase=Decay age=3 pullbacks=0 sinceImpulse=0
+[2026-04-02 17:50:00.406] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:50:00.415] [CRYPTO MSD] ETHUSD | ATR=5.0 ADX=17.9 HighVol=False LowVol=True Trend=False Momentum=False Expansion=False
+[2026-04-02 17:50:00.416] [CRYPTO MarketState] ETHUSD Trend=False Momentum=False LowVol=True ADX=17.9
+[2026-04-02 17:50:00.427] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:50:00.427] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 17:50:00.428] [RESOLVER][INPUT] input=ETHUSD
+[2026-04-02 17:50:00.428] [RESOLVER][CANONICAL] input=ETHUSD canonical=ETHUSD
+[2026-04-02 17:50:00.428] [SYMBOL][CLASSIFY][CRYPTO] raw=ETHUSD normalized=ETHUSD resolved=CRYPTO
+[2026-04-02 17:50:00.428] [RESOLVER][RUNTIME] source=current_bot runtime=ETHUSD
+[2026-04-02 17:50:00.429] [RESOLVER][SUCCESS] input=ETHUSD canonical=ETHUSD runtime=ETHUSD
+[2026-04-02 17:50:00.585] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:50:00.585] [IMPULSE SRC] idx=2070 barsSince=0 range=9.69
+[2026-04-02 17:50:00.585] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=9.69 comp=11.63/3.39 retr=0.00/3.31
+[2026-04-02 17:50:00.585] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 17:50:00.586] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=11.628999999999905 atr=5.5117857142855815
+[2026-04-02 17:50:00.586] [STRUCT][DIR][SOURCE] symbol=ETHUSD dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-11.44 slopeM5=-1.37227 slopeM15=2.76251
+[2026-04-02 17:50:00.586] [STRUCTURE][IMPULSE] dir=Short strength=1.65 range=9.7
+[2026-04-02 17:50:00.586] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 17:50:00.586] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 17:50:00.587] [STRUCT][FLAG][FAIL] symbol=ETHUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:50:00.587] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:50:00.588] [RESOLVER][INPUT] input=ETHUSD
+[2026-04-02 17:50:00.588] [RESOLVER][CANONICAL] input=ETHUSD canonical=ETHUSD
+[2026-04-02 17:50:00.588] [SYMBOL][CLASSIFY][CRYPTO] raw=ETHUSD normalized=ETHUSD resolved=CRYPTO
+[2026-04-02 17:50:00.589] [RESOLVER][RUNTIME] source=current_bot runtime=ETHUSD
+[2026-04-02 17:50:00.589] [RESOLVER][SUCCESS] input=ETHUSD canonical=ETHUSD runtime=ETHUSD
+[2026-04-02 17:50:01.228] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:50:01.228] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:50:01.229] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:50:01.229] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:50:01.230] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:50:01.230] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:50:01.230] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Decay continuationWindow=Fresh extensionState=Normal impulseFreshness=0.88 continuationFreshness=1.00 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:50:01.232] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:50:01.232] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=0 barsSinceBreak=2 attempts=0 triggerLate=0.15 distanceAtr=0.63
+[2026-04-02 17:50:01.239] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=False momentum=False lowVol=True adx=17.9 atrPts=4.96
+[2026-04-02 17:50:01.240] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:50:01.240] [SESSION_CALENDAR] utc=2026-04-02T17:50:01.2440000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:50:01.241] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:50:01.241] [SESSION CHECK] time=2026-04-02T17:50:01.2440000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:50:01.241] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:50:01.241] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:50:01.243] [ETH][Logic] Strong impulse candle
+[2026-04-02 17:50:01.243] [ETH][Logic] Bias=Short LogicConfidence=80
+[2026-04-02 17:50:01.243] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=80
+[2026-04-02 17:50:01.244] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=80
+[2026-04-02 17:50:01.244] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:50:01.244] [DEBUG] M5.Count=2072
+[2026-04-02 17:50:01.245] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=ETHUSD bar=2026-04-02T17:50:01.2440000Z
+[2026-04-02 17:50:01.245] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:50:01.256] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:50:01.257] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DBG ENTRY] total candidates=2
+[2026-04-02 17:50:01.257] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 17:50:01.257] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.258] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=80 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:50:01.258] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:50:01.259] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.259] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=80 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:50:01.260] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:50:01.260] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:50:01.260] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:50:01.261] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:50:01.261] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:50:01.262] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.262] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.262] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:50:01.263] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:50:01.263] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:50:01.263] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:50:01.263] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:50:01.264] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:50:01.264] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:50:01.264] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:50:01.265] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:50:01.265] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:50:01.265] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:50:01.266] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.266] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:50:01.266] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:50:01.267] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:50:01.267] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:50:01.267] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:50:01.268] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:50:01.268] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:50:01.268] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:50:01.269] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:50:01.269] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:50:01.269] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:50:01.270] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:50:01.270] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:50:01.270] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:50:01.270] [TRACE] selected is null = True
+[2026-04-02 17:50:01.271] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:50:01.271] [ETHUSD] attemptId=ETH6XTTDC [ATTEMPT ETH6XTTDC] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:50:01.271] BLOCK: entry gate
+[2026-04-02 17:50:01.271] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:50:01.272] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.7
+[2026-04-02 17:50:01.272] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:50:01.273] [MEMORY][UPDATE] symbol=ETHUSD age=1 sinceImpulse=0
+[2026-04-02 17:50:01.273] [MEMORY][IMPULSE] symbol=ETHUSD phase=Impulse
+[2026-04-02 17:50:01.274] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:50:01.274] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:55:00.191] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 17:55:00.191] [CRYPTO MSD] ETHUSD | ATR=4.7 ADX=18.3 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 17:55:00.194] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=18.3
+[2026-04-02 17:55:00.194] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 17:55:00.194] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:55:00.195] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:55:00.195] [IMPULSE SRC] idx=2070 barsSince=1 range=9.69
+[2026-04-02 17:55:00.195] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=9.69 comp=10.44/3.39 retr=0.00/3.12
+[2026-04-02 17:55:00.196] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 17:55:00.196] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=10.440000000000055 atr=5.201785714285571
+[2026-04-02 17:55:00.196] [STRUCT][DIR][SOURCE] symbol=ETHUSD dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-11.88 slopeM5=-2.15661 slopeM15=2.76251
+[2026-04-02 17:55:00.196] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2070 strength=1.75 range=9.69000
+[2026-04-02 17:55:00.196] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 17:55:00.197] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 17:55:00.197] [STRUCT][FLAG][FAIL] symbol=ETHUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 17:55:00.197] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 17:55:00.197] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 17:55:00.197] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 17:55:00.198] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 17:55:00.198] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 17:55:00.198] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 17:55:00.198] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 17:55:00.198] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 17:55:00.198] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:55:00.199] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.94
+[2026-04-02 17:55:00.199] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=18.3 atrPts=4.69
+[2026-04-02 17:55:00.199] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:55:00.199] [SESSION_CALENDAR] utc=2026-04-02T17:55:00.1980000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:55:00.200] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 17:55:00.200] [SESSION CHECK] time=2026-04-02T17:55:00.1980000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 17:55:00.200] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 17:55:00.200] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 17:55:00.201] [ETH][Logic] Weak impulse candle
+[2026-04-02 17:55:00.201] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 17:55:00.201] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 17:55:00.201] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 17:55:00.201] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:55:00.201] [DEBUG] M5.Count=2073
+[2026-04-02 17:55:00.202] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=ETHUSD bar=2026-04-02T17:55:00.1980000Z
+[2026-04-02 17:55:00.202] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 17:55:00.204] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 17:55:00.205] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DBG ENTRY] total candidates=2
+[2026-04-02 17:55:00.205] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 17:55:00.205] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.205] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 17:55:00.205] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 17:55:00.206] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.206] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 17:55:00.206] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 17:55:00.206] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 17:55:00.206] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:55:00.207] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 17:55:00.207] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:55:00.207] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.207] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.207] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 17:55:00.208] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 17:55:00.208] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:55:00.208] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:55:00.208] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 17:55:00.208] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 17:55:00.209] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 17:55:00.209] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:55:00.209] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 17:55:00.209] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:55:00.209] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:55:00.210] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.210] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:55:00.210] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 17:55:00.210] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:55:00.210] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:55:00.211] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:55:00.211] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:55:00.211] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:55:00.211] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:55:00.211] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:55:00.212] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 17:55:00.212] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:55:00.212] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 17:55:00.212] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:55:00.213] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:55:00.213] [TRACE] selected is null = True
+[2026-04-02 17:55:00.213] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:55:00.213] [ETHUSD] attemptId=ETH6Y08O6 [ATTEMPT ETH6Y08O6] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:55:00.213] BLOCK: entry gate
+[2026-04-02 17:55:00.214] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:55:00.214] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 17:55:00.215] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:55:00.215] [MEMORY][UPDATE] symbol=ETHUSD age=2 sinceImpulse=1
+[2026-04-02 17:55:00.216] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:55:00.216] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 18:00:00.542] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 18:00:00.543] [CRYPTO MSD] ETHUSD | ATR=4.8 ADX=19.7 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 18:00:00.543] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=19.7
+[2026-04-02 18:00:00.543] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 18:00:00.544] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:00:00.544] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:00:00.545] [IMPULSE SRC] idx=2072 barsSince=0 range=6.50
+[2026-04-02 18:00:00.545] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.50 comp=7.90/2.27 retr=0.00/3.16
+[2026-04-02 18:00:00.545] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:00:00.545] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=7.900000000000091 atr=5.270357142857002
+[2026-04-02 18:00:00.546] [STRUCT][DIR][SOURCE] symbol=ETHUSD dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-16.41 slopeM5=-3.09692 slopeM15=0.88419
+[2026-04-02 18:00:00.546] [STRUCTURE][IMPULSE] dir=Short strength=0.70 range=6.5
+[2026-04-02 18:00:00.546] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:00:00.546] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:00:00.547] [STRUCT][FLAG][FAIL] symbol=ETHUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:00:00.547] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:00:00.547] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 18:00:00.547] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 18:00:00.547] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 18:00:00.548] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 18:00:00.548] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 18:00:00.548] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 18:00:00.548] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.12 chaseRisk=False timingPenalty=-12
+[2026-04-02 18:00:00.549] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:00:00.549] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.12 distanceAtr=0.58
+[2026-04-02 18:00:00.549] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=19.7 atrPts=4.80
+[2026-04-02 18:00:00.550] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:00:00.550] [SESSION_CALENDAR] utc=2026-04-02T18:00:00.5590000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:00:00.551] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 18:00:00.551] [SESSION CHECK] time=2026-04-02T18:00:00.5590000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 18:00:00.552] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 18:00:00.552] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 18:00:00.553] [ETH][Logic] Weak impulse candle
+[2026-04-02 18:00:00.553] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 18:00:00.554] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 18:00:00.554] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 18:00:00.554] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:00:00.555] [DEBUG] M5.Count=2074
+[2026-04-02 18:00:00.555] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=ETHUSD bar=2026-04-02T18:00:00.5590000Z
+[2026-04-02 18:00:00.555] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 18:00:00.558] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 18:00:00.558] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DBG ENTRY] total candidates=2
+[2026-04-02 18:00:00.559] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 18:00:00.559] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.559] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 18:00:00.559] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 18:00:00.559] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.560] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 18:00:00.560] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 18:00:00.560] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 18:00:00.560] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:00:00.560] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:00:00.561] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 18:00:00.561] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.561] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.562] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:00:00.562] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 18:00:00.562] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:00:00.563] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:00:00.563] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 18:00:00.564] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:00:00.564] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 18:00:00.564] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:00:00.565] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 18:00:00.565] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:00:00.566] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:00:00.566] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.566] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:00:00.567] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:00:00.567] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:00:00.567] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:00:00.567] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:00:00.568] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:00:00.568] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=6 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:00:00.568] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:00:00.568] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:00:00.568] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:00:00.569] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:00:00.569] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:00:00.569] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:00:00.569] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 18:00:00.569] [TRACE] selected is null = True
+[2026-04-02 18:00:00.570] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:00:00.570] [ETHUSD] attemptId=ETH6Y6OF3 [ATTEMPT ETH6Y6OF3] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:00:00.570] BLOCK: entry gate
+[2026-04-02 18:00:00.570] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:00:00.571] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 18:00:00.571] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:00:00.572] [MEMORY][UPDATE] symbol=ETHUSD age=3 sinceImpulse=2
+[2026-04-02 18:00:00.573] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 18:00:00.573] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.9
+[2026-04-02 18:05:01.537] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 18:05:01.537] [CRYPTO MSD] ETHUSD | ATR=4.7 ADX=20.5 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 18:05:01.537] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=20.5
+[2026-04-02 18:05:01.537] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 18:05:01.538] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:05:01.538] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:05:01.538] [IMPULSE SRC] idx=2072 barsSince=1 range=6.50
+[2026-04-02 18:05:01.539] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.50 comp=6.50/2.27 retr=0.00/3.24
+[2026-04-02 18:05:01.539] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:05:01.539] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=6.5 atr=5.396071428571288
+[2026-04-02 18:05:01.539] [STRUCT][DIR][SOURCE] symbol=ETHUSD dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-15.59 slopeM5=-3.06902 slopeM15=0.88419
+[2026-04-02 18:05:01.539] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2072 strength=0.69 range=6.50000
+[2026-04-02 18:05:01.539] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:05:01.540] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:05:01.540] [STRUCT][FLAG][FAIL] symbol=ETHUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:05:01.540] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:05:01.540] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 18:05:01.541] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 18:05:01.541] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 18:05:01.541] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 18:05:01.541] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 18:05:01.541] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 18:05:01.541] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=0.99 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 18:05:01.542] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:05:01.542] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.99 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.16 distanceAtr=0.65
+[2026-04-02 18:05:01.542] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=20.5 atrPts=4.65
+[2026-04-02 18:05:01.542] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:05:01.542] [SESSION_CALENDAR] utc=2026-04-02T18:05:01.5460000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:05:01.543] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 18:05:01.543] [SESSION CHECK] time=2026-04-02T18:05:01.5460000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 18:05:01.543] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 18:05:01.543] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 18:05:01.543] [ETH][Logic] Weak impulse candle
+[2026-04-02 18:05:01.544] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 18:05:01.544] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 18:05:01.544] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 18:05:01.544] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:05:01.544] [DEBUG] M5.Count=2075
+[2026-04-02 18:05:01.545] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=ETHUSD bar=2026-04-02T18:05:01.5460000Z
+[2026-04-02 18:05:01.545] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 18:05:01.547] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 18:05:01.547] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DBG ENTRY] total candidates=2
+[2026-04-02 18:05:01.548] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 18:05:01.548] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.548] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 18:05:01.548] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 18:05:01.548] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.548] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 18:05:01.549] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 18:05:01.549] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 18:05:01.549] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:05:01.549] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:05:01.549] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 18:05:01.550] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.550] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.550] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:05:01.550] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 18:05:01.550] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:05:01.550] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 18:05:01.551] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:05:01.552] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:05:01.552] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.552] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:05:01.552] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:05:01.552] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=8 logicProducedDirectionCount=8 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:05:01.553] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:05:01.554] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:05:01.554] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:05:01.554] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:05:01.554] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:05:01.554] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 18:05:01.555] [TRACE] selected is null = True
+[2026-04-02 18:05:01.555] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:05:01.555] [ETHUSD] attemptId=ETH6YD4OA [ATTEMPT ETH6YD4OA] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:05:01.556] BLOCK: entry gate
+[2026-04-02 18:05:01.556] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:05:01.557] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.9
+[2026-04-02 18:05:01.558] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:05:01.558] [MEMORY][UPDATE] symbol=ETHUSD age=4 sinceImpulse=3
+[2026-04-02 18:05:01.559] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 18:05:01.560] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=True late=False exhausted=False chase=False timingPenalty=-17 trust=0.9
+[2026-04-02 18:10:00.044] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 18:10:00.044] [CRYPTO MSD] ETHUSD | ATR=4.8 ADX=21.7 HighVol=False LowVol=True Trend=True Momentum=False Expansion=False
+[2026-04-02 18:10:00.045] [CRYPTO MarketState] ETHUSD Trend=True Momentum=False LowVol=True ADX=21.7
+[2026-04-02 18:10:00.045] [MEMORY][CTX_ATTACH][START] symbol=ETHUSD
+[2026-04-02 18:10:00.046] [MEMORY][CTX_ATTACH] symbol=ETHUSD hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 18:10:00.047] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:10:00.048] [IMPULSE SRC] idx=2072 barsSince=2 range=6.50
+[2026-04-02 18:10:00.048] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=6.50 comp=7.10/2.27 retr=0.00/3.25
+[2026-04-02 18:10:00.049] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:10:00.049] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=7.100000000000136 atr=5.610357142857018
+[2026-04-02 18:10:00.050] [STRUCT][DIR][SOURCE] symbol=ETHUSD dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-16.57 slopeM5=-3.21729 slopeM15=0.88419
+[2026-04-02 18:10:00.050] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=2 idx=2072 strength=0.66 range=7.10000
+[2026-04-02 18:10:00.050] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:10:00.051] [STRUCT][PULLBACK][FAIL] symbol=ETHUSD dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:10:00.051] [STRUCT][FLAG][FAIL] symbol=ETHUSD dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:10:00.052] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:10:00.052] [AUDIT][HTF FLOW][SOURCE] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=SOURCE module=CRYPTOHtfBiasEngine htfState=Neutral allowedDirection=None align=false candidateDirection=None
+[2026-04-02 18:10:00.053] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=ETHUSD asset=CRYPTO entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Neutral allowedDirection=None align=false candidateDirection=None htfConfidence=0.27
+[2026-04-02 18:10:00.053] [AUDIT][HTF CONTEXT] symbol=ETHUSD asset=CRYPTO allowedDirection=None confidence=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 activeDirection=None activeConfidence=0.27
+[2026-04-02 18:10:00.053] [HTF][SNAPSHOT] dir=None conf=0.27
+[2026-04-02 18:10:00.054] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 18:10:00.054] [CTX][MEMORY_READY] symbol=ETHUSD hasMemory=True
+[2026-04-02 18:10:00.055] [ENTRY][SNAPSHOT] symbol=ETHUSD movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.53 continuationFreshness=1.00 triggerLateScore=0.17 chaseRisk=False timingPenalty=-17
+[2026-04-02 18:10:00.056] [CTX][TIMING][SIDE] symbol=ETHUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:10:00.056] [CTX][TIMING][SIDE] symbol=ETHUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=3 attempts=0 triggerLate=0.17 distanceAtr=0.54
+[2026-04-02 18:10:00.056] [ENTRY MARKETSTATE ASSIGN] sym=ETHUSD trend=True momentum=False lowVol=True adx=21.7 atrPts=4.83
+[2026-04-02 18:10:00.057] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DIR][CTX_BUILD] sym=ETHUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 18:10:00.058] [SESSION_CALENDAR] utc=2026-04-02T18:10:00.0560000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:10:00.058] [SESSION_GATE] symbol=ETHUSD tf=M5 tier=Intraday bucket=CryptoAlwaysOn priority=Medium allow=True reason=Crypto always on
+[2026-04-02 18:10:00.059] [SESSION CHECK] time=2026-04-02T18:10:00.0560000Z symbol=ETHUSD bucket=CryptoAlwaysOn allow=True
+[2026-04-02 18:10:00.059] [SESSION_MATRIX] symbol=ETHUSD bucket=CryptoAlwaysOn tier=Intraday flag=True breakout=True pullback=True minADX=0.0 minAtrMult=1.00
+[2026-04-02 18:10:00.060] [CTX_SESSION_ASSIGN] sessionFromGate=CryptoAlwaysOn sessionAssigned=Off
+[2026-04-02 18:10:00.061] [ETH][Logic] Weak impulse candle
+[2026-04-02 18:10:00.061] [ETH][Logic] Bias=Short LogicConfidence=55
+[2026-04-02 18:10:00.062] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DIR][LOGIC] sym=ETHUSD logicBias=Short logicConf=55
+[2026-04-02 18:10:00.062] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [CTX PROPAGATION] symbol=ETHUSD bias=Short conf=55
+[2026-04-02 18:10:00.063] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:10:00.063] [DEBUG] M5.Count=2076
+[2026-04-02 18:10:00.064] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [PIPE][ENTRY_ROUTER_PASS] pass=5 symbol=ETHUSD bar=2026-04-02T18:10:00.0710000Z
+[2026-04-02 18:10:00.064] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY START] symbol=ETHUSD bias=Short
+[2026-04-02 18:10:00.070] [PIPE] symbol=ETHUSD hasSignals=True count=2
+[2026-04-02 18:10:00.071] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DBG ENTRY] total candidates=2
+[2026-04-02 18:10:00.072] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Flag valid=False score=0 dir=Short reason=[ROUTER] ENTRY_INVALID_FLAG
+[2026-04-02 18:10:00.072] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.072] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Flag stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Flag
+[2026-04-02 18:10:00.073] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DIR][ROUTER_CAND] sym=ETHUSD type=Crypto_Pullback valid=False score=0 dir=Short reason=[ROUTER] ENTRY_NO_PULLBACK
+[2026-04-02 18:10:00.073] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.073] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][LOGIC] symbol=ETHUSD entryType=Crypto_Pullback stage=LOGIC candidateDirection=Short score=0 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=55 patternDetected=true setupType=Crypto_Pullback
+[2026-04-02 18:10:00.074] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DIR][HTF] sym=ETHUSD allow=None conf=0.27 reason=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15
+[2026-04-02 18:10:00.074] [HTF][BIAS] asset=CRYPTO direction=None state=Neutral impact=ScoreOnly conf=0.27
+[2026-04-02 18:10:00.074] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Flag dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:10:00.075] [HTF][CANDIDATE] asset=CRYPTO type=Crypto_Pullback dir=Short aligned=False misaligned=False score=0->0 state=Neutral
+[2026-04-02 18:10:00.075] [HTF][APPLIED] asset=CRYPTO dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 18:10:00.075] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.076] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.076] [TIMING][Crypto_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:10:00.076] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short authority=False
+[2026-04-02 18:10:00.076] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Flag dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:10:00.077] [TIMING][Crypto_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:10:00.077] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short authority=False
+[2026-04-02 18:10:00.077] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=ETHUSD type=Crypto_Pullback dir=Short score=0->0 penalty=15 barsSinceBreak=0
+[2026-04-02 18:10:00.077] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Flag
+[2026-04-02 18:10:00.078] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Flag stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:10:00.078] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [INTEGRITY] SKIP restart protect on invalid candidate: Crypto_Pullback
+[2026-04-02 18:10:00.078] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][GATE] symbol=ETHUSD entryType=Crypto_Pullback stage=GATE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:10:00.079] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Flag stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:10:00.079] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.079] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][SCORE] symbol=ETHUSD entryType=Crypto_Pullback stage=SCORE candidateDirection=Short score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:10:00.080] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=ETHUSD asset=CRYPTO entryType=Crypto_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=CRYPTO_HTF NEUTRAL no usable directional premise, adx=21.0, gapATR=0.64, slope21ATR=-0.15 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 18:10:00.080] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Flag stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:10:00.080] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][CLASSIFICATION] symbol=ETHUSD entryType=Crypto_Pullback stage=CLASSIFICATION candidateDirection=Short score=0 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:10:00.080] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Flag stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:10:00.081] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][GATES] symbol=ETHUSD entryType=Crypto_Pullback stage=GATES candidateDirection=Short score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 18:10:00.081] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][SUMMARY] symbol=ETHUSD totalEvaluations=10 logicProducedDirectionCount=10 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:10:00.081] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:10:00.081] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [CANDIDATE] type=Crypto_Flag dir=Short valid=false score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:10:00.082] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [TR] RANK_ONLY_INPUT Crypto_Flag dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_INVALID_FLAG [EARLY_BREAK_PENALTY]
+[2026-04-02 18:10:00.082] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [CANDIDATE] type=Crypto_Pullback dir=Short valid=false score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:10:00.082] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [TR] RANK_ONLY_INPUT Crypto_Pullback dir=Short valid=False state=NONE trigger=False score=0 reason=[ROUTER] ENTRY_NO_PULLBACK [EARLY_BREAK_PENALTY]
+[2026-04-02 18:10:00.082] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:10:00.083] [ENTRY][CANDIDATE] symbol=ETHUSD entryType=Crypto_Flag score=0 confidence=0 trend=None fallback=true
+[2026-04-02 18:10:00.083] [TRACE] selected is null = True
+[2026-04-02 18:10:00.083] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:10:00.083] [ETHUSD] attemptId=ETH6YJIZS [ATTEMPT ETH6YJIZS] [ENTRY_TRACE][FINAL] symbol=ETHUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:10:00.083] BLOCK: entry gate
+[2026-04-02 18:10:00.084] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:10:00.084] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=True late=False exhausted=False chase=False timingPenalty=-17 trust=0.9
+[2026-04-02 18:10:00.085] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:10:00.085] [MEMORY][UPDATE] symbol=ETHUSD age=5 sinceImpulse=4
+[2026-04-02 18:10:00.085] [MEMORY] phase=Continuation window=Early ext=Normal
+[2026-04-02 18:10:00.086] [MEMORY][ASSESSMENT] symbol=ETHUSD firstPullback=True late=False exhausted=False chase=False timingPenalty=-28 trust=0.9
