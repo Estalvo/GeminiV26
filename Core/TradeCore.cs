@@ -336,9 +336,11 @@ namespace GeminiV26.Core
             {
                 _entryTypes = new List<IEntryType>
                 {
-                    // Phase 1 safe-mode runtime registration:
-                    // FX entry types remain disabled / non-executable.
+                    new FX_FlagContinuationEntry(),
+                    new FX_ImpulseContinuationEntry()
                 };
+
+                _bot.Print($"[ENTRY][REGISTER][FX] count={_entryTypes.Count}");
             }
             else if (_instrumentClass == InstrumentClass.INDEX)
             {
@@ -360,6 +362,12 @@ namespace GeminiV26.Core
                 };
             }
         
+
+            if (_entryTypes == null || _entryTypes.Count == 0)
+            {
+                _bot.Print("[ENTRY][FATAL] No entries registered → abort");
+                return;
+            }
 
             _entryRouter = new EntryRouter(_entryTypes);
             _transitionDetector = new TransitionDetector();
@@ -1177,6 +1185,7 @@ namespace GeminiV26.Core
             _ctx.DirectionDebugLogged = false;
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[PIPE][ENTRY_ROUTER_PASS] pass={_entryRouterPassCounter} symbol={_bot.SymbolName} bar={_bot.Server.Time:O}", _ctx));
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY START] symbol={_bot.SymbolName} bias={_ctx.LogicBias}", _ctx));
+            _bot.Print($"[ROUTER][START] entries={_entryTypes.Count}");
 
             var signals = _entryRouter.Evaluate(new[] { _ctx });
 
@@ -1607,6 +1616,14 @@ namespace GeminiV26.Core
 
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_PRE] sym={_bot.SymbolName} finalCtxDir={_ctx.FinalDirection}", _ctx));
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][EXEC_CONFIRMED] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
+
+                if (_ctx.FinalDirection == TradeDirection.None)
+                {
+                    _bot.Print("[EXECUTION][BLOCK] FinalDirection NONE");
+                    return;
+                }
+
+                _bot.Print($"[EXECUTION][DISPATCH] symbol={_bot.SymbolName} direction={_ctx.FinalDirection}");
 
                 if (!HasDirectionTraceCompleteness(_ctx))
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DIR][TRACE_INCOMPLETE] sym={_bot.SymbolName} finalDir={_ctx.FinalDirection}", _ctx));
