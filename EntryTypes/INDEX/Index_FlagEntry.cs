@@ -21,11 +21,14 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
             var direction = ctx.Structure.StructureDirection;
+            bool structureDirStrict = direction == TradeDirection.Long || direction == TradeDirection.Short;
+            bool structureDirAuthority = ctx.IsStructureDirectionAuthoritative();
             bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
             if (direction == TradeDirection.None)
             {
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
+                    structureDirAuthority &&
                     (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
                     (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal) &&
                     trendFollowThrough;
@@ -43,6 +46,11 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.LogStructureAuthority("Index_FlagEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
                     $"resolvedDir={direction}");
                 ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
+            }
+            else if (structureDirStrict)
+            {
+                ctx.LogStructureAuthority("Index_FlagEntry", "DIR_OK", "StructureDirection", "StructureDirection",
+                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={direction} strict=true");
             }
 
             int barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
