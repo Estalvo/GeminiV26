@@ -29,6 +29,10 @@ namespace GeminiV26.Core.Entry
         public bool HasFlag;
         public double FlagCompression;
         public int FlagBars;
+        public double FlagHigh;
+        public double FlagLow;
+        public bool FlagBreakoutUp;
+        public bool FlagBreakoutDown;
 
         public TradeDirection StructureDirection;
     }

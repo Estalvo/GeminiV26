@@ -44,15 +44,27 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "structure_direction_missing", 0, TradeDirection.None);
             }
 
+            bool validBreakout =
+                (ctx.Structure.StructureDirection == TradeDirection.Long && ctx.Structure.FlagBreakoutUp) ||
+                (ctx.Structure.StructureDirection == TradeDirection.Short && ctx.Structure.FlagBreakoutDown);
+
+            if (!validBreakout)
+            {
+                ctx.Log?.Invoke("[ENTRY][FLAG][WAIT_BREAKOUT]");
+                return Reject(ctx, "no_breakout", 0, TradeDirection.None);
+            }
+
             var direction = ctx.Structure.StructureDirection;
-            int score = (int)Math.Round(100.0 * (
-                0.4 * ctx.Structure.ImpulseStrength +
+            double score01 =
+                0.5 * ctx.Structure.ImpulseStrength +
                 0.3 * (1.0 - ctx.Structure.PullbackDepth) +
-                0.3 * (1.0 - ctx.Structure.FlagCompression)));
+                0.2 * (1.0 - ctx.Structure.FlagCompression);
+
+            int score = (int)Math.Round(100.0 * score01);
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score = Math.Max(0, Math.Min(100, score));
 
-            ctx.Log?.Invoke("[ENTRY][FLAG][STRUCTURE_OK]");
+            ctx.Log?.Invoke("[ENTRY][FLAG][BREAKOUT_CONFIRMED]");
 
             return new EntryEvaluation
             {
