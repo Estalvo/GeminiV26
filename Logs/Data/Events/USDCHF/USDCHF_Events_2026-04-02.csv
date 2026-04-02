@@ -12,3 +12,5 @@ EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
 2026-04-02T16:54:57.6980000Z,USDCHF,BotStart,0,,Started on Minute5,,
 2026-04-02T17:46:39.5180000Z,USDCHF,BotStop,0,,,,
 2026-04-02T17:46:48.0020000Z,USDCHF,BotStart,0,,Started on Minute5,,
+2026-04-02T18:36:04.7320000Z,USDCHF,BotStop,0,,,,
+2026-04-02T18:36:13.0910000Z,USDCHF,BotStart,0,,Started on Minute5,,

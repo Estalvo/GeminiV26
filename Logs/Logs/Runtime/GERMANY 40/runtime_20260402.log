@@ -5321,3 +5321,967 @@
 [2026-04-02 18:15:00.068] [MEMORY][UPDATE] symbol=GER40 age=3 sinceImpulse=2
 [2026-04-02 18:15:00.069] [MEMORY] phase=Continuation window=Fresh ext=Normal
 [2026-04-02 18:15:00.069] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-6 trust=0.9
+[2026-04-02 18:20:01.000] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:20:01.001] [INDEX MSD] GERMANY 40 | atrPts=17.4 adx=26.1 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:20:01.001] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=26.1
+[2026-04-02 18:20:01.001] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:20:01.002] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:20:01.003] [PB] bars=2 depth=0.25 early=False
+[2026-04-02 18:20:01.003] [IMPULSE SRC] idx=2071 barsSince=3 range=17.00
+[2026-04-02 18:20:01.003] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=True long=False short=False impulse=17.00 comp=14.50/5.95 retr=5.00/8.50
+[2026-04-02 18:20:01.003] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:20:01.003] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=True HL=True short=False long=False range=14.5 atr=20.107142857142858
+[2026-04-02 18:20:01.004] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=7.14 slopeM5=4.82206 slopeM15=33.07467
+[2026-04-02 18:20:01.004] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=5 idx=2069 strength=0.80 range=20.50000
+[2026-04-02 18:20:01.004] [STRUCT][PULLBACK][STANDARD_OK] depth=0.25 bars=2 micro=true
+[2026-04-02 18:20:01.004] [STRUCTURE][PULLBACK_RANGE] low=23172.30000 high=23186.80000
+[2026-04-02 18:20:01.005] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_FLAG bars=0 compression=0.72 pressure=true
+[2026-04-02 18:20:01.005] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=true pbDepth=0.25 pbBars=2 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:20:01.005] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:20:01.005] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:20:01.006] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:20:01.006] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:20:01.006] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:20:01.006] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.06 chaseRisk=False timingPenalty=-6
+[2026-04-02 18:20:01.006] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.06 distanceAtr=0.04
+[2026-04-02 18:20:01.007] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:20:01.007] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=26.1 atrPts=17.45
+[2026-04-02 18:20:01.008] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:20:01.008] [SESSION_CALENDAR] utc=2026-04-02T18:20:01.0120000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:20:01.008] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:20:01.008] [SESSION CHECK] time=2026-04-02T18:20:01.0120000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:20:01.008] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:20:01.009] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:20:01.009] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23102.75 ema200=23009.54 diff=93.21 | adx=26.1 atr=17.45 | htfBull=True
+[2026-04-02 18:20:01.009] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:20:01.010] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:20:01.010] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:20:01.010] [DEBUG] M5.Count=2076
+[2026-04-02 18:20:01.010] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [PIPE][ENTRY_ROUTER_PASS] pass=7 symbol=GERMANY 40 bar=2026-04-02T18:20:01.0120000Z
+[2026-04-02 18:20:01.010] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:20:01.015] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:20:01.016] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:20:01.017] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DBG ENTRY] total candidates=2
+[2026-04-02 18:20:01.017] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_signal|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:20:01.018] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.018] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 18:20:01.019] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] INVALID_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:20:01.019] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.020] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 18:20:01.020] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:20:01.021] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:20:01.021] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:20:01.022] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:20:01.022] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:20:01.023] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.023] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.023] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:20:01.023] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:20:01.024] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:20:01.024] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:20:01.024] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:20:01.024] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:20:01.025] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:20:01.025] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:20:01.025] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:20:01.025] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:20:01.026] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:20:01.026] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:20:01.026] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:20:01.026] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.026] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:20:01.027] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:20:01.027] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:20:01.027] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:20:01.027] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:20:01.028] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:20:01.028] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=14 logicProducedDirectionCount=14 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:20:01.028] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:20:01.028] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_signal|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:20:01.029] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_signal|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:20:01.029] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] INVALID_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:20:01.029] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] INVALID_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:20:01.029] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:20:01.030] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:20:01.030] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:20:01.030] [TRACE] selected is null = True
+[2026-04-02 18:20:01.030] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:20:01.030] [GERMANY 40] attemptId=GER6YWEPG [ATTEMPT GER6YWEPG] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:20:01.031] BLOCK: entry gate
+[2026-04-02 18:20:01.031] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:20:01.031] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-6 trust=0.9
+[2026-04-02 18:20:01.032] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:20:01.033] [MEMORY][UPDATE] symbol=GER40 age=4 sinceImpulse=0
+[2026-04-02 18:20:01.033] [MEMORY] phase=Decay window=Early ext=Normal
+[2026-04-02 18:20:01.034] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 18:25:00.400] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:25:00.400] [INDEX MSD] GERMANY 40 | atrPts=16.0 adx=25.2 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:25:00.400] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=25.2
+[2026-04-02 18:25:00.400] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:25:00.400] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 18:25:00.401] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:25:00.401] [IMPULSE SRC] idx=2071 barsSince=4 range=0.00
+[2026-04-02 18:25:00.401] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=14.00/14.51 retr=0.00/9.07
+[2026-04-02 18:25:00.402] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:25:00.402] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=14 atr=18.142857142857142
+[2026-04-02 18:25:00.402] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=6.39 slopeM5=3.88369 slopeM15=33.07467
+[2026-04-02 18:25:00.402] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=6 idx=2069 strength=0.88 range=20.50000
+[2026-04-02 18:25:00.403] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:25:00.403] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 18:25:00.403] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:25:00.403] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:25:00.403] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:25:00.404] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:25:00.404] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:25:00.404] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:25:00.404] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:25:00.404] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.83 continuationFreshness=1.00 triggerLateScore=0.12 chaseRisk=False timingPenalty=-12
+[2026-04-02 18:25:00.405] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=0 barsSinceBreak=3 attempts=0 triggerLate=0.12 distanceAtr=0.23
+[2026-04-02 18:25:00.405] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:25:00.405] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=25.2 atrPts=16.00
+[2026-04-02 18:25:00.405] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:25:00.405] [SESSION_CALENDAR] utc=2026-04-02T18:25:00.3980000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:25:00.406] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:25:00.406] [SESSION CHECK] time=2026-04-02T18:25:00.3980000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:25:00.406] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:25:00.406] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:25:00.406] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23105.11 ema200=23011.07 diff=94.05 | adx=25.2 atr=16.00 | htfBull=True
+[2026-04-02 18:25:00.407] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:25:00.407] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:25:00.407] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:25:00.408] [DEBUG] M5.Count=2077
+[2026-04-02 18:25:00.408] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [PIPE][ENTRY_ROUTER_PASS] pass=8 symbol=GERMANY 40 bar=2026-04-02T18:25:00.3980000Z
+[2026-04-02 18:25:00.408] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:25:00.410] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:25:00.411] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:25:00.411] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DBG ENTRY] total candidates=2
+[2026-04-02 18:25:00.411] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:25:00.411] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.412] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 18:25:00.412] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:25:00.413] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.413] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 18:25:00.413] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:25:00.413] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:25:00.414] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:25:00.414] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:25:00.414] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:25:00.414] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.415] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.415] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:25:00.415] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:25:00.415] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:25:00.416] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:25:00.416] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:25:00.416] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:25:00.416] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:25:00.417] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:25:00.417] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:25:00.417] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:25:00.417] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:25:00.418] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:25:00.418] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:25:00.418] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.418] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:25:00.418] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:25:00.419] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:25:00.420] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:25:00.420] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:25:00.420] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:25:00.421] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=16 logicProducedDirectionCount=16 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:25:00.421] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:25:00.422] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:25:00.422] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:25:00.422] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:25:00.423] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:25:00.423] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:25:00.424] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:25:00.424] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:25:00.424] [TRACE] selected is null = True
+[2026-04-02 18:25:00.424] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:25:00.425] [GERMANY 40] attemptId=GER6Z2TPQ [ATTEMPT GER6Z2TPQ] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:25:00.425] BLOCK: entry gate
+[2026-04-02 18:25:00.425] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:25:00.425] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 18:25:00.426] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:25:00.426] [MEMORY][UPDATE] symbol=GER40 age=1 sinceImpulse=0
+[2026-04-02 18:25:00.426] [MEMORY][IMPULSE] symbol=GER40 phase=Impulse
+[2026-04-02 18:25:00.427] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 18:25:00.427] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 18:30:00.500] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:30:00.500] [INDEX MSD] GERMANY 40 | atrPts=15.1 adx=23.5 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:30:00.500] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.5
+[2026-04-02 18:30:00.500] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:30:00.501] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 18:30:00.502] [PB] bars=1 depth=0.45 early=True
+[2026-04-02 18:30:00.502] [IMPULSE SRC] idx=2071 barsSince=5 range=0.00
+[2026-04-02 18:30:00.502] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=16.50/14.09 retr=8.00/8.80
+[2026-04-02 18:30:00.503] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:30:00.503] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=16.5 atr=17.607142857142858
+[2026-04-02 18:30:00.503] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=3.40 slopeM5=3.03063 slopeM15=27.93151
+[2026-04-02 18:30:00.503] [STRUCT][IMPULSE][FAIL] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.06 rangeAtr=0.62 adx=24.7
+[2026-04-02 18:30:00.504] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 18:30:00.504] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:30:00.504] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:30:00.504] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:30:00.505] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:30:00.505] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:30:00.505] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:30:00.505] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:30:00.506] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 18:30:00.506] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:30:00.506] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 18:30:00.506] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.5 atrPts=15.15
+[2026-04-02 18:30:00.507] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:30:00.507] [SESSION_CALENDAR] utc=2026-04-02T18:30:00.5080000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:30:00.507] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:30:00.507] [SESSION CHECK] time=2026-04-02T18:30:00.5080000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:30:00.508] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:30:00.508] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:30:00.508] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23107.59 ema200=23012.63 diff=94.96 | adx=23.5 atr=15.15 | htfBull=True
+[2026-04-02 18:30:00.508] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:30:00.508] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:30:00.509] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:30:00.510] [DEBUG] M5.Count=2078
+[2026-04-02 18:30:00.510] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [PIPE][ENTRY_ROUTER_PASS] pass=9 symbol=GERMANY 40 bar=2026-04-02T18:30:00.5080000Z
+[2026-04-02 18:30:00.512] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:30:00.514] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:30:00.515] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:30:00.515] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DBG ENTRY] total candidates=2
+[2026-04-02 18:30:00.515] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:30:00.515] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.515] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 18:30:00.516] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:30:00.516] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.516] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 18:30:00.516] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:30:00.516] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:30:00.517] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:30:00.517] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:30:00.517] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:30:00.517] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.517] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.518] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:30:00.518] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:30:00.518] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:30:00.518] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:30:00.519] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:30:00.519] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:30:00.519] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:30:00.519] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:30:00.519] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:30:00.520] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:30:00.520] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:30:00.520] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:30:00.520] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:30:00.520] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.521] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:30:00.521] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:30:00.521] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:30:00.521] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:30:00.522] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:30:00.522] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:30:00.522] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=18 logicProducedDirectionCount=18 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:30:00.522] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:30:00.523] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:30:00.523] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:30:00.523] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:30:00.523] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:30:00.523] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:30:00.524] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:30:00.524] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:30:00.524] [TRACE] selected is null = True
+[2026-04-02 18:30:00.524] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:30:00.524] [GERMANY 40] attemptId=GER6Z999O [ATTEMPT GER6Z999O] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:30:00.525] BLOCK: entry gate
+[2026-04-02 18:30:00.525] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:30:00.525] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 18:30:00.526] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:30:00.526] [MEMORY][UPDATE] symbol=GER40 age=2 sinceImpulse=1
+[2026-04-02 18:30:00.526] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 18:30:00.527] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.9
+[2026-04-02 18:35:00.642] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:35:00.644] [INDEX MSD] GERMANY 40 | atrPts=14.5 adx=23.0 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:35:00.644] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.0
+[2026-04-02 18:35:00.645] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:35:00.645] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 18:35:00.646] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:35:00.647] [IMPULSE SRC] idx=2071 barsSince=6 range=0.00
+[2026-04-02 18:35:00.647] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=17.00/13.74 retr=0.00/8.59
+[2026-04-02 18:35:00.648] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:35:00.654] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=17 atr=17.178571428571427
+[2026-04-02 18:35:00.665] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=5.19 slopeM5=2.84603 slopeM15=27.93151
+[2026-04-02 18:35:00.668] [STRUCT][IMPULSE][FAIL] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=8 bodyAtr=0.49 rangeAtr=0.67 adx=23.8
+[2026-04-02 18:35:00.669] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 18:35:00.671] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:35:00.671] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:35:00.672] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:35:00.672] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:35:00.672] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:35:00.672] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:35:00.673] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:35:00.673] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.08 chaseRisk=False timingPenalty=-8
+[2026-04-02 18:35:00.673] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:35:00.674] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.08 distanceAtr=0.32
+[2026-04-02 18:35:00.674] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.0 atrPts=14.46
+[2026-04-02 18:35:00.674] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:35:00.675] [SESSION_CALENDAR] utc=2026-04-02T18:35:00.6690000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:35:00.675] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:35:00.675] [SESSION CHECK] time=2026-04-02T18:35:00.6690000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:35:00.676] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:35:00.676] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:35:00.676] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23110.65 ema200=23014.35 diff=96.29 | adx=23.0 atr=14.46 | htfBull=True
+[2026-04-02 18:35:00.677] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:35:00.677] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:35:00.678] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:35:00.678] [DEBUG] M5.Count=2079
+[2026-04-02 18:35:00.679] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [PIPE][ENTRY_ROUTER_PASS] pass=10 symbol=GERMANY 40 bar=2026-04-02T18:35:00.6850000Z
+[2026-04-02 18:35:00.679] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:35:00.691] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:35:00.695] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:35:00.695] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DBG ENTRY] total candidates=2
+[2026-04-02 18:35:00.695] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:35:00.696] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.696] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 18:35:00.696] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:35:00.697] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.697] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 18:35:00.697] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:35:00.698] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:35:00.698] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:35:00.698] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:35:00.698] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:35:00.699] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.699] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.699] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:35:00.699] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:35:00.700] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:35:00.700] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:35:00.702] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:35:00.702] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:35:00.703] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:35:00.703] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:35:00.703] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:35:00.704] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:35:00.704] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:35:00.704] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:35:00.704] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:35:00.705] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.705] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:35:00.705] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:35:00.706] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:35:00.706] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:35:00.706] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:35:00.706] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:35:00.706] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=20 logicProducedDirectionCount=20 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:35:00.707] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:35:00.707] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:35:00.707] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:35:00.708] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:35:00.708] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:35:00.708] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:35:00.709] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:35:00.709] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:35:00.710] [TRACE] selected is null = True
+[2026-04-02 18:35:00.710] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:35:00.710] [GERMANY 40] attemptId=GER6ZFOV2 [ATTEMPT GER6ZFOV2] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:35:00.711] BLOCK: entry gate
+[2026-04-02 18:35:00.711] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:35:00.712] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-8 trust=0.9
+[2026-04-02 18:35:00.712] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:35:00.713] [MEMORY][UPDATE] symbol=GER40 age=1 sinceImpulse=0
+[2026-04-02 18:35:00.713] [MEMORY][IMPULSE] symbol=GER40 phase=Impulse
+[2026-04-02 18:35:00.714] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 18:35:00.714] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 18:36:04.742] GeminiV26Bot STOP
+[2026-04-02 18:36:12.055] ======================================
+[2026-04-02 18:36:12.063] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 18:36:12.066] ❌ NOT legacy Gemini
+[2026-04-02 18:36:12.076] 📊 Symbol: GERMANY 40
+[2026-04-02 18:36:12.083] ⏱ Timeframe: Minute5
+[2026-04-02 18:36:12.087] ======================================
+[2026-04-02 18:36:12.089] [SYMBOL][CLASSIFY][INDEX] raw=GERMANY 40 normalized=GER40 resolved=INDEX
+[2026-04-02 18:36:12.973] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 18:36:13.101] [RESOLVER][INPUT] input=GER40
+[2026-04-02 18:36:13.103] [RESOLVER][CANONICAL] input=GER40 canonical=GER40
+[2026-04-02 18:36:13.107] [SYMBOL][CLASSIFY][INDEX] raw=GER40 normalized=GER40 resolved=INDEX
+[2026-04-02 18:36:13.108] [RESOLVER][RUNTIME] source=current_bot runtime=GERMANY 40
+[2026-04-02 18:36:13.108] [RESOLVER][SUCCESS] input=GER40 canonical=GER40 runtime=GERMANY 40
+[2026-04-02 18:36:13.118] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 18:36:13.118] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 18:36:13.120] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 18:36:13.124] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 18:36:13.134] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 18:36:13.135] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 18:36:13.136] [BOOT][REHYDRATE_START]
+[2026-04-02 18:36:13.143] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 18:36:13.144] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 18:36:13.193] [MEMORY][BUILD_START] symbol=GER40 bars=2078
+[2026-04-02 18:36:13.230] [MEMORY][DONE] symbol=GER40 mode=HistoricalReplay phase=Impulse age=1 pullbacks=0 sinceImpulse=0
+[2026-04-02 18:40:00.533] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:40:00.537] [INDEX MSD] GERMANY 40 | atrPts=14.0 adx=22.3 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:40:00.538] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=22.3
+[2026-04-02 18:40:00.538] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:40:00.539] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 18:40:00.539] [RESOLVER][INPUT] input=GERMANY 40
+[2026-04-02 18:40:00.540] [RESOLVER][CANONICAL] input=GERMANY 40 canonical=GER40
+[2026-04-02 18:40:00.541] [SYMBOL][CLASSIFY][INDEX] raw=GERMANY 40 normalized=GER40 resolved=INDEX
+[2026-04-02 18:40:00.541] [RESOLVER][RUNTIME] source=current_bot runtime=GERMANY 40
+[2026-04-02 18:40:00.541] [RESOLVER][SUCCESS] input=GERMANY 40 canonical=GER40 runtime=GERMANY 40
+[2026-04-02 18:40:00.866] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:40:00.866] [IMPULSE SRC] idx=2071 barsSince=7 range=0.00
+[2026-04-02 18:40:00.866] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=12.40/13.54 retr=0.00/8.46
+[2026-04-02 18:40:00.867] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:40:00.867] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=False short=False long=False range=12.399999999997817 atr=16.921428571428415
+[2026-04-02 18:40:00.867] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=5.15 slopeM5=2.72366 slopeM15=27.93151
+[2026-04-02 18:40:00.867] [STRUCT][IMPULSE][FAIL] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.33 rangeAtr=0.73 adx=23.1
+[2026-04-02 18:40:00.868] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 18:40:00.868] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:40:00.868] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:40:00.868] [RESOLVER][INPUT] input=GERMANY 40
+[2026-04-02 18:40:00.868] [RESOLVER][CANONICAL] input=GERMANY 40 canonical=GER40
+[2026-04-02 18:40:00.869] [SYMBOL][CLASSIFY][INDEX] raw=GERMANY 40 normalized=GER40 resolved=INDEX
+[2026-04-02 18:40:00.869] [RESOLVER][RUNTIME] source=current_bot runtime=GERMANY 40
+[2026-04-02 18:40:00.869] [RESOLVER][SUCCESS] input=GERMANY 40 canonical=GER40 runtime=GERMANY 40
+[2026-04-02 18:40:01.201] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:40:01.201] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:40:01.201] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:40:01.202] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:40:01.202] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:40:01.202] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 18:40:01.202] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.96
+[2026-04-02 18:40:01.203] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:40:01.203] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=22.3 atrPts=14.04
+[2026-04-02 18:40:01.203] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:40:01.204] [SESSION_CALENDAR] utc=2026-04-02T18:40:01.1960000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:40:01.205] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:40:01.209] [SESSION CHECK] time=2026-04-02T18:40:01.2120000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:40:01.209] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:40:01.210] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:40:01.216] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23112.80 ema200=23015.85 diff=96.94 | adx=22.3 atr=14.04 | htfBull=True
+[2026-04-02 18:40:01.216] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:40:01.217] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:40:01.217] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:40:01.217] [DEBUG] M5.Count=2080
+[2026-04-02 18:40:01.218] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=GERMANY 40 bar=2026-04-02T18:40:01.2120000Z
+[2026-04-02 18:40:01.218] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:40:01.229] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:40:01.230] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:40:01.230] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DBG ENTRY] total candidates=2
+[2026-04-02 18:40:01.230] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:40:01.231] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.238] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 18:40:01.239] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:40:01.239] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.240] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 18:40:01.240] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:40:01.240] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:40:01.241] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:40:01.241] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:40:01.242] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:40:01.245] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.246] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.246] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:40:01.246] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:40:01.247] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:40:01.247] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:40:01.248] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:40:01.248] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:40:01.248] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:40:01.249] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:40:01.249] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:40:01.250] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:40:01.250] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:40:01.250] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:40:01.251] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:40:01.251] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.251] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:40:01.252] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:40:01.252] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:40:01.252] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:40:01.252] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:40:01.253] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:40:01.253] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:40:01.253] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:40:01.253] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:40:01.253] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:40:01.254] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:40:01.254] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:40:01.254] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:40:01.254] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:40:01.254] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:40:01.255] [TRACE] selected is null = True
+[2026-04-02 18:40:01.255] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:40:01.255] [GERMANY 40] attemptId=GER6ZM49O [ATTEMPT GER6ZM49O] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:40:01.255] BLOCK: entry gate
+[2026-04-02 18:40:01.255] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:40:01.256] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 18:40:01.256] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 18:40:01.257] [MEMORY][UPDATE] symbol=GER40 age=2 sinceImpulse=0
+[2026-04-02 18:40:01.257] [MEMORY] phase=Decay window=Fresh ext=Normal
+[2026-04-02 18:40:01.257] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-9 trust=0.9
+[2026-04-02 18:45:00.204] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:45:00.204] [INDEX MSD] GERMANY 40 | atrPts=14.9 adx=23.1 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:45:00.205] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.1
+[2026-04-02 18:45:00.206] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:45:00.206] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 18:45:00.208] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 18:45:00.208] [IMPULSE SRC] idx=2079 barsSince=0 range=23.50
+[2026-04-02 18:45:00.209] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=23.50 comp=27.90/8.22 retr=0.00/10.15
+[2026-04-02 18:45:00.209] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:45:00.210] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=27.899999999997817 atr=16.921428571428415
+[2026-04-02 18:45:00.210] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=9.83 slopeM5=4.15787 slopeM15=27.66501
+[2026-04-02 18:45:00.211] [STRUCTURE][IMPULSE] dir=Long strength=0.98 range=23.5
+[2026-04-02 18:45:00.211] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 18:45:00.212] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 18:45:00.212] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:45:00.212] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:45:00.213] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:45:00.213] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:45:00.213] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:45:00.214] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:45:00.214] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:45:00.215] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Decay continuationWindow=Fresh extensionState=Normal impulseFreshness=0.92 continuationFreshness=1.00 triggerLateScore=0.09 chaseRisk=False timingPenalty=-9
+[2026-04-02 18:45:00.222] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=0 barsSinceBreak=1 attempts=0 triggerLate=0.09 distanceAtr=0.43
+[2026-04-02 18:45:00.222] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:45:00.223] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.1 atrPts=14.90
+[2026-04-02 18:45:00.228] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:45:00.231] [SESSION_CALENDAR] utc=2026-04-02T18:45:00.2310000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:45:00.232] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:45:00.232] [SESSION CHECK] time=2026-04-02T18:45:00.2310000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:45:00.233] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:45:00.234] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:45:00.235] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23116.30 ema200=23017.71 diff=98.59 | adx=23.1 atr=14.90 | htfBull=True
+[2026-04-02 18:45:00.235] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:45:00.236] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:45:00.236] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:45:00.237] [DEBUG] M5.Count=2081
+[2026-04-02 18:45:00.237] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=GERMANY 40 bar=2026-04-02T18:45:00.2460000Z
+[2026-04-02 18:45:00.238] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:45:00.256] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:45:00.257] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:45:00.257] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DBG ENTRY] total candidates=2
+[2026-04-02 18:45:00.257] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:45:00.258] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.258] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 18:45:00.258] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:45:00.259] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.259] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 18:45:00.259] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:45:00.260] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:45:00.260] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:45:00.261] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:45:00.261] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:45:00.261] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.261] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.262] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:45:00.262] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:45:00.263] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:45:00.263] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:45:00.264] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:45:00.264] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:45:00.265] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:45:00.265] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:45:00.265] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:45:00.265] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:45:00.266] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:45:00.266] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:45:00.266] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:45:00.267] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.267] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:45:00.270] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:45:00.272] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:45:00.272] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:45:00.273] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:45:00.273] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:45:00.274] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:45:00.275] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:45:00.275] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:45:00.276] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:45:00.276] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:45:00.277] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:45:00.278] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:45:00.278] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:45:00.279] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:45:00.281] [TRACE] selected is null = True
+[2026-04-02 18:45:00.282] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:45:00.286] [GERMANY 40] attemptId=GER6ZSJHZ [ATTEMPT GER6ZSJHZ] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:45:00.287] BLOCK: entry gate
+[2026-04-02 18:45:00.288] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:45:00.289] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-9 trust=0.9
+[2026-04-02 18:45:00.290] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:45:00.295] [MEMORY][UPDATE] symbol=GER40 age=1 sinceImpulse=0
+[2026-04-02 18:45:00.297] [MEMORY][IMPULSE] symbol=GER40 phase=Impulse
+[2026-04-02 18:45:00.298] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 18:45:00.302] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 18:50:01.320] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:50:01.321] [INDEX MSD] GERMANY 40 | atrPts=14.0 adx=23.1 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:50:01.321] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.1
+[2026-04-02 18:50:01.322] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:50:01.322] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 18:50:01.324] [PB] bars=3 depth=1.35 early=True
+[2026-04-02 18:50:01.324] [IMPULSE SRC] idx=2079 barsSince=1 range=23.50
+[2026-04-02 18:50:01.325] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=False long=False short=False impulse=23.50 comp=27.90/8.22 retr=22.50/10.02
+[2026-04-02 18:50:01.325] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:50:01.326] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=27.899999999997817 atr=16.707142857142703
+[2026-04-02 18:50:01.326] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=9.51 slopeM5=4.74352 slopeM15=27.66501
+[2026-04-02 18:50:01.327] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2079 strength=0.99 range=23.50000
+[2026-04-02 18:50:01.327] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.35 bars=3 shallowDepth=false
+[2026-04-02 18:50:01.328] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=1.35 bars=3 pressure=true
+[2026-04-02 18:50:01.328] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:50:01.329] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:50:01.329] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:50:01.330] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:50:01.330] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:50:01.331] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:50:01.331] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:50:01.332] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.98 triggerLateScore=0.11 chaseRisk=False timingPenalty=-11
+[2026-04-02 18:50:01.332] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.98 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.11 distanceAtr=0.70
+[2026-04-02 18:50:01.333] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:50:01.333] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.1 atrPts=13.97
+[2026-04-02 18:50:01.334] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:50:01.334] [SESSION_CALENDAR] utc=2026-04-02T18:50:01.3300000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:50:01.335] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:50:01.335] [SESSION CHECK] time=2026-04-02T18:50:01.3300000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:50:01.335] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:50:01.336] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:50:01.337] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23119.23 ema200=23019.44 diff=99.79 | adx=23.1 atr=13.97 | htfBull=True
+[2026-04-02 18:50:01.337] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:50:01.338] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:50:01.338] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:50:01.339] [DEBUG] M5.Count=2082
+[2026-04-02 18:50:01.339] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=GERMANY 40 bar=2026-04-02T18:50:01.3300000Z
+[2026-04-02 18:50:01.339] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:50:01.351] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:50:01.351] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:50:01.352] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DBG ENTRY] total candidates=2
+[2026-04-02 18:50:01.352] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:50:01.353] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.353] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 18:50:01.354] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:50:01.354] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.354] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 18:50:01.354] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:50:01.354] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:50:01.355] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:50:01.355] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:50:01.355] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:50:01.355] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.356] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.356] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:50:01.356] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:50:01.356] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:50:01.357] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:50:01.357] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:50:01.357] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:50:01.357] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:50:01.357] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:50:01.358] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:50:01.358] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:50:01.358] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:50:01.358] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:50:01.358] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:50:01.359] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.359] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:50:01.359] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:50:01.359] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:50:01.360] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:50:01.360] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:50:01.360] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:50:01.360] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=6 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:50:01.360] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:50:01.361] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:50:01.361] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:50:01.361] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:50:01.361] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:50:01.362] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:50:01.362] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:50:01.362] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:50:01.362] [TRACE] selected is null = True
+[2026-04-02 18:50:01.362] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:50:01.363] [GERMANY 40] attemptId=GER6ZYZTU [ATTEMPT GER6ZYZTU] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:50:01.363] BLOCK: entry gate
+[2026-04-02 18:50:01.363] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:50:01.364] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 18:50:01.364] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:50:01.364] [MEMORY][UPDATE] symbol=GER40 age=2 sinceImpulse=1
+[2026-04-02 18:50:01.365] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 18:50:01.366] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 18:55:02.200] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 18:55:02.201] [INDEX MSD] GERMANY 40 | atrPts=13.6 adx=23.6 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 18:55:02.201] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.6
+[2026-04-02 18:55:02.202] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 18:55:02.203] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 18:55:02.205] [PB] bars=1 depth=0.12 early=False
+[2026-04-02 18:55:02.206] [IMPULSE SRC] idx=2079 barsSince=2 range=23.50
+[2026-04-02 18:55:02.206] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=23.50 comp=14.00/8.22 retr=2.00/9.94
+[2026-04-02 18:55:02.207] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 18:55:02.207] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=14 atr=16.564285714285557
+[2026-04-02 18:55:02.208] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=10.68 slopeM5=5.63047 slopeM15=27.66501
+[2026-04-02 18:55:02.209] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2079 strength=1.00 range=23.50000
+[2026-04-02 18:55:02.209] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=0.12 bars=1 pressure=false
+[2026-04-02 18:55:02.210] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 18:55:02.210] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 18:55:02.211] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 18:55:02.211] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.82
+[2026-04-02 18:55:02.212] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 activeDirection=Long activeConfidence=0.82
+[2026-04-02 18:55:02.212] [HTF][SNAPSHOT] dir=Long conf=0.82
+[2026-04-02 18:55:02.213] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 18:55:02.213] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.82 continuationFreshness=0.98 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 18:55:02.214] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.98 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.14 distanceAtr=0.75
+[2026-04-02 18:55:02.214] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 18:55:02.215] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.6 atrPts=13.56
+[2026-04-02 18:55:02.215] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 18:55:02.216] [SESSION_CALENDAR] utc=2026-04-02T18:55:02.2130000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 18:55:02.216] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 18:55:02.217] [SESSION CHECK] time=2026-04-02T18:55:02.2130000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 18:55:02.218] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 18:55:02.218] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 18:55:02.218] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23121.78 ema200=23021.08 diff=100.70 | adx=23.6 atr=13.56 | htfBull=True
+[2026-04-02 18:55:02.219] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 18:55:02.219] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 18:55:02.220] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 18:55:02.220] [DEBUG] M5.Count=2083
+[2026-04-02 18:55:02.220] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=GERMANY 40 bar=2026-04-02T18:55:02.2290000Z
+[2026-04-02 18:55:02.220] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 18:55:02.223] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 18:55:02.224] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 18:55:02.224] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DBG ENTRY] total candidates=2
+[2026-04-02 18:55:02.224] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:55:02.224] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.224] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 18:55:02.225] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 18:55:02.225] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.225] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 18:55:02.225] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.82 reason=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11
+[2026-04-02 18:55:02.226] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.82
+[2026-04-02 18:55:02.226] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:55:02.226] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 18:55:02.226] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 18:55:02.226] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.227] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.227] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 18:55:02.227] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 18:55:02.227] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:55:02.227] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 18:55:02.228] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 18:55:02.228] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 18:55:02.228] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 18:55:02.228] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 18:55:02.229] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:55:02.229] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 18:55:02.229] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 18:55:02.229] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 18:55:02.229] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:55:02.230] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.230] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 18:55:02.230] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.30 slope50ATR=0.20 adx=26.1 gapATR=0.84 distFastATR=1.11 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 18:55:02.230] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:55:02.230] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 18:55:02.231] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:55:02.231] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 18:55:02.231] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=8 logicProducedDirectionCount=8 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 18:55:02.231] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 18:55:02.231] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:55:02.232] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:55:02.232] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:55:02.232] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 18:55:02.232] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 18:55:02.233] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 18:55:02.233] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 18:55:02.233] [TRACE] selected is null = True
+[2026-04-02 18:55:02.233] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 18:55:02.234] [GERMANY 40] attemptId=GER705FZP [ATTEMPT GER705FZP] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 18:55:02.234] BLOCK: entry gate
+[2026-04-02 18:55:02.234] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 18:55:02.234] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 18:55:02.235] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 18:55:02.235] [MEMORY][UPDATE] symbol=GER40 age=3 sinceImpulse=2
+[2026-04-02 18:55:02.235] [MEMORY] phase=Continuation window=Early ext=Normal
+[2026-04-02 18:55:02.240] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 19:00:00.197] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 19:00:00.198] [INDEX MSD] GERMANY 40 | atrPts=12.5 adx=23.1 | lowVol=False trend=True momentum=False | minAtr=9 minAdx=22
+[2026-04-02 19:00:00.198] [INDEX MarketState] GERMANY 40 Trend=True Momentum=False LowVol=False ADX=23.1
+[2026-04-02 19:00:00.198] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 19:00:00.199] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 19:00:00.200] [PB] bars=1 depth=0.19 early=False
+[2026-04-02 19:00:00.200] [IMPULSE SRC] idx=2079 barsSince=3 range=23.50
+[2026-04-02 19:00:00.201] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=23.50 comp=16.90/8.22 retr=2.50/8.03
+[2026-04-02 19:00:00.201] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 19:00:00.201] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=16.899999999997817 atr=13.378571428571117
+[2026-04-02 19:00:00.202] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=8.80 slopeM5=4.67316 slopeM15=25.88638
+[2026-04-02 19:00:00.202] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=3 idx=2079 strength=1.23 range=23.50000
+[2026-04-02 19:00:00.202] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=0.19 bars=1 pressure=false
+[2026-04-02 19:00:00.203] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:00:00.203] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:00:00.204] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:00:00.204] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.85
+[2026-04-02 19:00:00.204] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 activeDirection=Long activeConfidence=0.85
+[2026-04-02 19:00:00.205] [HTF][SNAPSHOT] dir=Long conf=0.85
+[2026-04-02 19:00:00.205] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 19:00:00.205] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Continuation continuationWindow=Early extensionState=Normal impulseFreshness=0.68 continuationFreshness=0.70 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 19:00:00.206] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.70 barsSinceImpulse=2 barsSinceBreak=2 attempts=1 triggerLate=0.14 distanceAtr=0.12
+[2026-04-02 19:00:00.207] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:00:00.207] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=True momentum=False lowVol=False adx=23.1 atrPts=12.50
+[2026-04-02 19:00:00.210] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 19:00:00.212] [SESSION_CALENDAR] utc=2026-04-02T19:00:00.2110000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 19:00:00.214] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 19:00:00.214] [SESSION CHECK] time=2026-04-02T19:00:00.2110000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 19:00:00.215] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 19:00:00.215] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 19:00:00.217] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=90 | ema50=23124.01 ema200=23022.64 diff=101.37 | adx=23.1 atr=12.50 | htfBull=True
+[2026-04-02 19:00:00.219] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=90
+[2026-04-02 19:00:00.219] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=90
+[2026-04-02 19:00:00.219] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 19:00:00.220] [DEBUG] M5.Count=2084
+[2026-04-02 19:00:00.220] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [PIPE][ENTRY_ROUTER_PASS] pass=5 symbol=GERMANY 40 bar=2026-04-02T19:00:00.2270000Z
+[2026-04-02 19:00:00.221] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 19:00:00.225] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 19:00:00.227] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 19:00:00.227] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DBG ENTRY] total candidates=2
+[2026-04-02 19:00:00.227] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 19:00:00.227] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.228] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 19:00:00.228] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 19:00:00.228] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.228] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 19:00:00.228] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27
+[2026-04-02 19:00:00.229] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.85
+[2026-04-02 19:00:00.229] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 19:00:00.229] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 19:00:00.229] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 19:00:00.230] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.230] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.230] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 19:00:00.230] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 19:00:00.231] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 19:00:00.231] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 19:00:00.231] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 19:00:00.232] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 19:00:00.232] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 19:00:00.232] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 19:00:00.233] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 19:00:00.233] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 19:00:00.233] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 19:00:00.233] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 19:00:00.233] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 19:00:00.234] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.234] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 19:00:00.235] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:00:00.235] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 19:00:00.236] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 19:00:00.236] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 19:00:00.236] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 19:00:00.237] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=10 logicProducedDirectionCount=10 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 19:00:00.237] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 19:00:00.237] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:00:00.237] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:00:00.238] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:00:00.238] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:00:00.238] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 19:00:00.239] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 19:00:00.240] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=90 trend=Long fallback=true
+[2026-04-02 19:00:00.240] [TRACE] selected is null = True
+[2026-04-02 19:00:00.240] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 19:00:00.240] [GERMANY 40] attemptId=GER70BTXF [ATTEMPT GER70BTXF] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 19:00:00.241] BLOCK: entry gate
+[2026-04-02 19:00:00.241] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 19:00:00.243] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 19:00:00.243] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 19:00:00.244] [MEMORY][UPDATE] symbol=GER40 age=1 sinceImpulse=0
+[2026-04-02 19:00:00.244] [MEMORY][IMPULSE] symbol=GER40 phase=Impulse
+[2026-04-02 19:00:00.245] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 19:00:00.245] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 19:05:00.025] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 19:05:00.026] [INDEX MSD] GERMANY 40 | atrPts=12.4 adx=21.9 | lowVol=False trend=False momentum=False | minAtr=9 minAdx=22
+[2026-04-02 19:05:00.027] [INDEX MarketState] GERMANY 40 Trend=False Momentum=False LowVol=False ADX=21.9
+[2026-04-02 19:05:00.027] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 19:05:00.028] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 19:05:00.029] [PB] bars=1 depth=0.12 early=False
+[2026-04-02 19:05:00.030] [IMPULSE SRC] idx=2083 barsSince=0 range=12.60
+[2026-04-02 19:05:00.030] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=12.60 comp=13.50/4.41 retr=1.60/6.30
+[2026-04-02 19:05:00.031] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 19:05:00.031] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=13.5 atr=12.814285714285559
+[2026-04-02 19:05:00.032] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=Long source=TREND_DIRECTION trend=Long diSpread=5.68 slopeM5=2.93014 slopeM15=25.88638
+[2026-04-02 19:05:00.032] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=2079 strength=1.29 range=23.50000
+[2026-04-02 19:05:00.033] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=Long code=NO_VALID_PULLBACK depth=0.12 bars=1 pressure=false
+[2026-04-02 19:05:00.033] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:05:00.034] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:05:00.034] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:05:00.035] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.85
+[2026-04-02 19:05:00.035] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 activeDirection=Long activeConfidence=0.85
+[2026-04-02 19:05:00.036] [HTF][SNAPSHOT] dir=Long conf=0.85
+[2026-04-02 19:05:00.036] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 19:05:00.037] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.99 triggerLateScore=0.10 chaseRisk=False timingPenalty=-10
+[2026-04-02 19:05:00.037] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:05:00.038] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.99 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.10 distanceAtr=0.69
+[2026-04-02 19:05:00.038] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=False momentum=False lowVol=False adx=21.9 atrPts=12.36
+[2026-04-02 19:05:00.039] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DIR][CTX_BUILD] sym=GERMANY 40 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 19:05:00.039] [SESSION_CALENDAR] utc=2026-04-02T19:05:00.0370000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 19:05:00.040] [SESSION_GATE] symbol=GERMANY 40 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 19:05:00.040] [SESSION CHECK] time=2026-04-02T19:05:00.0370000Z symbol=GERMANY 40 bucket=NewYork allow=True
+[2026-04-02 19:05:00.041] [SESSION_MATRIX] symbol=GERMANY 40 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 19:05:00.041] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 19:05:00.042] [GER40 LOGIC] signal=LongTrend bias=Buy logicConf=80 | ema50=23125.67 ema200=23024.07 diff=101.60 | adx=21.9 atr=12.36 | htfBull=True
+[2026-04-02 19:05:00.042] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DIR][LOGIC] sym=GERMANY 40 logicBias=Long logicConf=80
+[2026-04-02 19:05:00.042] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [CTX PROPAGATION] symbol=GERMANY 40 bias=Long conf=80
+[2026-04-02 19:05:00.043] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 19:05:00.043] [DEBUG] M5.Count=2085
+[2026-04-02 19:05:00.044] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [PIPE][ENTRY_ROUTER_PASS] pass=6 symbol=GERMANY 40 bar=2026-04-02T19:05:00.0370000Z
+[2026-04-02 19:05:00.044] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY START] symbol=GERMANY 40 bias=Long
+[2026-04-02 19:05:00.051] [PIPE] symbol=GERMANY 40 hasSignals=True count=2
+[2026-04-02 19:05:00.052] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 19:05:00.052] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DBG ENTRY] total candidates=2
+[2026-04-02 19:05:00.052] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 19:05:00.053] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.053] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=80 patternDetected=true setupType=Index_Pullback
+[2026-04-02 19:05:00.054] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DIR][ROUTER_CAND] sym=GERMANY 40 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 19:05:00.055] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.055] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=80 patternDetected=true setupType=Index_Flag
+[2026-04-02 19:05:00.056] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DIR][HTF] sym=GERMANY 40 allow=Long conf=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27
+[2026-04-02 19:05:00.056] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.85
+[2026-04-02 19:05:00.057] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 19:05:00.057] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 19:05:00.057] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 19:05:00.058] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.058] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.059] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 19:05:00.059] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long authority=False
+[2026-04-02 19:05:00.059] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 19:05:00.060] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 19:05:00.060] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long authority=False
+[2026-04-02 19:05:00.061] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GERMANY 40 type=Index_Flag dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 19:05:00.061] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 19:05:00.061] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 19:05:00.061] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 19:05:00.062] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 19:05:00.062] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][GATE] symbol=GERMANY 40 entryType=Index_Flag stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 19:05:00.062] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 19:05:00.063] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 19:05:00.063] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.063] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 19:05:00.063] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GERMANY 40 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 19:05:00.064] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 19:05:00.064] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][CLASSIFICATION] symbol=GERMANY 40 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 19:05:00.064] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 19:05:00.064] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][GATES] symbol=GERMANY 40 entryType=Index_Flag stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 19:05:00.065] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][SUMMARY] symbol=GERMANY 40 totalEvaluations=12 logicProducedDirectionCount=12 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 19:05:00.065] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 19:05:00.065] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:05:00.065] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:05:00.066] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [CANDIDATE] type=Index_Flag dir=Long valid=false score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:05:00.066] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 19:05:00.066] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 19:05:00.066] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 19:05:00.067] [ENTRY][CANDIDATE] symbol=GERMANY 40 entryType=Index_Pullback score=30 confidence=80 trend=Long fallback=true
+[2026-04-02 19:05:00.067] [TRACE] selected is null = True
+[2026-04-02 19:05:00.067] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 19:05:00.068] [GERMANY 40] attemptId=GER70I99Y [ATTEMPT GER70I99Y] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 19:05:00.068] BLOCK: entry gate
+[2026-04-02 19:05:00.069] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 19:05:00.069] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 19:05:00.070] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 19:05:00.071] [MEMORY][UPDATE] symbol=GER40 age=1 sinceImpulse=0
+[2026-04-02 19:05:00.071] [MEMORY][IMPULSE] symbol=GER40 phase=Impulse
+[2026-04-02 19:05:00.072] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 19:05:00.072] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9

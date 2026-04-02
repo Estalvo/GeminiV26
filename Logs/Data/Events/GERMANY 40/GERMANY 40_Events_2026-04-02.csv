@@ -12,3 +12,5 @@ EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
 2026-04-02T16:54:57.7920000Z,GERMANY 40,BotStart,0,,Started on Minute5,,
 2026-04-02T17:46:39.5180000Z,GERMANY 40,BotStop,0,,,,
 2026-04-02T17:46:47.9390000Z,GERMANY 40,BotStart,0,,Started on Minute5,,
+2026-04-02T18:36:04.7320000Z,GERMANY 40,BotStop,0,,,,
+2026-04-02T18:36:13.0130000Z,GERMANY 40,BotStart,0,,Started on Minute5,,

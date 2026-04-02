@@ -12,3 +12,5 @@ EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
 2026-04-02T16:54:57.6670000Z,NZDUSD,BotStart,0,,Started on Minute5,,
 2026-04-02T17:46:39.5330000Z,NZDUSD,BotStop,0,,,,
 2026-04-02T17:46:47.9550000Z,NZDUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T18:36:04.7320000Z,NZDUSD,BotStop,0,,,,
+2026-04-02T18:36:13.0290000Z,NZDUSD,BotStart,0,,Started on Minute5,,
