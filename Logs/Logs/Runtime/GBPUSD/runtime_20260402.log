@@ -1,0 +1,362 @@
+[2026-04-02 10:55:18.859] ======================================
+[2026-04-02 10:55:18.876] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 10:55:18.877] ❌ NOT legacy Gemini
+[2026-04-02 10:55:18.877] 📊 Symbol: GBPUSD
+[2026-04-02 10:55:18.877] ⏱ Timeframe: Minute5
+[2026-04-02 10:55:18.878] ======================================
+[2026-04-02 10:55:18.882] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 10:55:22.912] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 10:55:24.557] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 10:55:24.558] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 10:55:24.559] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 10:55:24.559] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 10:55:24.561] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 10:55:24.561] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 10:55:24.561] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 10:55:24.562] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 10:55:24.562] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 10:55:24.562] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 10:55:24.562] [BOOT][REHYDRATE_START]
+[2026-04-02 10:55:24.563] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 10:55:24.563] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 10:55:24.578] [MEMORY][BUILD_START] symbol=GBPUSD bars=2192
+[2026-04-02 10:55:24.578] [MEMORY][DONE] symbol=GBPUSD mode=HistoricalReplay phase=Continuation age=2 pullbacks=0 sinceImpulse=1
+[2026-04-02 11:00:00.432] [ONBAR DBG] raw=GBPUSD canonical=GBPUSD
+[2026-04-02 11:00:00.461] [FX MSD] GBPUSD | atrPips=3.95 adx=25.8 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:00:00.461] [FX MarketState] GBPUSD Trend=True Momentum=False LowVol=True ADX=25.8
+[2026-04-02 11:00:00.462] [MEMORY][CTX_ATTACH][START] symbol=GBPUSD
+[2026-04-02 11:00:00.462] [MEMORY][CTX_ATTACH] symbol=GBPUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:00:00.462] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 11:00:00.463] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 11:00:00.463] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 11:00:00.463] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 11:00:00.574] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 11:00:00.575] [IMPULSE SRC] idx=2192 barsSince=0 range=0.00
+[2026-04-02 11:00:00.575] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:00:00.575] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:00:00.575] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.0005999999999999339 atr=0.0004221428571428313
+[2026-04-02 11:00:00.576] [STRUCTURE][IMPULSE] dir=Short strength=0.88 range=0.0
+[2026-04-02 11:00:00.576] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 11:00:00.576] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 11:00:00.577] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 11:00:00.577] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 11:00:00.946] [AUDIT][HTF FLOW][SOURCE] symbol=GBPUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 11:00:00.946] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.52
+[2026-04-02 11:00:00.947] [AUDIT][HTF CONTEXT] symbol=GBPUSD asset=FX allowedDirection=Short confidence=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 activeDirection=Short activeConfidence=0.52
+[2026-04-02 11:00:00.947] [HTF][SNAPSHOT] dir=Short conf=0.52
+[2026-04-02 11:00:00.947] [CTX][MEMORY_READY] symbol=GBPUSD hasMemory=True
+[2026-04-02 11:00:00.947] [ENTRY][SNAPSHOT] symbol=GBPUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.10 chaseRisk=False timingPenalty=-10
+[2026-04-02 11:00:00.947] [CTX][TIMING][SIDE] symbol=GBPUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:00:00.948] [CTX][TIMING][SIDE] symbol=GBPUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.10 distanceAtr=0.46
+[2026-04-02 11:00:00.948] [ENTRY MARKETSTATE ASSIGN] sym=GBPUSD trend=True momentum=False lowVol=True adx=25.8 atrPts=3.95
+[2026-04-02 11:00:00.948] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [DIR][CTX_BUILD] sym=GBPUSD trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:00:00.948] [SESSION_CALENDAR] utc=2026-04-02T11:00:00.9510000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:00:00.949] [SESSION_GATE] symbol=GBPUSD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:00:00.949] [SESSION CHECK] time=2026-04-02T11:00:00.9510000Z symbol=GBPUSD bucket=London allow=True
+[2026-04-02 11:00:00.949] [SESSION_MATRIX] symbol=GBPUSD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:00:00.949] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:00:00.957] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [DIR][LOGIC] sym=GBPUSD logicBias=Short logicConf=83
+[2026-04-02 11:00:00.957] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [CTX PROPAGATION] symbol=GBPUSD bias=Short conf=83
+[2026-04-02 11:00:00.957] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:00:00.958] [DEBUG] M5.Count=2194
+[2026-04-02 11:00:00.958] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=GBPUSD bar=2026-04-02T11:00:00.9670000Z
+[2026-04-02 11:00:00.958] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [ENTRY START] symbol=GBPUSD bias=Short
+[2026-04-02 11:00:00.959] [PIPE] symbol=GBPUSD hasSignals=True count=0
+[2026-04-02 11:00:00.960] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [DBG ENTRY] total candidates=0
+[2026-04-02 11:00:00.960] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [DIR][HTF] sym=GBPUSD allow=Short conf=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87
+[2026-04-02 11:00:00.960] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.52
+[2026-04-02 11:00:00.961] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:00:00.961] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [ENTRY_TRACE][SUMMARY] symbol=GBPUSD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:00:00.962] [TR] SelectEntry CALLED
+[2026-04-02 11:00:00.962] [TRACE] selected is null = True
+[2026-04-02 11:00:00.962] [FX][TOTAL_REJECTION] symbol=GBPUSD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:00:00.962] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:00:00.963] [GBPUSD] attemptId=GBP6J6JWZ [ATTEMPT GBP6J6JWZ] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:00:00.963] BLOCK: entry gate
+[2026-04-02 11:00:00.963] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:00:00.964] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.7
+[2026-04-02 11:00:00.965] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:00:00.965] [MEMORY][UPDATE] symbol=GBPUSD age=1 sinceImpulse=0
+[2026-04-02 11:00:00.965] [MEMORY][IMPULSE] symbol=GBPUSD phase=Impulse
+[2026-04-02 11:00:00.966] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 11:00:00.967] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:05:00.244] [ONBAR DBG] raw=GBPUSD canonical=GBPUSD
+[2026-04-02 11:05:00.246] [FX MSD] GBPUSD | atrPips=3.93 adx=26.4 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:05:00.247] [FX MarketState] GBPUSD Trend=True Momentum=False LowVol=True ADX=26.4
+[2026-04-02 11:05:00.248] [MEMORY][CTX_ATTACH][START] symbol=GBPUSD
+[2026-04-02 11:05:00.250] [MEMORY][CTX_ATTACH] symbol=GBPUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 11:05:00.251] [PB] bars=1 depth=0.67 early=True
+[2026-04-02 11:05:00.252] [IMPULSE SRC] idx=2192 barsSince=1 range=0.00
+[2026-04-02 11:05:00.257] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:05:00.257] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:05:00.262] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0006099999999999994 atr=0.00043428571428568867
+[2026-04-02 11:05:00.265] [AUDIT][HTF FLOW][SOURCE] symbol=GBPUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 11:05:00.266] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.52
+[2026-04-02 11:05:00.266] [AUDIT][HTF CONTEXT] symbol=GBPUSD asset=FX allowedDirection=Short confidence=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 activeDirection=Short activeConfidence=0.52
+[2026-04-02 11:05:00.266] [HTF][SNAPSHOT] dir=Short conf=0.52
+[2026-04-02 11:05:00.267] [CTX][MEMORY_READY] symbol=GBPUSD hasMemory=True
+[2026-04-02 11:05:00.267] [ENTRY][SNAPSHOT] symbol=GBPUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 11:05:00.268] [CTX][TIMING][SIDE] symbol=GBPUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:05:00.268] [CTX][TIMING][SIDE] symbol=GBPUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.90
+[2026-04-02 11:05:00.269] [ENTRY MARKETSTATE ASSIGN] sym=GBPUSD trend=True momentum=False lowVol=True adx=26.4 atrPts=3.93
+[2026-04-02 11:05:00.269] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [DIR][CTX_BUILD] sym=GBPUSD trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:05:00.270] [SESSION_CALENDAR] utc=2026-04-02T11:05:00.2760000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:05:00.270] [SESSION_GATE] symbol=GBPUSD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:05:00.271] [SESSION CHECK] time=2026-04-02T11:05:00.2760000Z symbol=GBPUSD bucket=London allow=True
+[2026-04-02 11:05:00.273] [SESSION_MATRIX] symbol=GBPUSD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:05:00.277] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:05:00.277] [BIAS FALLBACK] using TrendDirection
+[2026-04-02 11:05:00.278] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [DIR][LOGIC] sym=GBPUSD logicBias=Short logicConf=50
+[2026-04-02 11:05:00.278] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [CTX PROPAGATION] symbol=GBPUSD bias=Short conf=50
+[2026-04-02 11:05:00.278] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:05:00.288] [DEBUG] M5.Count=2195
+[2026-04-02 11:05:00.288] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=GBPUSD bar=2026-04-02T11:05:00.2910000Z
+[2026-04-02 11:05:00.289] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [ENTRY START] symbol=GBPUSD bias=Short
+[2026-04-02 11:05:00.289] [PIPE] symbol=GBPUSD hasSignals=True count=0
+[2026-04-02 11:05:00.289] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [DBG ENTRY] total candidates=0
+[2026-04-02 11:05:00.290] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [DIR][HTF] sym=GBPUSD allow=Short conf=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87
+[2026-04-02 11:05:00.290] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.52
+[2026-04-02 11:05:00.290] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:05:00.291] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [ENTRY_TRACE][SUMMARY] symbol=GBPUSD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:05:00.292] [TR] SelectEntry CALLED
+[2026-04-02 11:05:00.292] [TRACE] selected is null = True
+[2026-04-02 11:05:00.292] [FX][TOTAL_REJECTION] symbol=GBPUSD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:05:00.292] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:05:00.293] [GBPUSD] attemptId=GBP6JCZ84 [ATTEMPT GBP6JCZ84] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:05:00.294] BLOCK: entry gate
+[2026-04-02 11:05:00.295] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:05:00.295] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:05:00.296] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:05:00.296] [MEMORY][UPDATE] symbol=GBPUSD age=2 sinceImpulse=1
+[2026-04-02 11:05:00.296] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 11:05:00.297] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 11:10:00.271] [ONBAR DBG] raw=GBPUSD canonical=GBPUSD
+[2026-04-02 11:10:00.271] [FX MSD] GBPUSD | atrPips=3.77 adx=26.9 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:10:00.272] [FX MarketState] GBPUSD Trend=True Momentum=False LowVol=True ADX=26.9
+[2026-04-02 11:10:00.273] [MEMORY][CTX_ATTACH][START] symbol=GBPUSD
+[2026-04-02 11:10:00.273] [MEMORY][CTX_ATTACH] symbol=GBPUSD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:10:00.275] [PB] bars=1 depth=0.31 early=True
+[2026-04-02 11:10:00.275] [IMPULSE SRC] idx=2192 barsSince=2 range=0.00
+[2026-04-02 11:10:00.276] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:10:00.276] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:10:00.277] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.00045000000000006146 atr=0.00042428571428567075
+[2026-04-02 11:10:00.278] [AUDIT][HTF FLOW][SOURCE] symbol=GBPUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 11:10:00.278] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.52
+[2026-04-02 11:10:00.279] [AUDIT][HTF CONTEXT] symbol=GBPUSD asset=FX allowedDirection=Short confidence=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 activeDirection=Short activeConfidence=0.52
+[2026-04-02 11:10:00.279] [HTF][SNAPSHOT] dir=Short conf=0.52
+[2026-04-02 11:10:00.280] [CTX][MEMORY_READY] symbol=GBPUSD hasMemory=True
+[2026-04-02 11:10:00.280] [ENTRY][SNAPSHOT] symbol=GBPUSD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.12 chaseRisk=False timingPenalty=-12
+[2026-04-02 11:10:00.281] [CTX][TIMING][SIDE] symbol=GBPUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:10:00.282] [CTX][TIMING][SIDE] symbol=GBPUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.12 distanceAtr=0.62
+[2026-04-02 11:10:00.282] [ENTRY MARKETSTATE ASSIGN] sym=GBPUSD trend=True momentum=False lowVol=True adx=26.9 atrPts=3.77
+[2026-04-02 11:10:00.283] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [DIR][CTX_BUILD] sym=GBPUSD trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:10:00.283] [SESSION_CALENDAR] utc=2026-04-02T11:10:00.2950000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:10:00.283] [SESSION_GATE] symbol=GBPUSD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:10:00.283] [SESSION CHECK] time=2026-04-02T11:10:00.2950000Z symbol=GBPUSD bucket=London allow=True
+[2026-04-02 11:10:00.284] [SESSION_MATRIX] symbol=GBPUSD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:10:00.284] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:10:00.285] [BIAS FALLBACK] using TrendDirection
+[2026-04-02 11:10:00.285] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [DIR][LOGIC] sym=GBPUSD logicBias=Short logicConf=50
+[2026-04-02 11:10:00.285] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [CTX PROPAGATION] symbol=GBPUSD bias=Short conf=50
+[2026-04-02 11:10:00.286] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:10:00.286] [DEBUG] M5.Count=2196
+[2026-04-02 11:10:00.286] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=GBPUSD bar=2026-04-02T11:10:00.2950000Z
+[2026-04-02 11:10:00.286] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [ENTRY START] symbol=GBPUSD bias=Short
+[2026-04-02 11:10:00.287] [PIPE] symbol=GBPUSD hasSignals=True count=0
+[2026-04-02 11:10:00.287] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [DBG ENTRY] total candidates=0
+[2026-04-02 11:10:00.287] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [DIR][HTF] sym=GBPUSD allow=Short conf=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87
+[2026-04-02 11:10:00.288] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.52
+[2026-04-02 11:10:00.288] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:10:00.288] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [ENTRY_TRACE][SUMMARY] symbol=GBPUSD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:10:00.288] [TR] SelectEntry CALLED
+[2026-04-02 11:10:00.289] [TRACE] selected is null = True
+[2026-04-02 11:10:00.289] [FX][TOTAL_REJECTION] symbol=GBPUSD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:10:00.289] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:10:00.289] [GBPUSD] attemptId=GBP6JJEQG [ATTEMPT GBP6JJEQG] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:10:00.290] BLOCK: entry gate
+[2026-04-02 11:10:00.290] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:10:00.290] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 11:10:00.291] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:10:00.292] [MEMORY][UPDATE] symbol=GBPUSD age=3 sinceImpulse=2
+[2026-04-02 11:10:00.293] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 11:10:00.294] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:15:00.613] [ONBAR DBG] raw=GBPUSD canonical=GBPUSD
+[2026-04-02 11:15:00.614] [FX MSD] GBPUSD | atrPips=3.60 adx=27.7 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:15:00.614] [FX MarketState] GBPUSD Trend=True Momentum=False LowVol=True ADX=27.7
+[2026-04-02 11:15:00.615] [MEMORY][CTX_ATTACH][START] symbol=GBPUSD
+[2026-04-02 11:15:00.615] [MEMORY][CTX_ATTACH] symbol=GBPUSD hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 11:15:00.617] [PB] bars=2 depth=0.84 early=True
+[2026-04-02 11:15:00.618] [IMPULSE SRC] idx=2195 barsSince=0 range=0.00
+[2026-04-02 11:15:00.618] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:15:00.619] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:15:00.619] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=True HL=False short=False long=False range=0.00038999999999989043 atr=0.0004064285714285219
+[2026-04-02 11:15:00.620] [AUDIT][HTF FLOW][SOURCE] symbol=GBPUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 11:15:00.620] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.52
+[2026-04-02 11:15:00.621] [AUDIT][HTF CONTEXT] symbol=GBPUSD asset=FX allowedDirection=Short confidence=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 activeDirection=Short activeConfidence=0.52
+[2026-04-02 11:15:00.621] [HTF][SNAPSHOT] dir=Short conf=0.52
+[2026-04-02 11:15:00.622] [CTX][MEMORY_READY] symbol=GBPUSD hasMemory=True
+[2026-04-02 11:15:00.623] [ENTRY][SNAPSHOT] symbol=GBPUSD movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 11:15:00.623] [CTX][TIMING][SIDE] symbol=GBPUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:15:00.624] [CTX][TIMING][SIDE] symbol=GBPUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.14 distanceAtr=0.56
+[2026-04-02 11:15:00.624] [ENTRY MARKETSTATE ASSIGN] sym=GBPUSD trend=True momentum=False lowVol=True adx=27.7 atrPts=3.60
+[2026-04-02 11:15:00.632] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [DIR][CTX_BUILD] sym=GBPUSD trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:15:00.632] [SESSION_CALENDAR] utc=2026-04-02T11:15:00.6320000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:15:00.633] [SESSION_GATE] symbol=GBPUSD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:15:00.633] [SESSION CHECK] time=2026-04-02T11:15:00.6320000Z symbol=GBPUSD bucket=London allow=True
+[2026-04-02 11:15:00.634] [SESSION_MATRIX] symbol=GBPUSD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:15:00.634] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:15:00.636] [BIAS FALLBACK] using TrendDirection
+[2026-04-02 11:15:00.636] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [DIR][LOGIC] sym=GBPUSD logicBias=Short logicConf=50
+[2026-04-02 11:15:00.637] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [CTX PROPAGATION] symbol=GBPUSD bias=Short conf=50
+[2026-04-02 11:15:00.637] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:15:00.638] [DEBUG] M5.Count=2197
+[2026-04-02 11:15:00.638] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=GBPUSD bar=2026-04-02T11:15:00.6320000Z
+[2026-04-02 11:15:00.639] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [ENTRY START] symbol=GBPUSD bias=Short
+[2026-04-02 11:15:00.639] [PIPE] symbol=GBPUSD hasSignals=True count=0
+[2026-04-02 11:15:00.640] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [DBG ENTRY] total candidates=0
+[2026-04-02 11:15:00.641] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [DIR][HTF] sym=GBPUSD allow=Short conf=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87
+[2026-04-02 11:15:00.641] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.52
+[2026-04-02 11:15:00.642] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:15:00.642] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [ENTRY_TRACE][SUMMARY] symbol=GBPUSD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:15:00.643] [TR] SelectEntry CALLED
+[2026-04-02 11:15:00.643] [TRACE] selected is null = True
+[2026-04-02 11:15:00.644] [FX][TOTAL_REJECTION] symbol=GBPUSD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:15:00.644] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:15:00.645] [GBPUSD] attemptId=GBP6JPUH4 [ATTEMPT GBP6JPUH4] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:15:00.645] BLOCK: entry gate
+[2026-04-02 11:15:00.646] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:15:00.647] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:15:00.648] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=1
+[2026-04-02 11:15:00.648] [MEMORY][UPDATE] symbol=GBPUSD age=1 sinceImpulse=0
+[2026-04-02 11:15:00.649] [MEMORY][IMPULSE] symbol=GBPUSD phase=Impulse
+[2026-04-02 11:15:00.650] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 11:15:00.651] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 11:18:03.599] GeminiV26Bot STOP
+[2026-04-02 11:18:07.944] ======================================
+[2026-04-02 11:18:07.955] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 11:18:07.957] ❌ NOT legacy Gemini
+[2026-04-02 11:18:07.960] 📊 Symbol: GBPUSD
+[2026-04-02 11:18:07.965] ⏱ Timeframe: Minute5
+[2026-04-02 11:18:07.966] ======================================
+[2026-04-02 11:18:07.981] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 11:18:09.098] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 11:18:09.229] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 11:18:09.230] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 11:18:09.231] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 11:18:09.232] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 11:18:09.233] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 11:18:09.233] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 11:18:09.234] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 11:18:09.235] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 11:18:09.240] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 11:18:09.240] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 11:18:09.241] [BOOT][REHYDRATE_START]
+[2026-04-02 11:18:09.247] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 11:18:09.250] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 11:18:09.270] [MEMORY][BUILD_START] symbol=GBPUSD bars=2196
+[2026-04-02 11:18:09.272] [MEMORY][DONE] symbol=GBPUSD mode=HistoricalReplay phase=Impulse age=1 pullbacks=0 sinceImpulse=0
+[2026-04-02 11:20:00.359] [ONBAR DBG] raw=GBPUSD canonical=GBPUSD
+[2026-04-02 11:20:00.365] [FX MSD] GBPUSD | atrPips=3.56 adx=29.5 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:20:00.365] [FX MarketState] GBPUSD Trend=True Momentum=False LowVol=True ADX=29.5
+[2026-04-02 11:20:00.365] [MEMORY][CTX_ATTACH][START] symbol=GBPUSD
+[2026-04-02 11:20:00.366] [MEMORY][CTX_ATTACH] symbol=GBPUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 11:20:00.366] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 11:20:00.366] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 11:20:00.366] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 11:20:00.366] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 11:20:00.491] [PB] bars=3 depth=0.96 early=True
+[2026-04-02 11:20:00.492] [IMPULSE SRC] idx=2195 barsSince=1 range=0.00
+[2026-04-02 11:20:00.494] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:20:00.497] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:20:00.499] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=True HL=False short=False long=False range=0.0006999999999999229 atr=0.0004071428571428123
+[2026-04-02 11:20:00.499] [RESOLVER][INPUT] input=GBPUSD
+[2026-04-02 11:20:00.499] [RESOLVER][CANONICAL] input=GBPUSD canonical=GBPUSD
+[2026-04-02 11:20:00.500] [RESOLVER][RUNTIME] source=current_bot runtime=GBPUSD
+[2026-04-02 11:20:00.500] [RESOLVER][SUCCESS] input=GBPUSD canonical=GBPUSD runtime=GBPUSD
+[2026-04-02 11:20:00.844] [AUDIT][HTF FLOW][SOURCE] symbol=GBPUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 11:20:00.844] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.52
+[2026-04-02 11:20:00.845] [AUDIT][HTF CONTEXT] symbol=GBPUSD asset=FX allowedDirection=Short confidence=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 activeDirection=Short activeConfidence=0.52
+[2026-04-02 11:20:00.845] [HTF][SNAPSHOT] dir=Short conf=0.52
+[2026-04-02 11:20:00.845] [CTX][MEMORY_READY] symbol=GBPUSD hasMemory=True
+[2026-04-02 11:20:00.845] [ENTRY][SNAPSHOT] symbol=GBPUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.97 triggerLateScore=0.12 chaseRisk=False timingPenalty=-12
+[2026-04-02 11:20:00.845] [CTX][TIMING][SIDE] symbol=GBPUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:20:00.846] [CTX][TIMING][SIDE] symbol=GBPUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.97 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.12 distanceAtr=0.79
+[2026-04-02 11:20:00.846] [ENTRY MARKETSTATE ASSIGN] sym=GBPUSD trend=True momentum=False lowVol=True adx=29.5 atrPts=3.56
+[2026-04-02 11:20:00.853] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DIR][CTX_BUILD] sym=GBPUSD trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:20:00.853] [SESSION_CALENDAR] utc=2026-04-02T11:20:00.8500000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:20:00.853] [SESSION_GATE] symbol=GBPUSD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:20:00.853] [SESSION CHECK] time=2026-04-02T11:20:00.8500000Z symbol=GBPUSD bucket=London allow=True
+[2026-04-02 11:20:00.854] [SESSION_MATRIX] symbol=GBPUSD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:20:00.854] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:20:00.862] [BIAS FALLBACK] using TrendDirection
+[2026-04-02 11:20:00.862] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DIR][LOGIC] sym=GBPUSD logicBias=Short logicConf=50
+[2026-04-02 11:20:00.862] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [CTX PROPAGATION] symbol=GBPUSD bias=Short conf=50
+[2026-04-02 11:20:00.862] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:20:00.863] [DEBUG] M5.Count=2198
+[2026-04-02 11:20:00.863] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=GBPUSD bar=2026-04-02T11:20:00.8650000Z
+[2026-04-02 11:20:00.863] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY START] symbol=GBPUSD bias=Short
+[2026-04-02 11:20:00.865] [PIPE] symbol=GBPUSD hasSignals=True count=2
+[2026-04-02 11:20:00.866] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DBG ENTRY] total candidates=2
+[2026-04-02 11:20:00.866] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DIR][ROUTER_CAND] sym=GBPUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.866] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GBPUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.867] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][LOGIC] symbol=GBPUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.867] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DIR][ROUTER_CAND] sym=GBPUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.867] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GBPUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.867] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][LOGIC] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.868] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [DIR][HTF] sym=GBPUSD allow=Short conf=0.52 reason=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87
+[2026-04-02 11:20:00.868] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.52
+[2026-04-02 11:20:00.868] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Short aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 11:20:00.868] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 11:20:00.869] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.869] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.869] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:20:00.870] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GBPUSD type=FX_FlagContinuation dir=Short authority=False
+[2026-04-02 11:20:00.870] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GBPUSD type=FX_FlagContinuation dir=Short score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 11:20:00.873] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][GATE] symbol=GBPUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=false reason=PASS_NO_RESTART_DECAY
+[2026-04-02 11:20:00.874] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][GATE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=false reason=PASS_NO_RESTART_DECAY
+[2026-04-02 11:20:00.874] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][SCORE] symbol=GBPUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.875] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.875] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][SCORE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.875] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.875] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][CLASSIFICATION] symbol=GBPUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:20:00.876] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][CLASSIFICATION] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:20:00.876] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][GATES] symbol=GBPUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=30 classification=HTF_OK
+[2026-04-02 11:20:00.876] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][GATES] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 11:20:00.876] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][SUMMARY] symbol=GBPUSD totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:20:00.876] [TR] SelectEntry CALLED
+[2026-04-02 11:20:00.877] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:20:00.877] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:20:00.877] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [TR] CAND FX_FlagContinuation dir=Short valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:20:00.877] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.878] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [TR] CAND FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.878] [BASELINE CHECK] type=FX_FlagContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:20:00.879] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [BLOCK] type=FX_FlagContinuation dir=Short score=30 reason=invalid_candidate
+[2026-04-02 11:20:00.879] [AUDIT][VALIDITY] type=FX_FlagContinuation structure=True impulse=True htfAlign=True continuation=True pullback=True breakout=False
+[2026-04-02 11:20:00.879] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=GBPUSD asset=FX entryType=FX_FlagContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.879] [AUDIT][HTF ROUTER] asset=FX symbol=GBPUSD entryType=FX_FlagContinuation routerHtfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 routerAllowedDirection=Short routerAlign=True sourceHtfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 sourceAllowedDirection=Short sourceAlign=True divergence=False
+[2026-04-02 11:20:00.880] [AUDIT][DEATH] type=FX_FlagContinuation score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:20:00.880] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [SCORE][DECISION_INPUT] entry=30 logic=50 final=36 threshold=55
+[2026-04-02 11:20:00.880] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY DECISION] symbol=GBPUSD type=FX_FlagContinuation side=Short rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:20:00.881] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY REJECT DETAIL] symbol=GBPUSD type=FX_FlagContinuation side=Short reason=INVALID_STRUCTURE structureAligned=true momentumAligned=true trend=Short adx=28.3
+[2026-04-02 11:20:00.882] [BASELINE CHECK] type=FX_ImpulseContinuation score=40 valid=false source=ENTRY_ONLY
+[2026-04-02 11:20:00.882] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [BLOCK] type=FX_ImpulseContinuation dir=Short score=40 reason=invalid_candidate
+[2026-04-02 11:20:00.882] [AUDIT][VALIDITY] type=FX_ImpulseContinuation structure=True impulse=True htfAlign=True continuation=True pullback=True breakout=False
+[2026-04-02 11:20:00.883] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=GBPUSD asset=FX entryType=FX_ImpulseContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 11:20:00.883] [AUDIT][HTF ROUTER] asset=FX symbol=GBPUSD entryType=FX_ImpulseContinuation routerHtfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 routerAllowedDirection=Short routerAlign=True sourceHtfState=FX_HTF BEAR extended, reduced confidence, conf=0.52, gapATR=1.80, adx=24.0, distATR=1.87 sourceAllowedDirection=Short sourceAlign=True divergence=False
+[2026-04-02 11:20:00.883] [AUDIT][DEATH] type=FX_ImpulseContinuation score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS trigger=False state=NONE
+[2026-04-02 11:20:00.884] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [SCORE][DECISION_INPUT] entry=40 logic=50 final=43 threshold=55
+[2026-04-02 11:20:00.884] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY DECISION] symbol=GBPUSD type=FX_ImpulseContinuation side=Short rawValid=false finalValid=false preScore=40 postScore=40 cappedScore=40 threshold=55 reason=INVALID_STRUCTURE state=NONE trigger=false → REJECT
+[2026-04-02 11:20:00.884] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY REJECT DETAIL] symbol=GBPUSD type=FX_ImpulseContinuation side=Short reason=INVALID_STRUCTURE structureAligned=true momentumAligned=true trend=Short adx=28.3
+[2026-04-02 11:20:00.885] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:20:00.886] [ENTRY][CANDIDATE] symbol=GBPUSD entryType=FX_ImpulseContinuation score=40 confidence=50 trend=Short fallback=true
+[2026-04-02 11:20:00.886] [TRACE] selected is null = True
+[2026-04-02 11:20:00.887] [FX][TOTAL_REJECTION] symbol=GBPUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 11:20:00.887] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:20:00.888] [GBPUSD] attemptId=GBP6JW9RH [ATTEMPT GBP6JW9RH] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:20:00.888] BLOCK: entry gate
+[2026-04-02 11:20:00.888] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:20:00.889] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.7
+[2026-04-02 11:20:00.892] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=2
+[2026-04-02 11:20:00.892] [MEMORY][UPDATE] symbol=GBPUSD age=2 sinceImpulse=1
+[2026-04-02 11:20:00.893] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 11:20:00.893] [MEMORY][ASSESSMENT] symbol=GBPUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.9

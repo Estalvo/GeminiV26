@@ -1,0 +1,4 @@
+EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
+2026-04-02T10:55:24.6200000Z,AUDUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T11:18:03.5690000Z,AUDUSD,BotStop,0,,,,
+2026-04-02T11:18:09.1630000Z,AUDUSD,BotStart,0,,Started on Minute5,,

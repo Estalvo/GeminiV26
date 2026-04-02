@@ -1,0 +1,16 @@
+[2026-04-02 11:18:07.944] ======================================
+[2026-04-02 11:18:07.966] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 11:18:07.984] ❌ NOT legacy Gemini
+[2026-04-02 11:18:07.984] 📊 Symbol: XAUUSD
+[2026-04-02 11:18:07.985] ⏱ Timeframe: Minute5
+[2026-04-02 11:18:07.985] ======================================
+[2026-04-02 11:18:08.495] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 11:18:09.065] [RESOLVER][INPUT] input=XAUUSD
+[2026-04-02 11:18:09.066] [RESOLVER][CANONICAL] input=XAUUSD canonical=XAUUSD
+[2026-04-02 11:18:09.066] [RESOLVER][RUNTIME] source=current_bot runtime=XAUUSD
+[2026-04-02 11:18:09.067] [RESOLVER][SUCCESS] input=XAUUSD canonical=XAUUSD runtime=XAUUSD
+[2026-04-02 11:20:00.559] [ONBAR DBG] raw=XAUUSD canonical=XAUUSD
+[2026-04-02 11:20:00.559] [RESOLVER][INPUT] input=XAUUSD
+[2026-04-02 11:20:00.560] [RESOLVER][CANONICAL] input=XAUUSD canonical=XAUUSD
+[2026-04-02 11:20:00.560] [RESOLVER][RUNTIME] source=current_bot runtime=XAUUSD
+[2026-04-02 11:20:00.560] [RESOLVER][SUCCESS] input=XAUUSD canonical=XAUUSD runtime=XAUUSD

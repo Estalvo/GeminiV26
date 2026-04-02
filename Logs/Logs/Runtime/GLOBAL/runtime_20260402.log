@@ -1,0 +1,461 @@
+[2026-04-02 10:55:18.894] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:18.895] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:18.898] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:18.897] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:18.898] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:20.530] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:22.781] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:23.156] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:23.198] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 10:55:25.067] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:00:00.694] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.695] [DEBUG] signals.Keys = EURUSD
+[2026-04-02 11:00:00.695] [RuntimeType] [DIR DEBUG] symbol=US 30 bias=Short conf=50
+[2026-04-02 11:00:00.697] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:00:00.697] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:00:00.699] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.699] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.699] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.700] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:00:00.700] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:00:00.700] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.700] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.701] [DEBUG] signals.Keys = US 30
+[2026-04-02 11:00:00.863] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.863] [RuntimeType] [DIR DEBUG] symbol=GERMANY 40 bias=Short conf=90
+[2026-04-02 11:00:00.864] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 11:00:00.864] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:00:00.864] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.864] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.864] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.865] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 11:00:00.865] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:00:00.865] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.865] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.866] [DEBUG] signals.Keys = GERMANY 40
+[2026-04-02 11:00:00.888] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.888] [RuntimeType] [DIR DEBUG] symbol=US TECH 100 bias=Short conf=65
+[2026-04-02 11:00:00.889] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=false setupType=Index_Pullback
+[2026-04-02 11:00:00.889] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:00:00.889] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.890] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.890] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:00:00.891] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=false setupType=Index_Flag
+[2026-04-02 11:00:00.891] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:00:00.891] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:00:00.891] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:00:00.892] [DEBUG] signals.Keys = US TECH 100
+[2026-04-02 11:00:00.928] [DEBUG] signals.Keys = USDJPY
+[2026-04-02 11:00:00.929] [DEBUG] signals.Keys = USDCAD
+[2026-04-02 11:00:00.931] [DEBUG] signals.Keys = EURJPY
+[2026-04-02 11:00:00.955] [DEBUG] signals.Keys = NZDUSD
+[2026-04-02 11:00:00.959] [DEBUG] signals.Keys = GBPUSD
+[2026-04-02 11:00:00.962] [DEBUG] signals.Keys = GBPJPY
+[2026-04-02 11:00:00.982] [DEBUG] signals.Keys = AUDUSD
+[2026-04-02 11:00:01.103] [DEBUG] signals.Keys = AUDNZD
+[2026-04-02 11:00:01.107] [DEBUG] signals.Keys = USDCHF
+[2026-04-02 11:05:00.114] [DEBUG] signals.Keys = AUDUSD
+[2026-04-02 11:05:00.192] [DEBUG] signals.Keys = USDCAD
+[2026-04-02 11:05:00.260] [DEBUG] signals.Keys = GBPJPY
+[2026-04-02 11:05:00.266] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.266] [RuntimeType] [DIR DEBUG] symbol=GERMANY 40 bias=Short conf=90
+[2026-04-02 11:05:00.267] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 11:05:00.267] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:05:00.268] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.268] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.269] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.269] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 11:05:00.269] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:05:00.270] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.270] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.271] [DEBUG] signals.Keys = GERMANY 40
+[2026-04-02 11:05:00.281] [DEBUG] signals.Keys = EURJPY
+[2026-04-02 11:05:00.284] [DEBUG] signals.Keys = AUDNZD
+[2026-04-02 11:05:00.289] [DEBUG] signals.Keys = GBPUSD
+[2026-04-02 11:05:00.302] [DEBUG] signals.Keys = NZDUSD
+[2026-04-02 11:05:00.312] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.312] [RuntimeType] [DIR DEBUG] symbol=US 30 bias=Short conf=50
+[2026-04-02 11:05:00.313] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:05:00.313] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:05:00.313] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.313] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.313] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.314] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:05:00.314] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:05:00.314] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.314] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.315] [DEBUG] signals.Keys = US 30
+[2026-04-02 11:05:00.408] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.408] [RuntimeType] [DIR DEBUG] symbol=US TECH 100 bias=Short conf=65
+[2026-04-02 11:05:00.408] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:05:00.408] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:05:00.409] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.409] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.409] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:05:00.409] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:05:00.409] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:05:00.410] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:05:00.410] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:05:00.410] [DEBUG] signals.Keys = US TECH 100
+[2026-04-02 11:05:01.127] [DEBUG] signals.Keys = EURUSD
+[2026-04-02 11:05:01.173] [DEBUG] signals.Keys = USDCHF
+[2026-04-02 11:05:01.225] [DEBUG] signals.Keys = USDJPY
+[2026-04-02 11:10:00.092] [DEBUG] signals.Keys = NZDUSD
+[2026-04-02 11:10:00.177] [DEBUG] signals.Keys = AUDNZD
+[2026-04-02 11:10:00.287] [DEBUG] signals.Keys = GBPUSD
+[2026-04-02 11:10:00.322] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.323] [RuntimeType] [DIR DEBUG] symbol=US TECH 100 bias=Short conf=65
+[2026-04-02 11:10:00.323] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:10:00.323] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:10:00.323] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.324] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.324] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.324] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:10:00.324] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:10:00.325] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.325] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.325] [DEBUG] signals.Keys = US TECH 100
+[2026-04-02 11:10:00.327] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.327] [RuntimeType] [DIR DEBUG] symbol=GERMANY 40 bias=Short conf=90
+[2026-04-02 11:10:00.328] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Pullback
+[2026-04-02 11:10:00.328] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:10:00.328] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.329] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.329] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.330] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=Index_Flag
+[2026-04-02 11:10:00.331] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:10:00.331] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.332] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.333] [DEBUG] signals.Keys = GERMANY 40
+[2026-04-02 11:10:00.519] [DEBUG] signals.Keys = USDJPY
+[2026-04-02 11:10:00.522] [DEBUG] signals.Keys = AUDUSD
+[2026-04-02 11:10:00.524] [DEBUG] signals.Keys = USDCAD
+[2026-04-02 11:10:00.524] [DEBUG] signals.Keys = GBPJPY
+[2026-04-02 11:10:00.566] [DEBUG] signals.Keys = EURJPY
+[2026-04-02 11:10:00.715] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.715] [RuntimeType] [DIR DEBUG] symbol=US 30 bias=Short conf=50
+[2026-04-02 11:10:00.715] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:10:00.716] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:10:00.716] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.717] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.717] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:10:00.718] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:10:00.718] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:10:00.719] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:10:00.719] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:10:00.720] [DEBUG] signals.Keys = US 30
+[2026-04-02 11:10:01.196] [DEBUG] signals.Keys = EURUSD
+[2026-04-02 11:10:01.804] [DEBUG] signals.Keys = USDCHF
+[2026-04-02 11:15:00.079] [DEBUG] signals.Keys = GBPJPY
+[2026-04-02 11:15:00.287] [DEBUG] signals.Keys = EURUSD
+[2026-04-02 11:15:00.308] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:00.308] [RuntimeType] [DIR DEBUG] symbol=US TECH 100 bias=Short conf=65
+[2026-04-02 11:15:00.308] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:15:00.308] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:00.308] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:00.309] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:00.309] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:00.309] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=65 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:15:00.309] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=65 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:00.309] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:00.310] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:00.311] [DEBUG] signals.Keys = US TECH 100
+[2026-04-02 11:15:00.418] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:00.419] [RuntimeType] [DIR DEBUG] symbol=GERMANY 40 bias=Short conf=90
+[2026-04-02 11:15:00.419] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:15:00.420] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:00.420] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:00.420] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:00.421] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:00.421] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:15:00.422] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=90 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:00.422] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:00.422] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:00.423] [DEBUG] signals.Keys = GERMANY 40
+[2026-04-02 11:15:00.634] [DEBUG] signals.Keys = USDCAD
+[2026-04-02 11:15:00.640] [DEBUG] signals.Keys = GBPUSD
+[2026-04-02 11:15:00.670] [DEBUG] signals.Keys = USDJPY
+[2026-04-02 11:15:00.904] [DEBUG] signals.Keys = AUDUSD
+[2026-04-02 11:15:01.018] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:01.018] [RuntimeType] [DIR DEBUG] symbol=US 30 bias=Short conf=50
+[2026-04-02 11:15:01.019] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:15:01.019] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:01.020] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:01.020] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:01.020] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:15:01.021] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:15:01.021] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:15:01.022] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:15:01.022] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:15:01.023] [DEBUG] signals.Keys = US 30
+[2026-04-02 11:15:01.204] [DEBUG] signals.Keys = NZDUSD
+[2026-04-02 11:15:02.540] [DEBUG] signals.Keys = AUDNZD
+[2026-04-02 11:15:04.786] [DEBUG] signals.Keys = USDCHF
+[2026-04-02 11:15:05.622] [DEBUG] signals.Keys = EURJPY
+[2026-04-02 11:18:07.979] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.980] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.980] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.980] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.980] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.980] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.981] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.982] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.985] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:18:07.986] [FX MATRIX DBG] Keys = EURUSD,GBPUSD,USDJPY,GBPJPY,EURJPY,AUDUSD,NZDUSD,AUDNZD,USDCAD,USDCHF
+[2026-04-02 11:20:00.483] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.484] [RuntimeType] [DIR DEBUG] symbol=US TECH 100 bias=Short conf=70
+[2026-04-02 11:20:00.486] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:20:00.486] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=70 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.487] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.488] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.488] [EntryRouter] [ENTRY_TRACE][START] symbol=US TECH 100 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.488] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:20:00.490] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US TECH 100 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=70 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.491] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.491] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_NO_DIRECTION finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.490] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.494] [DEBUG] signals.Keys = US TECH 100
+[2026-04-02 11:20:00.494] [RuntimeType] [DIR DEBUG] symbol=GERMANY 40 bias=Short conf=100
+[2026-04-02 11:20:00.501] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=100 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:20:00.501] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=100 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.502] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.502] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.503] [EntryRouter] [ENTRY_TRACE][START] symbol=GERMANY 40 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.503] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GERMANY 40 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=100 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:20:00.503] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GERMANY 40 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=100 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.503] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GERMANY 40 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.504] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GERMANY 40 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.504] [DEBUG] signals.Keys = GERMANY 40
+[2026-04-02 11:20:00.577] [EntryRouter] [ENTRY_TRACE][START] symbol=AUDUSD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.578] [RuntimeType] [DIR DEBUG] symbol=AUDUSD bias=Short conf=95
+[2026-04-02 11:20:00.579] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=AUDUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=95 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.579] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=AUDUSD entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=95 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.579] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=AUDUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.579] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=AUDUSD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.580] [EntryRouter] [ENTRY_TRACE][START] symbol=AUDUSD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.581] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=95 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.581] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=AUDUSD entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=95 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.582] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.583] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.587] [DEBUG] signals.Keys = AUDUSD
+[2026-04-02 11:20:00.588] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.590] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.600] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=95 isValid=false
+[2026-04-02 11:20:00.600] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.602] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=95 isValid=false
+[2026-04-02 11:20:00.602] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.603] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=95 isValid=false
+[2026-04-02 11:20:00.609] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.621] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=95 isValid=false
+[2026-04-02 11:20:00.622] [FX][ENTRY_PIPELINE] symbol=AUDUSD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.631] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_PullbackEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.631] [RuntimeType] [DIR DEBUG] symbol=US 30 bias=Short conf=50
+[2026-04-02 11:20:00.632] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:20:00.632] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Pullback biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.632] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.632] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Pullback stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.633] [EntryRouter] [ENTRY_TRACE][START] symbol=US 30 entryType=Index_FlagEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.633] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:20:00.633] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=US 30 entryType=Index_Flag biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.633] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.634] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=Index_Flag stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.634] [DEBUG] signals.Keys = US 30
+[2026-04-02 11:20:00.863] [EntryRouter] [ENTRY_TRACE][START] symbol=GBPUSD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.864] [RuntimeType] [DIR DEBUG] symbol=GBPUSD bias=Short conf=50
+[2026-04-02 11:20:00.864] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GBPUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.864] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GBPUSD entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.864] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GBPUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.864] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.865] [EntryRouter] [ENTRY_TRACE][START] symbol=GBPUSD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.865] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.865] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GBPUSD entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.865] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.865] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.866] [DEBUG] signals.Keys = GBPUSD
+[2026-04-02 11:20:00.866] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.867] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.868] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=50 isValid=false
+[2026-04-02 11:20:00.869] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.870] [EntryRouter] [ENTRY_TRACE][START] symbol=USDJPY entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.870] [RuntimeType] [DIR DEBUG] symbol=USDJPY bias=Long conf=50
+[2026-04-02 11:20:00.871] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.871] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDJPY entryType=FX_FlagContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.871] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.871] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.871] [EntryRouter] [ENTRY_TRACE][START] symbol=USDJPY entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.872] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.872] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDJPY entryType=FX_ImpulseContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=50 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.872] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.870] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.873] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.874] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.874] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.872] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.877] [DEBUG] signals.Keys = USDJPY
+[2026-04-02 11:20:00.879] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_FlagContinuation stage=CREATED score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.880] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.883] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=50 isValid=false
+[2026-04-02 11:20:00.883] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.885] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.885] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.885] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.885] [FX][ENTRY_PIPELINE] symbol=GBPUSD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.887] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.887] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.901] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=50 isValid=false
+[2026-04-02 11:20:00.901] [FX][ENTRY_PIPELINE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=50 isValid=false
+[2026-04-02 11:20:00.915] [EntryRouter] [ENTRY_TRACE][START] symbol=USDCAD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.915] [RuntimeType] [DIR DEBUG] symbol=USDCAD bias=Long conf=29
+[2026-04-02 11:20:00.915] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDCAD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=33 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.916] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDCAD entryType=FX_FlagContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.916] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDCAD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.916] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.916] [EntryRouter] [ENTRY_TRACE][START] symbol=AUDNZD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.917] [RuntimeType] [DIR DEBUG] symbol=AUDNZD bias=Short conf=67
+[2026-04-02 11:20:00.917] [EntryRouter] [ENTRY_TRACE][START] symbol=USDCAD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.918] [RuntimeType] [AUDNZD TRACE] step3_entry=Short conf=67
+[2026-04-02 11:20:00.918] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDCAD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=33 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.918] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=AUDNZD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=67 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.918] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDCAD entryType=FX_ImpulseContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.919] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=AUDNZD entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=67 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.919] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.919] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.920] [DEBUG] signals.Keys = USDCAD
+[2026-04-02 11:20:00.919] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=AUDNZD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.921] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.921] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=AUDNZD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.922] [EntryRouter] [ENTRY_TRACE][START] symbol=AUDNZD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.922] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=67 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.922] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=AUDNZD entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=67 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.922] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.923] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.923] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.924] [DEBUG] signals.Keys = AUDNZD
+[2026-04-02 11:20:00.925] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=33 isValid=false
+[2026-04-02 11:20:00.926] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.926] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.928] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.932] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=30 confidence=67 isValid=false
+[2026-04-02 11:20:00.932] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.934] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=15 confidence=67 isValid=false
+[2026-04-02 11:20:00.934] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.935] [EntryRouter] [ENTRY_TRACE][START] symbol=USDCHF entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.936] [RuntimeType] [DIR DEBUG] symbol=USDCHF bias=Long conf=96
+[2026-04-02 11:20:00.937] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDCHF entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=96 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.938] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDCHF entryType=FX_FlagContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=96 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.938] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDCHF entryType=FX_FlagContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.939] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDCHF entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.939] [EntryRouter] [ENTRY_TRACE][START] symbol=USDCHF entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.940] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=USDCHF entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=96 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.940] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=USDCHF entryType=FX_ImpulseContinuation biasDirection=Long rawDirection=Long fallbackUsed=true confidence=96 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.940] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_FlagContinuation stage=AFTER_REGIME score=15 confidence=67 isValid=false
+[2026-04-02 11:20:00.941] [EntryRouter] [ENTRY_TRACE][START] symbol=EURUSD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.941] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.941] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.941] [RuntimeType] [DIR DEBUG] symbol=EURUSD bias=Short conf=95
+[2026-04-02 11:20:00.942] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=95 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.942] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=EURUSD entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=95 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.941] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=USDCHF entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Long score=40 classification=HTF_OK finalCandidateDirection=Long finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.942] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.943] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.943] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=33 isValid=false
+[2026-04-02 11:20:00.943] [EntryRouter] [ENTRY_TRACE][START] symbol=EURUSD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.944] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.943] [DEBUG] signals.Keys = USDCHF
+[2026-04-02 11:20:00.948] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=95 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.949] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_FlagContinuation stage=CREATED score=40 confidence=96 isValid=false
+[2026-04-02 11:20:00.950] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=EURUSD entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=95 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:00.951] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=33 isValid=false
+[2026-04-02 11:20:00.954] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.953] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.956] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.957] [DEBUG] signals.Keys = EURUSD
+[2026-04-02 11:20:00.953] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=96 isValid=false
+[2026-04-02 11:20:00.961] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.964] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.970] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=96 isValid=false
+[2026-04-02 11:20:00.970] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=96 isValid=false
+[2026-04-02 11:20:00.971] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=96 isValid=false
+[2026-04-02 11:20:00.972] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=96 isValid=false
+[2026-04-02 11:20:00.973] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=96 isValid=false
+[2026-04-02 11:20:00.973] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=96 isValid=false
+[2026-04-02 11:20:00.978] [EntryRouter] [ENTRY_TRACE][START] symbol=NZDUSD entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.978] [RuntimeType] [DIR DEBUG] symbol=NZDUSD bias=Short conf=29
+[2026-04-02 11:20:00.978] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=NZDUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.978] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=NZDUSD entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.979] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=NZDUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.979] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=NZDUSD entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.980] [EntryRouter] [ENTRY_TRACE][START] symbol=NZDUSD entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:00.982] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.984] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=NZDUSD entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=false
+[2026-04-02 11:20:00.985] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=95 isValid=false
+[2026-04-02 11:20:00.986] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.987] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_OK finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.987] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=95 isValid=false
+[2026-04-02 11:20:00.988] [DEBUG] signals.Keys = NZDUSD
+[2026-04-02 11:20:00.986] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=67 isValid=false
+[2026-04-02 11:20:00.989] [FX][ENTRY_PIPELINE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=67 isValid=false
+[2026-04-02 11:20:00.990] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_FlagContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.993] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.994] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=33 isValid=false
+[2026-04-02 11:20:00.995] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_FlagContinuation stage=AFTER_MATRIX score=45 confidence=33 isValid=false
+[2026-04-02 11:20:00.995] [FX][ENTRY_PIPELINE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.995] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.996] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=95 isValid=false
+[2026-04-02 11:20:00.997] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=30 confidence=33 isValid=false
+[2026-04-02 11:20:01.001] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=33 isValid=false
+[2026-04-02 11:20:00.999] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=96 isValid=false
+[2026-04-02 11:20:01.002] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=33 isValid=false
+[2026-04-02 11:20:01.002] [FX][ENTRY_PIPELINE] symbol=USDCHF entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=96 isValid=false
+[2026-04-02 11:20:01.000] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=95 isValid=false
+[2026-04-02 11:20:01.003] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.009] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_FlagContinuation stage=AFTER_REGIME score=30 confidence=95 isValid=false
+[2026-04-02 11:20:01.010] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=95 isValid=false
+[2026-04-02 11:20:01.018] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=33 isValid=false
+[2026-04-02 11:20:01.019] [FX][ENTRY_PIPELINE] symbol=NZDUSD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.020] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=95 isValid=false
+[2026-04-02 11:20:01.020] [FX][ENTRY_PIPELINE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=95 isValid=false
+[2026-04-02 11:20:01.133] [EntryRouter] [ENTRY_TRACE][START] symbol=EURJPY entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:01.133] [RuntimeType] [DIR DEBUG] symbol=EURJPY bias=Short conf=21
+[2026-04-02 11:20:01.133] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=EURJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:01.134] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=EURJPY entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:01.134] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=EURJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:01.134] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=EURJPY entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:01.134] [EntryRouter] [ENTRY_TRACE][START] symbol=EURJPY entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:01.134] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=EURJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:01.135] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=EURJPY entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=33 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:01.135] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:01.135] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=EURJPY entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:01.135] [DEBUG] signals.Keys = EURJPY
+[2026-04-02 11:20:01.136] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_FlagContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.137] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.138] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_FlagContinuation stage=AFTER_MATRIX score=30 confidence=33 isValid=false
+[2026-04-02 11:20:01.138] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.140] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=15 confidence=33 isValid=false
+[2026-04-02 11:20:01.140] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.141] [EntryRouter] [ENTRY_TRACE][START] symbol=GBPJPY entryType=FX_FlagContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:01.141] [RuntimeType] [DIR DEBUG] symbol=GBPJPY bias=Short conf=71
+[2026-04-02 11:20:01.142] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GBPJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=71 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:20:01.142] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_FlagContinuation stage=AFTER_REGIME score=15 confidence=33 isValid=false
+[2026-04-02 11:20:01.142] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GBPJPY entryType=FX_FlagContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=71 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:01.142] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.142] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GBPJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:01.143] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GBPJPY entryType=FX_FlagContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:01.143] [EntryRouter] [ENTRY_TRACE][START] symbol=GBPJPY entryType=FX_ImpulseContinuationEntry stage=START candidateDirection=None score=NA classification=HTF_NO_DIRECTION
+[2026-04-02 11:20:01.143] [EntryRouter] [ENTRY_TRACE][LOGIC] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=71 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:01.144] [EntryRouter] [ENTRY_TRACE][DIRECTION_SOURCE] symbol=GBPJPY entryType=FX_ImpulseContinuation biasDirection=Short rawDirection=Short fallbackUsed=true confidence=71 stage=POST_LOGIC patternDetected=true
+[2026-04-02 11:20:01.144] [EntryRouter] [ENTRY_TRACE][SCORE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:01.144] [EntryRouter] [ENTRY_TRACE][FINAL] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=ENTRY_ROUTER candidateDirection=Short score=40 classification=HTF_MISMATCH finalCandidateDirection=Short finalScore=40 blocked=true finalReason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:01.145] [DEBUG] signals.Keys = GBPJPY
+[2026-04-02 11:20:01.146] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_FlagContinuation stage=CREATED score=40 confidence=71 isValid=false
+[2026-04-02 11:20:01.147] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=CREATED score=40 confidence=71 isValid=false
+[2026-04-02 11:20:01.148] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_FlagContinuation stage=AFTER_MATRIX score=30 confidence=71 isValid=false
+[2026-04-02 11:20:01.149] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=AFTER_MATRIX score=40 confidence=71 isValid=false
+[2026-04-02 11:20:01.150] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_FlagContinuation stage=AFTER_STRUCTURE score=15 confidence=71 isValid=false
+[2026-04-02 11:20:01.150] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=AFTER_STRUCTURE score=40 confidence=71 isValid=false
+[2026-04-02 11:20:01.152] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_FlagContinuation stage=AFTER_REGIME score=15 confidence=71 isValid=false
+[2026-04-02 11:20:01.152] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=AFTER_REGIME score=40 confidence=71 isValid=false
+[2026-04-02 11:20:01.153] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=33 isValid=false
+[2026-04-02 11:20:01.153] [FX][ENTRY_PIPELINE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=33 isValid=false
+[2026-04-02 11:20:01.162] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_FlagContinuation stage=AFTER_ROUTER score=30 confidence=71 isValid=false
+[2026-04-02 11:20:01.163] [FX][ENTRY_PIPELINE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=AFTER_ROUTER score=40 confidence=71 isValid=false

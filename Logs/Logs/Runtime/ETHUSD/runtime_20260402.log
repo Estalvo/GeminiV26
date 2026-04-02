@@ -1,0 +1,16 @@
+[2026-04-02 11:18:10.841] ======================================
+[2026-04-02 11:18:10.842] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 11:18:10.843] ❌ NOT legacy Gemini
+[2026-04-02 11:18:10.843] 📊 Symbol: ETHUSD
+[2026-04-02 11:18:10.844] ⏱ Timeframe: Minute5
+[2026-04-02 11:18:10.844] ======================================
+[2026-04-02 11:18:10.913] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 11:18:11.540] [RESOLVER][INPUT] input=ETHUSD
+[2026-04-02 11:18:11.541] [RESOLVER][CANONICAL] input=ETHUSD canonical=ETHUSD
+[2026-04-02 11:18:11.541] [RESOLVER][RUNTIME] source=current_bot runtime=ETHUSD
+[2026-04-02 11:18:11.543] [RESOLVER][SUCCESS] input=ETHUSD canonical=ETHUSD runtime=ETHUSD
+[2026-04-02 11:20:00.393] [ONBAR DBG] raw=ETHUSD canonical=ETHUSD
+[2026-04-02 11:20:00.393] [RESOLVER][INPUT] input=ETHUSD
+[2026-04-02 11:20:00.394] [RESOLVER][CANONICAL] input=ETHUSD canonical=ETHUSD
+[2026-04-02 11:20:00.394] [RESOLVER][RUNTIME] source=current_bot runtime=ETHUSD
+[2026-04-02 11:20:00.394] [RESOLVER][SUCCESS] input=ETHUSD canonical=ETHUSD runtime=ETHUSD

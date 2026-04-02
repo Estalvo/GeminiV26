@@ -1,0 +1,16 @@
+[2026-04-02 11:18:10.333] ======================================
+[2026-04-02 11:18:10.334] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 11:18:10.335] ❌ NOT legacy Gemini
+[2026-04-02 11:18:10.335] 📊 Symbol: BTCUSD
+[2026-04-02 11:18:10.336] ⏱ Timeframe: Minute5
+[2026-04-02 11:18:10.336] ======================================
+[2026-04-02 11:18:10.625] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 11:18:11.412] [RESOLVER][INPUT] input=BTCUSD
+[2026-04-02 11:18:11.412] [RESOLVER][CANONICAL] input=BTCUSD canonical=BTCUSD
+[2026-04-02 11:18:11.413] [RESOLVER][RUNTIME] source=current_bot runtime=BTCUSD
+[2026-04-02 11:18:11.414] [RESOLVER][SUCCESS] input=BTCUSD canonical=BTCUSD runtime=BTCUSD
+[2026-04-02 11:20:00.408] [ONBAR DBG] raw=BTCUSD canonical=BTCUSD
+[2026-04-02 11:20:00.408] [RESOLVER][INPUT] input=BTCUSD
+[2026-04-02 11:20:00.408] [RESOLVER][CANONICAL] input=BTCUSD canonical=BTCUSD
+[2026-04-02 11:20:00.408] [RESOLVER][RUNTIME] source=current_bot runtime=BTCUSD
+[2026-04-02 11:20:00.408] [RESOLVER][SUCCESS] input=BTCUSD canonical=BTCUSD runtime=BTCUSD

@@ -1,0 +1,363 @@
+[2026-04-02 10:55:18.859] ======================================
+[2026-04-02 10:55:18.882] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 10:55:18.883] ❌ NOT legacy Gemini
+[2026-04-02 10:55:18.885] 📊 Symbol: USDCAD
+[2026-04-02 10:55:18.885] ⏱ Timeframe: Minute5
+[2026-04-02 10:55:18.886] ======================================
+[2026-04-02 10:55:18.886] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 10:55:22.932] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 10:55:25.052] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 10:55:25.053] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 10:55:25.054] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 10:55:25.064] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 10:55:25.066] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 10:55:25.066] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 10:55:25.068] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 10:55:25.070] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 10:55:25.070] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 10:55:25.070] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 10:55:25.071] [BOOT][REHYDRATE_START]
+[2026-04-02 10:55:25.071] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 10:55:25.071] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 10:55:25.082] [MEMORY][BUILD_START] symbol=USDCAD bars=2192
+[2026-04-02 10:55:25.083] [MEMORY][DONE] symbol=USDCAD mode=HistoricalReplay phase=Continuation age=2 pullbacks=0 sinceImpulse=1
+[2026-04-02 11:00:00.417] [ONBAR DBG] raw=USDCAD canonical=USDCAD
+[2026-04-02 11:00:00.444] [FX MSD] USDCAD | atrPips=1.59 adx=31.0 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:00:00.448] [FX MarketState] USDCAD Trend=True Momentum=False LowVol=True ADX=31.0
+[2026-04-02 11:00:00.448] [MEMORY][CTX_ATTACH][START] symbol=USDCAD
+[2026-04-02 11:00:00.448] [MEMORY][CTX_ATTACH] symbol=USDCAD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:00:00.449] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 11:00:00.449] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 11:00:00.450] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 11:00:00.450] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 11:00:00.535] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 11:00:00.536] [IMPULSE SRC] idx=2192 barsSince=0 range=0.00
+[2026-04-02 11:00:00.536] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:00:00.536] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:00:00.536] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00017999999999984695 atr=0.0001942857142857024
+[2026-04-02 11:00:00.536] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 11:00:00.537] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 11:00:00.537] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 11:00:00.537] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 11:00:00.912] [AUDIT][HTF FLOW][SOURCE] symbol=USDCAD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:00:00.912] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCAD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.53
+[2026-04-02 11:00:00.913] [AUDIT][HTF CONTEXT] symbol=USDCAD asset=FX allowedDirection=Long confidence=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 activeDirection=Long activeConfidence=0.53
+[2026-04-02 11:00:00.913] [HTF][SNAPSHOT] dir=Long conf=0.53
+[2026-04-02 11:00:00.913] [CTX][MEMORY_READY] symbol=USDCAD hasMemory=True
+[2026-04-02 11:00:00.914] [ENTRY][SNAPSHOT] symbol=USDCAD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=0.97 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 11:00:00.914] [CTX][TIMING][SIDE] symbol=USDCAD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.15 distanceAtr=0.80
+[2026-04-02 11:00:00.914] [CTX][TIMING][SIDE] symbol=USDCAD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:00:00.914] [ENTRY MARKETSTATE ASSIGN] sym=USDCAD trend=True momentum=False lowVol=True adx=31.0 atrPts=1.59
+[2026-04-02 11:00:00.915] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [DIR][CTX_BUILD] sym=USDCAD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 11:00:00.915] [SESSION_CALENDAR] utc=2026-04-02T11:00:00.9200000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:00:00.915] [SESSION_GATE] symbol=USDCAD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:00:00.916] [SESSION CHECK] time=2026-04-02T11:00:00.9200000Z symbol=USDCAD bucket=London allow=True
+[2026-04-02 11:00:00.916] [SESSION_MATRIX] symbol=USDCAD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:00:00.916] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:00:00.926] [USDCAD LOGIC] state=STRUCTURED_BIAS bias=Buy logicConf=85 | ema50=1.39191 ema200=1.39054 diff=0.00137 adx=31.0 atr=0.00016 pattern=hhhl chop=True opp=False htfAlign=True
+[2026-04-02 11:00:00.926] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [DIR][LOGIC] sym=USDCAD logicBias=Long logicConf=85
+[2026-04-02 11:00:00.926] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [CTX PROPAGATION] symbol=USDCAD bias=Long conf=85
+[2026-04-02 11:00:00.927] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:00:00.927] [DEBUG] M5.Count=2194
+[2026-04-02 11:00:00.927] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=USDCAD bar=2026-04-02T11:00:00.9360000Z
+[2026-04-02 11:00:00.928] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [ENTRY START] symbol=USDCAD bias=Long
+[2026-04-02 11:00:00.928] [PIPE] symbol=USDCAD hasSignals=True count=0
+[2026-04-02 11:00:00.929] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [DBG ENTRY] total candidates=0
+[2026-04-02 11:00:00.929] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [DIR][HTF] sym=USDCAD allow=Long conf=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00
+[2026-04-02 11:00:00.929] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.53
+[2026-04-02 11:00:00.930] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:00:00.930] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [ENTRY_TRACE][SUMMARY] symbol=USDCAD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:00:00.930] [TR] SelectEntry CALLED
+[2026-04-02 11:00:00.931] [TRACE] selected is null = True
+[2026-04-02 11:00:00.931] [FX][TOTAL_REJECTION] symbol=USDCAD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:00:00.932] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:00:00.932] [USDCAD] attemptId=USD6J6JWJ [ATTEMPT USD6J6JWJ] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:00:00.933] BLOCK: entry gate
+[2026-04-02 11:00:00.933] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:00:00.934] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.7
+[2026-04-02 11:00:00.935] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:00:00.936] [MEMORY][UPDATE] symbol=USDCAD age=1 sinceImpulse=0
+[2026-04-02 11:00:00.936] [MEMORY][IMPULSE] symbol=USDCAD phase=Impulse
+[2026-04-02 11:00:00.937] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 11:00:00.937] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 11:05:00.179] [ONBAR DBG] raw=USDCAD canonical=USDCAD
+[2026-04-02 11:05:00.180] [FX MSD] USDCAD | atrPips=1.59 adx=33.1 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:05:00.180] [FX MarketState] USDCAD Trend=True Momentum=False LowVol=True ADX=33.1
+[2026-04-02 11:05:00.181] [MEMORY][CTX_ATTACH][START] symbol=USDCAD
+[2026-04-02 11:05:00.181] [MEMORY][CTX_ATTACH] symbol=USDCAD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 11:05:00.183] [PB] bars=5 depth=2.01 early=True
+[2026-04-02 11:05:00.184] [IMPULSE SRC] idx=2193 barsSince=0 range=0.00
+[2026-04-02 11:05:00.184] [FLAG FIX] recentImpulse=True bars=5 retraceOk=False tight=False decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:05:00.185] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 11:05:00.185] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=0.00043999999999999595 atr=0.00019857142857141304
+[2026-04-02 11:05:00.186] [AUDIT][HTF FLOW][SOURCE] symbol=USDCAD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:05:00.187] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCAD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.53
+[2026-04-02 11:05:00.187] [AUDIT][HTF CONTEXT] symbol=USDCAD asset=FX allowedDirection=Long confidence=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 activeDirection=Long activeConfidence=0.53
+[2026-04-02 11:05:00.187] [HTF][SNAPSHOT] dir=Long conf=0.53
+[2026-04-02 11:05:00.187] [CTX][MEMORY_READY] symbol=USDCAD hasMemory=True
+[2026-04-02 11:05:00.187] [ENTRY][SNAPSHOT] symbol=USDCAD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 11:05:00.188] [CTX][TIMING][SIDE] symbol=USDCAD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 11:05:00.188] [CTX][TIMING][SIDE] symbol=USDCAD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:05:00.188] [ENTRY MARKETSTATE ASSIGN] sym=USDCAD trend=True momentum=False lowVol=True adx=33.1 atrPts=1.59
+[2026-04-02 11:05:00.189] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [DIR][CTX_BUILD] sym=USDCAD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 11:05:00.189] [SESSION_CALENDAR] utc=2026-04-02T11:05:00.1820000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:05:00.189] [SESSION_GATE] symbol=USDCAD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:05:00.189] [SESSION CHECK] time=2026-04-02T11:05:00.1970000Z symbol=USDCAD bucket=London allow=True
+[2026-04-02 11:05:00.190] [SESSION_MATRIX] symbol=USDCAD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:05:00.190] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:05:00.190] [USDCAD LOGIC] state=STRUCTURED_BIAS bias=Buy logicConf=85 | ema50=1.39195 ema200=1.39056 diff=0.00139 adx=33.1 atr=0.00016 pattern=hhhl chop=True opp=False htfAlign=True
+[2026-04-02 11:05:00.190] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [DIR][LOGIC] sym=USDCAD logicBias=Long logicConf=85
+[2026-04-02 11:05:00.191] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [CTX PROPAGATION] symbol=USDCAD bias=Long conf=85
+[2026-04-02 11:05:00.191] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:05:00.191] [DEBUG] M5.Count=2195
+[2026-04-02 11:05:00.191] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=USDCAD bar=2026-04-02T11:05:00.1970000Z
+[2026-04-02 11:05:00.191] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [ENTRY START] symbol=USDCAD bias=Long
+[2026-04-02 11:05:00.192] [PIPE] symbol=USDCAD hasSignals=True count=0
+[2026-04-02 11:05:00.192] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [DBG ENTRY] total candidates=0
+[2026-04-02 11:05:00.192] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [DIR][HTF] sym=USDCAD allow=Long conf=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00
+[2026-04-02 11:05:00.192] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.53
+[2026-04-02 11:05:00.193] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:05:00.193] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [ENTRY_TRACE][SUMMARY] symbol=USDCAD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:05:00.193] [TR] SelectEntry CALLED
+[2026-04-02 11:05:00.194] [TRACE] selected is null = True
+[2026-04-02 11:05:00.194] [FX][TOTAL_REJECTION] symbol=USDCAD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:05:00.194] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:05:00.194] [USDCAD] attemptId=USD6JCZ6E [ATTEMPT USD6JCZ6E] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:05:00.194] BLOCK: entry gate
+[2026-04-02 11:05:00.195] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:05:00.195] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 11:05:00.195] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:05:00.196] [MEMORY][UPDATE] symbol=USDCAD age=2 sinceImpulse=1
+[2026-04-02 11:05:00.197] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 11:05:00.198] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:10:00.484] [ONBAR DBG] raw=USDCAD canonical=USDCAD
+[2026-04-02 11:10:00.487] [FX MSD] USDCAD | atrPips=1.60 adx=34.9 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:10:00.489] [FX MarketState] USDCAD Trend=True Momentum=False LowVol=True ADX=34.9
+[2026-04-02 11:10:00.490] [MEMORY][CTX_ATTACH][START] symbol=USDCAD
+[2026-04-02 11:10:00.495] [MEMORY][CTX_ATTACH] symbol=USDCAD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:10:00.496] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 11:10:00.498] [IMPULSE SRC] idx=2193 barsSince=1 range=0.00
+[2026-04-02 11:10:00.499] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:10:00.499] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:10:00.500] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00021000000000004349 atr=0.00020071428571428424
+[2026-04-02 11:10:00.500] [AUDIT][HTF FLOW][SOURCE] symbol=USDCAD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:10:00.501] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCAD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.53
+[2026-04-02 11:10:00.501] [AUDIT][HTF CONTEXT] symbol=USDCAD asset=FX allowedDirection=Long confidence=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 activeDirection=Long activeConfidence=0.53
+[2026-04-02 11:10:00.502] [HTF][SNAPSHOT] dir=Long conf=0.53
+[2026-04-02 11:10:00.502] [CTX][MEMORY_READY] symbol=USDCAD hasMemory=True
+[2026-04-02 11:10:00.502] [ENTRY][SNAPSHOT] symbol=USDCAD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=0.98 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 11:10:00.502] [CTX][TIMING][SIDE] symbol=USDCAD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.98 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.14 distanceAtr=0.74
+[2026-04-02 11:10:00.504] [CTX][TIMING][SIDE] symbol=USDCAD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:10:00.505] [ENTRY MARKETSTATE ASSIGN] sym=USDCAD trend=True momentum=False lowVol=True adx=34.9 atrPts=1.60
+[2026-04-02 11:10:00.506] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [DIR][CTX_BUILD] sym=USDCAD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 11:10:00.509] [SESSION_CALENDAR] utc=2026-04-02T11:10:00.5140000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:10:00.511] [SESSION_GATE] symbol=USDCAD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:10:00.512] [SESSION CHECK] time=2026-04-02T11:10:00.5140000Z symbol=USDCAD bucket=London allow=True
+[2026-04-02 11:10:00.516] [SESSION_MATRIX] symbol=USDCAD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:10:00.519] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:10:00.520] [USDCAD LOGIC] state=TREND_ONLY bias=Buy logicConf=29 | ema50=1.39199 ema200=1.39059 diff=0.00141 adx=34.9 atr=0.00016 pattern=none chop=True opp=False htfAlign=True
+[2026-04-02 11:10:00.521] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [DIR][LOGIC] sym=USDCAD logicBias=Long logicConf=29
+[2026-04-02 11:10:00.521] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [CTX PROPAGATION] symbol=USDCAD bias=Long conf=29
+[2026-04-02 11:10:00.522] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:10:00.522] [DEBUG] M5.Count=2196
+[2026-04-02 11:10:00.523] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=USDCAD bar=2026-04-02T11:10:00.5300000Z
+[2026-04-02 11:10:00.523] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [ENTRY START] symbol=USDCAD bias=Long
+[2026-04-02 11:10:00.524] [PIPE] symbol=USDCAD hasSignals=True count=0
+[2026-04-02 11:10:00.525] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [DBG ENTRY] total candidates=0
+[2026-04-02 11:10:00.527] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [DIR][HTF] sym=USDCAD allow=Long conf=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00
+[2026-04-02 11:10:00.527] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.53
+[2026-04-02 11:10:00.528] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:10:00.529] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [ENTRY_TRACE][SUMMARY] symbol=USDCAD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:10:00.531] [TR] SelectEntry CALLED
+[2026-04-02 11:10:00.531] [TRACE] selected is null = True
+[2026-04-02 11:10:00.531] [FX][TOTAL_REJECTION] symbol=USDCAD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:10:00.532] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:10:00.532] [USDCAD] attemptId=USD6JJEWI [ATTEMPT USD6JJEWI] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:10:00.532] BLOCK: entry gate
+[2026-04-02 11:10:00.532] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:10:00.533] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 11:10:00.533] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:10:00.535] [MEMORY][UPDATE] symbol=USDCAD age=3 sinceImpulse=2
+[2026-04-02 11:10:00.539] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 11:10:00.540] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 11:15:00.611] [ONBAR DBG] raw=USDCAD canonical=USDCAD
+[2026-04-02 11:15:00.612] [FX MSD] USDCAD | atrPips=1.85 adx=37.6 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:15:00.613] [FX MarketState] USDCAD Trend=True Momentum=False LowVol=True ADX=37.6
+[2026-04-02 11:15:00.614] [MEMORY][CTX_ATTACH][START] symbol=USDCAD
+[2026-04-02 11:15:00.614] [MEMORY][CTX_ATTACH] symbol=USDCAD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:15:00.616] [PB] bars=2 depth=0.84 early=True
+[2026-04-02 11:15:00.617] [IMPULSE SRC] idx=2195 barsSince=0 range=0.00
+[2026-04-02 11:15:00.617] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:15:00.618] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 11:15:00.618] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.000460000000000127 atr=0.00020214285714284915
+[2026-04-02 11:15:00.619] [AUDIT][HTF FLOW][SOURCE] symbol=USDCAD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:15:00.620] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCAD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.53
+[2026-04-02 11:15:00.620] [AUDIT][HTF CONTEXT] symbol=USDCAD asset=FX allowedDirection=Long confidence=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 activeDirection=Long activeConfidence=0.53
+[2026-04-02 11:15:00.621] [HTF][SNAPSHOT] dir=Long conf=0.53
+[2026-04-02 11:15:00.621] [CTX][MEMORY_READY] symbol=USDCAD hasMemory=True
+[2026-04-02 11:15:00.622] [ENTRY][SNAPSHOT] symbol=USDCAD movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.68 continuationFreshness=1.00 triggerLateScore=0.11 chaseRisk=False timingPenalty=-11
+[2026-04-02 11:15:00.624] [CTX][TIMING][SIDE] symbol=USDCAD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=2 barsSinceBreak=2 attempts=0 triggerLate=0.11 distanceAtr=0.37
+[2026-04-02 11:15:00.625] [CTX][TIMING][SIDE] symbol=USDCAD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:15:00.626] [ENTRY MARKETSTATE ASSIGN] sym=USDCAD trend=True momentum=False lowVol=True adx=37.6 atrPts=1.85
+[2026-04-02 11:15:00.627] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [DIR][CTX_BUILD] sym=USDCAD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 11:15:00.628] [SESSION_CALENDAR] utc=2026-04-02T11:15:00.6320000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:15:00.629] [SESSION_GATE] symbol=USDCAD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:15:00.629] [SESSION CHECK] time=2026-04-02T11:15:00.6320000Z symbol=USDCAD bucket=London allow=True
+[2026-04-02 11:15:00.629] [SESSION_MATRIX] symbol=USDCAD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:15:00.630] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:15:00.630] [USDCAD LOGIC] state=TREND_ONLY bias=Buy logicConf=29 | ema50=1.39204 ema200=1.39061 diff=0.00143 adx=37.6 atr=0.00019 pattern=none chop=True opp=False htfAlign=True
+[2026-04-02 11:15:00.631] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [DIR][LOGIC] sym=USDCAD logicBias=Long logicConf=29
+[2026-04-02 11:15:00.631] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [CTX PROPAGATION] symbol=USDCAD bias=Long conf=29
+[2026-04-02 11:15:00.632] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:15:00.632] [DEBUG] M5.Count=2197
+[2026-04-02 11:15:00.633] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=USDCAD bar=2026-04-02T11:15:00.6320000Z
+[2026-04-02 11:15:00.633] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [ENTRY START] symbol=USDCAD bias=Long
+[2026-04-02 11:15:00.633] [PIPE] symbol=USDCAD hasSignals=True count=0
+[2026-04-02 11:15:00.634] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [DBG ENTRY] total candidates=0
+[2026-04-02 11:15:00.635] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [DIR][HTF] sym=USDCAD allow=Long conf=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00
+[2026-04-02 11:15:00.635] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.53
+[2026-04-02 11:15:00.635] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:15:00.636] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [ENTRY_TRACE][SUMMARY] symbol=USDCAD totalEvaluations=0 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:15:00.636] [TR] SelectEntry CALLED
+[2026-04-02 11:15:00.636] [TRACE] selected is null = True
+[2026-04-02 11:15:00.637] [FX][TOTAL_REJECTION] symbol=USDCAD candidates=0 reason=ALL_INVALID
+[2026-04-02 11:15:00.637] [FX][ENTRY_STATS] created=0 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:15:00.638] [USDCAD] attemptId=USD6JPUH4 [ATTEMPT USD6JPUH4] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:15:00.638] BLOCK: entry gate
+[2026-04-02 11:15:00.639] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:15:00.639] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 11:15:00.640] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:15:00.640] [MEMORY][UPDATE] symbol=USDCAD age=4 sinceImpulse=3
+[2026-04-02 11:15:00.641] [MEMORY] phase=Continuation window=Early ext=Normal
+[2026-04-02 11:15:00.641] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9
+[2026-04-02 11:18:03.617] GeminiV26Bot STOP
+[2026-04-02 11:18:07.944] ======================================
+[2026-04-02 11:18:07.954] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 11:18:07.965] ❌ NOT legacy Gemini
+[2026-04-02 11:18:07.966] 📊 Symbol: USDCAD
+[2026-04-02 11:18:07.972] ⏱ Timeframe: Minute5
+[2026-04-02 11:18:07.972] ======================================
+[2026-04-02 11:18:07.973] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 11:18:09.120] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 11:18:09.229] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 11:18:09.231] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 11:18:09.231] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 11:18:09.231] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 11:18:09.233] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 11:18:09.233] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 11:18:09.234] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 11:18:09.235] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 11:18:09.240] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 11:18:09.241] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 11:18:09.242] [BOOT][REHYDRATE_START]
+[2026-04-02 11:18:09.246] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 11:18:09.247] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 11:18:09.249] [MEMORY][BUILD_START] symbol=USDCAD bars=2196
+[2026-04-02 11:18:09.271] [MEMORY][DONE] symbol=USDCAD mode=HistoricalReplay phase=Continuation age=4 pullbacks=0 sinceImpulse=3
+[2026-04-02 11:20:00.360] [ONBAR DBG] raw=USDCAD canonical=USDCAD
+[2026-04-02 11:20:00.366] [FX MSD] USDCAD | atrPips=1.99 adx=38.2 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:20:00.368] [FX MarketState] USDCAD Trend=True Momentum=False LowVol=True ADX=38.2
+[2026-04-02 11:20:00.368] [MEMORY][CTX_ATTACH][START] symbol=USDCAD
+[2026-04-02 11:20:00.369] [MEMORY][CTX_ATTACH] symbol=USDCAD hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:20:00.369] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 11:20:00.369] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 11:20:00.369] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 11:20:00.370] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 11:20:00.489] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 11:20:00.490] [IMPULSE SRC] idx=2196 barsSince=0 range=0.00
+[2026-04-02 11:20:00.490] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:20:00.491] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 11:20:00.492] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0004900000000001015 atr=0.00020285714285713956
+[2026-04-02 11:20:00.492] [RESOLVER][INPUT] input=USDCAD
+[2026-04-02 11:20:00.496] [RESOLVER][CANONICAL] input=USDCAD canonical=USDCAD
+[2026-04-02 11:20:00.503] [RESOLVER][RUNTIME] source=current_bot runtime=USDCAD
+[2026-04-02 11:20:00.503] [RESOLVER][SUCCESS] input=USDCAD canonical=USDCAD runtime=USDCAD
+[2026-04-02 11:20:00.894] [AUDIT][HTF FLOW][SOURCE] symbol=USDCAD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:20:00.895] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCAD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.53
+[2026-04-02 11:20:00.895] [AUDIT][HTF CONTEXT] symbol=USDCAD asset=FX allowedDirection=Long confidence=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 activeDirection=Long activeConfidence=0.53
+[2026-04-02 11:20:00.896] [HTF][SNAPSHOT] dir=Long conf=0.53
+[2026-04-02 11:20:00.896] [CTX][MEMORY_READY] symbol=USDCAD hasMemory=True
+[2026-04-02 11:20:00.896] [ENTRY][SNAPSHOT] symbol=USDCAD movePhase=Continuation continuationWindow=Early extensionState=Normal impulseFreshness=0.53 continuationFreshness=1.00 triggerLateScore=0.13 chaseRisk=False timingPenalty=-13
+[2026-04-02 11:20:00.897] [CTX][TIMING][SIDE] symbol=USDCAD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=3 attempts=0 triggerLate=0.13 distanceAtr=0.25
+[2026-04-02 11:20:00.897] [CTX][TIMING][SIDE] symbol=USDCAD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:20:00.898] [ENTRY MARKETSTATE ASSIGN] sym=USDCAD trend=True momentum=False lowVol=True adx=38.2 atrPts=1.99
+[2026-04-02 11:20:00.898] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DIR][CTX_BUILD] sym=USDCAD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 11:20:00.899] [SESSION_CALENDAR] utc=2026-04-02T11:20:00.8970000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:20:00.899] [SESSION_GATE] symbol=USDCAD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:20:00.899] [SESSION CHECK] time=2026-04-02T11:20:00.8970000Z symbol=USDCAD bucket=London allow=True
+[2026-04-02 11:20:00.899] [SESSION_MATRIX] symbol=USDCAD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:20:00.900] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:20:00.909] [USDCAD LOGIC] state=TREND_ONLY bias=Buy logicConf=29 | ema50=1.39206 ema200=1.39063 diff=0.00143 adx=38.2 atr=0.00020 pattern=none chop=True opp=False htfAlign=True
+[2026-04-02 11:20:00.909] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DIR][LOGIC] sym=USDCAD logicBias=Long logicConf=29
+[2026-04-02 11:20:00.910] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [CTX PROPAGATION] symbol=USDCAD bias=Long conf=29
+[2026-04-02 11:20:00.914] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:20:00.914] [DEBUG] M5.Count=2198
+[2026-04-02 11:20:00.915] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=USDCAD bar=2026-04-02T11:20:00.9120000Z
+[2026-04-02 11:20:00.915] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY START] symbol=USDCAD bias=Long
+[2026-04-02 11:20:00.920] [PIPE] symbol=USDCAD hasSignals=True count=2
+[2026-04-02 11:20:00.920] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DBG ENTRY] total candidates=2
+[2026-04-02 11:20:00.920] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DIR][ROUTER_CAND] sym=USDCAD type=FX_FlagContinuation valid=False score=40 dir=Long reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.921] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDCAD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.921] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][LOGIC] symbol=USDCAD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=33 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 11:20:00.922] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DIR][ROUTER_CAND] sym=USDCAD type=FX_ImpulseContinuation valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.923] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDCAD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.923] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][LOGIC] symbol=USDCAD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=33 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 11:20:00.924] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [DIR][HTF] sym=USDCAD allow=Long conf=0.53 reason=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00
+[2026-04-02 11:20:00.924] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.53
+[2026-04-02 11:20:00.924] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 11:20:00.925] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 11:20:00.926] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCAD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.927] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCAD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.927] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:20:00.934] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=USDCAD type=FX_FlagContinuation dir=Long authority=False
+[2026-04-02 11:20:00.941] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=USDCAD type=FX_FlagContinuation dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 11:20:00.948] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 11:20:00.949] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][GATE] symbol=USDCAD entryType=FX_FlagContinuation stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:20:00.950] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 11:20:00.950] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][GATE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:20:00.955] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][SCORE] symbol=USDCAD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.956] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCAD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.957] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][SCORE] symbol=USDCAD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:20:00.965] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDCAD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.977] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][CLASSIFICATION] symbol=USDCAD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:20:00.977] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][CLASSIFICATION] symbol=USDCAD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:20:00.978] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][GATES] symbol=USDCAD entryType=FX_FlagContinuation stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 11:20:00.978] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][GATES] symbol=USDCAD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 11:20:00.978] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][SUMMARY] symbol=USDCAD totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:20:00.978] [TR] SelectEntry CALLED
+[2026-04-02 11:20:00.979] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:20:00.979] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [CANDIDATE] type=FX_FlagContinuation dir=Long valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:20:00.980] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [TR] CAND FX_FlagContinuation dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:20:00.981] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [CANDIDATE] type=FX_ImpulseContinuation dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.982] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [TR] CAND FX_ImpulseContinuation dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:20:00.982] [BASELINE CHECK] type=FX_FlagContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:20:00.984] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [BLOCK] type=FX_FlagContinuation dir=Long score=30 reason=invalid_candidate
+[2026-04-02 11:20:00.985] [AUDIT][VALIDITY] type=FX_FlagContinuation structure=False impulse=False htfAlign=True continuation=True pullback=False breakout=False
+[2026-04-02 11:20:00.985] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=USDCAD asset=FX entryType=FX_FlagContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.985] [AUDIT][HTF ROUTER] asset=FX symbol=USDCAD entryType=FX_FlagContinuation routerHtfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 routerAllowedDirection=Long routerAlign=True sourceHtfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 sourceAllowedDirection=Long sourceAlign=True divergence=False
+[2026-04-02 11:20:00.986] [AUDIT][DEATH] type=FX_FlagContinuation score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:20:00.986] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [SCORE][DECISION_INPUT] entry=30 logic=29 final=30 threshold=55
+[2026-04-02 11:20:00.987] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY DECISION] symbol=USDCAD type=FX_FlagContinuation side=Long rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:20:00.987] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY REJECT DETAIL] symbol=USDCAD type=FX_FlagContinuation side=Long reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=Long adx=36.9
+[2026-04-02 11:20:00.988] [BASELINE CHECK] type=FX_ImpulseContinuation score=40 valid=false source=ENTRY_ONLY
+[2026-04-02 11:20:00.988] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [BLOCK] type=FX_ImpulseContinuation dir=Long score=40 reason=invalid_candidate
+[2026-04-02 11:20:00.989] [AUDIT][VALIDITY] type=FX_ImpulseContinuation structure=False impulse=False htfAlign=True continuation=True pullback=False breakout=False
+[2026-04-02 11:20:00.990] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=USDCAD asset=FX entryType=FX_ImpulseContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 11:20:00.991] [AUDIT][HTF ROUTER] asset=FX symbol=USDCAD entryType=FX_ImpulseContinuation routerHtfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 routerAllowedDirection=Long routerAlign=True sourceHtfState=FX_HTF BULL extended, reduced confidence, conf=0.53, gapATR=4.45, adx=46.5, distATR=3.00 sourceAllowedDirection=Long sourceAlign=True divergence=False
+[2026-04-02 11:20:00.991] [AUDIT][DEATH] type=FX_ImpulseContinuation score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS trigger=False state=NONE
+[2026-04-02 11:20:00.992] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [SCORE][DECISION_INPUT] entry=40 logic=29 final=37 threshold=55
+[2026-04-02 11:20:00.993] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY DECISION] symbol=USDCAD type=FX_ImpulseContinuation side=Long rawValid=false finalValid=false preScore=40 postScore=40 cappedScore=40 threshold=55 reason=INVALID_STRUCTURE state=NONE trigger=false → REJECT
+[2026-04-02 11:20:00.993] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY REJECT DETAIL] symbol=USDCAD type=FX_ImpulseContinuation side=Long reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=Long adx=36.9
+[2026-04-02 11:20:00.994] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:20:00.996] [ENTRY][CANDIDATE] symbol=USDCAD entryType=FX_ImpulseContinuation score=40 confidence=33 trend=Long fallback=true
+[2026-04-02 11:20:00.996] [TRACE] selected is null = True
+[2026-04-02 11:20:00.997] [FX][TOTAL_REJECTION] symbol=USDCAD candidates=2 reason=ALL_INVALID
+[2026-04-02 11:20:01.000] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:20:01.001] [USDCAD] attemptId=USD6JW9RH [ATTEMPT USD6JW9RH] [ENTRY_TRACE][FINAL] symbol=USDCAD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:20:01.001] BLOCK: entry gate
+[2026-04-02 11:20:01.002] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:20:01.002] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.7
+[2026-04-02 11:20:01.003] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:20:01.003] [MEMORY][UPDATE] symbol=USDCAD age=5 sinceImpulse=0
+[2026-04-02 11:20:01.004] [MEMORY] phase=Decay window=Early ext=Normal
+[2026-04-02 11:20:01.004] [MEMORY][ASSESSMENT] symbol=USDCAD firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
