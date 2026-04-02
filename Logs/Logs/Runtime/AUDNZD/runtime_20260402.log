@@ -374,3 +374,107 @@
 [2026-04-02 11:20:00.997] [MEMORY][UPDATE] symbol=AUDNZD age=7 sinceImpulse=5
 [2026-04-02 11:20:00.998] [MEMORY] phase=Decay window=Exhausted ext=Overextended
 [2026-04-02 11:20:01.000] [MEMORY][ASSESSMENT] symbol=AUDNZD firstPullback=False late=False exhausted=True chase=True timingPenalty=-80 trust=0.9
+[2026-04-02 11:25:03.961] [ONBAR DBG] raw=AUDNZD canonical=AUDNZD
+[2026-04-02 11:25:03.962] [FX MSD] AUDNZD | atrPips=2.05 adx=21.3 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 11:25:03.963] [FX MarketState] AUDNZD Trend=True Momentum=False LowVol=False ADX=21.3
+[2026-04-02 11:25:03.963] [MEMORY][CTX_ATTACH][START] symbol=AUDNZD
+[2026-04-02 11:25:03.964] [MEMORY][CTX_ATTACH] symbol=AUDNZD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 11:25:03.966] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 11:25:03.967] [IMPULSE SRC] idx=2197 barsSince=0 range=0.00
+[2026-04-02 11:25:03.967] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 11:25:03.968] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:25:03.969] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00029999999999996696 atr=0.0002142857142856907
+[2026-04-02 11:25:03.969] [AUDIT][HTF FLOW][SOURCE] symbol=AUDNZD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:25:03.970] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=AUDNZD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 11:25:03.971] [AUDIT][HTF CONTEXT] symbol=AUDNZD asset=FX allowedDirection=Long confidence=0.84 reason=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 activeDirection=Long activeConfidence=0.84
+[2026-04-02 11:25:03.971] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 11:25:03.972] [CTX][MEMORY_READY] symbol=AUDNZD hasMemory=True
+[2026-04-02 11:25:03.974] [ENTRY][SNAPSHOT] symbol=AUDNZD movePhase=Decay continuationWindow=Exhausted extensionState=Overextended impulseFreshness=0.00 continuationFreshness=0.29 triggerLateScore=0.60 chaseRisk=True timingPenalty=-80
+[2026-04-02 11:25:03.974] [CTX][TIMING][SIDE] symbol=AUDNZD side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=True freshness=0.29 barsSinceImpulse=5 barsSinceBreak=6 attempts=0 triggerLate=0.60 distanceAtr=3.00
+[2026-04-02 11:25:03.975] [CTX][TIMING][SIDE] symbol=AUDNZD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:25:03.975] [ENTRY MARKETSTATE ASSIGN] sym=AUDNZD trend=True momentum=False lowVol=False adx=21.3 atrPts=2.05
+[2026-04-02 11:25:03.976] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DIR][CTX_BUILD] sym=AUDNZD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 11:25:03.977] [SESSION_CALENDAR] utc=2026-04-02T11:25:03.9780000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:25:03.977] [SESSION_GATE] symbol=AUDNZD tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:25:03.978] [SESSION CHECK] time=2026-04-02T11:25:03.9780000Z symbol=AUDNZD bucket=London allow=True
+[2026-04-02 11:25:03.978] [SESSION_MATRIX] symbol=AUDNZD bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:25:03.979] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:25:03.979] [AUDNZD TRACE] step1_logic=Sell conf=67
+[2026-04-02 11:25:03.980] [FX BIAS FALLBACK] trend-based bias
+[2026-04-02 11:25:03.980] [AUDNZD LOGIC] state=FX_FALLBACK bias=Sell logicConf=67 | ema50=1.20347 ema200=1.20379 diff=-0.00032 adx=21.3 atr=0.00021 pattern=trend chop=False opp=False htfAlign=True
+[2026-04-02 11:25:03.980] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DIR][LOGIC] sym=AUDNZD logicBias=Short logicConf=67
+[2026-04-02 11:25:03.981] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [CTX PROPAGATION] symbol=AUDNZD bias=Short conf=67
+[2026-04-02 11:25:03.981] [AUDNZD TRACE] step2_ctx=Short conf=67
+[2026-04-02 11:25:03.981] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:25:03.982] [DEBUG] M5.Count=2199
+[2026-04-02 11:25:03.982] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=AUDNZD bar=2026-04-02T11:25:03.9780000Z
+[2026-04-02 11:25:03.982] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY START] symbol=AUDNZD bias=Short
+[2026-04-02 11:25:03.989] [PIPE] symbol=AUDNZD hasSignals=True count=2
+[2026-04-02 11:25:03.990] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DBG ENTRY] total candidates=2
+[2026-04-02 11:25:03.991] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DIR][ROUTER_CAND] sym=AUDNZD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:03.993] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=AUDNZD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:03.993] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][LOGIC] symbol=AUDNZD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=67 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 11:25:03.994] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DIR][ROUTER_CAND] sym=AUDNZD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:03.995] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=AUDNZD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:03.995] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][LOGIC] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=67 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 11:25:03.996] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [DIR][HTF] sym=AUDNZD allow=Long conf=0.84 reason=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19
+[2026-04-02 11:25:03.996] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.84
+[2026-04-02 11:25:03.997] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Short aligned=False misaligned=True score=40->30 state=Neutral
+[2026-04-02 11:25:03.997] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=1
+[2026-04-02 11:25:04.000] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=AUDNZD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.001] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=AUDNZD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.001] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:25:04.002] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=AUDNZD type=FX_FlagContinuation dir=Short authority=False
+[2026-04-02 11:25:04.002] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=AUDNZD type=FX_FlagContinuation dir=Short score=30->15 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:04.005] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 11:25:04.006] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][GATE] symbol=AUDNZD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=15 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:04.006] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 11:25:04.006] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][GATE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:04.008] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [FX][PENALTY_CAP] symbol=AUDNZD entryType=FX_FlagContinuation createdScore=40 score=15->30 totalPenalty=25 cap=10
+[2026-04-02 11:25:04.008] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][SCORE] symbol=AUDNZD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=30 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:04.008] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=AUDNZD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.008] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][SCORE] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:04.009] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=AUDNZD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.010] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][CLASSIFICATION] symbol=AUDNZD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:04.010] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][CLASSIFICATION] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:04.010] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][GATES] symbol=AUDNZD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=30 classification=HTF_MISMATCH
+[2026-04-02 11:25:04.011] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][GATES] symbol=AUDNZD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 11:25:04.011] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][SUMMARY] symbol=AUDNZD totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:25:04.011] [TR] SelectEntry CALLED
+[2026-04-02 11:25:04.011] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:25:04.011] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:04.012] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [TR] CAND FX_FlagContinuation dir=Short valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:04.012] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:04.013] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [TR] CAND FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:04.013] [BASELINE CHECK] type=FX_FlagContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:04.014] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [BLOCK] type=FX_FlagContinuation dir=Short score=30 reason=invalid_candidate
+[2026-04-02 11:25:04.014] [AUDIT][VALIDITY] type=FX_FlagContinuation structure=False impulse=False htfAlign=False continuation=False pullback=False breakout=False
+[2026-04-02 11:25:04.014] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=AUDNZD asset=FX entryType=FX_FlagContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.015] [AUDIT][HTF ROUTER] asset=FX symbol=AUDNZD entryType=FX_FlagContinuation routerHtfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:04.015] [AUDIT][DEATH] type=FX_FlagContinuation score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:04.015] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [SCORE][DECISION_INPUT] entry=30 logic=67 final=41 threshold=55
+[2026-04-02 11:25:04.016] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY DECISION] symbol=AUDNZD type=FX_FlagContinuation side=Short rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:04.016] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY REJECT DETAIL] symbol=AUDNZD type=FX_FlagContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=None adx=21.1
+[2026-04-02 11:25:04.016] [BASELINE CHECK] type=FX_ImpulseContinuation score=40 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:04.017] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [BLOCK] type=FX_ImpulseContinuation dir=Short score=40 reason=invalid_candidate
+[2026-04-02 11:25:04.017] [AUDIT][VALIDITY] type=FX_ImpulseContinuation structure=False impulse=False htfAlign=False continuation=False pullback=False breakout=False
+[2026-04-02 11:25:04.017] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=AUDNZD asset=FX entryType=FX_ImpulseContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:04.017] [AUDIT][HTF ROUTER] asset=FX symbol=AUDNZD entryType=FX_ImpulseContinuation routerHtfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL strong structure, conf=0.84, gapATR=2.93, adx=16.0, distATR=1.19 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:04.018] [AUDIT][DEATH] type=FX_ImpulseContinuation score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS trigger=False state=NONE
+[2026-04-02 11:25:04.018] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [SCORE][DECISION_INPUT] entry=40 logic=67 final=48 threshold=55
+[2026-04-02 11:25:04.018] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY DECISION] symbol=AUDNZD type=FX_ImpulseContinuation side=Short rawValid=false finalValid=false preScore=40 postScore=40 cappedScore=40 threshold=55 reason=INVALID_STRUCTURE state=NONE trigger=false → REJECT
+[2026-04-02 11:25:04.019] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY REJECT DETAIL] symbol=AUDNZD type=FX_ImpulseContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=None adx=21.1
+[2026-04-02 11:25:04.019] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:25:04.020] [ENTRY][CANDIDATE] symbol=AUDNZD entryType=FX_ImpulseContinuation score=40 confidence=67 trend=None fallback=true
+[2026-04-02 11:25:04.020] [TRACE] selected is null = True
+[2026-04-02 11:25:04.020] [FX][TOTAL_REJECTION] symbol=AUDNZD candidates=2 reason=ALL_INVALID
+[2026-04-02 11:25:04.021] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:25:04.021] [AUDNZD] attemptId=AUD6K2S0Q [ATTEMPT AUD6K2S0Q] [ENTRY_TRACE][FINAL] symbol=AUDNZD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:25:04.021] BLOCK: entry gate
+[2026-04-02 11:25:04.021] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:25:04.022] [MEMORY][ASSESSMENT] symbol=AUDNZD firstPullback=False late=False exhausted=True chase=True timingPenalty=-80 trust=0.9
+[2026-04-02 11:25:04.022] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 11:25:04.023] [MEMORY][UPDATE] symbol=AUDNZD age=1 sinceImpulse=0
+[2026-04-02 11:25:04.023] [MEMORY][IMPULSE] symbol=AUDNZD phase=Impulse
+[2026-04-02 11:25:04.024] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 11:25:04.024] [MEMORY][ASSESSMENT] symbol=AUDNZD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9

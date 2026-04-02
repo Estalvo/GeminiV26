@@ -365,3 +365,112 @@
 [2026-04-02 11:20:01.165] [MEMORY][UPDATE] symbol=GBPJPY age=5 sinceImpulse=4
 [2026-04-02 11:20:01.165] [MEMORY] phase=Pullback window=Early ext=Normal
 [2026-04-02 11:20:01.166] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=True late=False exhausted=False chase=False timingPenalty=-18 trust=0.9
+[2026-04-02 11:25:00.323] [ONBAR DBG] raw=GBPJPY canonical=GBPJPY
+[2026-04-02 11:25:00.323] [FX MSD] GBPJPY | atrPips=4.94 adx=29.4 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 11:25:00.324] [FX MarketState] GBPJPY Trend=True Momentum=False LowVol=True ADX=29.4
+[2026-04-02 11:25:00.324] [MEMORY][CTX_ATTACH][START] symbol=GBPJPY
+[2026-04-02 11:25:00.325] [MEMORY][CTX_ATTACH] symbol=GBPJPY hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 11:25:00.326] [PB] bars=1 depth=0.28 early=True
+[2026-04-02 11:25:00.326] [IMPULSE SRC] idx=2197 barsSince=0 range=0.07
+[2026-04-02 11:25:00.327] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.10/0.02 retr=0.02/0.03
+[2026-04-02 11:25:00.327] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 11:25:00.327] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.10200000000000387 atr=0.053857142857142194
+[2026-04-02 11:25:00.328] [STRUCTURE][IMPULSE] dir=Short strength=1.04 range=0.1
+[2026-04-02 11:25:00.330] [STRUCTURE][PULLBACK] depth=0.28 bars=1
+[2026-04-02 11:25:00.330] [STRUCTURE][PULLBACK_RANGE] low=210.55600 high=210.62700
+[2026-04-02 11:25:00.333] [AUDIT][HTF FLOW][SOURCE] symbol=GBPJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:25:00.334] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GBPJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.36
+[2026-04-02 11:25:00.340] [AUDIT][HTF CONTEXT] symbol=GBPJPY asset=FX allowedDirection=Long confidence=0.36 reason=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 activeDirection=Long activeConfidence=0.36
+[2026-04-02 11:25:00.343] [HTF][SNAPSHOT] dir=Long conf=0.36
+[2026-04-02 11:25:00.344] [CTX][MEMORY_READY] symbol=GBPJPY hasMemory=True
+[2026-04-02 11:25:00.344] [ENTRY][SNAPSHOT] symbol=GBPJPY movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.39 continuationFreshness=0.90 triggerLateScore=0.18 chaseRisk=False timingPenalty=-18
+[2026-04-02 11:25:00.344] [CTX][TIMING][SIDE] symbol=GBPJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:25:00.344] [CTX][TIMING][SIDE] symbol=GBPJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.90 barsSinceImpulse=4 barsSinceBreak=4 attempts=0 triggerLate=0.18 distanceAtr=0.45
+[2026-04-02 11:25:00.345] [ENTRY MARKETSTATE ASSIGN] sym=GBPJPY trend=True momentum=False lowVol=True adx=29.4 atrPts=4.94
+[2026-04-02 11:25:00.345] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DIR][CTX_BUILD] sym=GBPJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:25:00.346] [SESSION_CALENDAR] utc=2026-04-02T11:25:00.3530000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:25:00.346] [SESSION_GATE] symbol=GBPJPY tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:25:00.346] [SESSION CHECK] time=2026-04-02T11:25:00.3530000Z symbol=GBPJPY bucket=London allow=True
+[2026-04-02 11:25:00.347] [SESSION_MATRIX] symbol=GBPJPY bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:25:00.347] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:25:00.348] [GBPJPY LOGIC] state=TREND_ONLY bias=Sell logicConf=29 | ema50=210.65545 ema200=210.82210 diff=-0.16666 adx=29.4 atr=0.04936 pattern=none chop=False opp=True htfAlign=True
+[2026-04-02 11:25:00.354] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DIR][LOGIC] sym=GBPJPY logicBias=Short logicConf=29
+[2026-04-02 11:25:00.355] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [CTX PROPAGATION] symbol=GBPJPY bias=Short conf=29
+[2026-04-02 11:25:00.355] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:25:00.356] [DEBUG] M5.Count=2199
+[2026-04-02 11:25:00.356] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=GBPJPY bar=2026-04-02T11:25:00.3530000Z
+[2026-04-02 11:25:00.356] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY START] symbol=GBPJPY bias=Short
+[2026-04-02 11:25:00.364] [PIPE] symbol=GBPJPY hasSignals=True count=2
+[2026-04-02 11:25:00.365] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DBG ENTRY] total candidates=2
+[2026-04-02 11:25:00.366] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DIR][ROUTER_CAND] sym=GBPJPY type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.367] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GBPJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.367] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][LOGIC] symbol=GBPJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:25:00.367] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DIR][ROUTER_CAND] sym=GBPJPY type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_CONTINUATION_SIGNAL|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.368] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=GBPJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.369] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][LOGIC] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=33 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:25:00.369] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [DIR][HTF] sym=GBPJPY allow=Long conf=0.36 reason=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39
+[2026-04-02 11:25:00.369] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.36
+[2026-04-02 11:25:00.370] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Short aligned=False misaligned=True score=40->30 state=Neutral
+[2026-04-02 11:25:00.370] [HTF][CANDIDATE] asset=FX type=FX_ImpulseContinuation dir=Short aligned=False misaligned=True score=40->30 state=Neutral
+[2026-04-02 11:25:00.370] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=2
+[2026-04-02 11:25:00.371] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.372] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.372] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:25:00.373] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GBPJPY type=FX_FlagContinuation dir=Short authority=False
+[2026-04-02 11:25:00.373] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GBPJPY type=FX_FlagContinuation dir=Short score=30->15 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:00.374] [TIMING][FX_ImpulseContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:25:00.374] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=GBPJPY type=FX_ImpulseContinuation dir=Short authority=False
+[2026-04-02 11:25:00.375] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=GBPJPY type=FX_ImpulseContinuation dir=Short score=30->15 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:00.376] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 11:25:00.377] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][GATE] symbol=GBPJPY entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=15 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:00.377] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 11:25:00.377] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][GATE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=15 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:00.379] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [FX][PENALTY_CAP] symbol=GBPJPY entryType=FX_FlagContinuation createdScore=40 score=15->30 totalPenalty=25 cap=10
+[2026-04-02 11:25:00.380] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [FX][PENALTY_CAP] symbol=GBPJPY entryType=FX_ImpulseContinuation createdScore=40 score=15->30 totalPenalty=25 cap=10
+[2026-04-02 11:25:00.380] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][SCORE] symbol=GBPJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=30 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.382] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.382] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][SCORE] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=30 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.382] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=GBPJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.382] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][CLASSIFICATION] symbol=GBPJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.383] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][CLASSIFICATION] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.383] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][GATES] symbol=GBPJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=30 classification=HTF_MISMATCH
+[2026-04-02 11:25:00.383] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][GATES] symbol=GBPJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=30 classification=HTF_MISMATCH
+[2026-04-02 11:25:00.383] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][SUMMARY] symbol=GBPJPY totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:25:00.384] [TR] SelectEntry CALLED
+[2026-04-02 11:25:00.384] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:25:00.384] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=30 reason=[ROUTER] NO_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.384] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [TR] CAND FX_FlagContinuation dir=Short valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.385] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=30 reason=[ROUTER] NO_CONTINUATION_SIGNAL|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.385] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [TR] CAND FX_ImpulseContinuation dir=Short valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_CONTINUATION_SIGNAL|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.386] [BASELINE CHECK] type=FX_FlagContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.386] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [BLOCK] type=FX_FlagContinuation dir=Short score=30 reason=invalid_candidate
+[2026-04-02 11:25:00.386] [AUDIT][VALIDITY] type=FX_FlagContinuation structure=False impulse=True htfAlign=False continuation=True pullback=False breakout=False
+[2026-04-02 11:25:00.387] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=GBPJPY asset=FX entryType=FX_FlagContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.387] [AUDIT][HTF ROUTER] asset=FX symbol=GBPJPY entryType=FX_FlagContinuation routerHtfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:00.387] [AUDIT][DEATH] type=FX_FlagContinuation score=30 reason=[ROUTER] NO_FLAG|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:00.387] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [SCORE][DECISION_INPUT] entry=30 logic=29 final=30 threshold=55
+[2026-04-02 11:25:00.388] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY DECISION] symbol=GBPJPY type=FX_FlagContinuation side=Short rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:00.388] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY REJECT DETAIL] symbol=GBPJPY type=FX_FlagContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=Short adx=30.9
+[2026-04-02 11:25:00.388] [BASELINE CHECK] type=FX_ImpulseContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.388] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [BLOCK] type=FX_ImpulseContinuation dir=Short score=30 reason=invalid_candidate
+[2026-04-02 11:25:00.388] [AUDIT][VALIDITY] type=FX_ImpulseContinuation structure=False impulse=True htfAlign=False continuation=True pullback=False breakout=False
+[2026-04-02 11:25:00.389] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=GBPJPY asset=FX entryType=FX_ImpulseContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.389] [AUDIT][HTF ROUTER] asset=FX symbol=GBPJPY entryType=FX_ImpulseContinuation routerHtfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL extended, reduced confidence, conf=0.36, gapATR=0.22, adx=27.7, distATR=1.39 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:00.389] [AUDIT][DEATH] type=FX_ImpulseContinuation score=30 reason=[ROUTER] NO_CONTINUATION_SIGNAL|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:00.389] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [SCORE][DECISION_INPUT] entry=30 logic=29 final=30 threshold=55
+[2026-04-02 11:25:00.390] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY DECISION] symbol=GBPJPY type=FX_ImpulseContinuation side=Short rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:00.390] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY REJECT DETAIL] symbol=GBPJPY type=FX_ImpulseContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=false trend=Short adx=30.9
+[2026-04-02 11:25:00.390] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:25:00.391] [ENTRY][CANDIDATE] symbol=GBPJPY entryType=FX_FlagContinuation score=30 confidence=33 trend=Short fallback=true
+[2026-04-02 11:25:00.391] [TRACE] selected is null = True
+[2026-04-02 11:25:00.391] [FX][TOTAL_REJECTION] symbol=GBPJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 11:25:00.391] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:25:00.391] [GBPJPY] attemptId=GBP6K2P7L [ATTEMPT GBP6K2P7L] [ENTRY_TRACE][FINAL] symbol=GBPJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:25:00.392] BLOCK: entry gate
+[2026-04-02 11:25:00.392] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:25:00.392] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=True late=False exhausted=False chase=False timingPenalty=-18 trust=0.9
+[2026-04-02 11:25:00.393] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:25:00.393] [MEMORY][UPDATE] symbol=GBPJPY age=1 sinceImpulse=0
+[2026-04-02 11:25:00.393] [MEMORY][IMPULSE] symbol=GBPJPY phase=Impulse
+[2026-04-02 11:25:00.393] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 11:25:00.394] [MEMORY][ASSESSMENT] symbol=GBPJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9

@@ -599,3 +599,108 @@
 [2026-04-02 11:20:00.609] [MEMORY][UPDATE] symbol=NAS100 age=2 sinceImpulse=1
 [2026-04-02 11:20:00.610] [MEMORY] phase=Continuation window=Fresh ext=Normal
 [2026-04-02 11:20:00.610] [MEMORY][ASSESSMENT] symbol=NAS100 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 11:25:00.401] [ONBAR DBG] raw=US TECH 100 canonical=NAS100
+[2026-04-02 11:25:00.401] [INDEX MSD] US TECH 100 | atrPts=17.9 adx=19.9 | lowVol=False trend=False momentum=False | minAtr=10 minAdx=21
+[2026-04-02 11:25:00.401] [INDEX MarketState] US TECH 100 Trend=False Momentum=False LowVol=False ADX=19.9
+[2026-04-02 11:25:00.401] [MEMORY][CTX_ATTACH][START] symbol=NAS100
+[2026-04-02 11:25:00.401] [MEMORY][CTX_ATTACH] symbol=NAS100 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:25:00.402] [PB] bars=1 depth=0.44 early=True
+[2026-04-02 11:25:00.402] [IMPULSE SRC] idx=2190 barsSince=1 range=30.20
+[2026-04-02 11:25:00.403] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=30.20 comp=30.20/10.57 retr=8.60/11.82
+[2026-04-02 11:25:00.403] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 11:25:00.403] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=30.200000000000728 atr=19.707142857142962
+[2026-04-02 11:25:00.403] [AUDIT][HTF FLOW][SOURCE] symbol=US TECH 100 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Transition allowedDirection=None align=false candidateDirection=None
+[2026-04-02 11:25:00.403] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US TECH 100 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Transition allowedDirection=None align=false candidateDirection=None htfConfidence=0.72
+[2026-04-02 11:25:00.404] [AUDIT][HTF CONTEXT] symbol=US TECH 100 asset=INDEX allowedDirection=None confidence=0.72 reason=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 activeDirection=None activeConfidence=0.72
+[2026-04-02 11:25:00.404] [HTF][SNAPSHOT] dir=None conf=0.72
+[2026-04-02 11:25:00.409] [HTF][WARN] Missing HTF snapshot
+[2026-04-02 11:25:00.409] [CTX][MEMORY_READY] symbol=US TECH 100 hasMemory=True
+[2026-04-02 11:25:00.410] [ENTRY][SNAPSHOT] symbol=US TECH 100 movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.11 chaseRisk=False timingPenalty=-11
+[2026-04-02 11:25:00.410] [CTX][TIMING][SIDE] symbol=US TECH 100 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:25:00.410] [CTX][TIMING][SIDE] symbol=US TECH 100 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.11 distanceAtr=0.53
+[2026-04-02 11:25:00.411] [ENTRY MARKETSTATE ASSIGN] sym=US TECH 100 trend=False momentum=False lowVol=False adx=19.9 atrPts=17.93
+[2026-04-02 11:25:00.411] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DIR][CTX_BUILD] sym=US TECH 100 trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:25:00.411] [SESSION_CALENDAR] utc=2026-04-02T11:25:00.4150000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:25:00.411] [SESSION_GATE] symbol=US TECH 100 tf=M5 tier=Intraday bucket=London priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 11:25:00.412] [SESSION CHECK] time=2026-04-02T11:25:00.4150000Z symbol=US TECH 100 bucket=London allow=True
+[2026-04-02 11:25:00.412] [SESSION_MATRIX] symbol=US TECH 100 bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:25:00.412] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:25:00.412] [NAS LOGIC] signal=ShortTrend bias=Sell logicConf=70 | ema50=23631.58 ema200=23741.61 diff=-110.03 | adx=19.9 atr=17.93 | htfBull=False
+[2026-04-02 11:25:00.413] [NAS LOGIC STATE] LastBias=Sell LastConf=70
+[2026-04-02 11:25:00.413] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DIR][LOGIC] sym=US TECH 100 logicBias=Short logicConf=70
+[2026-04-02 11:25:00.413] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [CTX PROPAGATION] symbol=US TECH 100 bias=Short conf=70
+[2026-04-02 11:25:00.413] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:25:00.413] [DEBUG] M5.Count=2193
+[2026-04-02 11:25:00.413] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=US TECH 100 bar=2026-04-02T11:25:00.4150000Z
+[2026-04-02 11:25:00.414] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY START] symbol=US TECH 100 bias=Short
+[2026-04-02 11:25:00.416] [PIPE] symbol=US TECH 100 hasSignals=True count=2
+[2026-04-02 11:25:00.416] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 11:25:00.417] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DBG ENTRY] total candidates=2
+[2026-04-02 11:25:00.417] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DIR][ROUTER_CAND] sym=US TECH 100 type=Index_Pullback valid=False score=40 dir=Short reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.417] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US TECH 100 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.417] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Pullback stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Index_Pullback
+[2026-04-02 11:25:00.417] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DIR][ROUTER_CAND] sym=US TECH 100 type=Index_Flag valid=False score=40 dir=Short reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.418] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US TECH 100 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.418] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][LOGIC] symbol=US TECH 100 entryType=Index_Flag stage=LOGIC candidateDirection=Short score=40 classification=HTF_NO_DIRECTION rawDirection=Short logicBiasDirection=Short logicConfidence=70 patternDetected=true setupType=Index_Flag
+[2026-04-02 11:25:00.418] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [DIR][HTF] sym=US TECH 100 allow=None conf=0.72 reason=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02
+[2026-04-02 11:25:00.418] [HTF][BIAS] asset=INDEX direction=None state=Neutral impact=ScoreOnly conf=0.72
+[2026-04-02 11:25:00.418] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Short aligned=False misaligned=False score=40->40 state=Neutral
+[2026-04-02 11:25:00.418] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Short aligned=False misaligned=False score=40->40 state=Neutral
+[2026-04-02 11:25:00.419] [HTF][APPLIED] asset=INDEX dir=None state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 11:25:00.419] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US TECH 100 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.419] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US TECH 100 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.419] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 11:25:00.419] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US TECH 100 type=Index_Pullback dir=Short authority=False
+[2026-04-02 11:25:00.420] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US TECH 100 type=Index_Pullback dir=Short score=40->25 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:00.420] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 11:25:00.420] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US TECH 100 type=Index_Flag dir=Short authority=False
+[2026-04-02 11:25:00.420] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US TECH 100 type=Index_Flag dir=Short score=40->25 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:00.420] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 11:25:00.421] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][GATE] symbol=US TECH 100 entryType=Index_Pullback stage=GATE candidateDirection=Short score=25 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=false reason=PASS_NO_RESTART_DECAY
+[2026-04-02 11:25:00.421] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][GATE] symbol=US TECH 100 entryType=Index_Flag stage=GATE candidateDirection=Short score=25 classification=HTF_NO_DIRECTION gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=false reason=PASS_NO_RESTART_DECAY
+[2026-04-02 11:25:00.421] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 11:25:00.421] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Pullback stage=SCORE candidateDirection=Short score=25 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=25 finalScore=25 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.421] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US TECH 100 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.421] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][SCORE] symbol=US TECH 100 entryType=Index_Flag stage=SCORE candidateDirection=Short score=25 classification=HTF_NO_DIRECTION baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=25 finalScore=25 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.422] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US TECH 100 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.422] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][CLASSIFICATION] symbol=US TECH 100 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Short score=25 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.422] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][CLASSIFICATION] symbol=US TECH 100 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Short score=25 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.422] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][GATES] symbol=US TECH 100 entryType=Index_Pullback stage=GATES candidateDirection=Short score=25 classification=HTF_NO_DIRECTION
+[2026-04-02 11:25:00.422] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][GATES] symbol=US TECH 100 entryType=Index_Flag stage=GATES candidateDirection=Short score=25 classification=HTF_NO_DIRECTION
+[2026-04-02 11:25:00.423] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][SUMMARY] symbol=US TECH 100 totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:25:00.423] [TR] SelectEntry CALLED
+[2026-04-02 11:25:00.423] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:25:00.423] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [CANDIDATE] type=Index_Pullback dir=Short valid=false score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:25:00.424] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [TR] CAND Index_Pullback dir=Short valid=False state=SETUP_DETECTED trigger=False score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:25:00.424] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [CANDIDATE] type=Index_Flag dir=Short valid=false score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:25:00.424] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [TR] CAND Index_Flag dir=Short valid=False state=SETUP_DETECTED trigger=False score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 11:25:00.424] [BASELINE CHECK] type=Index_Pullback score=25 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.424] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [BLOCK] type=Index_Pullback dir=Short score=25 reason=invalid_candidate
+[2026-04-02 11:25:00.425] [AUDIT][VALIDITY] type=Index_Pullback structure=True impulse=True htfAlign=True continuation=False pullback=True breakout=False
+[2026-04-02 11:25:00.425] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=US TECH 100 asset=INDEX entryType=Index_Pullback stage=TradeRouter module=TradeRouter htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.425] [AUDIT][HTF ROUTER] asset=INDEX symbol=US TECH 100 entryType=Index_Pullback routerHtfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 routerAllowedDirection=None routerAlign=True sourceHtfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 sourceAllowedDirection=None sourceAlign=True divergence=False
+[2026-04-02 11:25:00.426] [AUDIT][DEATH] type=Index_Pullback score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:00.426] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [SCORE][DECISION_INPUT] entry=25 logic=70 final=39 threshold=55
+[2026-04-02 11:25:00.426] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY DECISION] symbol=US TECH 100 type=Index_Pullback side=Short rawValid=false finalValid=false preScore=25 postScore=25 cappedScore=25 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:00.426] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY REJECT DETAIL] symbol=US TECH 100 type=Index_Pullback side=Short reason=INVALID_STRUCTURE structureAligned=true momentumAligned=true trend=Short adx=18.1
+[2026-04-02 11:25:00.426] [BASELINE CHECK] type=Index_Flag score=25 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.427] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [BLOCK] type=Index_Flag dir=Short score=25 reason=invalid_candidate
+[2026-04-02 11:25:00.427] [AUDIT][VALIDITY] type=Index_Flag structure=True impulse=True htfAlign=True continuation=False pullback=True breakout=False
+[2026-04-02 11:25:00.427] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=US TECH 100 asset=INDEX entryType=Index_Flag stage=TradeRouter module=TradeRouter htfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 allowedDirection=None align=True candidateDirection=Short
+[2026-04-02 11:25:00.427] [AUDIT][HTF ROUTER] asset=INDEX symbol=US TECH 100 entryType=Index_Flag routerHtfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 routerAllowedDirection=None routerAlign=True sourceHtfState=INDEX_HTF TRANSITION bearish but overextended slope21ATR=-0.49 adx=31.3 distFastATR=1.64 gapATR=1.02 sourceAllowedDirection=None sourceAlign=True divergence=False
+[2026-04-02 11:25:00.428] [AUDIT][DEATH] type=Index_Flag score=25 reason=[ROUTER] no_impulse|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:00.428] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [SCORE][DECISION_INPUT] entry=25 logic=70 final=39 threshold=55
+[2026-04-02 11:25:00.428] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY DECISION] symbol=US TECH 100 type=Index_Flag side=Short rawValid=false finalValid=false preScore=25 postScore=25 cappedScore=25 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:00.428] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY REJECT DETAIL] symbol=US TECH 100 type=Index_Flag side=Short reason=INVALID_STRUCTURE structureAligned=true momentumAligned=true trend=Short adx=18.1
+[2026-04-02 11:25:00.428] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:25:00.429] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 11:25:00.429] [ENTRY][CANDIDATE] symbol=US TECH 100 entryType=Index_Pullback score=25 confidence=70 trend=Short fallback=true
+[2026-04-02 11:25:00.429] [TRACE] selected is null = True
+[2026-04-02 11:25:00.429] [US TECH 100] attemptId=US 6K2P9S [ATTEMPT US 6K2P9S] [ENTRY_TRACE][FINAL] symbol=US TECH 100 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:25:00.430] BLOCK: entry gate
+[2026-04-02 11:25:00.430] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:25:00.430] [MEMORY][ASSESSMENT] symbol=NAS100 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 11:25:00.431] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:25:00.431] [MEMORY][UPDATE] symbol=NAS100 age=3 sinceImpulse=2
+[2026-04-02 11:25:00.432] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 11:25:00.432] [MEMORY][ASSESSMENT] symbol=NAS100 firstPullback=True late=False exhausted=False chase=False timingPenalty=-14 trust=0.9

@@ -362,3 +362,104 @@
 [2026-04-02 11:20:01.158] [MEMORY][UPDATE] symbol=EURJPY age=2 sinceImpulse=1
 [2026-04-02 11:20:01.159] [MEMORY] phase=Continuation window=Fresh ext=Normal
 [2026-04-02 11:20:01.160] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 11:25:00.304] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 11:25:00.304] [FX MSD] EURJPY | atrPips=3.82 adx=21.5 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 11:25:00.305] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=21.5
+[2026-04-02 11:25:00.305] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 11:25:00.306] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 11:25:00.307] [PB] bars=2 depth=0.45 early=True
+[2026-04-02 11:25:00.308] [IMPULSE SRC] idx=2195 barsSince=2 range=0.05
+[2026-04-02 11:25:00.309] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.04/0.02 retr=0.02/0.02
+[2026-04-02 11:25:00.309] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 11:25:00.310] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.03900000000001569 atr=0.044785714285721055
+[2026-04-02 11:25:00.310] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 11:25:00.311] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 11:25:00.312] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 activeDirection=Long activeConfidence=0.60
+[2026-04-02 11:25:00.312] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 11:25:00.313] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 11:25:00.313] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.12 chaseRisk=False timingPenalty=-12
+[2026-04-02 11:25:00.314] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.12 distanceAtr=0.59
+[2026-04-02 11:25:00.315] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 11:25:00.315] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=21.5 atrPts=3.82
+[2026-04-02 11:25:00.315] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 11:25:00.316] [SESSION_CALENDAR] utc=2026-04-02T11:25:00.3210000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 11:25:00.316] [SESSION_GATE] symbol=EURJPY tf=M5 tier=Intraday bucket=London priority=High allow=True reason=Intraday session allowed
+[2026-04-02 11:25:00.317] [SESSION CHECK] time=2026-04-02T11:25:00.3210000Z symbol=EURJPY bucket=London allow=True
+[2026-04-02 11:25:00.317] [SESSION_MATRIX] symbol=EURJPY bucket=London tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 11:25:00.317] [CTX_SESSION_ASSIGN] sessionFromGate=London sessionAssigned=London
+[2026-04-02 11:25:00.318] [FX BIAS FALLBACK] trend-based bias
+[2026-04-02 11:25:00.318] [EURJPY LOGIC] state=FX_FALLBACK bias=Sell logicConf=63 | ema50=183.87630 ema200=183.88389 diff=-0.00759 adx=21.5 atr=0.03824 pattern=trend chop=False opp=False htfAlign=True
+[2026-04-02 11:25:00.318] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DIR][LOGIC] sym=EURJPY logicBias=Short logicConf=63
+[2026-04-02 11:25:00.319] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [CTX PROPAGATION] symbol=EURJPY bias=Short conf=63
+[2026-04-02 11:25:00.320] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 11:25:00.320] [DEBUG] M5.Count=2199
+[2026-04-02 11:25:00.321] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=EURJPY bar=2026-04-02T11:25:00.3210000Z
+[2026-04-02 11:25:00.321] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY START] symbol=EURJPY bias=Short
+[2026-04-02 11:25:00.334] [PIPE] symbol=EURJPY hasSignals=True count=2
+[2026-04-02 11:25:00.341] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DBG ENTRY] total candidates=2
+[2026-04-02 11:25:00.341] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DIR][ROUTER_CAND] sym=EURJPY type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.342] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.342] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][LOGIC] symbol=EURJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=63 patternDetected=true setupType=FX_FlagContinuation
+[2026-04-02 11:25:00.342] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DIR][ROUTER_CAND] sym=EURJPY type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.343] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.344] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][LOGIC] symbol=EURJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=63 patternDetected=true setupType=FX_ImpulseContinuation
+[2026-04-02 11:25:00.344] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [DIR][HTF] sym=EURJPY allow=Long conf=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60
+[2026-04-02 11:25:00.344] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.60
+[2026-04-02 11:25:00.345] [HTF][CANDIDATE] asset=FX type=FX_FlagContinuation dir=Short aligned=False misaligned=True score=40->30 state=Neutral
+[2026-04-02 11:25:00.345] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=1
+[2026-04-02 11:25:00.347] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.348] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.349] [TIMING][FX_FlagContinuation] barsSinceBreak=0 late=false
+[2026-04-02 11:25:00.349] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=EURJPY type=FX_FlagContinuation dir=Short authority=False
+[2026-04-02 11:25:00.349] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=EURJPY type=FX_FlagContinuation dir=Short score=30->15 penalty=15 barsSinceBreak=0
+[2026-04-02 11:25:00.351] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 11:25:00.351] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][GATE] symbol=EURJPY entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=15 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:00.352] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 11:25:00.352] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][GATE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 11:25:00.353] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [FX][PENALTY_CAP] symbol=EURJPY entryType=FX_FlagContinuation createdScore=40 score=15->30 totalPenalty=25 cap=10
+[2026-04-02 11:25:00.354] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][SCORE] symbol=EURJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=30 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.355] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.355] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][SCORE] symbol=EURJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 11:25:00.355] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.356] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][CLASSIFICATION] symbol=EURJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.356] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][CLASSIFICATION] symbol=EURJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 11:25:00.356] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][GATES] symbol=EURJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=30 classification=HTF_MISMATCH
+[2026-04-02 11:25:00.357] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][GATES] symbol=EURJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 11:25:00.358] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][SUMMARY] symbol=EURJPY totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 11:25:00.358] [TR] SelectEntry CALLED
+[2026-04-02 11:25:00.358] [TR] evals=2 nonNull=2 valid=0 threshold=55
+[2026-04-02 11:25:00.359] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.359] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [TR] CAND FX_FlagContinuation dir=Short valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP]
+[2026-04-02 11:25:00.360] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.360] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [TR] CAND FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 11:25:00.361] [BASELINE CHECK] type=FX_FlagContinuation score=30 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.361] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [BLOCK] type=FX_FlagContinuation dir=Short score=30 reason=invalid_candidate
+[2026-04-02 11:25:00.362] [AUDIT][VALIDITY] type=FX_FlagContinuation structure=False impulse=True htfAlign=False continuation=True pullback=False breakout=False
+[2026-04-02 11:25:00.362] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=EURJPY asset=FX entryType=FX_FlagContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.362] [AUDIT][HTF ROUTER] asset=FX symbol=EURJPY entryType=FX_FlagContinuation routerHtfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:00.363] [AUDIT][DEATH] type=FX_FlagContinuation score=30 reason=[ROUTER] NO_IMPULSE|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY] [FX_PENALTY_CAP] trigger=False state=SETUP_DETECTED
+[2026-04-02 11:25:00.363] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [SCORE][DECISION_INPUT] entry=30 logic=63 final=40 threshold=55
+[2026-04-02 11:25:00.364] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY DECISION] symbol=EURJPY type=FX_FlagContinuation side=Short rawValid=false finalValid=false preScore=30 postScore=30 cappedScore=30 threshold=55 reason=INVALID_STRUCTURE state=SETUP_DETECTED trigger=false → REJECT
+[2026-04-02 11:25:00.364] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY REJECT DETAIL] symbol=EURJPY type=FX_FlagContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=true trend=Short adx=22.7
+[2026-04-02 11:25:00.364] [BASELINE CHECK] type=FX_ImpulseContinuation score=40 valid=false source=ENTRY_ONLY
+[2026-04-02 11:25:00.365] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [BLOCK] type=FX_ImpulseContinuation dir=Short score=40 reason=invalid_candidate
+[2026-04-02 11:25:00.365] [AUDIT][VALIDITY] type=FX_ImpulseContinuation structure=False impulse=True htfAlign=False continuation=True pullback=False breakout=False
+[2026-04-02 11:25:00.365] [AUDIT][HTF FLOW][ROUTER_CONSUME] symbol=EURJPY asset=FX entryType=FX_ImpulseContinuation stage=TradeRouter module=TradeRouter htfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 11:25:00.366] [AUDIT][HTF ROUTER] asset=FX symbol=EURJPY entryType=FX_ImpulseContinuation routerHtfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 routerAllowedDirection=Long routerAlign=False sourceHtfState=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.54, adx=14.3, distATR=0.60 sourceAllowedDirection=Long sourceAlign=False divergence=False
+[2026-04-02 11:25:00.367] [AUDIT][DEATH] type=FX_ImpulseContinuation score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS trigger=False state=NONE
+[2026-04-02 11:25:00.367] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [SCORE][DECISION_INPUT] entry=40 logic=63 final=47 threshold=55
+[2026-04-02 11:25:00.367] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY DECISION] symbol=EURJPY type=FX_ImpulseContinuation side=Short rawValid=false finalValid=false preScore=40 postScore=40 cappedScore=40 threshold=55 reason=INVALID_STRUCTURE state=NONE trigger=false → REJECT
+[2026-04-02 11:25:00.368] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY REJECT DETAIL] symbol=EURJPY type=FX_ImpulseContinuation side=Short reason=INVALID_STRUCTURE structureAligned=false momentumAligned=true trend=Short adx=22.7
+[2026-04-02 11:25:00.368] [TR] NO CANDIDATE PASSED GLOBAL ENTRY DECISION
+[2026-04-02 11:25:00.370] [ENTRY][CANDIDATE] symbol=EURJPY entryType=FX_ImpulseContinuation score=40 confidence=63 trend=Short fallback=true
+[2026-04-02 11:25:00.370] [TRACE] selected is null = True
+[2026-04-02 11:25:00.371] [FX][TOTAL_REJECTION] symbol=EURJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 11:25:00.371] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 11:25:00.372] [EURJPY] attemptId=EUR6K2P76 [ATTEMPT EUR6K2P76] [ENTRY_TRACE][FINAL] symbol=EURJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY
+[2026-04-02 11:25:00.373] BLOCK: entry gate
+[2026-04-02 11:25:00.373] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 11:25:00.374] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-12 trust=0.9
+[2026-04-02 11:25:00.374] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 11:25:00.375] [MEMORY][UPDATE] symbol=EURJPY age=3 sinceImpulse=2
+[2026-04-02 11:25:00.375] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 11:25:00.376] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-9 trust=0.9
