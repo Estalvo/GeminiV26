@@ -25,9 +25,34 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < MinBars)
                 return Reject(ctx, TradeDirection.None, "CTX_NOT_READY", "[ENTRY][XAU_PB][BLOCK_CTX]");
 
-            var dir = ctx.LogicBiasDirection;
-            if (dir == TradeDirection.None)
-                return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_PB][BLOCK_DIR]");
+            TradeDirection dir = ctx.Structure.StructureDirection;
+            bool structureDirStrict = dir == TradeDirection.Long || dir == TradeDirection.Short;
+            bool structureDirAuthority = ctx.IsStructureDirectionAuthoritative();
+            if (!structureDirStrict)
+            {
+                var logicDirection = ctx.LogicBiasDirection;
+                bool canUseLogicDirection =
+                    structureDirAuthority &&
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
+                    (ctx.Structure.PullbackEarlySignal || ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.LastClosedBarInTrendDirection);
+                if (!canUseLogicDirection)
+                {
+                    ctx.LogStructureAuthority("XAU_PullbackEntry", "STILL_FAIL", "StructureDirection", "NONE",
+                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"}");
+                    return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_PB][BLOCK_DIR]");
+                }
+
+                dir = logicDirection;
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
+                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir}");
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
+                    $"resolvedDir={dir}");
+            }
+            else
+            {
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "DIR_OK", "StructureDirection", "StructureDirection",
+                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir} strict=true");
+            }
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             bool recentImpulseWidened =

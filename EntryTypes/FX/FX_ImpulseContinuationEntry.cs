@@ -18,6 +18,8 @@ namespace GeminiV26.EntryTypes.FX
             LogStructure(ctx);
 
             var structureDirection = ctx.Structure?.StructureDirection ?? TradeDirection.None;
+            bool structureDirStrict = structureDirection == TradeDirection.Long || structureDirection == TradeDirection.Short;
+            bool structureDirAuthority = ctx.IsStructureDirectionAuthoritative();
 
             bool hasImpulse = ctx.Structure?.HasImpulse == true;
             bool hasPullback = ctx.Structure?.HasPullback == true;
@@ -39,6 +41,7 @@ namespace GeminiV26.EntryTypes.FX
             {
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
+                    structureDirAuthority &&
                     (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
                     (early || confirmed) &&
                     trendFollowThrough;
@@ -61,6 +64,11 @@ namespace GeminiV26.EntryTypes.FX
                     barsSinceImpulse <= 14 &&
                     (ctx.Structure?.ImpulseStrength ?? 0.0) >= 0.45;
                 ctx.Log?.Invoke($"[ENTRY][FX_IMPULSE][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={structureDirection}");
+            }
+            else if (structureDirStrict)
+            {
+                ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "DIR_OK", "StructureDirection", "StructureDirection",
+                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={structureDirection} strict=true");
             }
 
             ctx.Log?.Invoke(

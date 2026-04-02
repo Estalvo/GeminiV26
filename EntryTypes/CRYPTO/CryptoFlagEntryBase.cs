@@ -132,12 +132,24 @@ namespace GeminiV26.EntryTypes.Crypto
 
         private TradeDirection ResolveDirection(EntryContext ctx)
         {
+            TradeDirection strictDirection = ctx?.Structure?.StructureDirection ?? TradeDirection.None;
+            bool structureDirStrict = strictDirection == TradeDirection.Long || strictDirection == TradeDirection.Short;
+            if (structureDirStrict)
+            {
+                ctx?.LogStructureAuthority("CryptoFlagEntryBase", "DIR_OK", "StructureDirection", "StructureDirection",
+                    $"source={ctx?.Structure?.DirectionSource ?? "NA"} resolvedDir={strictDirection} strict=true");
+                return strictDirection;
+            }
+
+            bool structureDirAuthority = ctx?.IsStructureDirectionAuthoritative() == true;
             TradeDirection preFinalDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
             TradeDirection routedDirection = ctx?.RoutedDirection ?? TradeDirection.None;
             TradeDirection observedFinalDirection = ctx?.FinalDirection ?? TradeDirection.None;
 
-            if (preFinalDirection == TradeDirection.None)
+            if (!structureDirAuthority || preFinalDirection == TradeDirection.None)
             {
+                ctx?.LogStructureAuthority("CryptoFlagEntryBase", "STILL_FAIL", "StructureDirection", "NONE",
+                    $"reason=NO_DIRECTION source={ctx?.Structure?.DirectionSource ?? "NA"} structureAuthority={structureDirAuthority.ToString().ToLowerInvariant()}");
                 ctx?.Log?.Invoke(
                     $"[DIR][CRYPTO][EVAL_NONE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
                 return TradeDirection.None;
@@ -149,6 +161,10 @@ namespace GeminiV26.EntryTypes.Crypto
                     $"[DIR][CRYPTO][EVAL_MISMATCH_WARN] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
             }
 
+            ctx?.LogStructureAuthority("CryptoFlagEntryBase", "DIR_OK", "StructureDirection", "LogicBiasDirection",
+                $"source={ctx?.Structure?.DirectionSource ?? "NA"} resolvedDir={preFinalDirection}");
+            ctx?.LogStructureAuthority("CryptoFlagEntryBase", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
+                $"resolvedDir={preFinalDirection}");
             ctx?.Log?.Invoke(
                 $"[DIR][CRYPTO][EVAL_SOURCE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
             return preFinalDirection;
