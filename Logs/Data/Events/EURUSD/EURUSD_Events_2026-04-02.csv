@@ -1,4 +1,8 @@
 EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T10:55:24.6360000Z,EURUSD,BotStart,0,,Started on Minute5,,
-2026-04-02T11:18:03.5690000Z,EURUSD,BotStop,0,,,,
-2026-04-02T11:18:09.1940000Z,EURUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T13:02:54.7110000Z,EURUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:15:34.1660000Z,EURUSD,BotStop,0,,,,
+2026-04-02T14:15:39.2330000Z,EURUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:31:21.2340000Z,EURUSD,BotStop,0,,,,
+2026-04-02T14:31:25.8910000Z,EURUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:39:35.5350000Z,EURUSD,BotStop,0,,,,
+2026-04-02T14:39:42.1340000Z,EURUSD,BotStart,0,,Started on Minute5,,

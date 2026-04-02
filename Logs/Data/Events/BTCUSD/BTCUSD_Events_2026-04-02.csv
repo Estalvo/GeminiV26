@@ -1,2 +1,8 @@
 EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T11:18:11.1630000Z,BTCUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T13:02:55.5390000Z,BTCUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:15:34.1660000Z,BTCUSD,BotStop,0,,,,
+2026-04-02T14:15:39.2010000Z,BTCUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:31:21.2340000Z,BTCUSD,BotStop,0,,,,
+2026-04-02T14:31:25.9220000Z,BTCUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:39:35.5350000Z,BTCUSD,BotStop,0,,,,
+2026-04-02T14:39:42.1340000Z,BTCUSD,BotStart,0,,Started on Minute5,,

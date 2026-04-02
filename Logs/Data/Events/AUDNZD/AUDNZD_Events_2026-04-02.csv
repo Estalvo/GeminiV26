@@ -1,4 +1,8 @@
 EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T10:55:25.9020000Z,AUDNZD,BotStart,0,,Started on Minute5,,
-2026-04-02T11:18:03.5690000Z,AUDNZD,BotStop,0,,,,
-2026-04-02T11:18:09.1630000Z,AUDNZD,BotStart,0,,Started on Minute5,,
+2026-04-02T13:02:55.6490000Z,AUDNZD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:15:34.1660000Z,AUDNZD,BotStop,0,,,,
+2026-04-02T14:15:39.1860000Z,AUDNZD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:31:21.2340000Z,AUDNZD,BotStop,0,,,,
+2026-04-02T14:31:25.8440000Z,AUDNZD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:39:35.5350000Z,AUDNZD,BotStop,0,,,,
+2026-04-02T14:39:42.1500000Z,AUDNZD,BotStart,0,,Started on Minute5,,

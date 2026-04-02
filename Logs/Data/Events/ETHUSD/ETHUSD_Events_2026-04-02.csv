@@ -1,2 +1,8 @@
 EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T11:18:11.5070000Z,ETHUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T13:02:55.3200000Z,ETHUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:15:34.1660000Z,ETHUSD,BotStop,0,,,,
+2026-04-02T14:15:38.8890000Z,ETHUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:31:21.2340000Z,ETHUSD,BotStop,0,,,,
+2026-04-02T14:31:25.5000000Z,ETHUSD,BotStart,0,,Started on Minute5,,
+2026-04-02T14:39:35.5350000Z,ETHUSD,BotStop,0,,,,
+2026-04-02T14:39:41.6810000Z,ETHUSD,BotStart,0,,Started on Minute5,,
