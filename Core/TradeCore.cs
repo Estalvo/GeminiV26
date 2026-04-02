@@ -319,9 +319,8 @@ namespace GeminiV26.Core
             {
                 _entryTypes = new List<IEntryType>
                 {
-                    new BTC_PullbackEntry(),
-                    new BTC_FlagEntry(),
-                    new BTC_RangeBreakoutEntry()
+                    // Production core reduction (2026-04-02):
+                    // Crypto entry types are parked/disabled for now.
                 };
             }
 
@@ -330,24 +329,16 @@ namespace GeminiV26.Core
                 _entryTypes = new List<IEntryType>
                 {
                     new XAU_FlagEntry(),
-                    new XAU_PullbackEntry(),
-                    new XAU_ReversalEntry(),
-                    new XAU_ImpulseEntry()
+                    new XAU_PullbackEntry()
                 };
             }
             else if (_instrumentClass == InstrumentClass.FX)
             {
                 _entryTypes = new List<IEntryType>
                 {
-                new FX_FlagEntry(),
                 new FX_FlagContinuationEntry(),
-                new FX_MicroStructureEntry(),
-                new FX_MicroContinuationEntry(),
                 new FX_ImpulseContinuationEntry(),   // ← ide
-                new FX_PullbackEntry(),
-                new FX_RangeBreakoutEntry(),
-                new FX_ReversalEntry()
-            };
+                };
             }
             else if (_instrumentClass == InstrumentClass.INDEX)
             {
@@ -361,14 +352,12 @@ namespace GeminiV26.Core
 
             else
             {
-                GlobalLogger.Log(_bot, $"[WARN] Unknown symbol fallback used: {symbol}");
+                GlobalLogger.Log(_bot, $"[WARN] Unknown symbol fallback used: {symbol} | production_core_only=true | no fallback entry types registered");
 
                 _entryTypes = new List<IEntryType>
                 {
-                    new TC_PullbackEntry(),
-                    new TC_FlagEntry(),
-                    new BR_RangeBreakoutEntry(),
-                    new TR_ReversalEntry(),
+                    // Production core reduction (2026-04-02):
+                    // Legacy fallback entry types (TC_*, BR_*, TR_*) are disabled from runtime execution reach.
                 };
             }
         
