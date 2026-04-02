@@ -37,12 +37,32 @@ namespace GeminiV26.EntryTypes.METAL
                 barsSinceImpulse >= 0 &&
                 barsSinceImpulse <= 10 &&
                 ctx.Structure.ImpulseStrength >= 0.50;
+            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
             bool flagShapeWidened =
                 !ctx.Structure.HasFlag &&
                 ctx.Structure.FlagBars >= 2 &&
                 (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.HasReactionCandle_M5);
-            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasFlag && !flagShapeWidened))
+            bool flagOk = ctx.Structure.HasFlag || flagShapeWidened || ctx.IsStructureFlagAuthoritative();
+            if (!ctx.Structure.HasImpulse && impulseOk)
+            {
+                ctx.LogStructureAuthority("XAU_FlagEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("XAU_FlagEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
+            }
+            if (!ctx.Structure.HasFlag && flagOk)
+            {
+                ctx.LogStructureAuthority("XAU_FlagEntry", "FLAG_OK", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure.FlagBars} compression={ctx.Structure.FlagCompression:0.00} messy={ctx.Structure.FlagMessyOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("XAU_FlagEntry", "ALT_PATH_USED", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure.FlagBars}");
+            }
+            if (!impulseOk || !flagOk)
+            {
+                ctx.LogStructureAuthority("XAU_FlagEntry", "STILL_FAIL", "HasImpulse|HasFlag", "NONE",
+                    $"impulseOk={impulseOk.ToString().ToLowerInvariant()} flagOk={flagOk.ToString().ToLowerInvariant()} barsSinceImpulse={barsSinceImpulse}");
                 return Reject(ctx, dir, "NO_STRUCTURE", "[ENTRY][XAU_FLAG][WIDEN_STILL_BLOCK][CODE=NO_STRUCTURE]");
+            }
             if (recentImpulseWidened)
                 ctx.Log?.Invoke($"[ENTRY][XAU_FLAG][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
             if (flagShapeWidened)

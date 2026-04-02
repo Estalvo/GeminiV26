@@ -1042,13 +1042,40 @@ namespace GeminiV26.Core.Entry
 
         private void BuildImpulseAnchor(EntryContext ctx)
         {
-            if (ctx == null || ctx.M5 == null || ctx.M5.Count < 3 || ctx.AtrM5 <= 0)
+            if (ctx == null)
+            {
+                GlobalLogger.Log(_bot, "[STRUCT][IMPULSE][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
                 return;
+            }
+
+            if (ctx.M5 == null || ctx.M5.Count < 3)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={ctx.Structure?.StructureDirection ?? TradeDirection.None} code=CONTEXT_NOT_READY m5Count={(ctx.M5?.Count ?? 0)}");
+                return;
+            }
+
+            if (ctx.AtrM5 <= 0)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={ctx.Structure?.StructureDirection ?? TradeDirection.None} code=ATR_INVALID atrM5={ctx.AtrM5:0.00000}");
+                return;
+            }
 
             TradeDirection direction = ResolveStructureDirection(ctx);
             ctx.Structure.StructureDirection = direction;
             GlobalLogger.Log(_bot,
-                $"[STRUCT][DIR][SOURCE] dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} trend={ctx.TrendDirection} diSpread={ctx.DiSpread_M5:0.00} slopeM5={ctx.Ema21Slope_M5:0.00000} slopeM15={ctx.Ema21Slope_M15:0.00000}");
+                $"[STRUCT][DIR][SOURCE] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} trend={ctx.TrendDirection} diSpread={ctx.DiSpread_M5:0.00} slopeM5={ctx.Ema21Slope_M5:0.00000} slopeM15={ctx.Ema21Slope_M15:0.00000}");
+
+            if (direction == TradeDirection.None)
+            {
+                ctx.Structure.HasImpulse = false;
+                ctx.Structure.ImpulseRecentOk = false;
+                ctx.Structure.ImpulseAgeBars = ctx.BarsSinceImpulse_M5;
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} code=DIRECTION_UNRESOLVED age={ctx.BarsSinceImpulse_M5} adx={ctx.Adx_M5:0.0}");
+                return;
+            }
 
             int m5Idx = ctx.M5.Count - 2;
             double body = Math.Abs(ctx.M5.ClosePrices[m5Idx] - ctx.M5.OpenPrices[m5Idx]);
@@ -1113,7 +1140,7 @@ namespace GeminiV26.Core.Entry
             if (!ctx.Structure.HasImpulse)
             {
                 GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][FAIL] dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} age={bars} bodyAtr={move:0.00} rangeAtr={(ctx.AtrM5 > 0 ? range / ctx.AtrM5 : 0):0.00} adx={ctx.Adx_M5:0.0}");
+                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} code=NO_RECENT_IMPULSE age={bars} bodyAtr={move:0.00} rangeAtr={(ctx.AtrM5 > 0 ? range / ctx.AtrM5 : 0):0.00} adx={ctx.Adx_M5:0.0}");
                 return;
             }
 
@@ -1135,8 +1162,20 @@ namespace GeminiV26.Core.Entry
 
         private void BuildPullback(EntryContext ctx)
         {
-            if (ctx == null || !ctx.Structure.HasImpulse)
+            if (ctx == null)
+            {
+                GlobalLogger.Log(_bot, "[STRUCT][PULLBACK][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
                 return;
+            }
+
+            TradeDirection direction = ctx.Structure.StructureDirection;
+            bool impulseOk = ctx.Structure.HasImpulse || ctx.Structure.ImpulseRecentOk;
+            if (!impulseOk)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_PREREQ_NO_IMPULSE impulse={ctx.Structure.HasImpulse.ToString().ToLowerInvariant()} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
+                return;
+            }
 
             double retrace = ctx.PullbackDepthAtr_M5;
             int bars = ctx.PullbackBars_M5;
@@ -1154,12 +1193,27 @@ namespace GeminiV26.Core.Entry
                 ctx.M1TriggerInTrendDirection;
             bool shallowOk = !standardOk && shallowDepth && shallowBars && directionalPressure;
 
+            if (!validDepth && !shallowDepth)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_DEPTH_INVALID depth={retrace:0.00} bars={bars} shallowDepth={shallowDepth.ToString().ToLowerInvariant()}");
+            }
+            if (!notTooLong && !shallowBars)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_BARS_INVALID depth={retrace:0.00} bars={bars} notTooLong={notTooLong.ToString().ToLowerInvariant()} shallowBars={shallowBars.ToString().ToLowerInvariant()}");
+            }
+
             ctx.Structure.PullbackStandardOk = standardOk;
             ctx.Structure.PullbackShallowOk = shallowOk;
             ctx.Structure.HasPullback = standardOk || shallowOk;
 
             if (!ctx.Structure.HasPullback)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=NO_VALID_PULLBACK depth={retrace:0.00} bars={bars} pressure={directionalPressure.ToString().ToLowerInvariant()}");
                 return;
+            }
 
             ctx.Structure.HasMicroPullback =
                 retrace >= 0.08 &&
@@ -1184,8 +1238,27 @@ namespace GeminiV26.Core.Entry
 
         private void BuildFlag(EntryContext ctx)
         {
-            if (ctx == null || !ctx.Structure.HasPullback || ctx.AtrM5 <= 0)
+            if (ctx == null)
+            {
+                GlobalLogger.Log(_bot, "[STRUCT][FLAG][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
                 return;
+            }
+
+            TradeDirection direction = ctx.Structure.StructureDirection;
+            bool pullbackOk = ctx.Structure.HasPullback || ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback;
+            if (!pullbackOk)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_PREREQ_NO_PULLBACK pullback={ctx.Structure.HasPullback.ToString().ToLowerInvariant()} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()} micro={ctx.Structure.HasMicroPullback.ToString().ToLowerInvariant()}");
+                return;
+            }
+
+            if (ctx.AtrM5 <= 0)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=ATR_INVALID atrM5={ctx.AtrM5:0.00000}");
+                return;
+            }
 
             int bars = Math.Max(ctx.FlagBarsLong_M5, ctx.FlagBarsShort_M5);
             if (bars <= 0 && (ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5))
@@ -1209,12 +1282,27 @@ namespace GeminiV26.Core.Entry
                 ctx.IsPullbackDecelerating_M5;
             bool messyOk = !standardOk && messyCompression && messyBars && directionalPressure;
 
+            if (!(shortFlag || messyBars))
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_BARS_INVALID bars={bars} short={shortFlag.ToString().ToLowerInvariant()} messyBars={messyBars.ToString().ToLowerInvariant()}");
+            }
+            if (!(tight || messyCompression))
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_COMPRESSION_INVALID compression={compression:0.00} tight={tight.ToString().ToLowerInvariant()} messyCompression={messyCompression.ToString().ToLowerInvariant()}");
+            }
+
             ctx.Structure.FlagStandardOk = standardOk;
             ctx.Structure.FlagMessyOk = messyOk;
             ctx.Structure.HasFlag = standardOk || messyOk;
 
             if (!ctx.Structure.HasFlag)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=NO_VALID_FLAG bars={bars} compression={compression:0.00} pressure={directionalPressure.ToString().ToLowerInvariant()}");
                 return;
+            }
 
             ctx.Structure.FlagCompression = compression;
             ctx.Structure.FlagBars = bars;

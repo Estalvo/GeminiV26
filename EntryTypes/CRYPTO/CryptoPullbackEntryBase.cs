@@ -37,12 +37,32 @@ namespace GeminiV26.EntryTypes.Crypto
                 barsSinceImpulse >= 0 &&
                 barsSinceImpulse <= MaxBarsSinceImpulse + 2 &&
                 (ctx.Structure.ImpulseStrength >= (MinFuelImpulseStrength - 0.04) || ctx.IsAtrExpanding_M5);
+            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
             bool shallowPullbackWidened =
                 !ctx.Structure.HasPullback &&
                 (ctx.Structure.HasMicroPullback || (ctx.Structure.PullbackDepth >= 0.03 && ctx.Structure.PullbackDepth <= 0.20 && ctx.Structure.PullbackBars <= 3)) &&
                 (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough);
-            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasPullback && !shallowPullbackWidened))
+            bool pullbackOk = ctx.Structure.HasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
+            if (!ctx.Structure.HasImpulse && impulseOk)
+            {
+                ctx.LogStructureAuthority("CryptoPullbackEntryBase", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("CryptoPullbackEntryBase", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
+            }
+            if (!ctx.Structure.HasPullback && pullbackOk)
+            {
+                ctx.LogStructureAuthority("CryptoPullbackEntryBase", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("CryptoPullbackEntryBase", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00}");
+            }
+            if (!impulseOk || !pullbackOk)
+            {
+                ctx.LogStructureAuthority("CryptoPullbackEntryBase", "STILL_FAIL", "HasImpulse|HasPullback", "NONE",
+                    $"impulseOk={impulseOk.ToString().ToLowerInvariant()} pullbackOk={pullbackOk.ToString().ToLowerInvariant()} barsSinceImpulse={barsSinceImpulse}");
                 return Reject(ctx, dir, "NO_PULLBACK_STRUCTURE");
+            }
             if (recentImpulseWidened)
                 ctx.Log?.Invoke($"[ENTRY][CRYPTO_PB][WIDEN_ALLOW] symbol={ctx.Symbol} code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
             if (shallowPullbackWidened)

@@ -35,14 +35,34 @@ namespace GeminiV26.EntryTypes.METAL
                 barsSinceImpulse >= 0 &&
                 barsSinceImpulse <= 8 &&
                 ctx.Structure.ImpulseStrength >= 0.50;
+            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
             bool shallowPullbackWidened =
                 !ctx.Structure.HasPullback &&
                 ctx.Structure.HasMicroPullback &&
                 ctx.Structure.PullbackDepth >= 0.06 &&
                 ctx.Structure.PullbackDepth <= 0.24 &&
                 (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.HasReactionCandle_M5);
-            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasPullback && !shallowPullbackWidened))
+            bool pullbackOk = ctx.Structure.HasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
+            if (!ctx.Structure.HasImpulse && impulseOk)
+            {
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
+            }
+            if (!ctx.Structure.HasPullback && pullbackOk)
+            {
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00}");
+            }
+            if (!impulseOk || !pullbackOk)
+            {
+                ctx.LogStructureAuthority("XAU_PullbackEntry", "STILL_FAIL", "HasImpulse|HasPullback", "NONE",
+                    $"impulseOk={impulseOk.ToString().ToLowerInvariant()} pullbackOk={pullbackOk.ToString().ToLowerInvariant()} barsSinceImpulse={barsSinceImpulse}");
                 return Reject(ctx, dir, "NO_IMPULSE_PULLBACK_STRUCTURE", "[ENTRY][XAU_PB][WIDEN_STILL_BLOCK][CODE=NO_IMPULSE_PULLBACK_STRUCTURE]");
+            }
             if (recentImpulseWidened)
                 ctx.Log?.Invoke($"[ENTRY][XAU_PB][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
             if (shallowPullbackWidened)

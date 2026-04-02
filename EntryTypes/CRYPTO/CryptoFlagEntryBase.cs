@@ -36,13 +36,33 @@ namespace GeminiV26.EntryTypes.Crypto
                 barsSinceImpulse >= 0 &&
                 barsSinceImpulse <= MaxImpulseMemoryBars + 2 &&
                 (ctx.Structure.ImpulseStrength >= (MinImpulseStrength - 0.05) || ctx.IsAtrExpanding_M5);
+            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
             bool flagShapeWidened =
                 !ctx.Structure.HasFlag &&
                 ctx.Structure.FlagBars >= 2 &&
                 ctx.Structure.FlagCompression <= 0.78 &&
                 (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough);
-            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasFlag && !flagShapeWidened))
+            bool flagOk = ctx.Structure.HasFlag || flagShapeWidened || ctx.IsStructureFlagAuthoritative();
+            if (!ctx.Structure.HasImpulse && impulseOk)
+            {
+                ctx.LogStructureAuthority("CryptoFlagEntryBase", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("CryptoFlagEntryBase", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
+            }
+            if (!ctx.Structure.HasFlag && flagOk)
+            {
+                ctx.LogStructureAuthority("CryptoFlagEntryBase", "FLAG_OK", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure.FlagBars} compression={ctx.Structure.FlagCompression:0.00} messy={ctx.Structure.FlagMessyOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("CryptoFlagEntryBase", "ALT_PATH_USED", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure.FlagBars}");
+            }
+            if (!impulseOk || !flagOk)
+            {
+                ctx.LogStructureAuthority("CryptoFlagEntryBase", "STILL_FAIL", "HasImpulse|HasFlag", "NONE",
+                    $"impulseOk={impulseOk.ToString().ToLowerInvariant()} flagOk={flagOk.ToString().ToLowerInvariant()} barsSinceImpulse={barsSinceImpulse}");
                 return Reject(ctx, dir, "INVALID_STRUCTURE");
+            }
             if (recentImpulseWidened)
                 ctx.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][WIDEN_ALLOW] symbol={ctx.Symbol} code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
             if (flagShapeWidened)
