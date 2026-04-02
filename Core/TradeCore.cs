@@ -317,20 +317,45 @@ namespace GeminiV26.Core
 
             if (_instrumentClass == InstrumentClass.CRYPTO)
             {
-                _entryTypes = new List<IEntryType>
+                string rawSymbol = _bot.SymbolName;
+                string resolvedSymbol = SymbolRouting.NormalizeSymbol(rawSymbol);
+
+                if (string.Equals(resolvedSymbol, "BTCUSD", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Production core reduction (2026-04-02):
-                    // Crypto entry types are parked/disabled for now.
-                };
+                    _entryTypes = new List<IEntryType>
+                    {
+                        new BTC_FlagEntry(),
+                        new BTC_PullbackEntry()
+                    };
+
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][BTC] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                }
+                else if (string.Equals(resolvedSymbol, "ETHUSD", StringComparison.OrdinalIgnoreCase))
+                {
+                    _entryTypes = new List<IEntryType>
+                    {
+                        new ETH_FlagEntry(),
+                        new ETH_PullbackEntry()
+                    };
+
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                }
+                else
+                {
+                    _entryTypes = new List<IEntryType>();
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][UNSUPPORTED] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                }
             }
 
             else if (_instrumentClass == InstrumentClass.METAL)
             {
                 _entryTypes = new List<IEntryType>
                 {
-                    // Phase 1 safe-mode runtime registration:
-                    // Metal entry types remain parked / non-executable.
+                    new XAU_FlagEntry(),
+                    new XAU_PullbackEntry()
                 };
+
+                _bot.Print($"[ENTRY][REGISTER][METAL] symbol={symbol} count={_entryTypes.Count}");
             }
             else if (_instrumentClass == InstrumentClass.FX)
             {
