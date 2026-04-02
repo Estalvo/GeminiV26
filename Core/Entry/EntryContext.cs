@@ -15,6 +15,24 @@ namespace GeminiV26.Core.Entry
         public bool IsDeadMarketBlocked { get; set; }
     }
 
+    public class StructureContext
+    {
+        public bool HasImpulse;
+        public double ImpulseStrength;
+        public double ImpulseRange;
+        public int ImpulseBars;
+
+        public bool HasPullback;
+        public double PullbackDepth;
+        public int PullbackBars;
+
+        public bool HasFlag;
+        public double FlagCompression;
+        public int FlagBars;
+
+        public TradeDirection StructureDirection;
+    }
+
     public class EntryContext
     {
         // =========================
@@ -30,6 +48,7 @@ namespace GeminiV26.Core.Entry
         }
         public Action<string> Log { get; set; }
         public EntryContextFlags Flags { get; set; } = new EntryContextFlags();
+        public StructureContext Structure = new StructureContext();
         public GeminiV26.Core.Entry.Qualification.EntryState QualificationState { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;

@@ -834,6 +834,10 @@ namespace GeminiV26.Core.Entry
                 ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == ctx.TrendDirection;
 
+            BuildImpulseAnchor(ctx);
+            BuildPullback(ctx);
+            BuildFlag(ctx);
+
             // =================================================
             // HTF BIAS – FINAL DISPATCH (Phase 3.8 FIX)
             // =================================================
@@ -1002,6 +1006,82 @@ namespace GeminiV26.Core.Entry
             }
 
             return new string(buffer, index, buffer.Length - index);
+        }
+
+        private void BuildImpulseAnchor(EntryContext ctx)
+        {
+            if (ctx == null || ctx.M5 == null || ctx.M5.Count < 3 || ctx.AtrM5 <= 0)
+                return;
+
+            int m5Idx = ctx.M5.Count - 2;
+            double body = Math.Abs(ctx.M5.ClosePrices[m5Idx] - ctx.M5.OpenPrices[m5Idx]);
+            double range = Math.Abs(ctx.M5.HighPrices[m5Idx] - ctx.M5.LowPrices[m5Idx]);
+            double move = body / ctx.AtrM5;
+            int bars = ctx.BarsSinceImpulse_M5 <= 0 || ctx.BarsSinceImpulse_M5 >= 999
+                ? 1
+                : ctx.BarsSinceImpulse_M5;
+
+            bool strongMove = move >= 0.6;
+            bool expansion = range >= ctx.AtrM5 * 1.2;
+
+            ctx.Structure.HasImpulse = strongMove && expansion;
+
+            if (!ctx.Structure.HasImpulse)
+                return;
+
+            ctx.Structure.ImpulseStrength = move;
+            ctx.Structure.ImpulseRange = range;
+            ctx.Structure.ImpulseBars = bars;
+            ctx.Structure.StructureDirection = ctx.TrendDirection;
+
+            GlobalLogger.Log(_bot,
+                $"[STRUCTURE][IMPULSE] dir={ctx.Structure.StructureDirection} strength={ctx.Structure.ImpulseStrength:F2} range={ctx.Structure.ImpulseRange:F1}");
+        }
+
+        private void BuildPullback(EntryContext ctx)
+        {
+            if (ctx == null || !ctx.Structure.HasImpulse)
+                return;
+
+            double retrace = ctx.PullbackDepthAtr_M5;
+            int bars = ctx.PullbackBars_M5;
+
+            bool validDepth = retrace >= 0.2 && retrace <= 0.65;
+            bool notTooLong = bars <= 12;
+
+            ctx.Structure.HasPullback = validDepth && notTooLong;
+
+            if (!ctx.Structure.HasPullback)
+                return;
+
+            ctx.Structure.PullbackDepth = retrace;
+            ctx.Structure.PullbackBars = bars;
+
+            GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK] depth={retrace:F2} bars={bars}");
+        }
+
+        private void BuildFlag(EntryContext ctx)
+        {
+            if (ctx == null || !ctx.Structure.HasPullback || ctx.AtrM5 <= 0)
+                return;
+
+            int bars = Math.Max(ctx.FlagBarsLong_M5, ctx.FlagBarsShort_M5);
+            double compression = ctx.FlagAtr_M5 > 0
+                ? ctx.FlagAtr_M5 / ctx.AtrM5
+                : 1.0;
+
+            bool tight = compression <= 0.6;
+            bool shortFlag = bars <= 6;
+
+            ctx.Structure.HasFlag = tight && shortFlag;
+
+            if (!ctx.Structure.HasFlag)
+                return;
+
+            ctx.Structure.FlagCompression = compression;
+            ctx.Structure.FlagBars = bars;
+
+            GlobalLogger.Log(_bot, $"[STRUCTURE][FLAG] compression={compression:F2} bars={bars}");
         }
     }
 }
