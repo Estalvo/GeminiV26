@@ -21,11 +21,16 @@ namespace GeminiV26.Core.Entry
         public double ImpulseStrength;
         public double ImpulseRange;
         public int ImpulseBars;
+        public int ImpulseAgeBars;
+        public bool ImpulseRecentOk;
+        public string DirectionSource;
 
         public bool HasPullback;
         public bool HasMicroPullback;
         public double PullbackDepth;
         public int PullbackBars;
+        public bool PullbackStandardOk;
+        public bool PullbackShallowOk;
         public bool PullbackEarlySignal;
         public bool PullbackConfirmedSignal;
         public bool ContinuationEarlySignal;
@@ -38,6 +43,8 @@ namespace GeminiV26.Core.Entry
         public int FlagBars;
         public double FlagHigh;
         public double FlagLow;
+        public bool FlagStandardOk;
+        public bool FlagMessyOk;
         public bool FlagBreakoutUp;
         public bool FlagBreakoutDown;
 
