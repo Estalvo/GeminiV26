@@ -837,6 +837,7 @@ namespace GeminiV26.Core.Entry
             BuildImpulseAnchor(ctx);
             BuildPullback(ctx);
             BuildFlag(ctx);
+            DetectFlagBreakout(ctx);
 
             // =================================================
             // HTF BIAS – FINAL DISPATCH (Phase 3.8 FIX)
@@ -1080,8 +1081,54 @@ namespace GeminiV26.Core.Entry
 
             ctx.Structure.FlagCompression = compression;
             ctx.Structure.FlagBars = bars;
+            ctx.Structure.FlagHigh = ctx.FlagHigh;
+            ctx.Structure.FlagLow = ctx.FlagLow;
 
             GlobalLogger.Log(_bot, $"[STRUCTURE][FLAG] compression={compression:F2} bars={bars}");
+            GlobalLogger.Log(_bot, $"[STRUCTURE][FLAG_RANGE] high={ctx.Structure.FlagHigh:F5} low={ctx.Structure.FlagLow:F5}");
+        }
+
+        private void DetectFlagBreakout(EntryContext ctx)
+        {
+            if (ctx == null || !ctx.Structure.HasFlag || ctx.M1 == null || ctx.M1.Count < 2)
+                return;
+
+            int m1Idx = ctx.M1.Count - 2;
+            double price = ctx.M1.ClosePrices[m1Idx];
+
+            bool breakoutUp = price > ctx.Structure.FlagHigh;
+            bool breakoutDown = price < ctx.Structure.FlagLow;
+
+            ctx.Structure.FlagBreakoutUp = breakoutUp;
+            ctx.Structure.FlagBreakoutDown = breakoutDown;
+
+            if (breakoutUp || breakoutDown)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCTURE][FLAG_BREAKOUT] dir={(breakoutUp ? "UP" : "DOWN")} price={price:F5}");
+            }
+
+            if (ctx.AtrM5 > 0)
+            {
+                double breakoutRef = breakoutUp ? ctx.Structure.FlagHigh : ctx.Structure.FlagLow;
+                double breakoutStrength = Math.Abs(price - breakoutRef) / ctx.AtrM5;
+                bool weakBreakout = breakoutStrength < 0.1;
+
+                if (weakBreakout)
+                {
+                    ctx.Structure.FlagBreakoutUp = false;
+                    ctx.Structure.FlagBreakoutDown = false;
+                    GlobalLogger.Log(_bot, "[STRUCTURE][FLAG_BREAKOUT_WEAK]");
+                }
+            }
+
+            bool invalidBreakout =
+                (ctx.Structure.FlagBreakoutUp && ctx.Structure.StructureDirection != TradeDirection.Long) ||
+                (ctx.Structure.FlagBreakoutDown && ctx.Structure.StructureDirection != TradeDirection.Short) ||
+                (ctx.Structure.FlagBreakoutUp && ctx.Structure.FlagBreakoutDown);
+
+            if (invalidBreakout)
+                GlobalLogger.Log(_bot, "[ERROR][FLAG_BREAKOUT_INVALID]");
         }
     }
 }
