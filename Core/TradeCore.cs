@@ -3452,224 +3452,35 @@ namespace GeminiV26.Core
             if (eval.Direction == TradeDirection.None)
             {
                 GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=DIRECTION_NONE");
-                GlobalLogger.Log(_bot, "[SOFTENING][FA] softAllowed=0 hardBlocked=1");
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=DIRECTION_NONE");
                 return false;
-            }
-
-            int recommendedTimingPenalty = ctx.MemoryAssessment?.RecommendedTimingPenalty ?? ctx.MemoryTimingPenalty;
-            double triggerLateScore = ctx.MemoryTriggerLateScore;
-            bool overextended = ctx.MemoryAssessment?.IsOverextendedMove ?? false;
-            bool exhausted = ctx.MemoryAssessment?.IsExhaustedContinuation ?? false;
-            const int timingBlockThreshold = -20;
-            const int severeTimingBlockThreshold = -35;
-            bool weakSetup = !eval.HasStrongTrigger && !eval.HasStrongStructure;
-            int faSoftAllowed = 0;
-            int faHardBlocked = 0;
-            int duplicateSuppressedRejects = 0;
-            int timingDeferred = 0;
-            int timingLateSoft = 0;
-            int timingStaleBlocked = 0;
-
-            double timingMultiplier = 1.0 + (recommendedTimingPenalty / 100.0);
-            timingMultiplier = Math.Max(0.5, Math.Min(1.0, timingMultiplier));
-            double adjustedConfidence = ctx.LogicBiasConfidence * timingMultiplier;
-            int finalScore = PositionContext.ClampRiskConfidence(eval.Score + recommendedTimingPenalty);
-            GlobalLogger.Log(_bot, $"[FINAL][STATE] score={eval.Score:0.##} timingPenalty={recommendedTimingPenalty} statePenalty=0 finalScore={finalScore}");
-
-            GlobalLogger.Log(_bot, $"[MEM] penalty={recommendedTimingPenalty} source={(ctx.MemoryAssessment != null ? "assessment" : "fallback")}");
-
-            bool timingOverride = false;
-            string timingOverrideReason = "none";
-            bool timingBlocked = recommendedTimingPenalty <= timingBlockThreshold;
-            string timingDecisionReason = "pass";
-
-            if (eval.Score >= 70 && recommendedTimingPenalty > timingBlockThreshold)
-            {
-                timingOverride = true;
-                timingOverrideReason = "high_score_override";
-            }
-
-            if (timingBlocked && (overextended || exhausted) && eval.Score >= 75)
-            {
-                timingOverride = true;
-                timingOverrideReason = "strong_score_overext_exhaust_override";
-                timingBlocked = false;
-            }
-
-            if (timingBlocked)
-            {
-                if (recommendedTimingPenalty <= severeTimingBlockThreshold)
-                {
-                    timingDecisionReason = "TIMING_EXTREME";
-                }
-                else if (weakSetup && finalScore < EntryDecisionPolicy.MinScoreThreshold)
-                {
-                    timingDecisionReason = "TIMING_WEAK_COMBINED";
-                }
-                else
-                {
-                    timingBlocked = false;
-                    timingOverride = true;
-                    timingOverrideReason = "timing_soft_only";
-                }
-            }
-
-            string timingDecision = timingBlocked ? "block" : "allow";
-            GlobalLogger.Log(_bot, $"[TIMING DECISION] symbol={ctx.Symbol ?? _bot.SymbolName} score={eval.Score:0.##} penalty={recommendedTimingPenalty} threshold={timingBlockThreshold} override={timingOverride.ToString().ToLowerInvariant()} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} finalDecision={timingDecision} reason={timingOverrideReason} adjustedConfidence={adjustedConfidence:0.##}");
-
-            if (timingBlocked)
-            {
-                string timingFingerprint = $"timing_block:{ctx.Symbol}:{eval.Type}:{eval.Score}:{recommendedTimingPenalty}:{triggerLateScore:0.###}:{overextended}:{exhausted}";
-                if (!string.Equals(ctx.LastLoggedStateFingerprint, timingFingerprint, StringComparison.Ordinal))
-                {
-                    ctx.LastLoggedStateFingerprint = timingFingerprint;
-                    GlobalLogger.Log(_bot, $"[TIMING BLOCK] stage=final_acceptance symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} score={eval.Score:0.##} confidence={ctx.LogicBiasConfidence:0.##} adjustedConfidence={adjustedConfidence:0.##} penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###} overextended={overextended.ToString().ToLowerInvariant()} exhausted={exhausted.ToString().ToLowerInvariant()} threshold={timingBlockThreshold}");
-                }
-                GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=TIMING_EXTREME");
-                GlobalLogger.Log(_bot, $"[FINAL][DECISION] decision=BLOCK reason={timingDecisionReason}");
-                faHardBlocked++;
-                timingStaleBlocked++;
-                GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
-                return false;
-            }
-            else if (recommendedTimingPenalty <= timingBlockThreshold)
-            {
-                timingLateSoft++;
-                faSoftAllowed++;
-                GlobalLogger.Log(_bot, $"[FA][TIMING_SOFT] state=late_but_valid penalty={recommendedTimingPenalty} triggerLateScore={triggerLateScore:0.###}");
-                GlobalLogger.Log(_bot, $"[FA][SOFT_ALLOW] reason=non_extreme_timing category=QUALITY impact=timing_penalty_only");
             }
 
             if (BotRestartState.IsHardProtectionPhase && eval.Score < 60)
             {
                 GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=RESTART_HARD_PROTECTION");
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
-                    "[RESTART BLOCK] HARD phase requires higher confidence",
-                    ctx));
                 GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=RESTART");
-                faHardBlocked++;
-                GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
                 return false;
             }
 
-            string symbol = ctx.Symbol ?? _bot.SymbolName;
-            bool isLong = eval.Direction == TradeDirection.Long;
-            bool isShort = eval.Direction == TradeDirection.Short;
-            string canonicalSymbol = SymbolRouting.NormalizeSymbol(symbol);
-            TradeDirection htfDirection = ResolveHtfAllowedDirection(ctx);
-            TradeDirection candidateDirection = eval.Direction;
-            bool structureAligned = eval.HasStrongStructure;
-            int scoreBeforeXauCounterFilter = eval.Score;
-            int scoreAfterXauCounterFilter = eval.Score;
-
-            bool isCounterHTF =
-                (htfDirection == TradeDirection.Long && candidateDirection == TradeDirection.Short) ||
-                (htfDirection == TradeDirection.Short && candidateDirection == TradeDirection.Long);
-
-            if (canonicalSymbol == "XAUUSD" && isCounterHTF)
+            bool timingStaleOrExpired =
+                ctx.MemoryContinuationWindow == ContinuationWindowState.Unknown ||
+                ctx.MemoryContinuationWindow == ContinuationWindowState.Exhausted;
+            if (timingStaleOrExpired)
             {
-                if (!structureAligned)
-                {
-                    string reason = "xau_counter_htf_structure_fail";
-                    GlobalLogger.Log(_bot,
-                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
-                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=HTF");
-                    GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=XAU_COUNTER_HTF_STRUCTURE");
-                    faHardBlocked++;
-                    GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-                    GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-                    GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
-                    return false;
-                }
-
-                if (recommendedTimingPenalty <= -10)
-                {
-                    string reason = "xau_counter_htf_timing_conflict_soft";
-                    GlobalLogger.Log(_bot,
-                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=allow reason={reason}");
-                    GlobalLogger.Log(_bot, $"[FA][SOFT_ALLOW] reason=xau_counter_htf_timing_conflict category=QUALITY impact=timing_penalty_only");
-                    faSoftAllowed++;
-                }
-
-                if (scoreAfterXauCounterFilter < 80)
-                {
-                    string reason = "xau_counter_htf_low_score";
-                    GlobalLogger.Log(_bot,
-                        $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                        $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=block reason={reason}");
-                    GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=STRUCTURE");
-                    GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=XAU_COUNTER_HTF_LOW_SCORE");
-                    faHardBlocked++;
-                    GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-                    GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-                    GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
-                    return false;
-                }
-
-                GlobalLogger.Log(_bot,
-                    $"[XAU FILTER] symbol=XAUUSD entryType={eval.Type} scoreBefore={scoreBeforeXauCounterFilter} scoreAfter={scoreAfterXauCounterFilter} " +
-                    $"htfDirection={htfDirection} candidateDirection={candidateDirection} structureAligned={structureAligned.ToString().ToLowerInvariant()} timingPenalty={recommendedTimingPenalty} isCounterHTF={isCounterHTF.ToString().ToLowerInvariant()} decision=allow reason=pass");
-            }
-
-            if ((isLong && ctx.IsOverextendedLong) ||
-                (isShort && ctx.IsOverextendedShort))
-            {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
-                    $"[FINAL][REJECT][OVEREXT] {symbol} {eval.Type} {eval.Direction} score={eval.Score} trend={ctx.TrendDirection} conf={ctx.LogicBiasConfidence}",
-                    ctx));
-                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=STRUCTURE");
-                GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=OVEREXTENDED_DIRECTIONAL");
-                faHardBlocked++;
-                GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-                GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
+                GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=TIMING_STALE_OR_EXPIRED");
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=TIMING");
                 return false;
             }
 
-            bool lateContinuationInDirection =
-                (isLong && ctx.HasLateContinuationLong) ||
-                (isShort && ctx.HasLateContinuationShort);
-            if (lateContinuationInDirection)
+            if (ctx.IsOverextendedLong || ctx.IsOverextendedShort)
             {
-                if (weakSetup && eval.Score < 60)
-                {
-                    duplicateSuppressedRejects++;
-                    faSoftAllowed++;
-                    GlobalLogger.Log(_bot, $"[DUPLICATE_FILTER][SOFT] source=FinalAcceptance condition=late_weak_combined");
-                    GlobalLogger.Log(_bot, $"[FA][SOFT_ALLOW] reason=late_weak_combined category=QUALITY impact=degraded_quality_only");
-                }
-            }
-
-            if (ctx.MarketState?.IsTrend == true &&
-                ctx.LogicBiasConfidence >= 70 &&
-                ctx.TrendDirection != TradeDirection.None &&
-                eval.Direction != ctx.TrendDirection)
-            {
-                faSoftAllowed++;
-                GlobalLogger.Log(_bot, $"[FA][SOFT_ALLOW] reason=trend_conflict_moderate category=QUALITY impact=counter_trend_risk");
-            }
-
-            if (weakSetup &&
-                eval.Score < EntryDecisionPolicy.MinScoreThreshold)
-            {
-                duplicateSuppressedRejects++;
-                faSoftAllowed++;
-                GlobalLogger.Log(_bot, $"[DUPLICATE_FILTER][SOFT] source=FinalAcceptance condition=weak_setup_score");
-                GlobalLogger.Log(_bot, $"[FA][SOFT_ALLOW] reason=weak_setup_score category=QUALITY impact=lower_setup_quality");
+                GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=OVEREXTENDED");
+                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=OVEREXTENDED");
+                return false;
             }
 
             GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=ALLOW reason=PASS");
-            GlobalLogger.Log(_bot, $"[SOFTENING][FA] softAllowed={faSoftAllowed} hardBlocked={faHardBlocked}");
-            GlobalLogger.Log(_bot, $"[SOFTENING][TIMING] deferred={timingDeferred} lateSoft={timingLateSoft} staleBlocked={timingStaleBlocked}");
-            GlobalLogger.Log(_bot, $"[SOFTENING][DUPLICATE] suppressedRejects={duplicateSuppressedRejects}");
-            GlobalLogger.Log(_bot, $"[ENTRY][FINAL][PASS] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} positionId=0 pipelineId={(ctx?.TempId ?? "NA")} score={eval.Score:0.##} penalty={recommendedTimingPenalty}");
-            GlobalLogger.Log(_bot, $"[ENTRY][READY] symbol={ctx.Symbol ?? _bot.SymbolName} entryType={eval.Type} pipelineId={(ctx?.TempId ?? "NA")} side={eval.Direction}");
             return true;
         }
 
