@@ -3479,6 +3479,15 @@ namespace GeminiV26.Core
             if (ctx == null || eval == null)
                 return false;
 
+            if (eval.Type == EntryType.Index_Pullback)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][INDEX_PB][ACCEPTED] symbol={eval.Symbol ?? ctx.Symbol ?? _bot.SymbolName} dir={eval.Direction} score={eval.Score} trigger={eval.TriggerConfirmed.ToString().ToLowerInvariant()} state={eval.State} reason={eval.Reason ?? "NA"}");
+
+                if (!PassIndexPullbackQualification(ctx, eval))
+                    return false;
+            }
+
             if (eval.Direction == TradeDirection.None)
             {
                 GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=DIRECTION_NONE");
@@ -3501,6 +3510,69 @@ namespace GeminiV26.Core
             }
 
             GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=ALLOW reason=PASS");
+            return true;
+        }
+
+        private bool PassIndexPullbackQualification(EntryContext ctx, EntryEvaluation eval)
+        {
+            int barsSinceBreak = GetBarsSinceBreak(ctx, eval.Direction);
+            bool hasDirectionalPullback = ctx.HasDirectionalPullback(eval.Direction);
+            bool decelerating = ctx.IsPullbackDecelerating_M5;
+            bool reactionCandle = ctx.HasReactionCandle_M5;
+            double tq = eval.Direction == TradeDirection.Long
+                ? (ctx.TransitionLong?.QualityScore01 ?? ctx.Transition?.QualityScore01 ?? 0.0)
+                : eval.Direction == TradeDirection.Short
+                    ? (ctx.TransitionShort?.QualityScore01 ?? ctx.Transition?.QualityScore01 ?? 0.0)
+                    : (ctx.Transition?.QualityScore01 ?? 0.0);
+            double pullbackDepthR = eval.Direction == TradeDirection.Long
+                ? ctx.PullbackDepthRLong_M5
+                : eval.Direction == TradeDirection.Short
+                    ? ctx.PullbackDepthRShort_M5
+                    : 0.0;
+
+            bool redundantEarlyVeto = ContainsAny(eval.Reason, "EARLY_BREAK", "PULLBACK_TOO_EARLY", "TOO_EARLY");
+            bool redundantDepthVeto = ContainsAny(eval.Reason, "PULLBACK_DEPTH", "TOO_SHALLOW", "PULLBACK_TOO_SHALLOW");
+            bool redundantTransitionVeto = ContainsAny(eval.Reason, "TRANSITION", "COLLAPSE");
+
+            if (barsSinceBreak <= 0 && !decelerating && !reactionCandle)
+            {
+                if (!eval.TriggerConfirmed)
+                {
+                    GlobalLogger.Log(_bot,
+                        $"[ENTRY][INDEX_PB][QUAL_BLOCK] reason=TOO_EARLY barsSinceBreak={barsSinceBreak} trigger={eval.TriggerConfirmed.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} redundantSecondStage={redundantEarlyVeto.ToString().ToLowerInvariant()}");
+                    return false;
+                }
+
+                int before = eval.Score;
+                eval.Score = Math.Max(0, eval.Score - 4);
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][INDEX_PB][QUAL_ALLOW] reason=TOO_EARLY_SOFT barsSinceBreak={barsSinceBreak} trigger={eval.TriggerConfirmed.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} score={before}->{eval.Score} redundantSecondStage={redundantEarlyVeto.ToString().ToLowerInvariant()}");
+            }
+
+            bool collapse = tq < 0.24 && !decelerating && !reactionCandle && !hasDirectionalPullback;
+            if (collapse)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][INDEX_PB][QUAL_BLOCK] reason=TRANSITION_COLLAPSE tq={tq:0.00} hasDirectionalPullback={hasDirectionalPullback.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} redundantSecondStage={redundantTransitionVeto.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
+            if (tq < 0.30)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][INDEX_PB][QUAL_ALLOW] reason=TRANSITION_COOLING tq={tq:0.00} hasDirectionalPullback={hasDirectionalPullback.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} redundantSecondStage={redundantTransitionVeto.ToString().ToLowerInvariant()}");
+            }
+
+            bool shallow = pullbackDepthR > 0 && pullbackDepthR < 0.10 && !decelerating && !reactionCandle && !hasDirectionalPullback;
+            if (shallow && !redundantDepthVeto)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[ENTRY][INDEX_PB][QUAL_BLOCK] reason=PULLBACK_TOO_SHALLOW pullbackDepthR={pullbackDepthR:0.000} hasDirectionalPullback={hasDirectionalPullback.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} redundantSecondStage={redundantDepthVeto.ToString().ToLowerInvariant()}");
+                return false;
+            }
+
+            GlobalLogger.Log(_bot,
+                $"[ENTRY][INDEX_PB][QUAL_ALLOW] reason=PASS tq={tq:0.00} pullbackDepthR={pullbackDepthR:0.000} barsSinceBreak={barsSinceBreak} hasDirectionalPullback={hasDirectionalPullback.ToString().ToLowerInvariant()} decelerating={decelerating.ToString().ToLowerInvariant()} reactionCandle={reactionCandle.ToString().ToLowerInvariant()} redundantTooEarly={redundantEarlyVeto.ToString().ToLowerInvariant()} redundantTransition={redundantTransitionVeto.ToString().ToLowerInvariant()} redundantShallow={redundantDepthVeto.ToString().ToLowerInvariant()}");
             return true;
         }
 
