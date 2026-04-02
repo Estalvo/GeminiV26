@@ -21,10 +21,22 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "CTX_NOT_READY", 0, TradeDirection.None);
 
             var direction = ctx.Structure.StructureDirection;
+            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
             if (direction == TradeDirection.None)
             {
-                ctx.Log?.Invoke("[ENTRY][INDEX_FLAG][BLOCK] reason=NO_DIRECTION");
-                return Reject(ctx, "NO_DIRECTION", 0, TradeDirection.None);
+                var logicDirection = ctx.LogicBiasDirection;
+                bool canUseLogicDirection =
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
+                    (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal) &&
+                    trendFollowThrough;
+                if (!canUseLogicDirection)
+                {
+                    ctx.Log?.Invoke("[ENTRY][INDEX_FLAG][BLOCK][CODE=NO_DIRECTION]");
+                    return Reject(ctx, "NO_DIRECTION", 0, TradeDirection.None);
+                }
+
+                direction = logicDirection;
+                ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
             }
 
             int barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
@@ -36,11 +48,19 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, "NO_IMPULSE", 0, TradeDirection.None);
             }
 
-            if (!ctx.Structure.HasPullback)
+            bool shallowPullbackWidened =
+                !ctx.Structure.HasPullback &&
+                ctx.Structure.HasMicroPullback &&
+                ctx.Structure.PullbackDepth <= 0.22 &&
+                ctx.Structure.ImpulseStrength >= 0.45 &&
+                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough);
+            if (!ctx.Structure.HasPullback && !shallowPullbackWidened)
             {
-                ctx.Log?.Invoke("[ENTRY][INDEX_FLAG][BLOCK] reason=NO_PULLBACK");
+                ctx.Log?.Invoke("[ENTRY][INDEX_FLAG][BLOCK][CODE=NO_PULLBACK]");
                 return Reject(ctx, "NO_PULLBACK", 0, TradeDirection.None);
             }
+            if (shallowPullbackWidened)
+                ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={ctx.Structure.PullbackDepth:0.00}");
 
             bool hasFlag = ctx.Structure.HasFlag;
             bool weakButUsableFlag =
@@ -49,7 +69,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.Structure.FlagCompression <= 0.80;
             if (!hasFlag && !weakButUsableFlag)
             {
-                ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][BLOCK] reason=INVALID_FLAG flagBars={ctx.Structure.FlagBars} pullbackDepth={ctx.Structure.PullbackDepth:0.00} compression={ctx.Structure.FlagCompression:0.00}");
+                ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][BLOCK][CODE=INVALID_FLAG] flagBars={ctx.Structure.FlagBars} pullbackDepth={ctx.Structure.PullbackDepth:0.00} compression={ctx.Structure.FlagCompression:0.00}");
                 return Reject(ctx, "INVALID_FLAG", 0, TradeDirection.None);
             }
 

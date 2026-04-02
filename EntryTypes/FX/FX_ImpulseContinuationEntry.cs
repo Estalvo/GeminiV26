@@ -18,26 +18,68 @@ namespace GeminiV26.EntryTypes.FX
             LogStructure(ctx);
 
             var structureDirection = ctx.Structure?.StructureDirection ?? TradeDirection.None;
-            if (structureDirection != TradeDirection.Long && structureDirection != TradeDirection.Short)
-                return Block(ctx, "NO_DIRECTION");
 
             bool hasImpulse = ctx.Structure?.HasImpulse == true;
             bool hasPullback = ctx.Structure?.HasPullback == true;
             bool hasMicroPullback = ctx.Structure?.HasMicroPullback == true;
             bool early = ctx.Structure?.ContinuationEarlySignal == true;
             bool confirmed = ctx.Structure?.ContinuationConfirmedSignal == true;
+            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
+            int barsSinceImpulse = ctx.GetBarsSinceImpulse(structureDirection);
+            bool recentImpulseWidened =
+                !hasImpulse &&
+                structureDirection != TradeDirection.None &&
+                barsSinceImpulse >= 0 &&
+                barsSinceImpulse <= 14 &&
+                (ctx.Structure?.ImpulseStrength ?? 0.0) >= 0.45;
+
+            if (structureDirection != TradeDirection.Long && structureDirection != TradeDirection.Short)
+            {
+                var logicDirection = ctx.LogicBiasDirection;
+                bool canUseLogicDirection =
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
+                    (early || confirmed) &&
+                    trendFollowThrough;
+                if (!canUseLogicDirection)
+                    return Block(ctx, "NO_DIRECTION");
+
+                structureDirection = logicDirection;
+                barsSinceImpulse = ctx.GetBarsSinceImpulse(structureDirection);
+                recentImpulseWidened =
+                    !hasImpulse &&
+                    barsSinceImpulse >= 0 &&
+                    barsSinceImpulse <= 14 &&
+                    (ctx.Structure?.ImpulseStrength ?? 0.0) >= 0.45;
+                ctx.Log?.Invoke($"[ENTRY][FX_IMPULSE][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={structureDirection}");
+            }
 
             ctx.Log?.Invoke(
                 $"[FX][IMPULSE_CHECK] impulse={hasImpulse.ToString().ToLowerInvariant()} micro_pullback={hasMicroPullback.ToString().ToLowerInvariant()} direction={structureDirection} early={early.ToString().ToLowerInvariant()} confirmed={confirmed.ToString().ToLowerInvariant()}");
 
-            if (!hasImpulse)
+            if (!hasImpulse && !recentImpulseWidened)
                 return Block(ctx, "NO_IMPULSE");
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][FX_IMPULSE][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
 
-            if (!hasPullback)
+            bool shallowPullbackWidened =
+                !hasPullback &&
+                hasMicroPullback &&
+                (early || confirmed) &&
+                trendFollowThrough &&
+                (ctx.Structure?.PullbackDepth ?? 0.0) <= 0.20;
+            if (!hasPullback && !shallowPullbackWidened)
                 return Block(ctx, "NO_PULLBACK");
+            if (shallowPullbackWidened)
+                ctx.Log?.Invoke($"[ENTRY][FX_IMPULSE][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
 
-            if (!hasMicroPullback)
+            bool microPullbackWidened =
+                !hasMicroPullback &&
+                confirmed &&
+                trendFollowThrough;
+            if (!hasMicroPullback && !microPullbackWidened)
                 return Block(ctx, "NO_MICRO_PULLBACK");
+            if (microPullbackWidened)
+                ctx.Log?.Invoke("[ENTRY][FX_IMPULSE][WIDEN_ALLOW] code=MICRO_PULLBACK_PROXY");
 
             if (!early && !confirmed)
                 return Block(ctx, "NO_CONTINUATION_SIGNAL");
