@@ -842,6 +842,7 @@ namespace GeminiV26.Core.Entry
             DetectPullbackEarly(ctx);
             DetectPullbackConfirmed(ctx);
             DetectFlagBreakout(ctx);
+            MapStructureContinuationSignals(ctx);
 
             // =================================================
             // HTF BIAS – FINAL DISPATCH (Phase 3.8 FIX)
@@ -1059,6 +1060,7 @@ namespace GeminiV26.Core.Entry
             if (!ctx.Structure.HasPullback)
                 return;
 
+            ctx.Structure.HasMicroPullback = retrace >= 0.15 && retrace <= 0.45 && bars <= 6;
             ctx.Structure.PullbackDepth = retrace;
             ctx.Structure.PullbackBars = bars;
             ctx.Structure.PullbackLow = GetPullbackLow(ctx);
@@ -1158,6 +1160,7 @@ namespace GeminiV26.Core.Entry
                 price < previousLow;
 
             ctx.Structure.PullbackEarlySignal = earlyLong || earlyShort;
+            ctx.Structure.ContinuationEarlySignal = ctx.Structure.PullbackEarlySignal;
 
             if (ctx.Structure.PullbackEarlySignal)
                 GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_EARLY] dir={(earlyLong ? "LONG" : "SHORT")}");
@@ -1168,6 +1171,7 @@ namespace GeminiV26.Core.Entry
             if (weakMove)
             {
                 ctx.Structure.PullbackEarlySignal = false;
+                ctx.Structure.ContinuationEarlySignal = false;
                 GlobalLogger.Log(_bot, "[STRUCTURE][PULLBACK_EARLY_WEAK]");
             }
         }
@@ -1189,6 +1193,7 @@ namespace GeminiV26.Core.Entry
                 price < ctx.Structure.PullbackLow;
 
             ctx.Structure.PullbackConfirmedSignal = confirmedLong || confirmedShort;
+            ctx.Structure.ContinuationConfirmedSignal = ctx.Structure.PullbackConfirmedSignal;
 
             if (ctx.Structure.PullbackConfirmedSignal)
                 GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_CONFIRMED] dir={(confirmedLong ? "LONG" : "SHORT")}");
@@ -1199,6 +1204,15 @@ namespace GeminiV26.Core.Entry
 
             if (invalidTiming)
                 GlobalLogger.Log(_bot, "[ERROR][PULLBACK_TIMING_INVALID]");
+        }
+
+        private void MapStructureContinuationSignals(EntryContext ctx)
+        {
+            if (ctx == null)
+                return;
+
+            ctx.Structure.ContinuationEarlySignal = ctx.Structure.PullbackEarlySignal;
+            ctx.Structure.ContinuationConfirmedSignal = ctx.Structure.PullbackConfirmedSignal;
         }
 
         private static double GetPullbackLow(EntryContext ctx)

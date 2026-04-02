@@ -23,10 +23,13 @@ namespace GeminiV26.Core.Entry
         public int ImpulseBars;
 
         public bool HasPullback;
+        public bool HasMicroPullback;
         public double PullbackDepth;
         public int PullbackBars;
         public bool PullbackEarlySignal;
         public bool PullbackConfirmedSignal;
+        public bool ContinuationEarlySignal;
+        public bool ContinuationConfirmedSignal;
         public double PullbackLow;
         public double PullbackHigh;
 

@@ -1,6 +1,6 @@
+using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.EntryTypes;
-using GeminiV26.Core;
 using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.FX
@@ -9,188 +9,89 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_FlagContinuation;
 
-        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
-        private const double MinPullbackAtr = 0.15;
-        private const double MaxPullbackAtr = 0.60;
-
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             FxDirectionValidation.LogDirectionDebug(ctx);
             if (ctx == null || !ctx.IsReady)
-                return Invalid(ctx, "CTX_NOT_READY");
+                return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY");
 
-            if (ctx.LogicBias == TradeDirection.None)
-                return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
+            LogStructure(ctx);
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            bool hasImpulse = ctx.Structure?.HasImpulse == true;
+            bool hasPullback = ctx.Structure?.HasPullback == true;
+            bool hasFlag = ctx.Structure?.HasFlag == true;
+            var direction = ctx.Structure?.StructureDirection ?? TradeDirection.None;
+            bool breakoutUp = ctx.Structure?.FlagBreakoutUp == true;
+            bool breakoutDown = ctx.Structure?.FlagBreakoutDown == true;
 
-            if (ctx.LogicBias == TradeDirection.Long)
-            {
-                var eval = EvaluateSide(TradeDirection.Long, ctx);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
-                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
-                return EntryDecisionPolicy.Normalize(eval);
-            }
-            else if (ctx.LogicBias == TradeDirection.Short)
-            {
-                var eval = EvaluateSide(TradeDirection.Short, ctx);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
-                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
-                return EntryDecisionPolicy.Normalize(eval);
-            }
+            ctx.Log?.Invoke(
+                $"[FX][FLAG_CHECK] impulse={hasImpulse.ToString().ToLowerInvariant()} pullback={hasPullback.ToString().ToLowerInvariant()} flag={hasFlag.ToString().ToLowerInvariant()} direction={direction} breakout_up={breakoutUp.ToString().ToLowerInvariant()} breakout_down={breakoutDown.ToString().ToLowerInvariant()}");
 
-            return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
-        }
+            if (!hasImpulse)
+                return Block(ctx, "NO_IMPULSE");
 
-        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
-        {
-            int setupScore = 0;
-            int minScore = MinScore;
+            if (!hasPullback)
+                return Block(ctx, "NO_PULLBACK");
 
-            var timing = ContinuationTimingGate.Evaluate(ctx, dir, Type.ToString());
-            if (!timing.IsAllowed)
-                return Invalid(ctx, dir, timing.Reason, 0);
+            if (!hasFlag)
+                return Block(ctx, "NO_FLAG");
 
-            bool hasImpulse =
-                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
+            if (direction == TradeDirection.None)
+                return Block(ctx, "NO_DIRECTION");
 
-            double pullbackDepthAtr =
-                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
+            if (direction == TradeDirection.Long && !breakoutUp)
+                return Block(ctx, "NO_BREAKOUT_UP");
 
-            bool isValidFlagStructure =
-                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5;
+            if (direction == TradeDirection.Short && !breakoutDown)
+                return Block(ctx, "NO_BREAKOUT_DOWN");
 
-            bool hasValidImpulse =
-                hasImpulse ||
-                (ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5);
+            if ((direction == TradeDirection.Long && breakoutDown) || (direction == TradeDirection.Short && breakoutUp))
+                return Block(ctx, "DIRECTION_MISMATCH");
 
-            if (!hasValidImpulse)
-                return Invalid(ctx, dir, "NO_IMPULSE", 49);
+            ctx.Log?.Invoke($"[FX][FLAG_ENTRY] direction={direction}");
 
-            if (!isValidFlagStructure)
-                return Invalid(ctx, dir, "INVALID_FLAG", 50);
-
-            if (pullbackDepthAtr < MinPullbackAtr)
-                return Invalid(ctx, dir, "PB_TOO_SHALLOW", 50);
-
-            // =========================
-            // SESSION-AWARE PULLBACK DEPTH
-            // =========================
-            double maxPb = MaxPullbackAtr;
-
-            if (ctx.Session.ToString() == "NewYork")
-                maxPb = 0.75;
-
-            int score = 48;
-
-            if (pullbackDepthAtr > maxPb)
-                return Invalid(ctx, dir, "PB_TOO_DEEP", 49);
-
-            if (!ctx.IsPullbackDecelerating_M5)
-                return Invalid(ctx, dir, "NO_DECELERATION", 51);
-
-            if (!ctx.HasReactionCandle_M5)
-                return Invalid(ctx, dir, "NO_REACTION", 50);
-
-            // ✅ FIX: side-aware M1 confirmation
-            bool m1Confirm =
-                ctx.M1FlagBreakTrigger ||
-                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
-
-            bool continuationSignal = m1Confirm;
-
-            bool hasStructure =
-                pullbackDepthAtr >= MinPullbackAtr;
-
-            if (!hasStructure)
-                setupScore -= 35;
-            else
-                setupScore += 15;
-
-            bool hasContinuation =
-                continuationSignal;
-
-            if (hasContinuation)
-                setupScore += 20;
-
-            if (timing.RequireStrongStructure && !hasStructure)
-                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_STRUCTURE", 0);
-
-            if (timing.RequireStrongTrigger && !m1Confirm)
-                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_TRIGGER", 0);
-
-            // ✅ FIX: side-aware score boost
-            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
-                score += 10;
-
-            int lastClosed = ctx.M5.Count - 2;
-            var bar = ctx.M5[lastClosed];
-            bool breakoutDetected = m1Confirm || ctx.RangeBreakDirection == dir;
-            bool strongCandle =
-                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
-                (dir == TradeDirection.Short && bar.Close < bar.Open);
-            bool followThrough = continuationSignal || ctx.LastClosedBarInTrendDirection;
-
-            if (ctx.IsRange_M5)
-                score -= 10;
-
-            score = TriggerScoreModel.Apply(ctx, $"FX_FLAG_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_M1_CONFIRM");
-
-
-            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
-            score += timing.ScoreAdjustment;
-            minScore += timing.MinScoreAdjustment;
-            score += setupScore;
-
-            if (setupScore <= 0)
-                score = System.Math.Min(score, minScore - 10);
-
-            if (score < minScore)
-                return Invalid(ctx, dir, "LOW_SCORE", score);
-
-            return new EntryEvaluation
+            var eval = new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = dir,
-                Score = score,
+                Direction = direction,
+                Score = 70,
                 IsValid = true,
-                Reason = $"FX_FLAG_CONT score={score} pbATR={pullbackDepthAtr:F2}"
+                TriggerConfirmed = true,
+                Reason = "FX_FLAG_STRUCTURE_CONFIRMED"
             };
+
+            EntryDirectionQuality.LogDecision(
+                ctx,
+                Type.ToString(),
+                direction == TradeDirection.Long ? eval : null,
+                direction == TradeDirection.Short ? eval : null,
+                eval.Direction);
+
+            return EntryDecisionPolicy.Normalize(eval);
         }
 
-        private EntryEvaluation Invalid(EntryContext ctx, string reason)
-            => new()
-            {
-                Symbol = ctx?.Symbol,
-                Type = Type,
-                IsValid = false,
-                Reason = reason
-            };
+        private void LogStructure(EntryContext ctx)
+        {
+            ctx.Log?.Invoke(
+                $"[FX][STRUCTURE] impulse={(ctx.Structure?.HasImpulse == true).ToString().ToLowerInvariant()} pullback={(ctx.Structure?.HasPullback == true).ToString().ToLowerInvariant()} micro_pullback={(ctx.Structure?.HasMicroPullback == true).ToString().ToLowerInvariant()} flag={(ctx.Structure?.HasFlag == true).ToString().ToLowerInvariant()} direction={ctx.Structure?.StructureDirection ?? TradeDirection.None}");
+        }
 
-        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
+        private EntryEvaluation Block(EntryContext ctx, string reason)
+        {
+            ctx.Log?.Invoke($"[FX][ENTRY_BLOCK] reason={reason}");
+            return Invalid(ctx, TradeDirection.None, reason);
+        }
+
+        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason)
             => new()
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
                 Direction = dir,
-                Score = score,
+                Score = 0,
                 IsValid = false,
                 Reason = reason
             };
-
-        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
-        {
-            return EntryDirectionQuality.Apply(
-                ctx,
-                direction,
-                score,
-                new DirectionQualityRequest
-                {
-                    TypeTag = "FX_FlagContinuationEntry",
-                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
-                });
-        }
-
     }
 }
