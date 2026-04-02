@@ -35,18 +35,17 @@ namespace GeminiV26.EntryTypes.METAL
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
                     structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
-                    (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection);
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
                 if (!canUseLogicDirection)
                 {
                     ctx.LogStructureAuthority("XAU_FlagEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"}");
+                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"} finalValid=false");
                     return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_FLAG][BLOCK_DIR]");
                 }
 
                 dir = logicDirection;
                 ctx.LogStructureAuthority("XAU_FlagEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir}");
+                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir} finalValid=true");
                 ctx.LogStructureAuthority("XAU_FlagEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
                     $"resolvedDir={dir}");
             }

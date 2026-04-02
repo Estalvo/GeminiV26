@@ -42,19 +42,17 @@ namespace GeminiV26.EntryTypes.FX
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
                     structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
-                    (early || confirmed) &&
-                    trendFollowThrough;
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
                 if (!canUseLogicDirection)
                 {
                     ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"}");
+                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"} finalValid=false");
                     return Block(ctx, "NO_DIRECTION");
                 }
 
                 structureDirection = logicDirection;
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={structureDirection}");
+                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={structureDirection} finalValid=true");
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
                     $"resolvedDir={structureDirection}");
                 barsSinceImpulse = ctx.GetBarsSinceImpulse(structureDirection);
@@ -78,7 +76,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!impulseStrict && impulseOk)
             {
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={(ctx.Structure?.ImpulseRecentOk ?? false).ToString().ToLowerInvariant()}");
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={(ctx.Structure?.ImpulseRecentOk ?? false).ToString().ToLowerInvariant()} finalValid=true");
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
                     $"barsSinceImpulse={barsSinceImpulse}");
             }
@@ -101,7 +99,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!pullbackStrict && pullbackOk)
             {
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()}");
+                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()} finalValid=true");
                 ctx.LogStructureAuthority("FX_ImpulseContinuationEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
                     $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
             }

@@ -28,7 +28,7 @@ namespace GeminiV26.EntryTypes.Crypto
                 return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION");
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
-            if (barsSinceImpulse < 0)
+            if (barsSinceImpulse < 0 && !ctx.IsStructureImpulseAuthoritative())
                 return Reject(ctx, dir, "NO_RECENT_IMPULSE");
             bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection;
             bool recentImpulseWidened =
@@ -145,29 +145,32 @@ namespace GeminiV26.EntryTypes.Crypto
             TradeDirection preFinalDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
             TradeDirection routedDirection = ctx?.RoutedDirection ?? TradeDirection.None;
             TradeDirection observedFinalDirection = ctx?.FinalDirection ?? TradeDirection.None;
+            TradeDirection resolvedDirection = preFinalDirection != TradeDirection.None
+                ? preFinalDirection
+                : (routedDirection != TradeDirection.None ? routedDirection : observedFinalDirection);
 
-            if (!structureDirAuthority || preFinalDirection == TradeDirection.None)
+            if (!structureDirAuthority || resolvedDirection == TradeDirection.None)
             {
                 ctx?.LogStructureAuthority("CryptoFlagEntryBase", "STILL_FAIL", "StructureDirection", "NONE",
-                    $"reason=NO_DIRECTION source={ctx?.Structure?.DirectionSource ?? "NA"} structureAuthority={structureDirAuthority.ToString().ToLowerInvariant()}");
+                    $"reason=NO_DIRECTION source={ctx?.Structure?.DirectionSource ?? "NA"} structureAuthority={structureDirAuthority.ToString().ToLowerInvariant()} finalValid=false");
                 ctx?.Log?.Invoke(
                     $"[DIR][CRYPTO][EVAL_NONE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
                 return TradeDirection.None;
             }
 
-            if (observedFinalDirection != TradeDirection.None && observedFinalDirection != preFinalDirection)
+            if (observedFinalDirection != TradeDirection.None && observedFinalDirection != resolvedDirection)
             {
                 ctx?.Log?.Invoke(
-                    $"[DIR][CRYPTO][EVAL_MISMATCH_WARN] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
+                    $"[DIR][CRYPTO][EVAL_MISMATCH_WARN] symbol={ctx?.Symbol} entryType={Type} source=CompositeDirection chosen={resolvedDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
             }
 
             ctx?.LogStructureAuthority("CryptoFlagEntryBase", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                $"source={ctx?.Structure?.DirectionSource ?? "NA"} resolvedDir={preFinalDirection}");
+                $"source={ctx?.Structure?.DirectionSource ?? "NA"} resolvedDir={resolvedDirection} finalValid=true");
             ctx?.LogStructureAuthority("CryptoFlagEntryBase", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
-                $"resolvedDir={preFinalDirection}");
+                $"resolvedDir={resolvedDirection}");
             ctx?.Log?.Invoke(
-                $"[DIR][CRYPTO][EVAL_SOURCE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
-            return preFinalDirection;
+                $"[DIR][CRYPTO][EVAL_SOURCE] symbol={ctx?.Symbol} entryType={Type} source=CompositeDirection chosen={resolvedDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
+            return resolvedDirection;
         }
 
         protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason)

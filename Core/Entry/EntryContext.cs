@@ -457,8 +457,17 @@ namespace GeminiV26.Core.Entry
 
         public void LogStructureAuthority(string entryFamily, string tag, string strictFieldFailed, string rescueField, string details = null)
         {
+            bool strictDir = IsStructureDirectionStrict();
+            bool strictImpulse = Structure?.HasImpulse == true;
+            bool strictPullback = Structure?.HasPullback == true;
+            bool strictFlag = Structure?.HasFlag == true;
+            bool dirAuth = IsStructureDirectionAuthoritative();
+            bool impulseAuth = IsStructureImpulseAuthoritative();
+            bool pullbackAuth = IsStructurePullbackAuthoritative();
+            bool flagAuth = IsStructureFlagAuthoritative();
+            bool finalValid = !string.Equals(tag, "STILL_FAIL", StringComparison.OrdinalIgnoreCase);
             Log?.Invoke(
-                $"[STRUCT][AUTH][{tag}] symbol={Symbol} entry={entryFamily} strictFailed={strictFieldFailed} rescue={rescueField} {details ?? "details=NA"}");
+                $"[STRUCT][AUTH][{tag}] symbol={Symbol} entry={entryFamily} strictFailed={strictFieldFailed} rescue={rescueField} strictState=dir:{strictDir.ToString().ToLowerInvariant()}|impulse:{strictImpulse.ToString().ToLowerInvariant()}|pullback:{strictPullback.ToString().ToLowerInvariant()}|flag:{strictFlag.ToString().ToLowerInvariant()} compositeState=dir:{dirAuth.ToString().ToLowerInvariant()}|impulse:{impulseAuth.ToString().ToLowerInvariant()}|pullback:{pullbackAuth.ToString().ToLowerInvariant()}|flag:{flagAuth.ToString().ToLowerInvariant()} finalValid={finalValid.ToString().ToLowerInvariant()} {details ?? "details=NA"}");
         }
 
         public bool HasDirectionalPullback(TradeDirection direction)

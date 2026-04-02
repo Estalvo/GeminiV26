@@ -53,19 +53,17 @@ namespace GeminiV26.EntryTypes.FX
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
                     structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
-                    hasContinuationSignal &&
-                    trendFollowThrough;
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
                 if (!canUseLogicDirection)
                 {
                     ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"}");
+                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"} finalValid=false");
                     return Block(ctx, "NO_DIRECTION");
                 }
 
                 direction = logicDirection;
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={direction}");
+                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={direction} finalValid=true");
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
                     $"resolvedDir={direction}");
                 alignedBreakout = direction == TradeDirection.Long ? breakoutUp : breakoutDown;
@@ -84,7 +82,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!impulseStrict && impulseOk)
             {
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()} finalValid=true");
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
                     $"barsSinceImpulse={barsSinceImpulse}");
             }
@@ -106,7 +104,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!pullbackStrict && pullbackOk)
             {
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()} micro={(ctx.Structure?.HasMicroPullback ?? false).ToString().ToLowerInvariant()}");
+                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()} micro={(ctx.Structure?.HasMicroPullback ?? false).ToString().ToLowerInvariant()} finalValid=true");
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
                     $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
             }
@@ -124,7 +122,7 @@ namespace GeminiV26.EntryTypes.FX
             if (!flagStrict && flagOk)
             {
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "FLAG_OK", "HasFlag", "FlagMessyOk",
-                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00} messy={(ctx.Structure?.FlagMessyOk ?? false).ToString().ToLowerInvariant()}");
+                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00} messy={(ctx.Structure?.FlagMessyOk ?? false).ToString().ToLowerInvariant()} finalValid=true");
                 ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasFlag", "FlagMessyOk",
                     $"flagBars={ctx.Structure?.FlagBars ?? 0}");
             }
