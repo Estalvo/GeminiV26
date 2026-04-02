@@ -5,6 +5,7 @@ namespace GeminiV26.Core
 {
     public enum InstrumentClass
     {
+        UNKNOWN,
         FX,
         INDEX,
         METAL,
@@ -51,6 +52,9 @@ namespace GeminiV26.Core
         {
             var s = NormalizeSymbol(symbol);
 
+            if (string.IsNullOrWhiteSpace(s))
+                return InstrumentClass.UNKNOWN;
+
             if (s == "XAUUSD" || s == "XAGUSD")
                 return InstrumentClass.METAL;
 
@@ -60,7 +64,18 @@ namespace GeminiV26.Core
             if (s == "NAS100" || s == "US30" || s == "GER40")
                 return InstrumentClass.INDEX;
 
-            return InstrumentClass.FX;
+            if (s.Length == 6)
+            {
+                for (int i = 0; i < s.Length; i++)
+                {
+                    if (s[i] < 'A' || s[i] > 'Z')
+                        return InstrumentClass.UNKNOWN;
+                }
+
+                return InstrumentClass.FX;
+            }
+
+            return InstrumentClass.UNKNOWN;
         }
 
         public static IReadOnlyList<string> GetKnownRuntimeCandidates(string canonical)

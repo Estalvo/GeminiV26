@@ -55,7 +55,10 @@ namespace GeminiV26.Core
             GlobalLogger.Log(_bot, $"[RESOLVER][INPUT] input={requested}");
 
             string canonical = SymbolRouting.NormalizeSymbol(requested);
+            var resolvedClass = SymbolRouting.ResolveInstrumentClass(canonical);
+            var classLogBucket = resolvedClass == InstrumentClass.UNKNOWN ? "UNSUPPORTED" : resolvedClass.ToString();
             GlobalLogger.Log(_bot, $"[RESOLVER][CANONICAL] input={requested} canonical={canonical}");
+            GlobalLogger.Log(_bot, $"[SYMBOL][CLASSIFY][{classLogBucket}] raw={requested} normalized={canonical} resolved={resolvedClass}");
 
             if (TryResolveCurrentBotSymbol(canonical, out symbol))
             {
@@ -162,6 +165,9 @@ namespace GeminiV26.Core
                 return false;
 
             var instrumentClass = SymbolRouting.ResolveInstrumentClass(canonical);
+            if (instrumentClass == InstrumentClass.UNKNOWN)
+                return false;
+
             if (instrumentClass != InstrumentClass.FX)
                 return true;
 
