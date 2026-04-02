@@ -334,11 +334,7 @@ namespace GeminiV26.Core
                 }
                 else if (string.Equals(resolvedSymbol, "ETHUSD", StringComparison.OrdinalIgnoreCase))
                 {
-                    _entryTypes = new List<IEntryType>
-                    {
-                        new ETH_FlagEntry(),
-                        new ETH_PullbackEntry()
-                    };
+                    _entryTypes = BuildEthEntryTypes(rawSymbol, resolvedSymbol);
 
                     _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH] raw={rawSymbol} normalized={resolvedSymbol} resolvedClass={nameof(InstrumentClass.CRYPTO)} entryTypes={string.Join(",", _entryTypes.Select(x => x.GetType().Name))} count={_entryTypes.Count}");
                 }
@@ -755,6 +751,39 @@ namespace GeminiV26.Core
             };
 
             _bot.Positions.Closed += OnPositionClosed;
+        }
+
+        private List<IEntryType> BuildEthEntryTypes(string rawSymbol, string resolvedSymbol)
+        {
+            var result = new List<IEntryType>();
+
+            AddEntryTypeIfAvailable(result, "GeminiV26.EntryTypes.Crypto.ETH_FlagEntry");
+            AddEntryTypeIfAvailable(result, "GeminiV26.EntryTypes.Crypto.ETH_PullbackEntry");
+
+            if (result.Count == 0)
+            {
+                _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH][WARN] raw={rawSymbol} normalized={resolvedSymbol} reason=ETH_ENTRY_TYPES_NOT_FOUND");
+            }
+
+            return result;
+        }
+
+        private void AddEntryTypeIfAvailable(List<IEntryType> target, string typeName)
+        {
+            Type type = Type.GetType(typeName);
+            if (type == null)
+            {
+                type = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .Select(a => a.GetType(typeName, false))
+                    .FirstOrDefault(t => t != null);
+            }
+
+            if (type == null)
+                return;
+
+            if (Activator.CreateInstance(type) is IEntryType entryType)
+                target.Add(entryType);
         }
 
 
