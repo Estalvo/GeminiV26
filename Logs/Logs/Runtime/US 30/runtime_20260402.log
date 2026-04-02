@@ -3268,3 +3268,876 @@
 [2026-04-02 16:20:00.227] [MEMORY][IMPULSE] symbol=US30 phase=Impulse
 [2026-04-02 16:20:00.227] [MEMORY] phase=Impulse window=Fresh ext=Normal
 [2026-04-02 16:20:00.228] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 16:25:00.296] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:25:00.297] [INDEX MSD] US 30 | atrPts=68.2 adx=27.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:25:00.297] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=27.5
+[2026-04-02 16:25:00.297] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:25:00.297] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 16:25:00.298] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:25:00.298] [IMPULSE SRC] idx=2050 barsSince=1 range=80.50
+[2026-04-02 16:25:00.299] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=80.50 comp=95.00/28.17 retr=0.00/40.25
+[2026-04-02 16:25:00.299] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 16:25:00.299] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=95 atr=76.85714285714286
+[2026-04-02 16:25:00.300] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:25:00.300] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:25:00.300] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:25:00.300] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:25:00.301] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:25:00.301] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 16:25:00.301] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:25:00.302] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=0.97
+[2026-04-02 16:25:00.302] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=27.5 atrPts=68.16
+[2026-04-02 16:25:00.302] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:25:00.303] [SESSION_CALENDAR] utc=2026-04-02T16:25:00.3070000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:25:00.303] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:25:00.303] [SESSION CHECK] time=2026-04-02T16:25:00.3070000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:25:00.304] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:25:00.304] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:25:00.304] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:25:00.305] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:25:00.305] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:25:00.305] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:25:00.306] [DEBUG] M5.Count=2053
+[2026-04-02 16:25:00.306] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [PIPE][ENTRY_ROUTER_PASS] pass=7 symbol=US 30 bar=2026-04-02T16:25:00.3070000Z
+[2026-04-02 16:25:00.306] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:25:00.313] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:25:00.314] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:25:00.314] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DBG ENTRY] total candidates=2
+[2026-04-02 16:25:00.314] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.315] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.315] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=false setupType=Index_Pullback
+[2026-04-02 16:25:00.315] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.315] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.316] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=false setupType=Index_Flag
+[2026-04-02 16:25:00.316] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:25:00.316] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:25:00.317] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:25:00.317] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:25:00.317] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.318] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.318] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:25:00.318] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 16:25:00.319] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 16:25:00.319] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:25:00.319] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:25:00.319] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:25:00.320] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:25:00.320] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:25:00.320] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:25:00.321] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:00.321] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.321] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:00.322] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:25:00.322] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:25:00.322] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:25:00.322] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 16:25:00.323] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:25:00.323] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=14 logicProducedDirectionCount=14 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:25:00.323] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:25:00.323] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:25:00.324] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:25:00.324] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.324] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.324] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:25:00.325] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:25:00.325] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 16:25:00.325] [TRACE] selected is null = True
+[2026-04-02 16:25:00.325] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:25:00.326] [US 30] attemptId=US 6USI2R [ATTEMPT US 6USI2R] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:25:00.326] BLOCK: entry gate
+[2026-04-02 16:25:00.326] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:25:00.327] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 16:25:00.327] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:25:00.328] [MEMORY][UPDATE] symbol=US30 age=2 sinceImpulse=1
+[2026-04-02 16:25:00.328] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 16:25:00.329] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 16:30:00.151] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:30:00.151] [INDEX MSD] US 30 | atrPts=66.5 adx=25.6 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:30:00.154] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=25.6
+[2026-04-02 16:30:00.166] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:30:00.166] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 16:30:00.166] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:30:00.167] [IMPULSE SRC] idx=2050 barsSince=2 range=80.50
+[2026-04-02 16:30:00.167] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=80.50 comp=76.50/28.17 retr=0.00/40.25
+[2026-04-02 16:30:00.168] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 16:30:00.169] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=76.5 atr=75.82142857142857
+[2026-04-02 16:30:00.169] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:30:00.169] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:30:00.170] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:30:00.170] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:30:00.171] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:30:00.171] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.11 chaseRisk=False timingPenalty=-11
+[2026-04-02 16:30:00.172] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:30:00.172] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.11 distanceAtr=0.51
+[2026-04-02 16:30:00.173] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=25.6 atrPts=66.52
+[2026-04-02 16:30:00.173] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:30:00.174] [SESSION_CALENDAR] utc=2026-04-02T16:30:00.1820000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:30:00.174] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:30:00.175] [SESSION CHECK] time=2026-04-02T16:30:00.1820000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:30:00.176] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:30:00.176] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:30:00.178] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:30:00.178] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:30:00.178] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:30:00.178] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:30:00.179] [DEBUG] M5.Count=2054
+[2026-04-02 16:30:00.179] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [PIPE][ENTRY_ROUTER_PASS] pass=8 symbol=US 30 bar=2026-04-02T16:30:00.1820000Z
+[2026-04-02 16:30:00.179] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:30:00.186] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:30:00.187] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:30:00.188] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DBG ENTRY] total candidates=2
+[2026-04-02 16:30:00.188] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.188] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.188] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=false setupType=Index_Pullback
+[2026-04-02 16:30:00.189] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.191] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.191] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=false setupType=Index_Flag
+[2026-04-02 16:30:00.192] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:30:00.192] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:30:00.193] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:30:00.194] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:30:00.195] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.198] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.198] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:30:00.199] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 16:30:00.199] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 16:30:00.199] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:30:00.200] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:30:00.200] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:30:00.200] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:30:00.200] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:30:00.200] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:30:00.201] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:00.201] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.202] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:00.203] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:30:00.203] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:30:00.205] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:30:00.206] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 16:30:00.207] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:30:00.208] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=16 logicProducedDirectionCount=16 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:30:00.208] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:30:00.209] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:30:00.209] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:30:00.210] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.210] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.211] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:30:00.211] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:30:00.211] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 16:30:00.212] [TRACE] selected is null = True
+[2026-04-02 16:30:00.213] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:30:00.213] [US 30] attemptId=US 6UYXGM [ATTEMPT US 6UYXGM] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:30:00.213] BLOCK: entry gate
+[2026-04-02 16:30:00.213] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:30:00.214] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-11 trust=0.9
+[2026-04-02 16:30:00.215] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:30:00.215] [MEMORY][UPDATE] symbol=US30 age=3 sinceImpulse=0
+[2026-04-02 16:30:00.216] [MEMORY] phase=Decay window=Fresh ext=Normal
+[2026-04-02 16:30:00.216] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:35:00.204] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:35:00.204] [INDEX MSD] US 30 | atrPts=69.4 adx=24.7 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:35:00.205] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=24.7
+[2026-04-02 16:35:00.206] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:35:00.207] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:35:00.208] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:35:00.209] [IMPULSE SRC] idx=2053 barsSince=0 range=104.00
+[2026-04-02 16:35:00.209] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=104.00 comp=125.50/36.40 retr=0.00/45.99
+[2026-04-02 16:35:00.210] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:35:00.211] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=125.5 atr=76.64285714285714
+[2026-04-02 16:35:00.211] [STRUCTURE][IMPULSE] dir=None strength=0.84 range=104.0
+[2026-04-02 16:35:00.212] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:35:00.212] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:35:00.213] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:35:00.213] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:35:00.214] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:35:00.214] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Fresh extensionState=Normal impulseFreshness=0.88 continuationFreshness=1.00 triggerLateScore=0.10 chaseRisk=False timingPenalty=-10
+[2026-04-02 16:35:00.215] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:35:00.216] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=0 barsSinceBreak=2 attempts=0 triggerLate=0.10 distanceAtr=0.29
+[2026-04-02 16:35:00.216] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=24.7 atrPts=69.39
+[2026-04-02 16:35:00.218] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:35:00.218] [SESSION_CALENDAR] utc=2026-04-02T16:35:00.2030000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:35:00.219] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:35:00.220] [SESSION CHECK] time=2026-04-02T16:35:00.2190000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:35:00.221] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:35:00.225] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:35:00.227] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:35:00.228] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:35:00.228] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:35:00.231] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:35:00.234] [DEBUG] M5.Count=2055
+[2026-04-02 16:35:00.238] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [PIPE][ENTRY_ROUTER_PASS] pass=9 symbol=US 30 bar=2026-04-02T16:35:00.2340000Z
+[2026-04-02 16:35:00.239] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:35:00.257] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:35:00.260] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:35:00.261] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DBG ENTRY] total candidates=2
+[2026-04-02 16:35:00.261] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.261] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.262] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 16:35:00.265] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.266] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.266] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 16:35:00.266] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:35:00.266] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:35:00.266] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:35:00.269] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:35:00.269] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.270] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.270] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:35:00.270] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 16:35:00.270] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 16:35:00.271] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:35:00.272] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:35:00.274] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:35:00.283] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:35:00.284] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:35:00.285] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:35:00.285] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.292] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.292] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.293] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:35:00.293] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:35:00.293] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:35:00.294] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 16:35:00.294] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:35:00.294] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=18 logicProducedDirectionCount=18 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:35:00.294] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:35:00.295] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:35:00.295] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:35:00.295] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.296] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.296] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:35:00.296] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:35:00.297] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 16:35:00.297] [TRACE] selected is null = True
+[2026-04-02 16:35:00.297] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:35:00.298] [US 30] attemptId=US 6V5CYZ [ATTEMPT US 6V5CYZ] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:35:00.298] BLOCK: entry gate
+[2026-04-02 16:35:00.298] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:35:00.299] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:35:00.299] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:35:00.300] [MEMORY][UPDATE] symbol=US30 age=1 sinceImpulse=0
+[2026-04-02 16:35:00.300] [MEMORY][IMPULSE] symbol=US30 phase=Impulse
+[2026-04-02 16:35:00.300] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 16:35:00.301] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:40:00.154] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:40:00.154] [INDEX MSD] US 30 | atrPts=69.5 adx=23.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:40:00.154] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=23.5
+[2026-04-02 16:40:00.155] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:40:00.155] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 16:40:00.157] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:40:00.158] [IMPULSE SRC] idx=2053 barsSince=1 range=104.00
+[2026-04-02 16:40:00.158] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=104.00 comp=104.00/36.40 retr=0.00/44.40
+[2026-04-02 16:40:00.159] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:40:00.160] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=104 atr=74
+[2026-04-02 16:40:00.161] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:40:00.161] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:40:00.162] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:40:00.163] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:40:00.163] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:40:00.163] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.99 triggerLateScore=0.10 chaseRisk=False timingPenalty=-10
+[2026-04-02 16:40:00.164] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.99 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.10 distanceAtr=0.65
+[2026-04-02 16:40:00.164] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:40:00.165] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=23.5 atrPts=69.55
+[2026-04-02 16:40:00.165] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:40:00.166] [SESSION_CALENDAR] utc=2026-04-02T16:40:00.1670000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:40:00.166] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:40:00.167] [SESSION CHECK] time=2026-04-02T16:40:00.1670000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:40:00.167] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:40:00.168] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:40:00.169] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:40:00.169] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:40:00.170] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:40:00.170] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:40:00.171] [DEBUG] M5.Count=2056
+[2026-04-02 16:40:00.171] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [PIPE][ENTRY_ROUTER_PASS] pass=10 symbol=US 30 bar=2026-04-02T16:40:00.1670000Z
+[2026-04-02 16:40:00.172] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:40:00.177] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:40:00.178] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:40:00.178] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DBG ENTRY] total candidates=2
+[2026-04-02 16:40:00.178] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.178] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.179] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 16:40:00.179] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.179] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.180] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 16:40:00.180] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:40:00.180] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:40:00.180] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:40:00.181] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:40:00.181] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.181] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.181] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:40:00.181] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 16:40:00.182] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 16:40:00.182] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:40:00.182] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:40:00.182] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.183] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:40:00.183] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.183] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:40:00.183] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.183] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.184] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.184] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:40:00.184] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.185] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.185] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 16:40:00.186] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:40:00.186] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=20 logicProducedDirectionCount=20 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:40:00.187] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:40:00.187] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:40:00.187] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:40:00.188] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.188] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.188] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:40:00.203] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:40:00.203] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 16:40:00.204] [TRACE] selected is null = True
+[2026-04-02 16:40:00.204] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:40:00.204] [US 30] attemptId=US 6VBSEW [ATTEMPT US 6VBSEW] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:40:00.205] BLOCK: entry gate
+[2026-04-02 16:40:00.205] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:40:00.206] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:40:00.206] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:40:00.207] [MEMORY][UPDATE] symbol=US30 age=2 sinceImpulse=1
+[2026-04-02 16:40:00.207] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 16:40:00.207] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:45:00.101] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:45:00.102] [INDEX MSD] US 30 | atrPts=74.2 adx=24.3 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:45:00.102] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=24.3
+[2026-04-02 16:45:00.103] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:45:00.103] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 16:45:00.105] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:45:00.106] [IMPULSE SRC] idx=2055 barsSince=0 range=123.00
+[2026-04-02 16:45:00.106] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=123.00 comp=156.50/43.05 retr=0.00/47.06
+[2026-04-02 16:45:00.107] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 16:45:00.107] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=156.5 atr=78.42857142857143
+[2026-04-02 16:45:00.108] [STRUCTURE][IMPULSE] dir=Long strength=0.92 range=123.0
+[2026-04-02 16:45:00.108] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:45:00.109] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:45:00.109] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:45:00.110] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:45:00.110] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:45:00.110] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.10 chaseRisk=False timingPenalty=-10
+[2026-04-02 16:45:00.111] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.10 distanceAtr=0.50
+[2026-04-02 16:45:00.111] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:45:00.112] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=24.3 atrPts=74.21
+[2026-04-02 16:45:00.112] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:45:00.113] [SESSION_CALENDAR] utc=2026-04-02T16:45:00.1190000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:45:00.113] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:45:00.114] [SESSION CHECK] time=2026-04-02T16:45:00.1190000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:45:00.114] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:45:00.115] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:45:00.116] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:45:00.116] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:45:00.117] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:45:00.117] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:45:00.117] [DEBUG] M5.Count=2057
+[2026-04-02 16:45:00.118] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [PIPE][ENTRY_ROUTER_PASS] pass=11 symbol=US 30 bar=2026-04-02T16:45:00.1190000Z
+[2026-04-02 16:45:00.118] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:45:00.124] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:45:00.125] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:45:00.125] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DBG ENTRY] total candidates=2
+[2026-04-02 16:45:00.126] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.126] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.127] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 16:45:00.127] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.128] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.128] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 16:45:00.129] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:45:00.129] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:45:00.130] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:45:00.130] [HTF][CANDIDATE] asset=INDEX type=Index_Flag dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:45:00.130] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=2 misaligned=0
+[2026-04-02 16:45:00.131] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.131] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.131] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:45:00.132] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=True
+[2026-04-02 16:45:00.132] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->35 penalty=10 barsSinceBreak=0
+[2026-04-02 16:45:00.132] [TIMING][Index_Flag] barsSinceBreak=0 late=false
+[2026-04-02 16:45:00.133] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Flag dir=Long authority=True
+[2026-04-02 16:45:00.133] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Flag dir=Long score=45->35 penalty=10 barsSinceBreak=0
+[2026-04-02 16:45:00.133] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:45:00.134] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:45:00.134] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=35 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.134] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:45:00.135] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=35 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.135] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:45:00.135] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=35 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=35 finalScore=35 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.136] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.136] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=35 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=35 finalScore=35 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.137] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:45:00.137] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=35 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.137] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=35 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.138] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=35 classification=HTF_OK
+[2026-04-02 16:45:00.138] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=35 classification=HTF_OK
+[2026-04-02 16:45:00.139] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=22 logicProducedDirectionCount=22 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:45:00.139] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:45:00.139] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=35 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:45:00.139] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=35 reason=[ROUTER] no_pullback|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:45:00.140] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [CANDIDATE] type=Index_Flag dir=Long valid=false score=35 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:45:00.140] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=SETUP_DETECTED trigger=False score=35 reason=[ROUTER] NO_PULLBACK|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:45:00.140] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:45:00.141] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:45:00.141] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Pullback score=35 confidence=50 trend=Long fallback=true
+[2026-04-02 16:45:00.141] [TRACE] selected is null = True
+[2026-04-02 16:45:00.141] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:45:00.142] [US 30] attemptId=US 6VI7UW [ATTEMPT US 6VI7UW] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:45:00.142] BLOCK: entry gate
+[2026-04-02 16:45:00.142] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:45:00.143] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
+[2026-04-02 16:45:00.143] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:45:00.143] [MEMORY][UPDATE] symbol=US30 age=3 sinceImpulse=2
+[2026-04-02 16:45:00.144] [MEMORY] phase=Continuation window=Early ext=Normal
+[2026-04-02 16:45:00.144] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-21 trust=0.9
+[2026-04-02 16:50:00.194] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:50:00.195] [INDEX MSD] US 30 | atrPts=69.8 adx=24.1 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:50:00.195] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=24.1
+[2026-04-02 16:50:00.195] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:50:00.195] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 16:50:00.196] [PB] bars=1 depth=0.28 early=True
+[2026-04-02 16:50:00.196] [IMPULSE SRC] idx=2055 barsSince=1 range=123.00
+[2026-04-02 16:50:00.197] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=123.00 comp=123.00/43.05 retr=21.50/46.18
+[2026-04-02 16:50:00.197] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:50:00.197] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=123 atr=76.96428571428571
+[2026-04-02 16:50:00.198] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:50:00.198] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:50:00.198] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:50:00.199] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:50:00.199] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:50:00.199] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Continuation continuationWindow=Early extensionState=Normal impulseFreshness=0.68 continuationFreshness=0.70 triggerLateScore=0.21 chaseRisk=False timingPenalty=-21
+[2026-04-02 16:50:00.200] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.70 barsSinceImpulse=2 barsSinceBreak=2 attempts=1 triggerLate=0.21 distanceAtr=0.61
+[2026-04-02 16:50:00.200] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:50:00.201] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=24.1 atrPts=69.78
+[2026-04-02 16:50:00.201] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:50:00.201] [SESSION_CALENDAR] utc=2026-04-02T16:50:00.1940000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:50:00.202] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:50:00.202] [SESSION CHECK] time=2026-04-02T16:50:00.1940000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:50:00.202] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:50:00.203] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:50:00.203] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:50:00.204] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:50:00.204] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:50:00.204] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:50:00.205] [DEBUG] M5.Count=2058
+[2026-04-02 16:50:00.205] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [PIPE][ENTRY_ROUTER_PASS] pass=12 symbol=US 30 bar=2026-04-02T16:50:00.2100000Z
+[2026-04-02 16:50:00.205] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:50:00.218] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:50:00.219] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:50:00.219] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DBG ENTRY] total candidates=2
+[2026-04-02 16:50:00.219] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.219] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.220] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 16:50:00.220] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.220] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.220] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 16:50:00.221] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:50:00.221] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:50:00.222] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:50:00.222] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:50:00.222] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.222] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.222] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:50:00.223] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=True
+[2026-04-02 16:50:00.223] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->35 penalty=10 barsSinceBreak=0
+[2026-04-02 16:50:00.223] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:50:00.223] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:50:00.224] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=35 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:50:00.224] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:50:00.224] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:50:00.224] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:50:00.225] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=35 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=35 finalScore=35 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.225] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.225] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.225] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:50:00.226] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=35 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:50:00.226] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:50:00.226] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=35 classification=HTF_OK
+[2026-04-02 16:50:00.226] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:50:00.227] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=24 logicProducedDirectionCount=24 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:50:00.228] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:50:00.228] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=35 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:50:00.228] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=35 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:50:00.229] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.229] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.229] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:50:00.229] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:50:00.230] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=Long fallback=true
+[2026-04-02 16:50:00.230] [TRACE] selected is null = True
+[2026-04-02 16:50:00.230] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:50:00.231] [US 30] attemptId=US 6VONEQ [ATTEMPT US 6VONEQ] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:50:00.231] BLOCK: entry gate
+[2026-04-02 16:50:00.231] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:50:00.232] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-21 trust=0.9
+[2026-04-02 16:50:00.232] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:50:00.232] [MEMORY][UPDATE] symbol=US30 age=4 sinceImpulse=3
+[2026-04-02 16:50:00.233] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 16:50:00.233] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-23 trust=0.9
+[2026-04-02 16:54:52.333] GeminiV26Bot STOP
+[2026-04-02 16:54:56.812] ======================================
+[2026-04-02 16:54:56.823] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 16:54:56.825] ❌ NOT legacy Gemini
+[2026-04-02 16:54:56.826] 📊 Symbol: US 30
+[2026-04-02 16:54:56.829] ⏱ Timeframe: Minute5
+[2026-04-02 16:54:56.839] ======================================
+[2026-04-02 16:54:56.843] [SYMBOL][CLASSIFY][INDEX] raw=US 30 normalized=US30 resolved=INDEX
+[2026-04-02 16:54:57.632] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 16:54:57.825] [RESOLVER][INPUT] input=US30
+[2026-04-02 16:54:57.826] [RESOLVER][CANONICAL] input=US30 canonical=US30
+[2026-04-02 16:54:57.826] [SYMBOL][CLASSIFY][INDEX] raw=US30 normalized=US30 resolved=INDEX
+[2026-04-02 16:54:57.827] [RESOLVER][RUNTIME] source=current_bot runtime=US 30
+[2026-04-02 16:54:57.827] [RESOLVER][SUCCESS] input=US30 canonical=US30 runtime=US 30
+[2026-04-02 16:54:57.847] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 16:54:57.849] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.854] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 16:54:57.854] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 16:54:57.861] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 16:54:57.862] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.862] [BOOT][REHYDRATE_START]
+[2026-04-02 16:54:57.869] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 16:54:57.871] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 16:54:57.895] [MEMORY][BUILD_START] symbol=US30 bars=2057
+[2026-04-02 16:54:57.895] [MEMORY][DONE] symbol=US30 mode=HistoricalReplay phase=Pullback age=4 pullbacks=2 sinceImpulse=3
+[2026-04-02 16:55:00.598] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 16:55:00.606] [INDEX MSD] US 30 | atrPts=65.5 adx=23.6 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 16:55:00.606] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=23.6
+[2026-04-02 16:55:00.607] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 16:55:00.607] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 16:55:00.607] [RESOLVER][INPUT] input=US 30
+[2026-04-02 16:55:00.607] [RESOLVER][CANONICAL] input=US 30 canonical=US30
+[2026-04-02 16:55:00.608] [SYMBOL][CLASSIFY][INDEX] raw=US 30 normalized=US30 resolved=INDEX
+[2026-04-02 16:55:00.608] [RESOLVER][RUNTIME] source=current_bot runtime=US 30
+[2026-04-02 16:55:00.608] [RESOLVER][SUCCESS] input=US 30 canonical=US30 runtime=US 30
+[2026-04-02 16:55:00.634] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:55:00.634] [IMPULSE SRC] idx=2055 barsSince=2 range=123.00
+[2026-04-02 16:55:00.635] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=123.00 comp=55.50/43.05 retr=0.00/45.00
+[2026-04-02 16:55:00.635] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 16:55:00.635] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=55.5 atr=75
+[2026-04-02 16:55:00.635] [RESOLVER][INPUT] input=US 30
+[2026-04-02 16:55:00.636] [RESOLVER][CANONICAL] input=US 30 canonical=US30
+[2026-04-02 16:55:00.636] [SYMBOL][CLASSIFY][INDEX] raw=US 30 normalized=US30 resolved=INDEX
+[2026-04-02 16:55:00.636] [RESOLVER][RUNTIME] source=current_bot runtime=US 30
+[2026-04-02 16:55:00.636] [RESOLVER][SUCCESS] input=US 30 canonical=US30 runtime=US 30
+[2026-04-02 16:55:00.663] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:55:00.664] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.64
+[2026-04-02 16:55:00.664] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 activeDirection=Long activeConfidence=0.64
+[2026-04-02 16:55:00.664] [HTF][SNAPSHOT] dir=Long conf=0.64
+[2026-04-02 16:55:00.664] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 16:55:00.664] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.53 continuationFreshness=0.70 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 16:55:00.665] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.70 barsSinceImpulse=3 barsSinceBreak=3 attempts=1 triggerLate=0.23 distanceAtr=0.57
+[2026-04-02 16:55:00.665] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:55:00.665] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=23.6 atrPts=65.48
+[2026-04-02 16:55:00.665] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:55:00.665] [SESSION_CALENDAR] utc=2026-04-02T16:55:00.6670000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:55:00.666] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 16:55:00.666] [SESSION CHECK] time=2026-04-02T16:55:00.6670000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 16:55:00.666] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:55:00.666] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:55:00.674] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 16:55:00.674] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 16:55:00.674] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 16:55:00.674] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:55:00.675] [DEBUG] M5.Count=2059
+[2026-04-02 16:55:00.675] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=US 30 bar=2026-04-02T16:55:00.6830000Z
+[2026-04-02 16:55:00.675] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 16:55:00.678] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 16:55:00.678] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 16:55:00.678] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DBG ENTRY] total candidates=2
+[2026-04-02 16:55:00.678] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.679] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.679] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 16:55:00.679] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.679] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.679] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 16:55:00.680] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DIR][HTF] sym=US 30 allow=Long conf=0.64 reason=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75
+[2026-04-02 16:55:00.680] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.64
+[2026-04-02 16:55:00.680] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 16:55:00.680] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 16:55:00.681] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.681] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.681] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 16:55:00.681] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=True
+[2026-04-02 16:55:00.681] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY][PROTECT_SUPPRESSED] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->35 penalty=10 barsSinceBreak=0
+[2026-04-02 16:55:00.682] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 16:55:00.682] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 16:55:00.682] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=35 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:55:00.682] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 16:55:00.682] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:55:00.683] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 16:55:00.683] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=35 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=35 finalScore=35 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:00.683] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.683] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:00.683] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.17 slope50ATR=-0.02 adx=29.7 gapATR=0.30 distFastATR=0.75 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 16:55:00.684] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=35 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:55:00.684] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:55:00.684] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=35 classification=HTF_OK
+[2026-04-02 16:55:00.684] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 16:55:00.684] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:55:00.685] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:55:00.685] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=35 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:55:00.685] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=35 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 16:55:00.686] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.686] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.686] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:55:00.686] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 16:55:00.687] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=Long fallback=true
+[2026-04-02 16:55:00.687] [TRACE] selected is null = True
+[2026-04-02 16:55:00.687] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:55:00.687] [US 30] attemptId=US 6VV37H [ATTEMPT US 6VV37H] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:55:00.687] BLOCK: entry gate
+[2026-04-02 16:55:00.688] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:55:00.688] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 16:55:00.688] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:55:00.689] [MEMORY][UPDATE] symbol=US30 age=5 sinceImpulse=4
+[2026-04-02 16:55:00.689] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 16:55:00.690] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-26 trust=0.9
+[2026-04-02 17:00:00.402] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 17:00:00.402] [INDEX MSD] US 30 | atrPts=64.5 adx=21.8 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 17:00:00.403] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=21.8
+[2026-04-02 17:00:00.403] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 17:00:00.403] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Pullback isBuilt=True isUsable=True
+[2026-04-02 17:00:00.404] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:00:00.406] [IMPULSE SRC] idx=2058 barsSince=0 range=65.50
+[2026-04-02 17:00:00.406] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=65.50 comp=86.00/22.92 retr=0.00/32.75
+[2026-04-02 17:00:00.407] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:00:00.407] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=86 atr=74.60714285714286
+[2026-04-02 17:00:00.409] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:00:00.410] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 17:00:00.410] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 activeDirection=Long activeConfidence=0.77
+[2026-04-02 17:00:00.410] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 17:00:00.410] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 17:00:00.411] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Pullback continuationWindow=Early extensionState=Normal impulseFreshness=0.39 continuationFreshness=0.70 triggerLateScore=0.26 chaseRisk=False timingPenalty=-26
+[2026-04-02 17:00:00.411] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.70 barsSinceImpulse=4 barsSinceBreak=4 attempts=1 triggerLate=0.26 distanceAtr=0.52
+[2026-04-02 17:00:00.411] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:00:00.411] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=21.8 atrPts=64.53
+[2026-04-02 17:00:00.412] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 17:00:00.412] [SESSION_CALENDAR] utc=2026-04-02T17:00:00.4190000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:00:00.412] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 17:00:00.412] [SESSION CHECK] time=2026-04-02T17:00:00.4190000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 17:00:00.412] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:00:00.413] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:00:00.413] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 17:00:00.413] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 17:00:00.413] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 17:00:00.414] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:00:00.414] [DEBUG] M5.Count=2060
+[2026-04-02 17:00:00.414] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=US 30 bar=2026-04-02T17:00:00.4190000Z
+[2026-04-02 17:00:00.414] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 17:00:00.417] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 17:00:00.417] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 17:00:00.418] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DBG ENTRY] total candidates=2
+[2026-04-02 17:00:00.418] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.418] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.427] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 17:00:00.427] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.427] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.428] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 17:00:00.428] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DIR][HTF] sym=US 30 allow=Long conf=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47
+[2026-04-02 17:00:00.429] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.77
+[2026-04-02 17:00:00.429] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 17:00:00.429] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 17:00:00.430] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.430] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.430] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:00:00.430] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 17:00:00.431] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 17:00:00.431] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 17:00:00.431] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 17:00:00.431] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:00:00.431] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 17:00:00.432] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:00:00.432] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 17:00:00.432] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.433] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.433] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.433] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:00:00.434] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:00:00.434] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:00:00.434] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 17:00:00.435] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 17:00:00.435] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:00:00.436] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:00:00.436] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:00:00.436] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:00:00.437] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.437] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.437] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:00:00.437] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 17:00:00.438] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=Long fallback=true
+[2026-04-02 17:00:00.438] [TRACE] selected is null = True
+[2026-04-02 17:00:00.438] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:00:00.438] [US 30] attemptId=US 6W1IJ8 [ATTEMPT US 6W1IJ8] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:00:00.438] BLOCK: entry gate
+[2026-04-02 17:00:00.439] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:00:00.439] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-26 trust=0.9
+[2026-04-02 17:00:00.439] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:00:00.440] [MEMORY][UPDATE] symbol=US30 age=1 sinceImpulse=0
+[2026-04-02 17:00:00.440] [MEMORY][IMPULSE] symbol=US30 phase=Impulse
+[2026-04-02 17:00:00.440] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:00:00.441] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:00.698] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 17:05:00.699] [INDEX MSD] US 30 | atrPts=64.6 adx=19.8 | lowVol=False trend=False momentum=False | minAtr=16 minAdx=20
+[2026-04-02 17:05:00.699] [INDEX MarketState] US 30 Trend=False Momentum=False LowVol=False ADX=19.8
+[2026-04-02 17:05:00.700] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 17:05:00.700] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:05:00.702] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:05:00.702] [IMPULSE SRC] idx=2058 barsSince=1 range=65.50
+[2026-04-02 17:05:00.703] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=65.50 comp=97.50/22.92 retr=0.00/32.75
+[2026-04-02 17:05:00.703] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:05:00.703] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=97.5 atr=72.17857142857143
+[2026-04-02 17:05:00.703] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:05:00.704] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 17:05:00.704] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 activeDirection=Long activeConfidence=0.77
+[2026-04-02 17:05:00.704] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 17:05:00.704] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 17:05:00.704] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:05:00.705] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:05:00.705] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=0.97
+[2026-04-02 17:05:00.705] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=False momentum=False lowVol=False adx=19.8 atrPts=64.60
+[2026-04-02 17:05:00.705] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:05:00.706] [SESSION_CALENDAR] utc=2026-04-02T17:05:00.7180000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:05:00.706] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 17:05:00.706] [SESSION CHECK] time=2026-04-02T17:05:00.7180000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 17:05:00.706] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:05:00.707] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:05:00.707] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 17:05:00.707] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 17:05:00.708] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 17:05:00.708] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:05:00.708] [DEBUG] M5.Count=2061
+[2026-04-02 17:05:00.708] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=US 30 bar=2026-04-02T17:05:00.7180000Z
+[2026-04-02 17:05:00.709] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 17:05:00.711] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 17:05:00.712] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 17:05:00.712] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DBG ENTRY] total candidates=2
+[2026-04-02 17:05:00.712] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:00.712] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.712] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 17:05:00.713] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:00.713] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.713] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 17:05:00.713] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DIR][HTF] sym=US 30 allow=Long conf=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47
+[2026-04-02 17:05:00.713] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.77
+[2026-04-02 17:05:00.713] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 17:05:00.714] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 17:05:00.714] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.714] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.714] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:05:00.714] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 17:05:00.715] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 17:05:00.715] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 17:05:00.715] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 17:05:00.715] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:05:00.715] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 17:05:00.716] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:05:00.716] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 17:05:00.716] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:00.716] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.716] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:00.717] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:05:00.717] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:05:00.717] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:05:00.717] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 17:05:00.718] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 17:05:00.718] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=6 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:05:00.718] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:05:00.718] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:05:00.719] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:05:00.719] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:00.719] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:00.720] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:05:00.721] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 17:05:00.721] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 17:05:00.722] [TRACE] selected is null = True
+[2026-04-02 17:05:00.722] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:05:00.722] [US 30] attemptId=US 6W7Y8U [ATTEMPT US 6W7Y8U] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:05:00.722] BLOCK: entry gate
+[2026-04-02 17:05:00.723] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:05:00.723] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:00.724] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:05:00.724] [MEMORY][UPDATE] symbol=US30 age=2 sinceImpulse=1
+[2026-04-02 17:05:00.724] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:05:00.725] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.9
+[2026-04-02 17:10:00.029] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 17:10:00.029] [INDEX MSD] US 30 | atrPts=59.7 adx=18.5 | lowVol=False trend=False momentum=False | minAtr=16 minAdx=20
+[2026-04-02 17:10:00.030] [INDEX MarketState] US 30 Trend=False Momentum=False LowVol=False ADX=18.5
+[2026-04-02 17:10:00.030] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 17:10:00.030] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:10:00.031] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:10:00.032] [IMPULSE SRC] idx=2058 barsSince=2 range=65.50
+[2026-04-02 17:10:00.032] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=65.50 comp=72.50/22.92 retr=0.00/32.75
+[2026-04-02 17:10:00.032] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:10:00.033] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=72.5 atr=69.57142857142857
+[2026-04-02 17:10:00.033] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:10:00.033] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 17:10:00.033] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 activeDirection=Long activeConfidence=0.77
+[2026-04-02 17:10:00.033] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 17:10:00.034] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 17:10:00.034] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 17:10:00.034] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:10:00.035] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.12
+[2026-04-02 17:10:00.035] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=False momentum=False lowVol=False adx=18.5 atrPts=59.72
+[2026-04-02 17:10:00.035] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:10:00.035] [SESSION_CALENDAR] utc=2026-04-02T17:10:00.0440000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:10:00.036] [SESSION_GATE] symbol=US 30 tf=M5 tier=Intraday bucket=NewYork priority=High allow=True reason=Intraday session allowed
+[2026-04-02 17:10:00.036] [SESSION CHECK] time=2026-04-02T17:10:00.0440000Z symbol=US 30 bucket=NewYork allow=True
+[2026-04-02 17:10:00.036] [SESSION_MATRIX] symbol=US 30 bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:10:00.037] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:10:00.038] [US30][FALLBACK] EMA-based bias applied
+[2026-04-02 17:10:00.038] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DIR][LOGIC] sym=US 30 logicBias=Long logicConf=50
+[2026-04-02 17:10:00.039] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [CTX PROPAGATION] symbol=US 30 bias=Long conf=50
+[2026-04-02 17:10:00.039] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:10:00.040] [DEBUG] M5.Count=2062
+[2026-04-02 17:10:00.040] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=US 30 bar=2026-04-02T17:10:00.0440000Z
+[2026-04-02 17:10:00.040] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY START] symbol=US 30 bias=Long
+[2026-04-02 17:10:00.050] [PIPE] symbol=US 30 hasSignals=True count=2
+[2026-04-02 17:10:00.051] [INDEX][FUNNEL] stage=BUILT count=0
+[2026-04-02 17:10:00.052] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DBG ENTRY] total candidates=2
+[2026-04-02 17:10:00.053] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DIR][ROUTER_CAND] sym=US 30 type=Index_Pullback valid=False score=40 dir=Long reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.053] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.054] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Pullback stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Pullback
+[2026-04-02 17:10:00.055] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DIR][ROUTER_CAND] sym=US 30 type=Index_Flag valid=False score=40 dir=Long reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.055] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.056] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][LOGIC] symbol=US 30 entryType=Index_Flag stage=LOGIC candidateDirection=Long score=40 classification=HTF_OK rawDirection=Long logicBiasDirection=Long logicConfidence=50 patternDetected=true setupType=Index_Flag
+[2026-04-02 17:10:00.057] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DIR][HTF] sym=US 30 allow=Long conf=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47
+[2026-04-02 17:10:00.058] [HTF][BIAS] asset=INDEX direction=Long state=Neutral impact=ScoreOnly conf=0.77
+[2026-04-02 17:10:00.058] [HTF][CANDIDATE] asset=INDEX type=Index_Pullback dir=Long aligned=True misaligned=False score=40->45 state=Neutral
+[2026-04-02 17:10:00.059] [HTF][APPLIED] asset=INDEX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=1 misaligned=0
+[2026-04-02 17:10:00.059] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.059] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.060] [TIMING][Index_Pullback] barsSinceBreak=0 late=false
+[2026-04-02 17:10:00.060] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY][AUTH] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long authority=False
+[2026-04-02 17:10:00.062] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY][PROTECT] source=EARLY_BREAK_PROTECT symbol=US 30 type=Index_Pullback dir=Long score=45->30 penalty=15 barsSinceBreak=0
+[2026-04-02 17:10:00.065] [INDEX][FUNNEL] stage=AFTER_TRANSITION count=0
+[2026-04-02 17:10:00.065] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Pullback
+[2026-04-02 17:10:00.066] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Pullback stage=GATE candidateDirection=Long score=30 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:10:00.066] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [INTEGRITY] SKIP restart protect on invalid candidate: Index_Flag
+[2026-04-02 17:10:00.066] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][GATE] symbol=US 30 entryType=Index_Flag stage=GATE candidateDirection=Long score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Long afterDirection=Long blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:10:00.067] [INDEX][FUNNEL] stage=AFTER_FLAG count=0
+[2026-04-02 17:10:00.067] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Pullback stage=SCORE candidateDirection=Long score=30 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=30 finalScore=30 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.067] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Pullback stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.067] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][SCORE] symbol=US 30 entryType=Index_Flag stage=SCORE candidateDirection=Long score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.068] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=US 30 asset=INDEX entryType=Index_Flag stage=ENTRY_FILTER module=ApplyRestartProtection htfState=INDEX_HTF BULL continuation slope21ATR=0.26 slope50ATR=0.06 adx=29.3 gapATR=0.32 distFastATR=0.47 allowedDirection=Long align=True candidateDirection=Long
+[2026-04-02 17:10:00.068] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Pullback stage=CLASSIFICATION candidateDirection=Long score=30 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:10:00.068] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][CLASSIFICATION] symbol=US 30 entryType=Index_Flag stage=CLASSIFICATION candidateDirection=Long score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:10:00.068] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Pullback stage=GATES candidateDirection=Long score=30 classification=HTF_OK
+[2026-04-02 17:10:00.069] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][GATES] symbol=US 30 entryType=Index_Flag stage=GATES candidateDirection=Long score=40 classification=HTF_OK
+[2026-04-02 17:10:00.069] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][SUMMARY] symbol=US 30 totalEvaluations=8 logicProducedDirectionCount=8 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:10:00.070] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:10:00.070] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [CANDIDATE] type=Index_Pullback dir=Long valid=false score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:10:00.070] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [TR] RANK_ONLY_INPUT Index_Pullback dir=Long valid=False state=SETUP_DETECTED trigger=False score=30 reason=[ROUTER] structure_direction_missing|FALLBACK_DIRECTION_FROM_LOGIC_BIAS [EARLY_BREAK_PENALTY]
+[2026-04-02 17:10:00.073] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [CANDIDATE] type=Index_Flag dir=Long valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.073] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [TR] RANK_ONLY_INPUT Index_Flag dir=Long valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.073] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:10:00.074] [INDEX][FUNNEL] stage=AFTER_ROUTER count=0
+[2026-04-02 17:10:00.074] [ENTRY][CANDIDATE] symbol=US 30 entryType=Index_Flag score=40 confidence=50 trend=None fallback=true
+[2026-04-02 17:10:00.074] [TRACE] selected is null = True
+[2026-04-02 17:10:00.075] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:10:00.075] [US 30] attemptId=US 6WED7H [ATTEMPT US 6WED7H] [ENTRY_TRACE][FINAL] symbol=US 30 entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:10:00.076] BLOCK: entry gate
+[2026-04-02 17:10:00.076] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:10:00.078] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.9
+[2026-04-02 17:10:00.079] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:10:00.080] [MEMORY][UPDATE] symbol=US30 age=3 sinceImpulse=2
+[2026-04-02 17:10:00.080] [MEMORY] phase=Pullback window=Early ext=Normal
+[2026-04-02 17:10:00.081] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=True late=False exhausted=False chase=False timingPenalty=-9 trust=0.9

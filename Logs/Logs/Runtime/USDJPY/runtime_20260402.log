@@ -3127,3 +3127,795 @@
 [2026-04-02 16:20:00.242] [MEMORY][UPDATE] symbol=USDJPY age=7 sinceImpulse=4
 [2026-04-02 16:20:00.242] [MEMORY] phase=Decay window=Unknown ext=Normal
 [2026-04-02 16:20:00.242] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-26 trust=0.9
+[2026-04-02 16:25:00.989] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:25:00.989] [FX MSD] USDJPY | atrPips=4.28 adx=17.5 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 16:25:00.990] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.5
+[2026-04-02 16:25:00.990] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:25:00.991] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:25:00.992] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:25:00.993] [IMPULSE SRC] idx=2048 barsSince=3 range=0.07
+[2026-04-02 16:25:00.993] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.05/0.02 retr=0.00/0.03
+[2026-04-02 16:25:00.994] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:25:00.994] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.04999999999998295 atr=0.050499999999995486
+[2026-04-02 16:25:00.995] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:25:00.996] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:25:00.996] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:25:00.997] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:25:00.997] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:25:00.997] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.31 continuationFreshness=1.00 triggerLateScore=0.26 chaseRisk=False timingPenalty=-26
+[2026-04-02 16:25:00.998] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=4 barsSinceBreak=6 attempts=0 triggerLate=0.26 distanceAtr=0.58
+[2026-04-02 16:25:00.998] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:25:00.999] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.5 atrPts=4.28
+[2026-04-02 16:25:01.000] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:25:01.000] [SESSION_CALENDAR] utc=2026-04-02T16:25:00.9940000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:25:01.001] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:25:01.001] [SESSION CHECK] time=2026-04-02T16:25:01.0100000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:25:01.002] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:25:01.002] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:25:01.004] [USDJPY STRUCTURE] trendLong=False higherLow=False contLong=False pbLong=True extLong=False exhLong=False qualifiedLong=False
+[2026-04-02 16:25:01.005] [USDJPY LOGIC] trend=None longCont=False longPb=True ext=False exh=False shortWeak=True shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 16:25:01.005] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 16:25:01.006] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 16:25:01.006] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:25:01.007] [DEBUG] M5.Count=2053
+[2026-04-02 16:25:01.007] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [PIPE][ENTRY_ROUTER_PASS] pass=7 symbol=USDJPY bar=2026-04-02T16:25:01.0100000Z
+[2026-04-02 16:25:01.007] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 16:25:01.011] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:25:01.012] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DBG ENTRY] total candidates=2
+[2026-04-02 16:25:01.013] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.013] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.014] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:25:01.014] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.015] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.016] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:25:01.016] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:25:01.017] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:25:01.017] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:25:01.018] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.018] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.021] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:01.021] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.022] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:01.022] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:25:01.022] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:25:01.023] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:25:01.023] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:25:01.024] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:25:01.024] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=14 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=12
+[2026-04-02 16:25:01.024] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:25:01.025] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.025] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.026] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.026] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:25:01.026] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:25:01.028] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 16:25:01.028] [TRACE] selected is null = True
+[2026-04-02 16:25:01.028] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:25:01.029] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:25:01.029] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:25:01.030] [USDJPY] attemptId=USD6USIMA [ATTEMPT USD6USIMA] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:25:01.030] BLOCK: entry gate
+[2026-04-02 16:25:01.031] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:25:01.032] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-26 trust=0.9
+[2026-04-02 16:25:01.032] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=1 shortFlagBars=0
+[2026-04-02 16:25:01.033] [MEMORY][UPDATE] symbol=USDJPY age=8 sinceImpulse=5
+[2026-04-02 16:25:01.034] [MEMORY] phase=Decay window=Mature ext=Normal
+[2026-04-02 16:25:01.034] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-35 trust=0.9
+[2026-04-02 16:30:13.161] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:30:13.161] [FX MSD] USDJPY | atrPips=4.04 adx=16.6 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 16:30:13.161] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=16.6
+[2026-04-02 16:30:13.162] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:30:13.162] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:30:13.163] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:30:13.163] [IMPULSE SRC] idx=2048 barsSince=4 range=0.00
+[2026-04-02 16:30:13.163] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.03/0.04 retr=0.00/0.02
+[2026-04-02 16:30:13.164] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:30:13.164] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.03100000000000591 atr=0.0478571428571379
+[2026-04-02 16:30:13.164] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:30:13.164] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:30:13.165] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:30:13.165] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:30:13.165] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:30:13.165] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Decay continuationWindow=Mature extensionState=Normal impulseFreshness=0.17 continuationFreshness=0.95 triggerLateScore=0.35 chaseRisk=False timingPenalty=-35
+[2026-04-02 16:30:13.165] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.95 barsSinceImpulse=5 barsSinceBreak=7 attempts=0 triggerLate=0.35 distanceAtr=0.96
+[2026-04-02 16:30:13.166] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:30:13.166] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=16.6 atrPts=4.04
+[2026-04-02 16:30:13.166] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:30:13.166] [SESSION_CALENDAR] utc=2026-04-02T16:30:13.1660000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:30:13.167] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:30:13.167] [SESSION CHECK] time=2026-04-02T16:30:13.1660000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:30:13.167] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:30:13.168] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:30:13.168] [USDJPY STRUCTURE] trendLong=False higherLow=False contLong=False pbLong=False extLong=False exhLong=False qualifiedLong=False
+[2026-04-02 16:30:13.169] [USDJPY LOGIC] trend=None longCont=False longPb=False ext=False exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 16:30:13.169] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 16:30:13.169] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 16:30:13.169] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:30:13.169] [DEBUG] M5.Count=2054
+[2026-04-02 16:30:13.170] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [PIPE][ENTRY_ROUTER_PASS] pass=8 symbol=USDJPY bar=2026-04-02T16:30:13.1660000Z
+[2026-04-02 16:30:13.170] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 16:30:13.172] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:30:13.173] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DBG ENTRY] total candidates=2
+[2026-04-02 16:30:13.173] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.174] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.175] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:30:13.175] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.176] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.177] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:30:13.177] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:30:13.178] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:30:13.178] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:30:13.179] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.180] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.182] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:13.182] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.183] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:13.183] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:30:13.184] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:30:13.184] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:30:13.184] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:30:13.185] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:30:13.186] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=16 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=14
+[2026-04-02 16:30:13.186] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:30:13.187] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.187] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.188] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.188] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:30:13.189] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:30:13.190] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 16:30:13.191] [TRACE] selected is null = True
+[2026-04-02 16:30:13.191] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:30:13.192] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:30:13.192] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:30:13.192] [USDJPY] attemptId=USD6UZ7HQ [ATTEMPT USD6UZ7HQ] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:30:13.193] BLOCK: entry gate
+[2026-04-02 16:30:13.193] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:30:13.194] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-35 trust=0.9
+[2026-04-02 16:30:13.195] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:30:13.196] [MEMORY][UPDATE] symbol=USDJPY age=9 sinceImpulse=6
+[2026-04-02 16:30:13.197] [MEMORY] phase=Decay window=Mature ext=Normal
+[2026-04-02 16:30:13.198] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-37 trust=0.9
+[2026-04-02 16:35:00.363] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:35:00.364] [FX MSD] USDJPY | atrPips=4.27 adx=17.5 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 16:35:00.364] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.5
+[2026-04-02 16:35:00.365] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:35:00.365] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:35:00.366] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:35:00.366] [IMPULSE SRC] idx=2053 barsSince=0 range=0.07
+[2026-04-02 16:35:00.366] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.08/0.02 retr=0.00/0.03
+[2026-04-02 16:35:00.367] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:35:00.367] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.07699999999999818 atr=0.047428571428566456
+[2026-04-02 16:35:00.367] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:35:00.367] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:35:00.368] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:35:00.368] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:35:00.368] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:35:00.369] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Decay continuationWindow=Mature extensionState=Normal impulseFreshness=0.03 continuationFreshness=0.96 triggerLateScore=0.37 chaseRisk=False timingPenalty=-37
+[2026-04-02 16:35:00.369] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.96 barsSinceImpulse=6 barsSinceBreak=8 attempts=0 triggerLate=0.37 distanceAtr=0.88
+[2026-04-02 16:35:00.369] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:35:00.369] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.5 atrPts=4.27
+[2026-04-02 16:35:00.369] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:35:00.370] [SESSION_CALENDAR] utc=2026-04-02T16:35:00.3590000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:35:00.370] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:35:00.371] [SESSION CHECK] time=2026-04-02T16:35:00.3590000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:35:00.371] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:35:00.372] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:35:00.373] [USDJPY STRUCTURE] trendLong=False higherLow=False contLong=False pbLong=False extLong=False exhLong=False qualifiedLong=False
+[2026-04-02 16:35:00.373] [USDJPY LOGIC] trend=None longCont=False longPb=False ext=False exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 16:35:00.375] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 16:35:00.375] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 16:35:00.375] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:35:00.376] [DEBUG] M5.Count=2055
+[2026-04-02 16:35:00.376] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [PIPE][ENTRY_ROUTER_PASS] pass=9 symbol=USDJPY bar=2026-04-02T16:35:00.3750000Z
+[2026-04-02 16:35:00.376] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 16:35:00.387] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:35:00.388] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DBG ENTRY] total candidates=2
+[2026-04-02 16:35:00.389] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.390] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.390] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:35:00.390] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.398] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.399] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:35:00.399] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:35:00.399] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:35:00.400] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:35:00.401] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.402] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.404] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.404] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.405] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.405] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:35:00.405] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:35:00.405] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:35:00.405] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:35:00.406] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:35:00.406] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=18 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=16
+[2026-04-02 16:35:00.407] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:35:00.407] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.407] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.407] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.408] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:35:00.408] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:35:00.409] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 16:35:00.409] [TRACE] selected is null = True
+[2026-04-02 16:35:00.409] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:35:00.409] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:35:00.410] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:35:00.410] [USDJPY] attemptId=USD6V5D3B [ATTEMPT USD6V5D3B] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:35:00.410] BLOCK: entry gate
+[2026-04-02 16:35:00.410] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:35:00.411] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-37 trust=0.9
+[2026-04-02 16:35:00.411] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:35:00.412] [MEMORY][UPDATE] symbol=USDJPY age=10 sinceImpulse=7
+[2026-04-02 16:35:00.412] [MEMORY] phase=Decay window=Mature ext=Normal
+[2026-04-02 16:35:00.413] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-27 trust=0.9
+[2026-04-02 16:40:00.569] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:40:00.569] [FX MSD] USDJPY | atrPips=4.20 adx=17.5 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 16:40:00.570] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.5
+[2026-04-02 16:40:00.570] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:40:00.571] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:40:00.572] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:40:00.573] [IMPULSE SRC] idx=2053 barsSince=1 range=0.07
+[2026-04-02 16:40:00.573] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.07/0.02 retr=0.00/0.03
+[2026-04-02 16:40:00.574] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:40:00.574] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0660000000000025 atr=0.04257142857142477
+[2026-04-02 16:40:00.575] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:40:00.576] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:40:00.576] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:40:00.577] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:40:00.577] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:40:00.578] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Decay continuationWindow=Mature extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.27 chaseRisk=False timingPenalty=-27
+[2026-04-02 16:40:00.578] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=7 barsSinceBreak=9 attempts=0 triggerLate=0.27 distanceAtr=0.08
+[2026-04-02 16:40:00.579] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:40:00.579] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.5 atrPts=4.20
+[2026-04-02 16:40:00.580] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DIR][CTX_BUILD] sym=USDJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 16:40:00.580] [SESSION_CALENDAR] utc=2026-04-02T16:40:00.5890000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:40:00.580] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:40:00.580] [SESSION CHECK] time=2026-04-02T16:40:00.5890000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:40:00.581] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:40:00.581] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:40:00.582] [USDJPY STRUCTURE] trendLong=False higherLow=False contLong=False pbLong=False extLong=False exhLong=False qualifiedLong=False
+[2026-04-02 16:40:00.582] [USDJPY LOGIC] trend=None longCont=False longPb=False ext=False exh=False shortWeak=True shortBreak=False bias=Sell logicConf=62 hasLongStructure=False
+[2026-04-02 16:40:00.583] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DIR][LOGIC] sym=USDJPY logicBias=Short logicConf=62
+[2026-04-02 16:40:00.583] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [CTX PROPAGATION] symbol=USDJPY bias=Short conf=62
+[2026-04-02 16:40:00.583] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:40:00.583] [DEBUG] M5.Count=2056
+[2026-04-02 16:40:00.583] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [PIPE][ENTRY_ROUTER_PASS] pass=10 symbol=USDJPY bar=2026-04-02T16:40:00.5890000Z
+[2026-04-02 16:40:00.584] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY START] symbol=USDJPY bias=Short
+[2026-04-02 16:40:00.599] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:40:00.600] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DBG ENTRY] total candidates=2
+[2026-04-02 16:40:00.601] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.602] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.602] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=62 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:40:00.603] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.605] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.608] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=62 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:40:00.610] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:40:00.610] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:40:00.611] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:40:00.612] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.613] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.616] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:40:00.616] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][GATE] symbol=USDJPY entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.616] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:40:00.617] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][GATE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.619] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.619] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.619] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.620] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:40:00.620] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.620] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.621] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 16:40:00.621] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 16:40:00.621] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=20 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=16
+[2026-04-02 16:40:00.622] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:40:00.623] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.624] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.624] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.624] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.625] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:40:00.626] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=40 confidence=62 trend=Short fallback=true
+[2026-04-02 16:40:00.626] [TRACE] selected is null = True
+[2026-04-02 16:40:00.627] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:40:00.628] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:40:00.628] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:40:00.629] [USDJPY] attemptId=USD6VBSQL [ATTEMPT USD6VBSQL] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:40:00.629] BLOCK: entry gate
+[2026-04-02 16:40:00.629] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:40:00.630] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-27 trust=0.9
+[2026-04-02 16:40:00.631] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:40:00.632] [MEMORY][UPDATE] symbol=USDJPY age=11 sinceImpulse=8
+[2026-04-02 16:40:00.634] [MEMORY] phase=Decay window=Mature ext=Normal
+[2026-04-02 16:40:00.634] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-34 trust=0.9
+[2026-04-02 16:45:00.757] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:45:00.757] [FX MSD] USDJPY | atrPips=4.15 adx=17.0 | lowVol=False trend=False momentum=False compression=True
+[2026-04-02 16:45:00.758] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.0
+[2026-04-02 16:45:00.758] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:45:00.759] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:45:00.761] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:45:00.761] [IMPULSE SRC] idx=2055 barsSince=0 range=0.05
+[2026-04-02 16:45:00.762] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.05/0.02 retr=0.00/0.02
+[2026-04-02 16:45:00.762] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:45:00.763] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.049000000000006594 atr=0.04307142857142513
+[2026-04-02 16:45:00.763] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:45:00.764] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:45:00.764] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:45:00.765] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:45:00.765] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:45:00.766] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Decay continuationWindow=Mature extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.34 chaseRisk=False timingPenalty=-34
+[2026-04-02 16:45:00.766] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=8 barsSinceBreak=10 attempts=0 triggerLate=0.34 distanceAtr=0.35
+[2026-04-02 16:45:00.766] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:45:00.767] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.0 atrPts=4.15
+[2026-04-02 16:45:00.767] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DIR][CTX_BUILD] sym=USDJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 16:45:00.768] [SESSION_CALENDAR] utc=2026-04-02T16:45:00.7760000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:45:00.768] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:45:00.769] [SESSION CHECK] time=2026-04-02T16:45:00.7760000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:45:00.769] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:45:00.770] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:45:00.771] [USDJPY STRUCTURE] trendLong=False higherLow=False contLong=False pbLong=True extLong=False exhLong=False qualifiedLong=False
+[2026-04-02 16:45:00.771] [USDJPY LOGIC] trend=None longCont=False longPb=True ext=False exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 16:45:00.772] [BIAS FALLBACK] using TrendDirection
+[2026-04-02 16:45:00.772] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DIR][LOGIC] sym=USDJPY logicBias=Short logicConf=50
+[2026-04-02 16:45:00.773] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [CTX PROPAGATION] symbol=USDJPY bias=Short conf=50
+[2026-04-02 16:45:00.773] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:45:00.774] [DEBUG] M5.Count=2057
+[2026-04-02 16:45:00.774] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [PIPE][ENTRY_ROUTER_PASS] pass=11 symbol=USDJPY bar=2026-04-02T16:45:00.7760000Z
+[2026-04-02 16:45:00.775] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY START] symbol=USDJPY bias=Short
+[2026-04-02 16:45:00.780] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:45:00.781] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DBG ENTRY] total candidates=2
+[2026-04-02 16:45:00.782] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.782] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.783] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:45:00.783] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.784] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.784] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_MISMATCH rawDirection=Short logicBiasDirection=Short logicConfidence=50 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:45:00.785] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:45:00.785] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:45:00.785] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:45:00.786] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.786] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.787] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:45:00.787] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][GATE] symbol=USDJPY entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.787] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:45:00.787] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][GATE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_MISMATCH gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.788] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.788] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.788] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_MISMATCH baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.789] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=Short
+[2026-04-02 16:45:00.789] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.789] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.789] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 16:45:00.789] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_MISMATCH
+[2026-04-02 16:45:00.789] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=22 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=16
+[2026-04-02 16:45:00.790] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:45:00.790] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.790] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.790] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.790] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.791] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:45:00.791] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=40 confidence=50 trend=Short fallback=true
+[2026-04-02 16:45:00.792] [TRACE] selected is null = True
+[2026-04-02 16:45:00.792] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:45:00.792] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:45:00.792] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:45:00.793] [USDJPY] attemptId=USD6VI8D4 [ATTEMPT USD6VI8D4] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:45:00.793] BLOCK: entry gate
+[2026-04-02 16:45:00.793] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:45:00.794] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-34 trust=0.9
+[2026-04-02 16:45:00.794] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:45:00.794] [MEMORY][UPDATE] symbol=USDJPY age=12 sinceImpulse=9
+[2026-04-02 16:45:00.795] [MEMORY] phase=Stale window=Exhausted ext=Normal
+[2026-04-02 16:45:00.796] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=True chase=False timingPenalty=-67 trust=0.9
+[2026-04-02 16:50:00.605] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:50:00.605] [FX MSD] USDJPY | atrPips=4.91 adx=17.3 | lowVol=False trend=False momentum=False compression=False
+[2026-04-02 16:50:00.605] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.3
+[2026-04-02 16:50:00.605] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:50:00.606] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 16:50:00.606] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:50:00.607] [IMPULSE SRC] idx=2056 barsSince=0 range=0.11
+[2026-04-02 16:50:00.607] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.11 comp=0.15/0.04 retr=0.00/0.03
+[2026-04-02 16:50:00.607] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 16:50:00.607] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.15100000000001046 atr=0.04835714285714029
+[2026-04-02 16:50:00.607] [STRUCTURE][IMPULSE] dir=None strength=2.07 range=0.1
+[2026-04-02 16:50:00.608] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:50:00.608] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:50:00.608] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:50:00.609] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:50:00.609] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:50:00.610] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=0.99 triggerLateScore=0.57 chaseRisk=False timingPenalty=-67
+[2026-04-02 16:50:00.610] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.99 barsSinceImpulse=9 barsSinceBreak=11 attempts=0 triggerLate=0.57 distanceAtr=0.69
+[2026-04-02 16:50:00.610] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:50:00.610] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.3 atrPts=4.91
+[2026-04-02 16:50:00.611] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:50:00.611] [SESSION_CALENDAR] utc=2026-04-02T16:50:00.6160000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:50:00.612] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:50:00.612] [SESSION CHECK] time=2026-04-02T16:50:00.6160000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:50:00.612] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:50:00.612] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:50:00.613] [USDJPY STRUCTURE] trendLong=False higherLow=True contLong=True pbLong=True extLong=True exhLong=False qualifiedLong=False
+[2026-04-02 16:50:00.613] [USDJPY LOGIC] trend=None longCont=True longPb=True ext=True exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=True
+[2026-04-02 16:50:00.614] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 16:50:00.616] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 16:50:00.616] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:50:00.616] [DEBUG] M5.Count=2058
+[2026-04-02 16:50:00.617] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [PIPE][ENTRY_ROUTER_PASS] pass=12 symbol=USDJPY bar=2026-04-02T16:50:00.6160000Z
+[2026-04-02 16:50:00.617] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 16:50:00.626] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:50:00.627] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DBG ENTRY] total candidates=2
+[2026-04-02 16:50:00.627] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.628] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.628] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:50:00.629] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.629] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.630] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:50:00.630] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:50:00.631] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:50:00.631] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:50:00.632] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.632] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.634] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.635] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.635] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.635] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:50:00.635] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:50:00.636] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:50:00.636] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:50:00.636] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:50:00.637] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=24 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=18
+[2026-04-02 16:50:00.637] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:50:00.637] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.637] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.638] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.638] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:50:00.638] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:50:00.639] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 16:50:00.639] [TRACE] selected is null = True
+[2026-04-02 16:50:00.640] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:50:00.640] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:50:00.640] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:50:00.641] [USDJPY] attemptId=USD6VONQ1 [ATTEMPT USD6VONQ1] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:50:00.641] BLOCK: entry gate
+[2026-04-02 16:50:00.641] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:50:00.642] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=True chase=False timingPenalty=-67 trust=0.9
+[2026-04-02 16:50:00.642] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:50:00.643] [MEMORY][UPDATE] symbol=USDJPY age=1 sinceImpulse=0
+[2026-04-02 16:50:00.643] [MEMORY][IMPULSE] symbol=USDJPY phase=Impulse
+[2026-04-02 16:50:00.644] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 16:50:00.645] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.9
+[2026-04-02 16:54:52.335] GeminiV26Bot STOP
+[2026-04-02 16:54:56.812] ======================================
+[2026-04-02 16:54:56.826] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 16:54:56.829] ❌ NOT legacy Gemini
+[2026-04-02 16:54:56.830] 📊 Symbol: USDJPY
+[2026-04-02 16:54:56.830] ⏱ Timeframe: Minute5
+[2026-04-02 16:54:56.830] ======================================
+[2026-04-02 16:54:56.838] [SYMBOL][CLASSIFY][FX] raw=USDJPY normalized=USDJPY resolved=FX
+[2026-04-02 16:54:56.846] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 16:54:57.615] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 16:54:57.821] [RESOLVER][INPUT] input=USDJPY
+[2026-04-02 16:54:57.822] [RESOLVER][CANONICAL] input=USDJPY canonical=USDJPY
+[2026-04-02 16:54:57.823] [SYMBOL][CLASSIFY][FX] raw=USDJPY normalized=USDJPY resolved=FX
+[2026-04-02 16:54:57.848] [RESOLVER][RUNTIME] source=current_bot runtime=USDJPY
+[2026-04-02 16:54:57.852] [RESOLVER][SUCCESS] input=USDJPY canonical=USDJPY runtime=USDJPY
+[2026-04-02 16:54:57.854] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 16:54:57.855] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.855] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 16:54:57.855] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 16:54:57.859] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 16:54:57.859] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.860] [BOOT][REHYDRATE_START]
+[2026-04-02 16:54:57.867] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 16:54:57.868] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 16:54:57.909] [MEMORY][BUILD_START] symbol=USDJPY bars=2057
+[2026-04-02 16:54:57.910] [MEMORY][DONE] symbol=USDJPY mode=HistoricalReplay phase=Impulse age=1 pullbacks=0 sinceImpulse=0
+[2026-04-02 16:55:02.821] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 16:55:02.837] [FX MSD] USDJPY | atrPips=4.75 adx=17.6 | lowVol=False trend=False momentum=False compression=False
+[2026-04-02 16:55:02.838] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=17.6
+[2026-04-02 16:55:02.838] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 16:55:02.839] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 16:55:02.839] [RESOLVER][INPUT] input=USDJPY
+[2026-04-02 16:55:02.840] [RESOLVER][CANONICAL] input=USDJPY canonical=USDJPY
+[2026-04-02 16:55:02.840] [SYMBOL][CLASSIFY][FX] raw=USDJPY normalized=USDJPY resolved=FX
+[2026-04-02 16:55:02.840] [RESOLVER][RUNTIME] source=current_bot runtime=USDJPY
+[2026-04-02 16:55:02.841] [RESOLVER][SUCCESS] input=USDJPY canonical=USDJPY runtime=USDJPY
+[2026-04-02 16:55:02.960] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:55:02.960] [IMPULSE SRC] idx=2056 barsSince=1 range=0.11
+[2026-04-02 16:55:02.960] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.11 comp=0.12/0.04 retr=0.00/0.03
+[2026-04-02 16:55:02.961] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 16:55:02.961] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.12399999999999523 atr=0.048785714285713766
+[2026-04-02 16:55:02.961] [RESOLVER][INPUT] input=USDJPY
+[2026-04-02 16:55:02.961] [RESOLVER][CANONICAL] input=USDJPY canonical=USDJPY
+[2026-04-02 16:55:02.962] [SYMBOL][CLASSIFY][FX] raw=USDJPY normalized=USDJPY resolved=FX
+[2026-04-02 16:55:02.962] [RESOLVER][RUNTIME] source=current_bot runtime=USDJPY
+[2026-04-02 16:55:02.962] [RESOLVER][SUCCESS] input=USDJPY canonical=USDJPY runtime=USDJPY
+[2026-04-02 16:55:03.024] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 16:55:03.025] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 16:55:03.025] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 activeDirection=Long activeConfidence=0.89
+[2026-04-02 16:55:03.025] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 16:55:03.025] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 16:55:03.026] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.95 triggerLateScore=0.14 chaseRisk=False timingPenalty=-14
+[2026-04-02 16:55:03.026] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.95 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.14 distanceAtr=0.95
+[2026-04-02 16:55:03.026] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:55:03.026] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=17.6 atrPts=4.75
+[2026-04-02 16:55:03.027] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:55:03.027] [SESSION_CALENDAR] utc=2026-04-02T16:55:03.0270000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:55:03.027] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 16:55:03.027] [SESSION CHECK] time=2026-04-02T16:55:03.0270000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 16:55:03.027] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:55:03.028] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:55:03.039] [USDJPY STRUCTURE] trendLong=False higherLow=True contLong=False pbLong=False extLong=True exhLong=False qualifiedLong=False
+[2026-04-02 16:55:03.040] [USDJPY LOGIC] trend=None longCont=False longPb=False ext=True exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 16:55:03.041] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 16:55:03.041] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 16:55:03.041] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:55:03.042] [DEBUG] M5.Count=2059
+[2026-04-02 16:55:03.042] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=USDJPY bar=2026-04-02T16:55:03.0420000Z
+[2026-04-02 16:55:03.042] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 16:55:03.045] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 16:55:03.045] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DBG ENTRY] total candidates=2
+[2026-04-02 16:55:03.046] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.046] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.046] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:55:03.047] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.047] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.047] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:55:03.048] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05
+[2026-04-02 16:55:03.048] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 16:55:03.048] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:55:03.049] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.049] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.050] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:03.050] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.051] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:03.051] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.65, adx=22.4, distATR=1.05 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 16:55:03.051] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:55:03.051] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 16:55:03.052] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:55:03.052] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 16:55:03.052] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=2 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=2
+[2026-04-02 16:55:03.052] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:55:03.052] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.053] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.053] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.053] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 16:55:03.053] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:55:03.054] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 16:55:03.054] [TRACE] selected is null = True
+[2026-04-02 16:55:03.055] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:55:03.055] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 16:55:03.055] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:55:03.055] [USDJPY] attemptId=USD6VV4XJ [ATTEMPT USD6VV4XJ] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:55:03.055] BLOCK: entry gate
+[2026-04-02 16:55:03.056] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:55:03.056] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-14 trust=0.7
+[2026-04-02 16:55:03.057] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 16:55:03.057] [MEMORY][UPDATE] symbol=USDJPY age=2 sinceImpulse=1
+[2026-04-02 16:55:03.058] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 16:55:03.058] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.9
+[2026-04-02 17:00:00.161] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 17:00:00.162] [FX MSD] USDJPY | atrPips=4.89 adx=18.5 | lowVol=False trend=False momentum=False compression=False
+[2026-04-02 17:00:00.162] [FX MarketState] USDJPY Trend=False Momentum=False LowVol=False ADX=18.5
+[2026-04-02 17:00:00.163] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 17:00:00.163] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 17:00:00.165] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:00:00.166] [IMPULSE SRC] idx=2058 barsSince=0 range=0.06
+[2026-04-02 17:00:00.167] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.07/0.02 retr=0.00/0.03
+[2026-04-02 17:00:00.167] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 17:00:00.168] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.06700000000000728 atr=0.048785714285713766
+[2026-04-02 17:00:00.169] [STRUCTURE][IMPULSE] dir=None strength=1.21 range=0.1
+[2026-04-02 17:00:00.170] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:00:00.170] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 17:00:00.171] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 activeDirection=Long activeConfidence=0.89
+[2026-04-02 17:00:00.171] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 17:00:00.172] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 17:00:00.173] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 17:00:00.174] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.16
+[2026-04-02 17:00:00.174] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:00:00.175] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=False momentum=False lowVol=False adx=18.5 atrPts=4.89
+[2026-04-02 17:00:00.175] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:00:00.176] [SESSION_CALENDAR] utc=2026-04-02T17:00:00.1850000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:00:00.176] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 17:00:00.176] [SESSION CHECK] time=2026-04-02T17:00:00.1850000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 17:00:00.177] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:00:00.177] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:00:00.178] [USDJPY STRUCTURE] trendLong=False higherLow=True contLong=True pbLong=False extLong=True exhLong=False qualifiedLong=False
+[2026-04-02 17:00:00.178] [USDJPY LOGIC] trend=None longCont=True longPb=False ext=True exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 17:00:00.178] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 17:00:00.178] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 17:00:00.179] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:00:00.179] [DEBUG] M5.Count=2060
+[2026-04-02 17:00:00.180] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=USDJPY bar=2026-04-02T17:00:00.1850000Z
+[2026-04-02 17:00:00.180] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 17:00:00.184] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 17:00:00.185] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DBG ENTRY] total candidates=2
+[2026-04-02 17:00:00.185] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.187] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.187] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:00:00.188] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.189] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.190] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:00:00.190] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72
+[2026-04-02 17:00:00.191] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 17:00:00.192] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:00:00.193] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.195] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.232] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.233] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.235] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.235] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:00:00.236] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:00:00.237] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:00:00.238] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:00:00.239] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:00:00.240] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=4 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=4
+[2026-04-02 17:00:00.240] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:00:00.240] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.241] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.241] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.241] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:00:00.242] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:00:00.242] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:00:00.243] [TRACE] selected is null = True
+[2026-04-02 17:00:00.243] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:00:00.243] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 17:00:00.244] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:00:00.245] [USDJPY] attemptId=USD6W1ICP [ATTEMPT USD6W1ICP] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:00:00.246] BLOCK: entry gate
+[2026-04-02 17:00:00.247] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:00:00.248] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.9
+[2026-04-02 17:00:00.250] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:00:00.255] [MEMORY][UPDATE] symbol=USDJPY age=1 sinceImpulse=0
+[2026-04-02 17:00:00.255] [MEMORY][IMPULSE] symbol=USDJPY phase=Impulse
+[2026-04-02 17:00:00.256] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:00:00.256] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:02.189] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 17:05:02.189] [FX MSD] USDJPY | atrPips=5.03 adx=20.4 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:05:02.190] [FX MarketState] USDJPY Trend=True Momentum=False LowVol=False ADX=20.4
+[2026-04-02 17:05:02.190] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 17:05:02.191] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:05:02.192] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:05:02.192] [IMPULSE SRC] idx=2059 barsSince=0 range=0.07
+[2026-04-02 17:05:02.193] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.07 comp=0.12/0.02 retr=0.00/0.03
+[2026-04-02 17:05:02.193] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 17:05:02.194] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.11899999999999977 atr=0.051928571428571706
+[2026-04-02 17:05:02.194] [STRUCTURE][IMPULSE] dir=None strength=0.85 range=0.1
+[2026-04-02 17:05:02.195] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:05:02.195] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 17:05:02.196] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 activeDirection=Long activeConfidence=0.89
+[2026-04-02 17:05:02.196] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 17:05:02.197] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 17:05:02.197] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:05:02.198] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=0.98
+[2026-04-02 17:05:02.198] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:05:02.199] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=True momentum=False lowVol=False adx=20.4 atrPts=5.03
+[2026-04-02 17:05:02.199] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:05:02.200] [SESSION_CALENDAR] utc=2026-04-02T17:05:02.2020000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:05:02.200] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 17:05:02.200] [SESSION CHECK] time=2026-04-02T17:05:02.2020000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 17:05:02.201] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:05:02.201] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:05:02.203] [USDJPY STRUCTURE] trendLong=False higherLow=True contLong=True pbLong=False extLong=True exhLong=False qualifiedLong=False
+[2026-04-02 17:05:02.203] [USDJPY LOGIC] trend=None longCont=True longPb=False ext=True exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 17:05:02.204] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 17:05:02.204] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 17:05:02.204] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:05:02.205] [DEBUG] M5.Count=2061
+[2026-04-02 17:05:02.205] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=USDJPY bar=2026-04-02T17:05:02.2180000Z
+[2026-04-02 17:05:02.206] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 17:05:02.208] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 17:05:02.209] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DBG ENTRY] total candidates=2
+[2026-04-02 17:05:02.209] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.209] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.210] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:05:02.210] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.210] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.211] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:05:02.211] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72
+[2026-04-02 17:05:02.211] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 17:05:02.211] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:05:02.212] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.212] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.213] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:02.213] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.214] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:02.214] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:05:02.214] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:05:02.214] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:05:02.215] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:05:02.217] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:05:02.218] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=6 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=6
+[2026-04-02 17:05:02.218] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:05:02.218] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.218] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.218] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.219] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:05:02.219] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:05:02.221] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:05:02.222] [TRACE] selected is null = True
+[2026-04-02 17:05:02.222] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:05:02.223] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 17:05:02.223] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:05:02.223] [USDJPY] attemptId=USD6W7ZEI [ATTEMPT USD6W7ZEI] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:05:02.224] BLOCK: entry gate
+[2026-04-02 17:05:02.224] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:05:02.225] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:02.226] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:05:02.227] [MEMORY][UPDATE] symbol=USDJPY age=1 sinceImpulse=0
+[2026-04-02 17:05:02.227] [MEMORY][IMPULSE] symbol=USDJPY phase=Impulse
+[2026-04-02 17:05:02.228] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:05:02.229] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9
+[2026-04-02 17:10:00.652] [ONBAR DBG] raw=USDJPY canonical=USDJPY
+[2026-04-02 17:10:00.653] [FX MSD] USDJPY | atrPips=4.90 adx=22.2 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 17:10:00.653] [FX MarketState] USDJPY Trend=True Momentum=False LowVol=False ADX=22.2
+[2026-04-02 17:10:00.654] [MEMORY][CTX_ATTACH][START] symbol=USDJPY
+[2026-04-02 17:10:00.654] [MEMORY][CTX_ATTACH] symbol=USDJPY hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:10:00.656] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:10:00.656] [IMPULSE SRC] idx=2060 barsSince=0 range=0.05
+[2026-04-02 17:10:00.657] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.10/0.02 retr=0.00/0.02
+[2026-04-02 17:10:00.657] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 17:10:00.657] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.09999999999999432 atr=0.05149999999999823
+[2026-04-02 17:10:00.657] [AUDIT][HTF FLOW][SOURCE] symbol=USDJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 17:10:00.657] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 17:10:00.658] [AUDIT][HTF CONTEXT] symbol=USDJPY asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 activeDirection=Long activeConfidence=0.89
+[2026-04-02 17:10:00.658] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 17:10:00.658] [CTX][MEMORY_READY] symbol=USDJPY hasMemory=True
+[2026-04-02 17:10:00.658] [ENTRY][SNAPSHOT] symbol=USDJPY movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.96 triggerLateScore=0.13 chaseRisk=False timingPenalty=-13
+[2026-04-02 17:10:00.658] [CTX][TIMING][SIDE] symbol=USDJPY side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.96 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.13 distanceAtr=0.87
+[2026-04-02 17:10:00.659] [CTX][TIMING][SIDE] symbol=USDJPY side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:10:00.659] [ENTRY MARKETSTATE ASSIGN] sym=USDJPY trend=True momentum=False lowVol=False adx=22.2 atrPts=4.90
+[2026-04-02 17:10:00.659] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DIR][CTX_BUILD] sym=USDJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:10:00.659] [SESSION_CALENDAR] utc=2026-04-02T17:10:00.6690000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:10:00.660] [SESSION_GATE] symbol=USDJPY tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=USDJPY exception in NY session
+[2026-04-02 17:10:00.660] [SESSION CHECK] time=2026-04-02T17:10:00.6690000Z symbol=USDJPY bucket=NewYork allow=True
+[2026-04-02 17:10:00.660] [SESSION_MATRIX] symbol=USDJPY bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:10:00.660] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:10:00.661] [USDJPY STRUCTURE] trendLong=False higherLow=True contLong=True pbLong=False extLong=True exhLong=False qualifiedLong=False
+[2026-04-02 17:10:00.661] [USDJPY LOGIC] trend=None longCont=True longPb=False ext=True exh=False shortWeak=False shortBreak=False bias=Sell logicConf=0 hasLongStructure=False
+[2026-04-02 17:10:00.662] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DIR][LOGIC] sym=USDJPY logicBias=None logicConf=0
+[2026-04-02 17:10:00.662] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [CTX PROPAGATION] symbol=USDJPY bias=None conf=0
+[2026-04-02 17:10:00.662] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:10:00.662] [DEBUG] M5.Count=2062
+[2026-04-02 17:10:00.663] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=USDJPY bar=2026-04-02T17:10:00.6690000Z
+[2026-04-02 17:10:00.663] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY START] symbol=USDJPY bias=None
+[2026-04-02 17:10:00.666] [PIPE] symbol=USDJPY hasSignals=True count=2
+[2026-04-02 17:10:00.666] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DBG ENTRY] total candidates=2
+[2026-04-02 17:10:00.667] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DIR][ROUTER_CAND] sym=USDJPY type=FX_FlagContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.667] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.667] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_FlagContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:10:00.668] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DIR][ROUTER_CAND] sym=USDJPY type=FX_ImpulseContinuation valid=False score=0 dir=None reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.668] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.668] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][LOGIC] symbol=USDJPY entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=None score=0 classification=HTF_NO_DIRECTION rawDirection=None logicBiasDirection=None logicConfidence=0 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:10:00.669] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DIR][HTF] sym=USDJPY allow=Long conf=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72
+[2026-04-02 17:10:00.669] [HTF][BIAS] asset=FX direction=Long state=Neutral impact=ScoreOnly conf=0.89
+[2026-04-02 17:10:00.669] [HTF][APPLIED] asset=FX dir=Long state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:10:00.670] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.670] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.671] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_FlagContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.671] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.671] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][SCORE] symbol=USDJPY entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=None score=0 classification=HTF_NO_DIRECTION baseScore=0 afterHtfScoreAdjustment=0 afterPenalty=0 finalScore=0 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.671] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=USDJPY asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BULL strong structure, conf=0.89, gapATR=2.62, adx=21.1, distATR=0.72 allowedDirection=Long align=False candidateDirection=None
+[2026-04-02 17:10:00.672] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:10:00.672] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][CLASSIFICATION] symbol=USDJPY entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=None score=0 classification=ENTRY_NO_SIGNAL
+[2026-04-02 17:10:00.672] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_FlagContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:10:00.672] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][GATES] symbol=USDJPY entryType=FX_ImpulseContinuation stage=GATES candidateDirection=None score=0 classification=HTF_NO_DIRECTION
+[2026-04-02 17:10:00.672] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][SUMMARY] symbol=USDJPY totalEvaluations=8 logicProducedDirectionCount=0 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=8
+[2026-04-02 17:10:00.673] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:10:00.673] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [CANDIDATE] type=FX_FlagContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.673] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.673] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [CANDIDATE] type=FX_ImpulseContinuation dir=None valid=false score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.673] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=None valid=False state=NONE trigger=False score=0 reason=[ROUTER] NO_DIRECTION
+[2026-04-02 17:10:00.674] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:10:00.674] [ENTRY][CANDIDATE] symbol=USDJPY entryType=FX_FlagContinuation score=0 confidence=0 trend=None fallback=true
+[2026-04-02 17:10:00.675] [TRACE] selected is null = True
+[2026-04-02 17:10:00.675] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:10:00.675] [FX][TOTAL_REJECTION] symbol=USDJPY candidates=2 reason=ALL_INVALID
+[2026-04-02 17:10:00.675] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:10:00.676] [USDJPY] attemptId=USD6WEDOU [ATTEMPT USD6WEDOU] [ENTRY_TRACE][FINAL] symbol=USDJPY entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:10:00.676] BLOCK: entry gate
+[2026-04-02 17:10:00.676] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:10:00.677] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9
+[2026-04-02 17:10:00.678] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 17:10:00.678] [MEMORY][UPDATE] symbol=USDJPY age=1 sinceImpulse=0
+[2026-04-02 17:10:00.679] [MEMORY][IMPULSE] symbol=USDJPY phase=Impulse
+[2026-04-02 17:10:00.680] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:10:00.681] [MEMORY][ASSESSMENT] symbol=USDJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-13 trust=0.9

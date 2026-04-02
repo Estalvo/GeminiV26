@@ -3068,3 +3068,812 @@
 [2026-04-02 16:20:00.892] [MEMORY][UPDATE] symbol=EURUSD age=7 sinceImpulse=4
 [2026-04-02 16:20:00.893] [MEMORY] phase=Decay window=Late ext=Extended
 [2026-04-02 16:20:00.893] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-48 trust=0.9
+[2026-04-02 16:25:00.181] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:25:00.182] [FX MSD] EURUSD | atrPips=4.59 adx=27.9 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:25:00.182] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=27.9
+[2026-04-02 16:25:00.182] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:25:00.182] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:25:00.183] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:25:00.183] [IMPULSE SRC] idx=2044 barsSince=7 range=0.00
+[2026-04-02 16:25:00.184] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:25:00.184] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 16:25:00.184] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0007699999999999374 atr=0.0005235714285714645
+[2026-04-02 16:25:00.184] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:25:00.185] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:25:00.185] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:25:00.185] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:25:00.185] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:25:00.186] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Decay continuationWindow=Late extensionState=Extended impulseFreshness=0.13 continuationFreshness=0.67 triggerLateScore=0.48 chaseRisk=True timingPenalty=-48
+[2026-04-02 16:25:00.186] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:25:00.186] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=True overextended=False freshness=0.67 barsSinceImpulse=4 barsSinceBreak=6 attempts=0 triggerLate=0.48 distanceAtr=1.62
+[2026-04-02 16:25:00.186] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=27.9 atrPts=4.59
+[2026-04-02 16:25:00.187] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:25:00.187] [SESSION_CALENDAR] utc=2026-04-02T16:25:00.1820000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:25:00.187] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:25:00.188] [SESSION CHECK] time=2026-04-02T16:25:00.1820000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:25:00.188] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:25:00.189] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:25:00.189] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15384 ema200=1.15420 diff=-0.00035 | adx=27.9 atr=0.00046 | htfBull=True
+[2026-04-02 16:25:00.189] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:25:00.191] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:25:00.191] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:25:00.191] [DEBUG] M5.Count=2053
+[2026-04-02 16:25:00.191] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [PIPE][ENTRY_ROUTER_PASS] pass=7 symbol=EURUSD bar=2026-04-02T16:25:00.1970000Z
+[2026-04-02 16:25:00.192] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:25:00.194] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:25:00.195] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DBG ENTRY] total candidates=2
+[2026-04-02 16:25:00.195] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.195] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.195] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:25:00.195] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.196] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.196] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:25:00.196] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:25:00.197] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:25:00.197] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:25:00.197] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.198] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.199] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:25:00.199] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:25:00.200] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:25:00.200] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:25:00.201] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:00.201] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.201] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:25:00.202] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:25:00.202] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:25:00.202] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:25:00.202] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:25:00.203] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:25:00.203] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=14 logicProducedDirectionCount=14 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:25:00.203] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:25:00.203] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.204] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.204] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.204] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:25:00.204] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:25:00.206] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 16:25:00.207] [TRACE] selected is null = True
+[2026-04-02 16:25:00.207] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:25:00.207] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:25:00.207] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:25:00.207] [EURUSD] attemptId=EUR6USHZQ [ATTEMPT EUR6USHZQ] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:25:00.208] BLOCK: entry gate
+[2026-04-02 16:25:00.208] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:25:00.209] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-48 trust=0.9
+[2026-04-02 16:25:00.209] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:25:00.210] [MEMORY][UPDATE] symbol=EURUSD age=8 sinceImpulse=5
+[2026-04-02 16:25:00.210] [MEMORY] phase=Decay window=Late ext=Extended
+[2026-04-02 16:25:00.211] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-51 trust=0.9
+[2026-04-02 16:30:00.458] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:30:00.459] [FX MSD] EURUSD | atrPips=4.22 adx=27.2 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:30:00.459] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=27.2
+[2026-04-02 16:30:00.459] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:30:00.460] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:30:00.460] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:30:00.460] [IMPULSE SRC] idx=2044 barsSince=8 range=0.00
+[2026-04-02 16:30:00.461] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:30:00.461] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 16:30:00.461] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.00036999999999998145 atr=0.0004842857142857466
+[2026-04-02 16:30:00.461] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:30:00.462] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:30:00.462] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:30:00.462] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:30:00.462] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:30:00.463] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Decay continuationWindow=Late extensionState=Extended impulseFreshness=0.00 continuationFreshness=0.67 triggerLateScore=0.51 chaseRisk=True timingPenalty=-51
+[2026-04-02 16:30:00.463] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:30:00.463] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=True overextended=False freshness=0.67 barsSinceImpulse=5 barsSinceBreak=7 attempts=0 triggerLate=0.51 distanceAtr=1.59
+[2026-04-02 16:30:00.463] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=27.2 atrPts=4.22
+[2026-04-02 16:30:00.463] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:30:00.464] [SESSION_CALENDAR] utc=2026-04-02T16:30:00.4630000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:30:00.464] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:30:00.464] [SESSION CHECK] time=2026-04-02T16:30:00.4630000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:30:00.464] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:30:00.465] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:30:00.465] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15385 ema200=1.15419 diff=-0.00034 | adx=27.2 atr=0.00042 | htfBull=True
+[2026-04-02 16:30:00.465] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:30:00.466] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:30:00.466] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:30:00.466] [DEBUG] M5.Count=2054
+[2026-04-02 16:30:00.466] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [PIPE][ENTRY_ROUTER_PASS] pass=8 symbol=EURUSD bar=2026-04-02T16:30:00.4630000Z
+[2026-04-02 16:30:00.467] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:30:00.469] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:30:00.470] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DBG ENTRY] total candidates=2
+[2026-04-02 16:30:00.470] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.471] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.471] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:30:00.471] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.472] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.472] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:30:00.472] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:30:00.472] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:30:00.473] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:30:00.473] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.473] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.474] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:30:00.474] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:30:00.474] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:30:00.475] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:30:00.475] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:00.475] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.476] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:30:00.476] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:30:00.476] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:30:00.476] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:30:00.476] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:30:00.476] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:30:00.477] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=16 logicProducedDirectionCount=16 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:30:00.477] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:30:00.477] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.477] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.477] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.478] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:30:00.478] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:30:00.478] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 16:30:00.479] [TRACE] selected is null = True
+[2026-04-02 16:30:00.479] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:30:00.479] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:30:00.479] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:30:00.479] [EURUSD] attemptId=EUR6UYXOV [ATTEMPT EUR6UYXOV] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:30:00.479] BLOCK: entry gate
+[2026-04-02 16:30:00.480] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:30:00.480] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-51 trust=0.9
+[2026-04-02 16:30:00.480] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:30:00.481] [MEMORY][UPDATE] symbol=EURUSD age=9 sinceImpulse=6
+[2026-04-02 16:30:00.481] [MEMORY] phase=Decay window=Late ext=Extended
+[2026-04-02 16:30:00.481] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-53 trust=0.9
+[2026-04-02 16:35:00.259] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:35:00.259] [FX MSD] EURUSD | atrPips=4.49 adx=27.8 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:35:00.260] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=27.8
+[2026-04-02 16:35:00.261] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:35:00.261] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:35:00.262] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:35:00.262] [IMPULSE SRC] idx=2044 barsSince=9 range=0.00
+[2026-04-02 16:35:00.264] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:35:00.265] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:35:00.265] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.0006800000000000139 atr=0.0004785714285714552
+[2026-04-02 16:35:00.266] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:35:00.268] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:35:00.271] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:35:00.272] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:35:00.272] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:35:00.272] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Decay continuationWindow=Late extensionState=Extended impulseFreshness=0.00 continuationFreshness=0.67 triggerLateScore=0.53 chaseRisk=True timingPenalty=-53
+[2026-04-02 16:35:00.273] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:35:00.273] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=True overextended=False freshness=0.67 barsSinceImpulse=6 barsSinceBreak=8 attempts=0 triggerLate=0.53 distanceAtr=1.59
+[2026-04-02 16:35:00.273] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=27.8 atrPts=4.49
+[2026-04-02 16:35:00.274] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:35:00.274] [SESSION_CALENDAR] utc=2026-04-02T16:35:00.2660000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:35:00.274] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:35:00.274] [SESSION CHECK] time=2026-04-02T16:35:00.2660000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:35:00.276] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:35:00.276] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:35:00.277] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15387 ema200=1.15420 diff=-0.00033 | adx=27.8 atr=0.00045 | htfBull=True
+[2026-04-02 16:35:00.277] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:35:00.282] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:35:00.283] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:35:00.284] [DEBUG] M5.Count=2055
+[2026-04-02 16:35:00.285] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [PIPE][ENTRY_ROUTER_PASS] pass=9 symbol=EURUSD bar=2026-04-02T16:35:00.2810000Z
+[2026-04-02 16:35:00.285] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:35:00.300] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:35:00.300] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DBG ENTRY] total candidates=2
+[2026-04-02 16:35:00.301] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.301] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.301] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:35:00.302] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.302] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.302] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:35:00.303] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:35:00.303] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:35:00.303] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:35:00.303] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.304] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.304] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:35:00.305] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:35:00.305] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:35:00.305] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:35:00.306] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.306] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.306] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:35:00.306] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:35:00.306] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:35:00.307] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:35:00.307] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:35:00.307] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:35:00.307] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=18 logicProducedDirectionCount=18 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:35:00.308] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:35:00.308] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.308] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.308] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.308] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:35:00.309] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:35:00.310] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 16:35:00.310] [TRACE] selected is null = True
+[2026-04-02 16:35:00.310] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:35:00.310] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:35:00.311] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:35:00.311] [EURUSD] attemptId=EUR6V5D0A [ATTEMPT EUR6V5D0A] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:35:00.311] BLOCK: entry gate
+[2026-04-02 16:35:00.311] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:35:00.312] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-53 trust=0.9
+[2026-04-02 16:35:00.312] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:35:00.313] [MEMORY][UPDATE] symbol=EURUSD age=10 sinceImpulse=7
+[2026-04-02 16:35:00.313] [MEMORY] phase=Decay window=Late ext=Extended
+[2026-04-02 16:35:00.313] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-51 trust=0.9
+[2026-04-02 16:40:00.256] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:40:00.256] [FX MSD] EURUSD | atrPips=4.35 adx=27.7 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:40:00.257] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=27.7
+[2026-04-02 16:40:00.257] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:40:00.257] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:40:00.258] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:40:00.258] [IMPULSE SRC] idx=2048 barsSince=6 range=0.00
+[2026-04-02 16:40:00.259] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:40:00.259] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:40:00.259] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0006800000000000139 atr=0.0004300000000000256
+[2026-04-02 16:40:00.260] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:40:00.260] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:40:00.260] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:40:00.260] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:40:00.260] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:40:00.261] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Decay continuationWindow=Late extensionState=Extended impulseFreshness=0.00 continuationFreshness=0.72 triggerLateScore=0.51 chaseRisk=True timingPenalty=-51
+[2026-04-02 16:40:00.262] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:40:00.262] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=True overextended=False freshness=0.72 barsSinceImpulse=7 barsSinceBreak=9 attempts=0 triggerLate=0.51 distanceAtr=1.24
+[2026-04-02 16:40:00.263] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=27.7 atrPts=4.35
+[2026-04-02 16:40:00.263] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 16:40:00.263] [SESSION_CALENDAR] utc=2026-04-02T16:40:00.2610000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:40:00.264] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:40:00.264] [SESSION CHECK] time=2026-04-02T16:40:00.2610000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:40:00.264] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:40:00.266] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:40:00.267] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15390 ema200=1.15420 diff=-0.00030 | adx=27.7 atr=0.00044 | htfBull=True
+[2026-04-02 16:40:00.268] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:40:00.269] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:40:00.270] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:40:00.270] [DEBUG] M5.Count=2056
+[2026-04-02 16:40:00.271] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [PIPE][ENTRY_ROUTER_PASS] pass=10 symbol=EURUSD bar=2026-04-02T16:40:00.2770000Z
+[2026-04-02 16:40:00.272] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:40:00.275] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:40:00.275] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DBG ENTRY] total candidates=2
+[2026-04-02 16:40:00.275] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.276] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.276] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:40:00.276] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.278] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.280] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:40:00.280] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:40:00.281] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:40:00.282] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:40:00.283] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.285] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.285] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:40:00.286] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.286] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:40:00.286] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:40:00.287] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.287] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.287] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:40:00.287] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=20 logicProducedDirectionCount=20 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:40:00.288] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:40:00.289] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.289] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.289] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.289] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:40:00.289] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:40:00.290] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 16:40:00.290] [TRACE] selected is null = True
+[2026-04-02 16:40:00.290] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:40:00.290] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:40:00.291] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:40:00.291] [EURUSD] attemptId=EUR6VBSHX [ATTEMPT EUR6VBSHX] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:40:00.291] BLOCK: entry gate
+[2026-04-02 16:40:00.291] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:40:00.292] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=True exhausted=False chase=True timingPenalty=-51 trust=0.9
+[2026-04-02 16:40:00.292] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:40:00.292] [MEMORY][UPDATE] symbol=EURUSD age=11 sinceImpulse=8
+[2026-04-02 16:40:00.293] [MEMORY] phase=Decay window=Mature ext=Normal
+[2026-04-02 16:40:00.293] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-37 trust=0.9
+[2026-04-02 16:45:00.278] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:45:00.278] [FX MSD] EURUSD | atrPips=4.47 adx=28.5 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:45:00.278] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=28.5
+[2026-04-02 16:45:00.278] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:45:00.281] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 16:45:00.283] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:45:00.283] [IMPULSE SRC] idx=2055 barsSince=0 range=0.00
+[2026-04-02 16:45:00.283] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:45:00.284] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:45:00.284] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0007099999999999884 atr=0.0004478571428571586
+[2026-04-02 16:45:00.284] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:45:00.285] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:45:00.286] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:45:00.286] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:45:00.286] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:45:00.286] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Decay continuationWindow=Mature extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.37 chaseRisk=False timingPenalty=-37
+[2026-04-02 16:45:00.286] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:45:00.287] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=8 barsSinceBreak=10 attempts=0 triggerLate=0.37 distanceAtr=0.52
+[2026-04-02 16:45:00.287] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=28.5 atrPts=4.47
+[2026-04-02 16:45:00.287] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DIR][CTX_BUILD] sym=EURUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:45:00.288] [SESSION_CALENDAR] utc=2026-04-02T16:45:00.2910000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:45:00.288] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:45:00.289] [SESSION CHECK] time=2026-04-02T16:45:00.2910000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:45:00.289] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:45:00.289] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:45:00.290] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15393 ema200=1.15421 diff=-0.00027 | adx=28.5 atr=0.00045 | htfBull=True
+[2026-04-02 16:45:00.292] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:45:00.293] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:45:00.293] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:45:00.293] [DEBUG] M5.Count=2057
+[2026-04-02 16:45:00.294] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [PIPE][ENTRY_ROUTER_PASS] pass=11 symbol=EURUSD bar=2026-04-02T16:45:00.2910000Z
+[2026-04-02 16:45:00.294] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:45:00.303] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:45:00.303] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DBG ENTRY] total candidates=2
+[2026-04-02 16:45:00.304] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.304] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.304] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:45:00.305] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.305] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.306] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:45:00.306] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:45:00.307] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:45:00.307] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:45:00.309] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.323] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.326] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:45:00.326] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.327] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:45:00.327] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:45:00.329] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.329] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.329] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:45:00.329] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:45:00.330] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.330] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:45:00.331] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:45:00.331] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:45:00.331] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=22 logicProducedDirectionCount=22 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:45:00.332] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:45:00.332] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.333] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.333] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.333] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:45:00.334] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:45:00.335] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=Long fallback=true
+[2026-04-02 16:45:00.335] [TRACE] selected is null = True
+[2026-04-02 16:45:00.336] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:45:00.336] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:45:00.336] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:45:00.337] [EURUSD] attemptId=EUR6VI7ZO [ATTEMPT EUR6VI7ZO] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:45:00.337] BLOCK: entry gate
+[2026-04-02 16:45:00.337] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:45:00.338] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-37 trust=0.9
+[2026-04-02 16:45:00.339] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:45:00.339] [MEMORY][UPDATE] symbol=EURUSD age=12 sinceImpulse=9
+[2026-04-02 16:45:00.339] [MEMORY] phase=Stale window=Exhausted ext=Normal
+[2026-04-02 16:45:00.340] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-60 trust=0.9
+[2026-04-02 16:50:00.159] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:50:00.159] [FX MSD] EURUSD | atrPips=4.45 adx=28.9 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:50:00.159] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=28.9
+[2026-04-02 16:50:00.160] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:50:00.160] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 16:50:00.171] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:50:00.171] [IMPULSE SRC] idx=2056 barsSince=0 range=0.00
+[2026-04-02 16:50:00.171] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:50:00.172] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:50:00.172] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0006099999999999994 atr=0.00045642857142857984
+[2026-04-02 16:50:00.172] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:50:00.172] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:50:00.173] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:50:00.173] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:50:00.174] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:50:00.174] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.50 chaseRisk=False timingPenalty=-60
+[2026-04-02 16:50:00.174] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:50:00.175] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=9 barsSinceBreak=11 attempts=0 triggerLate=0.50 distanceAtr=0.21
+[2026-04-02 16:50:00.175] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=28.9 atrPts=4.45
+[2026-04-02 16:50:00.175] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DIR][CTX_BUILD] sym=EURUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:50:00.176] [SESSION_CALENDAR] utc=2026-04-02T16:50:00.1790000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:50:00.176] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:50:00.176] [SESSION CHECK] time=2026-04-02T16:50:00.1790000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:50:00.177] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:50:00.180] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:50:00.180] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15395 ema200=1.15421 diff=-0.00026 | adx=28.9 atr=0.00044 | htfBull=True
+[2026-04-02 16:50:00.181] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:50:00.182] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:50:00.182] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:50:00.182] [DEBUG] M5.Count=2058
+[2026-04-02 16:50:00.183] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [PIPE][ENTRY_ROUTER_PASS] pass=12 symbol=EURUSD bar=2026-04-02T16:50:00.1790000Z
+[2026-04-02 16:50:00.183] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:50:00.188] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:50:00.189] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DBG ENTRY] total candidates=2
+[2026-04-02 16:50:00.189] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.190] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.190] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:50:00.191] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.191] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.192] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:50:00.192] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:50:00.193] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:50:00.193] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:50:00.193] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.194] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.195] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:50:00.196] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:50:00.196] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:50:00.196] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:50:00.197] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.198] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.198] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:50:00.199] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:50:00.199] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:50:00.199] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:50:00.200] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:50:00.201] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:50:00.201] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=24 logicProducedDirectionCount=24 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:50:00.201] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:50:00.202] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.202] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.203] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.203] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:50:00.203] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:50:00.204] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=Long fallback=true
+[2026-04-02 16:50:00.205] [TRACE] selected is null = True
+[2026-04-02 16:50:00.205] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:50:00.205] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:50:00.206] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:50:00.206] [EURUSD] attemptId=EUR6VONDV [ATTEMPT EUR6VONDV] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:50:00.207] BLOCK: entry gate
+[2026-04-02 16:50:00.207] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:50:00.208] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-60 trust=0.9
+[2026-04-02 16:50:00.209] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:50:00.209] [MEMORY][UPDATE] symbol=EURUSD age=13 sinceImpulse=10
+[2026-04-02 16:50:00.209] [MEMORY] phase=Stale window=Exhausted ext=Normal
+[2026-04-02 16:50:00.210] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-68 trust=0.9
+[2026-04-02 16:54:52.333] GeminiV26Bot STOP
+[2026-04-02 16:54:56.812] ======================================
+[2026-04-02 16:54:56.821] 🚀 GEMINI V26 DEMO BOT STARTED
+[2026-04-02 16:54:56.822] ❌ NOT legacy Gemini
+[2026-04-02 16:54:56.824] 📊 Symbol: EURUSD
+[2026-04-02 16:54:56.827] ⏱ Timeframe: Minute5
+[2026-04-02 16:54:56.828] ======================================
+[2026-04-02 16:54:56.839] [SYMBOL][CLASSIFY][FX] raw=EURUSD normalized=EURUSD resolved=FX
+[2026-04-02 16:54:56.844] [FX MATRIX DBG] MatrixType = GeminiV26, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+[2026-04-02 16:54:57.631] [RESOLVER][INIT] mode=runtime_only phase=OnStart
+[2026-04-02 16:54:57.823] [RESOLVER][INPUT] input=EURUSD
+[2026-04-02 16:54:57.825] [RESOLVER][CANONICAL] input=EURUSD canonical=EURUSD
+[2026-04-02 16:54:57.831] [SYMBOL][CLASSIFY][FX] raw=EURUSD normalized=EURUSD resolved=FX
+[2026-04-02 16:54:57.831] [RESOLVER][RUNTIME] source=current_bot runtime=EURUSD
+[2026-04-02 16:54:57.831] [RESOLVER][SUCCESS] input=EURUSD canonical=EURUSD runtime=EURUSD
+[2026-04-02 16:54:57.848] [MEMORY][COVERAGE] built=1/1
+[2026-04-02 16:54:57.851] [MEMORY][RESOLVE_COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.852] [MEMORY][USABLE_COVERAGE] usable=1/1
+[2026-04-02 16:54:57.853] [BOOT][MEMORY_READY] symbols=1
+[2026-04-02 16:54:57.865] [RESOLVER][VALIDATION] resolved=1/1
+[2026-04-02 16:54:57.867] [RESOLVER][COVERAGE] resolved=1/1
+[2026-04-02 16:54:57.868] [BOOT][REHYDRATE_START]
+[2026-04-02 16:54:57.871] [REHYDRATE_SUMMARY] seen=0 candidates=0 ok=0 skipped=0 failed=0 duplicates=0 fallbacks=0 ambiguousTp1=0 directionMismatches=0
+[2026-04-02 16:54:57.872] [BOOT][REHYDRATE_DONE] restored=0 skipped=0 failed=0 openPositions=0
+[2026-04-02 16:54:57.919] [MEMORY][BUILD_START] symbol=EURUSD bars=2057
+[2026-04-02 16:54:57.919] [MEMORY][DONE] symbol=EURUSD mode=HistoricalReplay phase=Stale age=13 pullbacks=0 sinceImpulse=10
+[2026-04-02 16:55:00.083] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 16:55:00.184] [FX MSD] EURUSD | atrPips=4.41 adx=28.7 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 16:55:00.187] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=28.7
+[2026-04-02 16:55:00.208] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 16:55:00.210] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 16:55:00.214] [RESOLVER][INPUT] input=EURUSD
+[2026-04-02 16:55:00.218] [RESOLVER][CANONICAL] input=EURUSD canonical=EURUSD
+[2026-04-02 16:55:00.219] [SYMBOL][CLASSIFY][FX] raw=EURUSD normalized=EURUSD resolved=FX
+[2026-04-02 16:55:00.220] [RESOLVER][RUNTIME] source=current_bot runtime=EURUSD
+[2026-04-02 16:55:00.221] [RESOLVER][SUCCESS] input=EURUSD canonical=EURUSD runtime=EURUSD
+[2026-04-02 16:55:00.271] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 16:55:00.271] [IMPULSE SRC] idx=2056 barsSince=1 range=0.00
+[2026-04-02 16:55:00.272] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 16:55:00.273] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 16:55:00.274] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0005800000000000249 atr=0.0004614285714285809
+[2026-04-02 16:55:00.274] [RESOLVER][INPUT] input=EURUSD
+[2026-04-02 16:55:00.275] [RESOLVER][CANONICAL] input=EURUSD canonical=EURUSD
+[2026-04-02 16:55:00.275] [SYMBOL][CLASSIFY][FX] raw=EURUSD normalized=EURUSD resolved=FX
+[2026-04-02 16:55:00.275] [RESOLVER][RUNTIME] source=current_bot runtime=EURUSD
+[2026-04-02 16:55:00.275] [RESOLVER][SUCCESS] input=EURUSD canonical=EURUSD runtime=EURUSD
+[2026-04-02 16:55:00.354] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 16:55:00.354] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 16:55:00.354] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 activeDirection=Short activeConfidence=0.88
+[2026-04-02 16:55:00.355] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 16:55:00.355] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 16:55:00.355] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.58 chaseRisk=False timingPenalty=-68
+[2026-04-02 16:55:00.355] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 16:55:00.355] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=10 barsSinceBreak=12 attempts=0 triggerLate=0.58 distanceAtr=0.52
+[2026-04-02 16:55:00.356] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=28.7 atrPts=4.41
+[2026-04-02 16:55:00.451] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DIR][CTX_BUILD] sym=EURUSD trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 16:55:00.456] [SESSION_CALENDAR] utc=2026-04-02T16:55:00.4640000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 16:55:00.461] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 16:55:00.462] [SESSION CHECK] time=2026-04-02T16:55:00.4640000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 16:55:00.462] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 16:55:00.462] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 16:55:00.470] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15397 ema200=1.15421 diff=-0.00024 | adx=28.7 atr=0.00044 | htfBull=True
+[2026-04-02 16:55:00.470] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 16:55:00.471] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 16:55:00.471] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 16:55:00.471] [DEBUG] M5.Count=2059
+[2026-04-02 16:55:00.471] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [PIPE][ENTRY_ROUTER_PASS] pass=1 symbol=EURUSD bar=2026-04-02T16:55:00.4800000Z
+[2026-04-02 16:55:00.471] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 16:55:00.491] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 16:55:00.491] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DBG ENTRY] total candidates=2
+[2026-04-02 16:55:00.494] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.503] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.503] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 16:55:00.505] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.506] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.507] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 16:55:00.508] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56
+[2026-04-02 16:55:00.513] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 16:55:00.514] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 16:55:00.516] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.519] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.548] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 16:55:00.548] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:55:00.549] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 16:55:00.549] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 16:55:00.551] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:00.551] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.552] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 16:55:00.552] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.95, adx=22.8, distATR=0.56 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 16:55:00.553] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:55:00.553] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 16:55:00.554] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:55:00.554] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 16:55:00.554] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=2 logicProducedDirectionCount=2 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 16:55:00.556] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 16:55:00.564] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.565] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.566] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.566] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 16:55:00.566] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 16:55:00.572] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=Long fallback=true
+[2026-04-02 16:55:00.572] [TRACE] selected is null = True
+[2026-04-02 16:55:00.573] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 16:55:00.573] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 16:55:00.574] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 16:55:00.574] [EURUSD] attemptId=EUR6VV2WM [ATTEMPT EUR6VV2WM] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 16:55:00.574] BLOCK: entry gate
+[2026-04-02 16:55:00.575] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 16:55:00.576] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-68 trust=0.7
+[2026-04-02 16:55:00.577] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 16:55:00.578] [MEMORY][UPDATE] symbol=EURUSD age=14 sinceImpulse=11
+[2026-04-02 16:55:00.579] [MEMORY] phase=Stale window=Exhausted ext=Normal
+[2026-04-02 16:55:00.580] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-69 trust=0.9
+[2026-04-02 17:00:00.358] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 17:00:00.359] [FX MSD] EURUSD | atrPips=4.47 adx=27.2 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:00:00.359] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=27.2
+[2026-04-02 17:00:00.359] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 17:00:00.360] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Stale isBuilt=True isUsable=True
+[2026-04-02 17:00:00.360] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:00:00.361] [IMPULSE SRC] idx=2058 barsSince=0 range=0.00
+[2026-04-02 17:00:00.361] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:00:00.361] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:00:00.361] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0007300000000001194 atr=0.000458571428571451
+[2026-04-02 17:00:00.362] [STRUCTURE][IMPULSE] dir=None strength=1.11 range=0.0
+[2026-04-02 17:00:00.365] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:00:00.366] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 17:00:00.367] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 activeDirection=Short activeConfidence=0.88
+[2026-04-02 17:00:00.367] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 17:00:00.367] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 17:00:00.368] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Stale continuationWindow=Exhausted extensionState=Normal impulseFreshness=0.00 continuationFreshness=1.00 triggerLateScore=0.59 chaseRisk=False timingPenalty=-69
+[2026-04-02 17:00:00.368] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:00:00.368] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=1.00 barsSinceImpulse=11 barsSinceBreak=13 attempts=0 triggerLate=0.59 distanceAtr=0.38
+[2026-04-02 17:00:00.369] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=27.2 atrPts=4.47
+[2026-04-02 17:00:00.369] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:00:00.369] [SESSION_CALENDAR] utc=2026-04-02T17:00:00.3720000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:00:00.369] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 17:00:00.370] [SESSION CHECK] time=2026-04-02T17:00:00.3720000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 17:00:00.370] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:00:00.370] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:00:00.370] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15395 ema200=1.15420 diff=-0.00026 | adx=27.2 atr=0.00045 | htfBull=True
+[2026-04-02 17:00:00.371] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 17:00:00.371] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 17:00:00.371] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:00:00.371] [DEBUG] M5.Count=2060
+[2026-04-02 17:00:00.371] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [PIPE][ENTRY_ROUTER_PASS] pass=2 symbol=EURUSD bar=2026-04-02T17:00:00.3720000Z
+[2026-04-02 17:00:00.372] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 17:00:00.377] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 17:00:00.378] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DBG ENTRY] total candidates=2
+[2026-04-02 17:00:00.378] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.379] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.379] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:00:00.380] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.380] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.381] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:00:00.381] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12
+[2026-04-02 17:00:00.381] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 17:00:00.382] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:00:00.382] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.383] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.384] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 17:00:00.385] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:00:00.385] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 17:00:00.385] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:00:00.387] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.387] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.387] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:00:00.388] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:00:00.390] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:00:00.391] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:00:00.392] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:00:00.393] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:00:00.395] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=4 logicProducedDirectionCount=4 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:00:00.395] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:00:00.396] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.396] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.397] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.397] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:00:00.398] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:00:00.399] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 17:00:00.399] [TRACE] selected is null = True
+[2026-04-02 17:00:00.399] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:00:00.400] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 17:00:00.406] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:00:00.406] [EURUSD] attemptId=EUR6W1IHX [ATTEMPT EUR6W1IHX] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:00:00.407] BLOCK: entry gate
+[2026-04-02 17:00:00.407] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:00:00.408] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=True chase=False timingPenalty=-69 trust=0.9
+[2026-04-02 17:00:00.410] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:00:00.422] [MEMORY][UPDATE] symbol=EURUSD age=1 sinceImpulse=0
+[2026-04-02 17:00:00.424] [MEMORY][IMPULSE] symbol=EURUSD phase=Impulse
+[2026-04-02 17:00:00.424] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:00:00.425] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:01.530] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 17:05:01.530] [FX MSD] EURUSD | atrPips=4.47 adx=25.4 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:05:01.530] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=25.4
+[2026-04-02 17:05:01.531] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 17:05:01.531] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:05:01.532] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:05:01.532] [IMPULSE SRC] idx=2059 barsSince=0 range=0.00
+[2026-04-02 17:05:01.533] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:05:01.534] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:05:01.534] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0007600000000000939 atr=0.00047428571428572867
+[2026-04-02 17:05:01.534] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:05:01.535] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 17:05:01.535] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 activeDirection=Short activeConfidence=0.88
+[2026-04-02 17:05:01.536] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 17:05:01.536] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 17:05:01.537] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:05:01.537] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:05:01.538] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=1.00
+[2026-04-02 17:05:01.538] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=25.4 atrPts=4.47
+[2026-04-02 17:05:01.539] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:05:01.539] [SESSION_CALENDAR] utc=2026-04-02T17:05:01.5460000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:05:01.540] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 17:05:01.540] [SESSION CHECK] time=2026-04-02T17:05:01.5460000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 17:05:01.541] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:05:01.541] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:05:01.542] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15397 ema200=1.15420 diff=-0.00024 | adx=25.4 atr=0.00045 | htfBull=True
+[2026-04-02 17:05:01.542] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 17:05:01.543] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 17:05:01.543] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:05:01.544] [DEBUG] M5.Count=2061
+[2026-04-02 17:05:01.544] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [PIPE][ENTRY_ROUTER_PASS] pass=3 symbol=EURUSD bar=2026-04-02T17:05:01.5460000Z
+[2026-04-02 17:05:01.545] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 17:05:01.550] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 17:05:01.550] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DBG ENTRY] total candidates=2
+[2026-04-02 17:05:01.551] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.552] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.552] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:05:01.552] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.553] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.553] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:05:01.554] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12
+[2026-04-02 17:05:01.554] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 17:05:01.554] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:05:01.555] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.556] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.557] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 17:05:01.557] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:05:01.558] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 17:05:01.558] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:05:01.559] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:01.559] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.560] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:05:01.560] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:05:01.560] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:05:01.561] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:05:01.561] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:05:01.561] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:05:01.561] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=6 logicProducedDirectionCount=6 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:05:01.562] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:05:01.562] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.562] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.562] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.563] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:05:01.563] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:05:01.563] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 17:05:01.564] [TRACE] selected is null = True
+[2026-04-02 17:05:01.564] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:05:01.564] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 17:05:01.564] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:05:01.564] [EURUSD] attemptId=EUR6W7YVV [ATTEMPT EUR6W7YVV] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:05:01.565] BLOCK: entry gate
+[2026-04-02 17:05:01.565] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:05:01.566] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:05:01.567] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:05:01.567] [MEMORY][UPDATE] symbol=EURUSD age=1 sinceImpulse=0
+[2026-04-02 17:05:01.568] [MEMORY][IMPULSE] symbol=EURUSD phase=Impulse
+[2026-04-02 17:05:01.568] [MEMORY] phase=Impulse window=Fresh ext=Normal
+[2026-04-02 17:05:01.569] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:10:00.302] [ONBAR DBG] raw=EURUSD canonical=EURUSD
+[2026-04-02 17:10:00.302] [FX MSD] EURUSD | atrPips=4.20 adx=25.0 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 17:10:00.303] [FX MarketState] EURUSD Trend=True Momentum=False LowVol=False ADX=25.0
+[2026-04-02 17:10:00.303] [MEMORY][CTX_ATTACH][START] symbol=EURUSD
+[2026-04-02 17:10:00.303] [MEMORY][CTX_ATTACH] symbol=EURUSD hasMemory=true phase=Impulse isBuilt=True isUsable=True
+[2026-04-02 17:10:00.304] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 17:10:00.304] [IMPULSE SRC] idx=2059 barsSince=1 range=0.00
+[2026-04-02 17:10:00.304] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 17:10:00.305] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 17:10:00.305] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.000660000000000105 atr=0.0004792857142857297
+[2026-04-02 17:10:00.305] [AUDIT][HTF FLOW][SOURCE] symbol=EURUSD asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bear allowedDirection=Short align=false candidateDirection=None
+[2026-04-02 17:10:00.306] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURUSD asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bear allowedDirection=Short align=false candidateDirection=None htfConfidence=0.88
+[2026-04-02 17:10:00.306] [AUDIT][HTF CONTEXT] symbol=EURUSD asset=FX allowedDirection=Short confidence=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 activeDirection=Short activeConfidence=0.88
+[2026-04-02 17:10:00.306] [HTF][SNAPSHOT] dir=Short conf=0.88
+[2026-04-02 17:10:00.306] [CTX][MEMORY_READY] symbol=EURUSD hasMemory=True
+[2026-04-02 17:10:00.307] [ENTRY][SNAPSHOT] symbol=EURUSD movePhase=Impulse continuationWindow=Fresh extensionState=Normal impulseFreshness=0.96 continuationFreshness=0.94 triggerLateScore=0.15 chaseRisk=False timingPenalty=-15
+[2026-04-02 17:10:00.307] [CTX][TIMING][SIDE] symbol=EURUSD side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.94 barsSinceImpulse=0 barsSinceBreak=0 attempts=0 triggerLate=0.15 distanceAtr=0.98
+[2026-04-02 17:10:00.307] [CTX][TIMING][SIDE] symbol=EURUSD side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 17:10:00.307] [ENTRY MARKETSTATE ASSIGN] sym=EURUSD trend=True momentum=False lowVol=False adx=25.0 atrPts=4.20
+[2026-04-02 17:10:00.307] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DIR][CTX_BUILD] sym=EURUSD trend=None impulse=None breakout=None reversal=None
+[2026-04-02 17:10:00.308] [SESSION_CALENDAR] utc=2026-04-02T17:10:00.3100000Z usDst=True euDst=True nyOpen=12:00:00 nyCashOpen=13:30:00 nyClose=21:00:00 londonOpen=06:00:00 londonClose=15:00:00
+[2026-04-02 17:10:00.308] [SESSION_GATE] symbol=EURUSD tf=M5 tier=Intraday bucket=NewYork priority=Medium allow=True reason=Intraday session allowed
+[2026-04-02 17:10:00.308] [SESSION CHECK] time=2026-04-02T17:10:00.3100000Z symbol=EURUSD bucket=NewYork allow=True
+[2026-04-02 17:10:00.308] [SESSION_MATRIX] symbol=EURUSD bucket=NewYork tier=Intraday flag=True breakout=True pullback=True minADX=18.0 minAtrMult=1.00
+[2026-04-02 17:10:00.308] [CTX_SESSION_ASSIGN] sessionFromGate=NewYork sessionAssigned=NewYork
+[2026-04-02 17:10:00.308] [EUR LOGIC] bias=Sell logicConf=90 | ema50=1.15398 ema200=1.15420 diff=-0.00022 | adx=25.0 atr=0.00042 | htfBull=True
+[2026-04-02 17:10:00.309] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DIR][LOGIC] sym=EURUSD logicBias=Short logicConf=90
+[2026-04-02 17:10:00.309] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [CTX PROPAGATION] symbol=EURUSD bias=Short conf=90
+[2026-04-02 17:10:00.309] [DEBUG] HasOpenGeminiPosition=False
+[2026-04-02 17:10:00.309] [DEBUG] M5.Count=2062
+[2026-04-02 17:10:00.310] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [PIPE][ENTRY_ROUTER_PASS] pass=4 symbol=EURUSD bar=2026-04-02T17:10:00.3100000Z
+[2026-04-02 17:10:00.310] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY START] symbol=EURUSD bias=Short
+[2026-04-02 17:10:00.313] [PIPE] symbol=EURUSD hasSignals=True count=2
+[2026-04-02 17:10:00.313] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DBG ENTRY] total candidates=2
+[2026-04-02 17:10:00.314] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DIR][ROUTER_CAND] sym=EURUSD type=FX_FlagContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.314] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.314] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_FlagContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_FlagContinuation
+[2026-04-02 17:10:00.314] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DIR][ROUTER_CAND] sym=EURUSD type=FX_ImpulseContinuation valid=False score=40 dir=Short reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.315] [AUDIT][HTF FLOW][ENTRY_EVALUATION] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_EVALUATION module=_entryRouter.Evaluate htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.315] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][LOGIC] symbol=EURUSD entryType=FX_ImpulseContinuation stage=LOGIC candidateDirection=Short score=40 classification=HTF_OK rawDirection=Short logicBiasDirection=Short logicConfidence=90 patternDetected=false setupType=FX_ImpulseContinuation
+[2026-04-02 17:10:00.315] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DIR][HTF] sym=EURUSD allow=Short conf=0.88 reason=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12
+[2026-04-02 17:10:00.315] [HTF][BIAS] asset=FX direction=Short state=Neutral impact=ScoreOnly conf=0.88
+[2026-04-02 17:10:00.316] [HTF][APPLIED] asset=FX dir=Short state=Neutral alignedBonus=5 misalignedPenalty=10 alignedCandidates=0 misaligned=0
+[2026-04-02 17:10:00.316] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.317] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyHtfBiasScoreOnly htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.317] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [INTEGRITY] SKIP restart protect on invalid candidate: FX_FlagContinuation
+[2026-04-02 17:10:00.317] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_FlagContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:10:00.318] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [INTEGRITY] SKIP restart protect on invalid candidate: FX_ImpulseContinuation
+[2026-04-02 17:10:00.318] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][GATE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATE candidateDirection=Short score=40 classification=HTF_OK gateName=ApplyRestartProtection beforeDirection=Short afterDirection=Short blocked=true reason=SKIP_INVALID_CANDIDATE
+[2026-04-02 17:10:00.319] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_FlagContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.319] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_FlagContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.319] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][SCORE] symbol=EURUSD entryType=FX_ImpulseContinuation stage=SCORE candidateDirection=Short score=40 classification=HTF_OK baseScore=40 afterHtfScoreAdjustment=40 afterPenalty=40 finalScore=40 scoreThreshold=55 passedThreshold=false
+[2026-04-02 17:10:00.319] [AUDIT][HTF FLOW][ENTRY_FILTER] symbol=EURUSD asset=FX entryType=FX_ImpulseContinuation stage=ENTRY_FILTER module=ApplyRestartProtection htfState=FX_HTF BEAR strong structure, conf=0.88, gapATR=1.87, adx=21.5, distATR=0.12 allowedDirection=Short align=True candidateDirection=Short
+[2026-04-02 17:10:00.319] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_FlagContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][CLASSIFICATION] symbol=EURUSD entryType=FX_ImpulseContinuation stage=CLASSIFICATION candidateDirection=Short score=40 classification=ENTRY_SCORE_FAIL
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_FlagContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][GATES] symbol=EURUSD entryType=FX_ImpulseContinuation stage=GATES candidateDirection=Short score=40 classification=HTF_OK
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][SUMMARY] symbol=EURUSD totalEvaluations=8 logicProducedDirectionCount=8 lostAfterScoreCount=0 lostAfterGateCount=0 neverHadDirectionCount=0
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ROUTER][RANK_ONLY][INPUT] total=2 executable=0
+[2026-04-02 17:10:00.320] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [CANDIDATE] type=FX_FlagContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.321] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [TR] RANK_ONLY_INPUT FX_FlagContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.321] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [CANDIDATE] type=FX_ImpulseContinuation dir=Short valid=false score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.321] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [TR] RANK_ONLY_INPUT FX_ImpulseContinuation dir=Short valid=False state=NONE trigger=False score=40 reason=[ROUTER] NO_DIRECTION|FALLBACK_DIRECTION_FROM_LOGIC_BIAS
+[2026-04-02 17:10:00.321] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate
+[2026-04-02 17:10:00.322] [ENTRY][CANDIDATE] symbol=EURUSD entryType=FX_FlagContinuation score=40 confidence=90 trend=None fallback=true
+[2026-04-02 17:10:00.322] [TRACE] selected is null = True
+[2026-04-02 17:10:00.323] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [DECISION][REJECT_FINAL][CODE=ROUTER_NO_CANDIDATE] detail=no_selected_entry
+[2026-04-02 17:10:00.323] [FX][TOTAL_REJECTION] symbol=EURUSD candidates=2 reason=ALL_INVALID
+[2026-04-02 17:10:00.323] [FX][ENTRY_STATS] created=2 validAfterMatrix=0 validFinal=0
+[2026-04-02 17:10:00.323] [EURUSD] attemptId=EUR6WEDFA [ATTEMPT EUR6WEDFA] [ENTRY_TRACE][FINAL] symbol=EURUSD entryType=None stage=FINAL candidateDirection=None score=NA classification=HTF_NO_DIRECTION finalCandidateDirection=None finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE
+[2026-04-02 17:10:00.324] BLOCK: entry gate
+[2026-04-02 17:10:00.324] [TC] NO SELECTED ENTRY (all invalid)
+[2026-04-02 17:10:00.324] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-15 trust=0.9
+[2026-04-02 17:10:00.325] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 17:10:00.325] [MEMORY][UPDATE] symbol=EURUSD age=2 sinceImpulse=1
+[2026-04-02 17:10:00.326] [MEMORY] phase=Continuation window=Fresh ext=Normal
+[2026-04-02 17:10:00.326] [MEMORY][ASSESSMENT] symbol=EURUSD firstPullback=False late=False exhausted=False chase=False timingPenalty=-10 trust=0.9
