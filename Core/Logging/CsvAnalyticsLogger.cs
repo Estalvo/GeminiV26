@@ -6,6 +6,8 @@ using System.IO;
 
 namespace GeminiV26.Core.Logging
 {
+    // INACTIVE: retained for backward compatibility only.
+    // Active analytics output is UnifiedAnalyticsWriter.
     public sealed class CsvAnalyticsLogger : ITradeLogger
     {
         private static readonly string[] Header =
@@ -38,7 +40,7 @@ namespace GeminiV26.Core.Logging
 
         public void OnTradeClosed(TradeLogContext context, Position position, TradeLogResult result)
         {
-            // SSOT ENFORCEMENT: disabled duplicate analytics writer
+            // Deprecated path: disabled duplicate analytics writer.
             return;
 
             if (context == null)

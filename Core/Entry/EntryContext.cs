@@ -308,7 +308,8 @@ namespace GeminiV26.Core.Entry
         public bool DirectionDebugLogged { get; set; }
         public string LastLoggedStateFingerprint { get; set; }
 
-        // Finalized snapshot fields (read-only source for audit snapshot generation)
+        // Pre-exec snapshot fields (audit only).
+        // Authoritative owner of FinalConfidence is PositionContext after position creation.
         public int EntryScore { get; set; }
         public int FinalConfidence { get; set; }
         public int RiskConfidence { get; set; }

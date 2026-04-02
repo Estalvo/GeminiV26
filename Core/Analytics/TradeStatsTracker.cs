@@ -49,6 +49,7 @@ namespace GeminiV26.Core.Analytics
             public int? Confidence;
             public string SetupType;
             public string EntryType;
+            public string InstrumentClass;
             public string MarketRegime;
             public double MfeR;
             public double MaeR;
@@ -152,6 +153,7 @@ namespace GeminiV26.Core.Analytics
                 Confidence = null,
                 SetupType = string.Empty,
                 EntryType = string.Empty,
+                InstrumentClass = string.Empty,
                 MarketRegime = string.Empty,
                 MfeR = 0,
                 MaeR = 0,
@@ -326,17 +328,21 @@ namespace GeminiV26.Core.Analytics
 
             try
             {
+                // Active analytics SSOT path:
+                // TradeStatsTracker -> UnifiedAnalyticsWriter.
                 var record = new TradeAnalyticsRecord
                 {
                     Symbol = snapshot.Symbol.Trim(),
                     PositionId = string.IsNullOrWhiteSpace(snapshot.PositionId) ? "UNKNOWN" : snapshot.PositionId,
                     SetupType = snapshot.SetupType ?? string.Empty,
                     EntryType = snapshot.EntryType ?? string.Empty,
+                    InstrumentClass = snapshot.InstrumentClass ?? string.Empty,
                     MarketRegime = snapshot.MarketRegime ?? string.Empty,
                     MfeR = snapshot.MfeR,
                     MaeR = snapshot.MaeR,
                     RMultiple = snapshot.RMultiple,
                     TransitionQuality = snapshot.TransitionQuality,
+                    FinalConfidence = snapshot.Confidence ?? 0,
                     Confidence = snapshot.Confidence ?? 0,
                     Profit = snapshot.Profit,
                     OpenTimeUtc = snapshot.OpenTimeUtc,

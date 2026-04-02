@@ -10,7 +10,7 @@
 //
 // TradeCore NEM:
 // - score-ol
-// - confidence-et számol
+// - autoritatív confidence-et számol
 // - stratégia között dönt
 // - EntryLogic-ra hallgat veto-ként
 //
@@ -18,6 +18,7 @@
 // - EntryType → EntryScore
 // - EntryLogic → LogicConfidence (csak info)
 // - PositionContext → FinalConfidence (single source of truth)
+// - EntryContext confidence mezők = pre-exec staging snapshot (audit)
 //
 // GATE SZABÁLY:
 // - Session / Impulse gate az egyetlen HARD STOP
@@ -1646,6 +1647,9 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot, $"[DIR] logic={logicDir} eval={evalDir} routed={routedDir} final={finalDir}");
                 _ctx.EntryScore = PositionContext.ClampRiskConfidence(selected.Score);
                 _ctx.LogicBiasConfidence = PositionContext.ClampRiskConfidence(Math.Max(0, _ctx.LogicBiasConfidence));
+                // PRE-EXEC STAGING SNAPSHOT ONLY:
+                // EntryContext.FinalConfidence/RiskConfidence are transient audit fields.
+                // Authoritative FinalConfidence owner remains PositionContext.
                 _ctx.FinalConfidence = PositionContext.ComputeFinalConfidenceValue(_ctx.EntryScore, _ctx.LogicBiasConfidence);
                 _ctx.RiskConfidence = PositionContext.ClampRiskConfidence(_ctx.FinalConfidence);
                 LogHtfFlowStage(_ctx, selected, "FINAL_DECISION", "DirectionSet");
@@ -2306,14 +2310,12 @@ namespace GeminiV26.Core
                 case EntryType.FX_FlagContinuation:
                 case EntryType.Index_Flag:
                 case EntryType.Crypto_Flag:
-                case EntryType.TC_Flag:
                 case EntryType.XAU_Flag:
                     return maxBonus;
 
                 case EntryType.FX_Pullback:
                 case EntryType.Index_Pullback:
                 case EntryType.Crypto_Pullback:
-                case EntryType.TC_Pullback:
                 case EntryType.XAU_Pullback:
                     return Math.Min(maxBonus, 8);
 
@@ -2330,14 +2332,12 @@ namespace GeminiV26.Core
                 case EntryType.FX_FlagContinuation:
                 case EntryType.Index_Flag:
                 case EntryType.Crypto_Flag:
-                case EntryType.TC_Flag:
                 case EntryType.XAU_Flag:
                     return maxBonus;
 
                 case EntryType.FX_Pullback:
                 case EntryType.Index_Pullback:
                 case EntryType.Crypto_Pullback:
-                case EntryType.TC_Pullback:
                 case EntryType.XAU_Pullback:
                     return Math.Min(maxBonus, 8);
 
@@ -3069,10 +3069,10 @@ namespace GeminiV26.Core
                 case EntryType.Crypto_RangeBreakout:
                 case EntryType.XAU_Flag:
                 case EntryType.XAU_Impulse:
-                case EntryType.TC_Flag:
                     return true;
 
                 default:
+                    // Legacy enum families are intentionally excluded from active trigger management.
                     return false;
             }
         }
@@ -4054,6 +4054,7 @@ namespace GeminiV26.Core
                     Confidence = ctx?.FinalConfidence ?? meta?.EntryScore,
                     SetupType = ResolveSetupType(meta?.EntryType),
                     EntryType = meta?.EntryType ?? ctx?.EntryType ?? "UNKNOWN",
+                    InstrumentClass = ResolveInstrumentClass(pos.SymbolName),
                     MarketRegime = ResolveMarketRegime(entryCtx),
                     MfeR = ctx?.MfeR ?? 0.0,
                     MaeR = ctx != null ? -Math.Abs(ctx.MaeR) : 0.0,
@@ -4353,6 +4354,7 @@ namespace GeminiV26.Core
 
             var setup = entryType.Trim();
 
+            // Compatibility note: Expectancy tooling groups by this high-level family.
             if (setup.IndexOf("MicroContinuation", StringComparison.OrdinalIgnoreCase) >= 0)
                 return "MicroContinuation";
             if (setup.IndexOf("Flag", StringComparison.OrdinalIgnoreCase) >= 0)

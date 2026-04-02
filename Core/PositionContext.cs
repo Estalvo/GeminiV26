@@ -91,6 +91,10 @@ namespace GeminiV26.Core
         /// </summary>
         public int FinalConfidence { get; private set; }
 
+        /// <summary>
+        /// Risk-engine confidence input derived from FinalConfidence.
+        /// This is a post-compute risk staging value, not an alternative confidence owner.
+        /// </summary>
         public int AdjustedRiskConfidence { get; set; }
 
         private bool _isFinalConfidenceComputed;
@@ -348,7 +352,7 @@ namespace GeminiV26.Core
             }
             else if (AdjustedRiskConfidence <= 0)
             {
-                // Failsafe fallback – MUST be visible
+                // Failsafe fallback – keep risk staging aligned with authoritative FinalConfidence.
                 AdjustedRiskConfidence = FinalConfidence;
 
                 GlobalLogger.Log(Bot, "[CONF][ADJUSTED_FALLBACK] using FinalConfidence");
