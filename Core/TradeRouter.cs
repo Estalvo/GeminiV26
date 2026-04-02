@@ -55,7 +55,7 @@ namespace GeminiV26.Core
 
             if (executable.Count == 0)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[ROUTER][RANK_ONLY][NO_WINNER] reason=NO_EXECUTABLE_CANDIDATE", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_NO_EXECUTABLE_CANDIDATE] detail=no_executable_candidate", entryContext));
                 return null;
             }
 
@@ -66,7 +66,7 @@ namespace GeminiV26.Core
 
             if (winner == null)
             {
-                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[ROUTER][RANK_ONLY][NO_WINNER] reason=EMPTY_AFTER_RANK", entryContext));
+                GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[ROUTER][RANK_ONLY][NO_WINNER][CODE=ROUTER_EMPTY_AFTER_RANK] detail=empty_after_rank", entryContext));
                 return null;
             }
 
