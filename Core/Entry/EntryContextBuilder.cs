@@ -121,10 +121,12 @@ namespace GeminiV26.Core.Entry
             // ATR (M5 + M15)
             // =====================================================
 
+            var atr_m1 = _bot.Indicators.AverageTrueRange(ctx.M1, 14, MovingAverageType.Simple);
             var atr_m5 = _bot.Indicators.AverageTrueRange(ctx.M5, 14, MovingAverageType.Simple);
             var atr_m15 = _bot.Indicators.AverageTrueRange(ctx.M15, 14, MovingAverageType.Simple);
 
             // aktuális index
+            ctx.AtrM1 = atr_m1.Result[m1Idx];
             ctx.AtrM5 = atr_m5.Result[m5Idx];
             ctx.AtrM15 = atr_m15.Result.LastValue;
 
@@ -837,6 +839,8 @@ namespace GeminiV26.Core.Entry
             BuildImpulseAnchor(ctx);
             BuildPullback(ctx);
             BuildFlag(ctx);
+            DetectPullbackEarly(ctx);
+            DetectPullbackConfirmed(ctx);
             DetectFlagBreakout(ctx);
 
             // =================================================
@@ -1057,8 +1061,11 @@ namespace GeminiV26.Core.Entry
 
             ctx.Structure.PullbackDepth = retrace;
             ctx.Structure.PullbackBars = bars;
+            ctx.Structure.PullbackLow = GetPullbackLow(ctx);
+            ctx.Structure.PullbackHigh = GetPullbackHigh(ctx);
 
             GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK] depth={retrace:F2} bars={bars}");
+            GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_RANGE] low={ctx.Structure.PullbackLow:F5} high={ctx.Structure.PullbackHigh:F5}");
         }
 
         private void BuildFlag(EntryContext ctx)
@@ -1129,6 +1136,101 @@ namespace GeminiV26.Core.Entry
 
             if (invalidBreakout)
                 GlobalLogger.Log(_bot, "[ERROR][FLAG_BREAKOUT_INVALID]");
+        }
+
+        private void DetectPullbackEarly(EntryContext ctx)
+        {
+            if (ctx == null || !ctx.Structure.HasPullback || ctx.M1 == null || ctx.M1.Count < 3)
+                return;
+
+            int m1Idx = ctx.M1.Count - 2;
+            double price = ctx.M1.ClosePrices[m1Idx];
+            double previousHigh = ctx.M1.HighPrices[m1Idx - 1];
+            double previousLow = ctx.M1.LowPrices[m1Idx - 1];
+            double previousClose = ctx.M1.ClosePrices[m1Idx - 1];
+
+            bool earlyLong =
+                ctx.Structure.StructureDirection == TradeDirection.Long &&
+                price > previousHigh;
+
+            bool earlyShort =
+                ctx.Structure.StructureDirection == TradeDirection.Short &&
+                price < previousLow;
+
+            ctx.Structure.PullbackEarlySignal = earlyLong || earlyShort;
+
+            if (ctx.Structure.PullbackEarlySignal)
+                GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_EARLY] dir={(earlyLong ? "LONG" : "SHORT")}");
+
+            double moveSize = Math.Abs(price - previousClose);
+            bool weakMove = ctx.AtrM1 > 0 && moveSize < ctx.AtrM1 * 0.05;
+
+            if (weakMove)
+            {
+                ctx.Structure.PullbackEarlySignal = false;
+                GlobalLogger.Log(_bot, "[STRUCTURE][PULLBACK_EARLY_WEAK]");
+            }
+        }
+
+        private void DetectPullbackConfirmed(EntryContext ctx)
+        {
+            if (ctx == null || !ctx.Structure.HasPullback || ctx.M1 == null || ctx.M1.Count < 2)
+                return;
+
+            int m1Idx = ctx.M1.Count - 2;
+            double price = ctx.M1.ClosePrices[m1Idx];
+
+            bool confirmedLong =
+                ctx.Structure.StructureDirection == TradeDirection.Long &&
+                price > ctx.Structure.PullbackHigh;
+
+            bool confirmedShort =
+                ctx.Structure.StructureDirection == TradeDirection.Short &&
+                price < ctx.Structure.PullbackLow;
+
+            ctx.Structure.PullbackConfirmedSignal = confirmedLong || confirmedShort;
+
+            if (ctx.Structure.PullbackConfirmedSignal)
+                GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_CONFIRMED] dir={(confirmedLong ? "LONG" : "SHORT")}");
+
+            bool invalidTiming =
+                (ctx.Structure.PullbackEarlySignal || ctx.Structure.PullbackConfirmedSignal) &&
+                ctx.Structure.StructureDirection == TradeDirection.None;
+
+            if (invalidTiming)
+                GlobalLogger.Log(_bot, "[ERROR][PULLBACK_TIMING_INVALID]");
+        }
+
+        private static double GetPullbackLow(EntryContext ctx)
+        {
+            if (ctx?.M1 == null || ctx.M1.Count < 3)
+                return 0;
+
+            int m1Idx = ctx.M1.Count - 2;
+            int window = Math.Max(2, Math.Min(m1Idx + 1, Math.Max(2, ctx.PullbackBars_M5 * 5)));
+            int start = Math.Max(0, m1Idx - window + 1);
+            double low = double.MaxValue;
+
+            for (int i = start; i <= m1Idx; i++)
+                low = Math.Min(low, ctx.M1.LowPrices[i]);
+
+            return low == double.MaxValue ? 0 : low;
+        }
+
+        private static double GetPullbackHigh(EntryContext ctx)
+        {
+            if (ctx?.M1 == null || ctx.M1.Count < 3)
+                return 0;
+
+            int m1Idx = ctx.M1.Count - 2;
+            int window = Math.Max(2, Math.Min(m1Idx + 1, Math.Max(2, ctx.PullbackBars_M5 * 5)));
+            int start = Math.Max(0, m1Idx - window + 1);
+            double high = double.MinValue;
+
+            for (int i = start; i <= m1Idx; i++)
+                high = Math.Max(high, ctx.M1.HighPrices[i]);
+
+            return high == double.MinValue ? 0 : high;
         }
     }
 }
