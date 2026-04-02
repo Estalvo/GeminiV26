@@ -93,30 +93,32 @@ namespace GeminiV26.EntryTypes.Crypto
 
         private TradeDirection ResolveDirection(EntryContext ctx)
         {
-            TradeDirection inputFinal = ctx?.FinalDirection ?? TradeDirection.None;
-            TradeDirection inputLogic = ctx?.LogicBiasDirection ?? TradeDirection.None;
-            ctx?.Log?.Invoke($"[DIR][CRYPTO_ENTRY][INPUT] symbol={ctx?.Symbol} final={inputFinal} logic={inputLogic}");
+            TradeDirection preFinalDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
+            TradeDirection routedDirection = ctx?.RoutedDirection ?? TradeDirection.None;
+            TradeDirection observedFinalDirection = ctx?.FinalDirection ?? TradeDirection.None;
 
-            if (inputFinal == TradeDirection.None && inputLogic == TradeDirection.None)
-                return TradeDirection.None;
-
-            if (inputFinal != TradeDirection.None)
+            if (preFinalDirection == TradeDirection.None)
             {
-                if (inputLogic != TradeDirection.None && inputLogic != inputFinal)
-                    ctx?.Log?.Invoke($"[DIR][CRYPTO_ENTRY][MISMATCH_WARN] symbol={ctx?.Symbol} final={inputFinal} logic={inputLogic}");
-
-                ctx?.Log?.Invoke($"[DIR][CRYPTO_ENTRY][FINAL_OK] symbol={ctx?.Symbol} source=FinalDirection dir={inputFinal}");
-                return inputFinal;
+                ctx?.Log?.Invoke(
+                    $"[DIR][CRYPTO][EVAL_NONE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
+                return TradeDirection.None;
             }
 
-            ctx?.Log?.Invoke($"[DIR][CRYPTO_ENTRY][MISMATCH_WARN] symbol={ctx?.Symbol} final=None logic={inputLogic} mode=advisory_fallback");
-            ctx?.Log?.Invoke($"[DIR][CRYPTO_ENTRY][FINAL_OK] symbol={ctx?.Symbol} source=LogicBiasDirectionFallback dir={inputLogic}");
-            return inputLogic;
+            if (observedFinalDirection != TradeDirection.None && observedFinalDirection != preFinalDirection)
+            {
+                ctx?.Log?.Invoke(
+                    $"[DIR][CRYPTO][EVAL_MISMATCH_WARN] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
+            }
+
+            ctx?.Log?.Invoke(
+                $"[DIR][CRYPTO][EVAL_SOURCE] symbol={ctx?.Symbol} entryType={Type} source=LogicBiasDirection chosen={preFinalDirection} logic={preFinalDirection} routed={routedDirection} final={observedFinalDirection}");
+            return preFinalDirection;
         }
 
         protected EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason)
         {
-            ctx?.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][BLOCK] symbol={ctx?.Symbol} dir={dir} reason={reason}");
+            string canonicalCode = CanonicalRejectCode(reason);
+            ctx?.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][BLOCK][CODE={canonicalCode}] symbol={ctx?.Symbol} dir={dir} detail={reason}");
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
@@ -124,7 +126,22 @@ namespace GeminiV26.EntryTypes.Crypto
                 Direction = dir,
                 IsValid = false,
                 Score = 0,
-                Reason = reason
+                Reason = canonicalCode,
+                RejectReason = canonicalCode
+            };
+        }
+
+        private static string CanonicalRejectCode(string reason)
+        {
+            return reason switch
+            {
+                "CTX_NOT_READY" => "CONTEXT_NOT_READY",
+                "NO_VALID_DIRECTION" => "CONTEXT_DIRECTION_NONE",
+                "NO_RECENT_IMPULSE" => "ENTRY_NO_IMPULSE",
+                "LATE_FLAG" => "ENTRY_TOO_LATE",
+                "INVALID_STRUCTURE" => "ENTRY_INVALID_FLAG",
+                "FAKE_BREAKOUT" => "TRIGGER_FAKE_BREAKOUT",
+                _ => "ENTRY_REJECT_UNSPECIFIED"
             };
         }
     }

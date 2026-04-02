@@ -330,20 +330,22 @@ namespace GeminiV26.Core
                         new BTC_PullbackEntry()
                     };
 
-                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][BTC] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][BTC] raw={rawSymbol} normalized={resolvedSymbol} resolvedClass={nameof(InstrumentClass.CRYPTO)} entryTypes={string.Join(",", _entryTypes.Select(x => x.GetType().Name))} count={_entryTypes.Count}");
                 }
                 else if (string.Equals(resolvedSymbol, "ETHUSD", StringComparison.OrdinalIgnoreCase))
                 {
-                    _entryTypes = new List<IEntryType>();
-                    TryAddCryptoEntryType(_entryTypes, "GeminiV26.EntryTypes.Crypto.ETH_FlagEntry");
-                    TryAddCryptoEntryType(_entryTypes, "GeminiV26.EntryTypes.Crypto.ETH_PullbackEntry");
+                    _entryTypes = new List<IEntryType>
+                    {
+                        new ETH_FlagEntry(),
+                        new ETH_PullbackEntry()
+                    };
 
-                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][ETH] raw={rawSymbol} normalized={resolvedSymbol} resolvedClass={nameof(InstrumentClass.CRYPTO)} entryTypes={string.Join(",", _entryTypes.Select(x => x.GetType().Name))} count={_entryTypes.Count}");
                 }
                 else
                 {
                     _entryTypes = new List<IEntryType>();
-                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][UNSUPPORTED] raw={rawSymbol} resolved={resolvedSymbol} count={_entryTypes.Count}");
+                    _bot.Print($"[ENTRY][REGISTER][CRYPTO][UNSUPPORTED] raw={rawSymbol} normalized={resolvedSymbol} resolvedClass={nameof(InstrumentClass.UNKNOWN)} entryTypes=none count={_entryTypes.Count}");
                 }
             }
 
@@ -1449,7 +1451,7 @@ namespace GeminiV26.Core
 
                 if (selected == null)
                 {
-                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[DECISION][REJECT_FINAL] reason=NO_SELECTED_ENTRY", _ctx));
+                    LogFinalReject("ROUTER_NO_CANDIDATE", "no_selected_entry", _ctx);
                     if (isFxSymbol)
                     {
                         fxValidFinalCount = symbolSignals.Count(x => IsFxCandidate(x) && x != null && x.IsValid);
@@ -1458,7 +1460,7 @@ namespace GeminiV26.Core
                     }
                     GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId(
                         $"[ENTRY_TRACE][FINAL] symbol={_bot.SymbolName} entryType=None stage=FINAL candidateDirection={TradeDirection.None} score=NA classification=HTF_NO_DIRECTION " +
-                        $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=NO_SELECTED_ENTRY",
+                        $"finalCandidateDirection={TradeDirection.None} finalScore=NA blocked=true finalReason=ROUTER_NO_CANDIDATE",
                         _ctx));
                     GlobalLogger.Log(_bot, "BLOCK: entry gate");
                     GlobalLogger.Log(_bot, "[TC] NO SELECTED ENTRY (all invalid)");
@@ -1655,7 +1657,7 @@ namespace GeminiV26.Core
 
                 if (_ctx.FinalDirection == TradeDirection.None)
                 {
-                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[EXEC][ABORT] reason=FINAL_DIRECTION_NONE", _ctx));
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[EXEC][ABORT][CODE=FINAL_DIRECTION_NONE] detail=final_direction_none", _ctx));
                     _bot.Print("[EXECUTION][BLOCK] FinalDirection NONE");
                     return;
                 }
@@ -1676,7 +1678,7 @@ namespace GeminiV26.Core
                 var currentEquity = _bot.Account.Equity;
                 if (!_globalRiskGuard.CanTrade(currentEquity, utcNowRisk))
                 {
-                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[EXEC][ABORT] reason=RISK_GUARD", _ctx));
+                    GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId("[EXEC][ABORT][CODE=EXEC_RISK_GUARD_BLOCK] detail=risk_guard", _ctx));
                     GlobalLogger.Log(_bot, "[RISK][DD_BLOCK] Daily DD limit reached");
                     return;
                 }
@@ -1994,7 +1996,7 @@ namespace GeminiV26.Core
         {
             if (entryContext == null || entry == null)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=DIRECTION_CONSISTENCY_NULL");
+                LogFinalReject("CONTEXT_NOT_READY", "direction_consistency_null");
                 GlobalLogger.Log(_bot, $"[DIR][FATAL_MISMATCH] type=null_context_or_entry sym={_bot.SymbolName}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
                 return false;
@@ -2002,7 +2004,7 @@ namespace GeminiV26.Core
 
             if (entryContext.FinalDirection == TradeDirection.None)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=DIRECTION_CONSISTENCY_FINAL_NONE");
+                LogFinalReject("FINAL_DIRECTION_NONE", "direction_consistency_final_none");
                 GlobalLogger.Log(_bot,
                     $"[DIR][FATAL_MISMATCH] type=final_none entry={entry.Direction} routed={entryContext.RoutedDirection} final={entryContext.FinalDirection} sym={_bot.SymbolName}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
@@ -2012,7 +2014,7 @@ namespace GeminiV26.Core
             if (entryContext.RoutedDirection != TradeDirection.None &&
                 entryContext.RoutedDirection != entryContext.FinalDirection)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=DIRECTION_CONSISTENCY_ROUTED_MISMATCH");
+                LogFinalReject("FINAL_ROUTED_MISMATCH", "direction_consistency_routed_mismatch");
                 GlobalLogger.Log(_bot,
                     $"[DIR][FATAL_MISMATCH] type=routed_vs_final entry={entry.Direction} routed={entryContext.RoutedDirection} final={entryContext.FinalDirection} sym={_bot.SymbolName}");
                 GlobalLogger.Log(_bot, "[TC] ENTRY BLOCKED: direction consistency check failed");
@@ -3493,37 +3495,11 @@ namespace GeminiV26.Core
             }
         }
 
-        private void TryAddCryptoEntryType(List<IEntryType> target, string typeName)
-        {
-            Type resolvedType =
-                Type.GetType(typeName) ??
-                Type.GetType($"{typeName}, GeminiV26") ??
-                AppDomain.CurrentDomain
-                    .GetAssemblies()
-                    .Select(a => a.GetType(typeName))
-                    .FirstOrDefault(t => t != null);
-
-            if (resolvedType == null)
-            {
-                _bot?.Print($"[ENTRY][REGISTER][CRYPTO][MISSING] type={typeName}");
-                return;
-            }
-
-            if (!typeof(IEntryType).IsAssignableFrom(resolvedType))
-            {
-                _bot?.Print($"[ENTRY][REGISTER][CRYPTO][INVALID] type={typeName} reason=NotIEntryType");
-                return;
-            }
-
-            if (Activator.CreateInstance(resolvedType) is IEntryType entry)
-                target.Add(entry);
-        }
-
         private bool PassFinalAcceptance(EntryContext ctx, EntryEvaluation eval)
         {
             if (ctx == null || eval == null)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=NULL_CONTEXT_OR_EVAL");
+                LogFinalReject("CONTEXT_NOT_READY", "null_context_or_eval");
                 return false;
             }
 
@@ -3535,19 +3511,19 @@ namespace GeminiV26.Core
 
             if (eval.Direction == TradeDirection.None)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=DIRECTION_NONE");
+                LogFinalReject("CONTEXT_DIRECTION_NONE", "direction_none");
                 return false;
             }
 
             if (BotRestartState.IsHardProtectionPhase)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=RESTART_HARD_PROTECTION");
+                LogFinalReject("QUAL_RESTART_HARD_PROTECTION", "restart_hard_protection");
                 return false;
             }
 
             if (ctx.IsOverextendedLong || ctx.IsOverextendedShort)
             {
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=OVEREXTENDED");
+                LogFinalReject("FINAL_OVEREXTENDED", "overextended");
                 return false;
             }
 
@@ -3581,11 +3557,16 @@ namespace GeminiV26.Core
             {
                 GlobalLogger.Log(_bot,
                     $"[ENTRY][INDEX_PB][POST_ACCEPT_INTEGRITY_BLOCK] reason=DIRECTION_NONE barsSinceBreak={barsSinceBreak} tq={tq:0.00} pullbackDepthR={pullbackDepthR:0.000}");
-                GlobalLogger.Log(_bot, "[DECISION][REJECT_FINAL] reason=INDEX_PB_POST_ACCEPT_INTEGRITY_BLOCK");
+                LogFinalReject("QUAL_INDEX_PB_POST_ACCEPT_INTEGRITY", "index_pb_post_accept_integrity_block");
                 return false;
             }
 
             return true;
+        }
+
+        private void LogFinalReject(string code, string detail, EntryContext ctx = null)
+        {
+            GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[DECISION][REJECT_FINAL][CODE={code}] detail={detail}", ctx));
         }
 
         private double ResolveExecutionRiskPercent(EntryEvaluation selected, EntryContext ctx)

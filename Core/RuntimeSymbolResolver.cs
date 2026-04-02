@@ -71,7 +71,7 @@ namespace GeminiV26.Core
 
             if (!IsGeminiSupportedCanonical(canonical))
             {
-                GlobalLogger.Log(_bot, $"[RESOLVER][SKIP] reason=unsupported_canonical canonical={canonical}");
+                GlobalLogger.Log(_bot, $"[RESOLVER][SKIP][CODE=SYMBOL_UNSUPPORTED] detail=unsupported_canonical canonical={canonical}");
                 _cycleCache[requested] = null;
                 return false;
             }
