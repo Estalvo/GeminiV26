@@ -29,20 +29,18 @@ namespace GeminiV26.EntryTypes.INDEX
                 var logicDirection = ctx.LogicBiasDirection;
                 bool canUseLogicDirection =
                     structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
-                    (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal) &&
-                    trendFollowThrough;
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
                 if (!canUseLogicDirection)
                 {
                     ctx.LogStructureAuthority("Index_FlagEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"}");
+                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"} finalValid=false");
                     ctx.Log?.Invoke("[ENTRY][INDEX_FLAG][BLOCK][CODE=NO_DIRECTION]");
                     return Reject(ctx, "NO_DIRECTION", 0, TradeDirection.None);
                 }
 
                 direction = logicDirection;
                 ctx.LogStructureAuthority("Index_FlagEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={direction}");
+                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={direction} finalValid=true");
                 ctx.LogStructureAuthority("Index_FlagEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
                     $"resolvedDir={direction}");
                 ctx.Log?.Invoke($"[ENTRY][INDEX_FLAG][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
