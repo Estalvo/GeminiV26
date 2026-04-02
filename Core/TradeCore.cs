@@ -3456,20 +3456,10 @@ namespace GeminiV26.Core
                 return false;
             }
 
-            if (BotRestartState.IsHardProtectionPhase && eval.Score < 60)
+            if (BotRestartState.IsHardProtectionPhase)
             {
                 GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=RESTART_HARD_PROTECTION");
                 GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=RESTART");
-                return false;
-            }
-
-            bool timingStaleOrExpired =
-                ctx.MemoryContinuationWindow == ContinuationWindowState.Unknown ||
-                ctx.MemoryContinuationWindow == ContinuationWindowState.Exhausted;
-            if (timingStaleOrExpired)
-            {
-                GlobalLogger.Log(_bot, "[FA][INTEGRITY_BLOCK] reason=TIMING_STALE_OR_EXPIRED");
-                GlobalLogger.Log(_bot, "[FINAL][DECISION] decision=BLOCK reason=TIMING");
                 return false;
             }
 
