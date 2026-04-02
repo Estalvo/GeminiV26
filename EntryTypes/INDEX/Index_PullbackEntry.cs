@@ -32,20 +32,34 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, TradeDirection.None, 0, "no_pullback");
             }
 
+            bool useEarly = ctx.Structure.PullbackEarlySignal;
+            bool useConfirmed = ctx.Structure.PullbackConfirmedSignal;
+
+            if (!useEarly && !useConfirmed)
+            {
+                ctx.Log?.Invoke("[ENTRY][PULLBACK][WAIT_SIGNAL]");
+                return Reject(ctx, TradeDirection.None, 0, "no_signal");
+            }
+
             if (ctx.Structure.StructureDirection == TradeDirection.None)
             {
                 ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=direction_must_come_from_impulse");
                 return Reject(ctx, TradeDirection.None, 0, "structure_direction_missing");
             }
 
+            bool isConfirmedEntry = useConfirmed;
+
             var direction = ctx.Structure.StructureDirection;
+            double timingScore = isConfirmedEntry ? 1.0 : 0.7;
             int score = (int)Math.Round(100.0 * (
-                0.5 * ctx.Structure.ImpulseStrength +
-                0.5 * (1.0 - ctx.Structure.PullbackDepth)));
+                0.4 * ctx.Structure.ImpulseStrength +
+                0.4 * (1.0 - ctx.Structure.PullbackDepth) +
+                0.2 * timingScore));
             score += (int)Math.Round(matrix.EntryScoreModifier);
             score = Math.Max(0, Math.Min(100, score));
 
             ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_OK]");
+            ctx.Log?.Invoke($"[ENTRY][PULLBACK][SIGNAL] type={(isConfirmedEntry ? "CONFIRMED" : "EARLY")}");
 
             return new EntryEvaluation
             {

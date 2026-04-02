@@ -25,6 +25,10 @@ namespace GeminiV26.Core.Entry
         public bool HasPullback;
         public double PullbackDepth;
         public int PullbackBars;
+        public bool PullbackEarlySignal;
+        public bool PullbackConfirmedSignal;
+        public double PullbackLow;
+        public double PullbackHigh;
 
         public bool HasFlag;
         public double FlagCompression;
@@ -97,6 +101,7 @@ namespace GeminiV26.Core.Entry
         // ATR
         // =========================
         public double AtrM5;
+        public double AtrM1;
         public double AtrM15;
 
         public double AtrSlope_M5;
