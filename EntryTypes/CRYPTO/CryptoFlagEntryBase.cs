@@ -27,15 +27,36 @@ namespace GeminiV26.EntryTypes.Crypto
             if (dir == TradeDirection.None)
                 return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION");
 
-            if (!ctx.Structure.HasImpulse || !ctx.Structure.HasFlag)
-                return Reject(ctx, dir, "INVALID_STRUCTURE");
-
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             if (barsSinceImpulse < 0)
                 return Reject(ctx, dir, "NO_RECENT_IMPULSE");
+            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection;
+            bool recentImpulseWidened =
+                !ctx.Structure.HasImpulse &&
+                barsSinceImpulse >= 0 &&
+                barsSinceImpulse <= MaxImpulseMemoryBars + 2 &&
+                (ctx.Structure.ImpulseStrength >= (MinImpulseStrength - 0.05) || ctx.IsAtrExpanding_M5);
+            bool flagShapeWidened =
+                !ctx.Structure.HasFlag &&
+                ctx.Structure.FlagBars >= 2 &&
+                ctx.Structure.FlagCompression <= 0.78 &&
+                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough);
+            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasFlag && !flagShapeWidened))
+                return Reject(ctx, dir, "INVALID_STRUCTURE");
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][WIDEN_ALLOW] symbol={ctx.Symbol} code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
+            if (flagShapeWidened)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][WIDEN_ALLOW] symbol={ctx.Symbol} code=MESSY_FLAG flagBars={ctx.Structure.FlagBars} compression={ctx.Structure.FlagCompression:0.00}");
 
-            if (barsSinceImpulse > MaxImpulseMemoryBars)
+            bool lateWindowWidened =
+                barsSinceImpulse > MaxImpulseMemoryBars &&
+                barsSinceImpulse <= MaxImpulseMemoryBars + 3 &&
+                (ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough) &&
+                (dir == TradeDirection.Long ? ctx.TriggerLateScoreLong : ctx.TriggerLateScoreShort) < 70.0;
+            if (barsSinceImpulse > MaxImpulseMemoryBars && !lateWindowWidened)
                 return Reject(ctx, dir, "LATE_FLAG");
+            if (lateWindowWidened)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_FLAG][WIDEN_ALLOW] symbol={ctx.Symbol} code=LATE_WINDOW barsSinceImpulse={barsSinceImpulse}");
 
             bool breakoutConfirmed = dir == TradeDirection.Long
                 ? (ctx.FlagBreakoutUpConfirmed || ctx.Structure.FlagBreakoutUp)
@@ -43,12 +64,10 @@ namespace GeminiV26.EntryTypes.Crypto
 
             int breakoutBarsSince = dir == TradeDirection.Long ? ctx.BreakoutUpBarsSince : ctx.BreakoutDownBarsSince;
             bool continuationSignal = ctx.Structure.ContinuationConfirmedSignal || ctx.RangeBreakDirection == dir;
-            bool hasTrendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection;
-
             bool persistenceOk =
                 ((breakoutConfirmed && breakoutBarsSince <= MaxBreakoutPersistenceBars) ||
                  (continuationSignal && breakoutBarsSince <= MaxLateBreakoutBars)) &&
-                hasTrendFollowThrough;
+                trendFollowThrough;
 
             if (!persistenceOk)
                 return Reject(ctx, dir, "LATE_FLAG");
@@ -63,7 +82,7 @@ namespace GeminiV26.EntryTypes.Crypto
 
             bool fakeBreak =
                 ctx.RangeFakeoutBars_M1 <= 2 ||
-                (!ctx.Structure.ContinuationConfirmedSignal && !ctx.IsAtrExpanding_M5) ||
+                (!ctx.Structure.ContinuationConfirmedSignal && !ctx.IsAtrExpanding_M5 && !trendFollowThrough) ||
                 (ctx.Structure.ImpulseStrength < MinImpulseStrength && !ctx.M1TriggerInTrendDirection);
 
             if (fakeBreak)

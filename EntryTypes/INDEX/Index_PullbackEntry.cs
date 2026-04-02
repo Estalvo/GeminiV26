@@ -20,17 +20,44 @@ namespace GeminiV26.EntryTypes.INDEX
             if (ctx == null || !ctx.IsReady)
                 return Reject(ctx, TradeDirection.None, 0, "CTX_NOT_READY");
 
-            if (!ctx.Structure.HasImpulse)
+            var direction = ctx.Structure.StructureDirection;
+            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
+            if (direction == TradeDirection.None)
+            {
+                var logicDirection = ctx.LogicBiasDirection;
+                bool canUseLogicDirection =
+                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short) &&
+                    (ctx.Structure.PullbackEarlySignal || ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal) &&
+                    trendFollowThrough;
+                if (!canUseLogicDirection)
+                    return Reject(ctx, TradeDirection.None, 0, "structure_direction_missing");
+
+                direction = logicDirection;
+                ctx.Log?.Invoke($"[ENTRY][INDEX_PB][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
+            }
+
+            int barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
+            bool recentImpulseWidened = !ctx.Structure.HasImpulse && barsSinceImpulse >= 0 && barsSinceImpulse <= 14;
+            if (!ctx.Structure.HasImpulse && !recentImpulseWidened)
             {
                 ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=no_trade_without_impulse");
                 return Reject(ctx, TradeDirection.None, 0, "no_impulse");
             }
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][INDEX_PB][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
 
-            if (!ctx.Structure.HasPullback)
+            bool shallowPullbackWidened =
+                !ctx.Structure.HasPullback &&
+                ctx.Structure.HasMicroPullback &&
+                ctx.Structure.PullbackDepth <= 0.20 &&
+                (ctx.Structure.PullbackEarlySignal || ctx.Structure.ContinuationEarlySignal || trendFollowThrough);
+            if (!ctx.Structure.HasPullback && !shallowPullbackWidened)
             {
                 ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=no_pullback_entry_without_retrace");
                 return Reject(ctx, TradeDirection.None, 0, "no_pullback");
             }
+            if (shallowPullbackWidened)
+                ctx.Log?.Invoke($"[ENTRY][INDEX_PB][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={ctx.Structure.PullbackDepth:0.00}");
 
             bool useEarly = ctx.Structure.PullbackEarlySignal;
             bool useConfirmed = ctx.Structure.PullbackConfirmedSignal;
@@ -41,15 +68,8 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, TradeDirection.None, 0, "no_signal");
             }
 
-            if (ctx.Structure.StructureDirection == TradeDirection.None)
-            {
-                ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=direction_must_come_from_impulse");
-                return Reject(ctx, TradeDirection.None, 0, "structure_direction_missing");
-            }
-
             bool isConfirmedEntry = useConfirmed;
 
-            var direction = ctx.Structure.StructureDirection;
             double timingScore = isConfirmedEntry ? 1.0 : 0.7;
             int score = (int)Math.Round(100.0 * (
                 0.4 * ctx.Structure.ImpulseStrength +

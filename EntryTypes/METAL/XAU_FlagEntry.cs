@@ -31,8 +31,22 @@ namespace GeminiV26.EntryTypes.METAL
             if (dir == TradeDirection.None)
                 return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_FLAG][BLOCK_DIR]");
 
-            if (!ctx.Structure.HasImpulse || !ctx.Structure.HasFlag)
-                return Reject(ctx, dir, "NO_STRUCTURE", "[ENTRY][XAU_FLAG][BLOCK_STRUCTURE]");
+            int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
+            bool recentImpulseWidened =
+                !ctx.Structure.HasImpulse &&
+                barsSinceImpulse >= 0 &&
+                barsSinceImpulse <= 10 &&
+                ctx.Structure.ImpulseStrength >= 0.50;
+            bool flagShapeWidened =
+                !ctx.Structure.HasFlag &&
+                ctx.Structure.FlagBars >= 2 &&
+                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.HasReactionCandle_M5);
+            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasFlag && !flagShapeWidened))
+                return Reject(ctx, dir, "NO_STRUCTURE", "[ENTRY][XAU_FLAG][WIDEN_STILL_BLOCK][CODE=NO_STRUCTURE]");
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][XAU_FLAG][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
+            if (flagShapeWidened)
+                ctx.Log?.Invoke($"[ENTRY][XAU_FLAG][WIDEN_ALLOW] code=MESSY_FLAG flagBars={ctx.Structure.FlagBars}");
 
             double compressionScore = dir == TradeDirection.Long
                 ? ctx.FlagCompressionScoreLong_M5
@@ -84,7 +98,6 @@ namespace GeminiV26.EntryTypes.METAL
             if (htfMismatch && !highQualityLocalBreak)
                 return Reject(ctx, dir, "HTF_MISMATCH", "[ENTRY][XAU_FLAG][BLOCK_HTF]");
 
-            int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             double lateScore = dir == TradeDirection.Long ? ctx.TriggerLateScoreLong : ctx.TriggerLateScoreShort;
             if (barsSinceImpulse < 0 || barsSinceImpulse > MaxBarsSinceImpulse || lateScore >= MaxLateTriggerScore)
                 return Reject(ctx, dir, "LATE_BLOCK", "[ENTRY][XAU_FLAG][BLOCK] reason=LATE_BLOCK");

@@ -26,19 +26,40 @@ namespace GeminiV26.EntryTypes.Crypto
             if (dir == TradeDirection.None)
                 return Reject(ctx, TradeDirection.None, "NO_VALID_DIRECTION");
 
-            if (!ctx.Structure.HasImpulse || !ctx.Structure.HasPullback)
-                return Reject(ctx, dir, "NO_PULLBACK_STRUCTURE");
-
             int attempts = dir == TradeDirection.Long ? ctx.ContinuationAttemptCountLong : ctx.ContinuationAttemptCountShort;
             if (attempts > 0)
                 return Reject(ctx, dir, "REFIRE_BLOCK");
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
-            if (barsSinceImpulse < 0 || barsSinceImpulse > MaxBarsSinceImpulse)
+            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.HasReactionCandle_M5 || ctx.M1TriggerInTrendDirection;
+            bool recentImpulseWidened =
+                !ctx.Structure.HasImpulse &&
+                barsSinceImpulse >= 0 &&
+                barsSinceImpulse <= MaxBarsSinceImpulse + 2 &&
+                (ctx.Structure.ImpulseStrength >= (MinFuelImpulseStrength - 0.04) || ctx.IsAtrExpanding_M5);
+            bool shallowPullbackWidened =
+                !ctx.Structure.HasPullback &&
+                (ctx.Structure.HasMicroPullback || (ctx.Structure.PullbackDepth >= 0.03 && ctx.Structure.PullbackDepth <= 0.20 && ctx.Structure.PullbackBars <= 3)) &&
+                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough);
+            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasPullback && !shallowPullbackWidened))
+                return Reject(ctx, dir, "NO_PULLBACK_STRUCTURE");
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_PB][WIDEN_ALLOW] symbol={ctx.Symbol} code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
+            if (shallowPullbackWidened)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_PB][WIDEN_ALLOW] symbol={ctx.Symbol} code=SHALLOW_PULLBACK depth={ctx.Structure.PullbackDepth:0.00} bars={ctx.Structure.PullbackBars}");
+
+            bool staleButUsable =
+                barsSinceImpulse > MaxBarsSinceImpulse &&
+                barsSinceImpulse <= MaxBarsSinceImpulse + 3 &&
+                (ctx.Structure.ContinuationConfirmedSignal || trendFollowThrough) &&
+                ctx.IsAtrExpanding_M5;
+            if (barsSinceImpulse < 0 || (barsSinceImpulse > MaxBarsSinceImpulse && !staleButUsable))
                 return Reject(ctx, dir, "STALE_PULLBACK");
+            if (staleButUsable)
+                ctx.Log?.Invoke($"[ENTRY][CRYPTO_PB][WIDEN_ALLOW] symbol={ctx.Symbol} code=EXTENDED_TIMING barsSinceImpulse={barsSinceImpulse}");
 
             TradeDirection impulseDirection = ctx.ImpulseDirection == TradeDirection.None ? dir : ctx.ImpulseDirection;
-            bool immediateCounter = barsSinceImpulse <= 0 && impulseDirection != dir;
+            bool immediateCounter = barsSinceImpulse <= 1 && impulseDirection != dir;
             if (immediateCounter)
                 return Reject(ctx, dir, "IMPULSE_LOCK_IMMEDIATE_COUNTER");
 
@@ -61,7 +82,8 @@ namespace GeminiV26.EntryTypes.Crypto
             bool pullbackComplete =
                 ctx.Structure.PullbackConfirmedSignal ||
                 maturitySignals >= 2 ||
-                (barsSinceImpulse >= 3 && maturitySignals >= 1);
+                (barsSinceImpulse >= 3 && maturitySignals >= 1) ||
+                (barsSinceImpulse >= 2 && maturitySignals >= 1 && ctx.Structure.ContinuationConfirmedSignal && trendFollowThrough);
             if (!pullbackComplete)
                 return Reject(ctx, dir, "PULLBACK_NOT_MATURE");
 

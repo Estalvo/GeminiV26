@@ -29,8 +29,24 @@ namespace GeminiV26.EntryTypes.METAL
             if (dir == TradeDirection.None)
                 return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_PB][BLOCK_DIR]");
 
-            if (!ctx.Structure.HasImpulse || !ctx.Structure.HasPullback)
-                return Reject(ctx, dir, "NO_IMPULSE_PULLBACK_STRUCTURE", "[ENTRY][XAU_PB][BLOCK_STRUCTURE]");
+            int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
+            bool recentImpulseWidened =
+                !ctx.Structure.HasImpulse &&
+                barsSinceImpulse >= 0 &&
+                barsSinceImpulse <= 8 &&
+                ctx.Structure.ImpulseStrength >= 0.50;
+            bool shallowPullbackWidened =
+                !ctx.Structure.HasPullback &&
+                ctx.Structure.HasMicroPullback &&
+                ctx.Structure.PullbackDepth >= 0.06 &&
+                ctx.Structure.PullbackDepth <= 0.24 &&
+                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.HasReactionCandle_M5);
+            if ((!ctx.Structure.HasImpulse && !recentImpulseWidened) || (!ctx.Structure.HasPullback && !shallowPullbackWidened))
+                return Reject(ctx, dir, "NO_IMPULSE_PULLBACK_STRUCTURE", "[ENTRY][XAU_PB][WIDEN_STILL_BLOCK][CODE=NO_IMPULSE_PULLBACK_STRUCTURE]");
+            if (recentImpulseWidened)
+                ctx.Log?.Invoke($"[ENTRY][XAU_PB][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
+            if (shallowPullbackWidened)
+                ctx.Log?.Invoke($"[ENTRY][XAU_PB][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={ctx.Structure.PullbackDepth:0.00}");
 
             bool trendStateOk = ctx.QualificationState?.HasTrend == true;
             bool localContinuationStructure =
@@ -64,7 +80,6 @@ namespace GeminiV26.EntryTypes.METAL
             if (widenedChopPass)
                 ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=CHOP_FILTER_WIDENED");
 
-            int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             if (barsSinceImpulse >= 0 && barsSinceImpulse <= FirstWindowMaxBars)
                 ctx.Log?.Invoke("[ENTRY][XAU_PB][FIRST_WINDOW]");
             else if (barsSinceImpulse > FirstWindowMaxBars &&
