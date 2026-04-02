@@ -421,6 +421,46 @@ namespace GeminiV26.Core.Entry
             };
         }
 
+        public bool IsStructureDirectionStrict()
+            => Structure?.StructureDirection == TradeDirection.Long ||
+               Structure?.StructureDirection == TradeDirection.Short;
+
+        public bool IsStructureDirectionAuthoritative()
+        {
+            if (IsStructureDirectionStrict())
+                return true;
+
+            bool hasResolvedSource =
+                !string.IsNullOrWhiteSpace(Structure?.DirectionSource) &&
+                !string.Equals(Structure.DirectionSource, "NONE", StringComparison.OrdinalIgnoreCase);
+
+            bool hasBroaderDirection =
+                LogicBiasDirection == TradeDirection.Long ||
+                LogicBiasDirection == TradeDirection.Short;
+
+            return hasResolvedSource && hasBroaderDirection;
+        }
+
+        public bool IsStructureImpulseAuthoritative()
+            => (Structure?.HasImpulse == true) || (Structure?.ImpulseRecentOk == true);
+
+        public bool IsStructurePullbackAuthoritative()
+            => (Structure?.HasPullback == true) ||
+               (Structure?.PullbackStandardOk == true) ||
+               (Structure?.PullbackShallowOk == true) ||
+               (Structure?.HasMicroPullback == true);
+
+        public bool IsStructureFlagAuthoritative()
+            => (Structure?.HasFlag == true) ||
+               (Structure?.FlagStandardOk == true) ||
+               (Structure?.FlagMessyOk == true);
+
+        public void LogStructureAuthority(string entryFamily, string tag, string strictFieldFailed, string rescueField, string details = null)
+        {
+            Log?.Invoke(
+                $"[STRUCT][AUTH][{tag}] symbol={Symbol} entry={entryFamily} strictFailed={strictFieldFailed} rescue={rescueField} {details ?? "details=NA"}");
+        }
+
         public bool HasDirectionalPullback(TradeDirection direction)
         {
             return direction switch

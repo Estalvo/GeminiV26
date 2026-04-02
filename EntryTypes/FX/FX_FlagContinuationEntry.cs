@@ -21,6 +21,9 @@ namespace GeminiV26.EntryTypes.FX
             bool hasPullback = ctx.Structure?.HasPullback == true;
             bool hasFlag = ctx.Structure?.HasFlag == true;
             var direction = ctx.Structure?.StructureDirection ?? TradeDirection.None;
+            bool impulseStrict = hasImpulse;
+            bool pullbackStrict = hasPullback;
+            bool flagStrict = hasFlag;
             bool breakoutUp = ctx.Structure?.FlagBreakoutUp == true;
             bool breakoutDown = ctx.Structure?.FlagBreakoutDown == true;
             bool alignedBreakout = direction == TradeDirection.Long ? breakoutUp : breakoutDown;
@@ -51,14 +54,31 @@ namespace GeminiV26.EntryTypes.FX
                     hasContinuationSignal &&
                     trendFollowThrough;
                 if (!canUseLogicDirection)
+                {
+                    ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "StructureDirection", "NONE",
+                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"}");
                     return Block(ctx, "NO_DIRECTION");
+                }
 
                 direction = logicDirection;
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
+                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={direction}");
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
+                    $"resolvedDir={direction}");
                 alignedBreakout = direction == TradeDirection.Long ? breakoutUp : breakoutDown;
                 opposingBreakout = direction == TradeDirection.Long ? breakoutDown : breakoutUp;
                 barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
                 hasRecentDirectionalImpulse = barsSinceImpulse >= 0 && barsSinceImpulse <= 12;
                 ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
+            }
+
+            bool impulseOk = hasImpulse || hasRecentDirectionalImpulse || ctx.IsStructureImpulseAuthoritative();
+            if (!impulseStrict && impulseOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
             }
 
             bool localAuthority =
@@ -67,16 +87,46 @@ namespace GeminiV26.EntryTypes.FX
                 hasContinuationSignal &&
                 (alignedBreakout || !opposingBreakout);
 
-            if (!hasImpulse && !hasRecentDirectionalImpulse)
+            if (!impulseOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasImpulse", "NONE",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()}");
                 return Block(ctx, "NO_IMPULSE");
+            }
 
-            if (!hasPullback && !shallowPullbackWidened)
+            bool pullbackOk = hasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
+            if (!pullbackStrict && pullbackOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()} micro={(ctx.Structure?.HasMicroPullback ?? false).ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
+            }
+
+            if (!pullbackOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasPullback", "NONE",
+                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
                 return Block(ctx, "NO_PULLBACK");
+            }
             if (shallowPullbackWidened)
                 ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
 
-            if (!hasFlag && !weakFlagWidened)
+            bool flagOk = hasFlag || weakFlagWidened || ctx.IsStructureFlagAuthoritative();
+            if (!flagStrict && flagOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "FLAG_OK", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00} messy={(ctx.Structure?.FlagMessyOk ?? false).ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasFlag", "FlagMessyOk",
+                    $"flagBars={ctx.Structure?.FlagBars ?? 0}");
+            }
+
+            if (!flagOk)
+            {
+                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasFlag", "NONE",
+                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00}");
                 return Block(ctx, "INVALID_FLAG");
+            }
             if (weakFlagWidened)
                 ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=WEAK_FLAG flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00}");
 

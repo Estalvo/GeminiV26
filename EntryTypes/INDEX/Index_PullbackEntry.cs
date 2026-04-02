@@ -21,6 +21,7 @@ namespace GeminiV26.EntryTypes.INDEX
                 return Reject(ctx, TradeDirection.None, 0, "CTX_NOT_READY");
 
             var direction = ctx.Structure.StructureDirection;
+            bool strictDirection = direction == TradeDirection.Long || direction == TradeDirection.Short;
             bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
             if (direction == TradeDirection.None)
             {
@@ -30,16 +31,37 @@ namespace GeminiV26.EntryTypes.INDEX
                     (ctx.Structure.PullbackEarlySignal || ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal) &&
                     trendFollowThrough;
                 if (!canUseLogicDirection)
+                {
+                    ctx.LogStructureAuthority("Index_PullbackEntry", "STILL_FAIL", "StructureDirection", "NONE",
+                        $"reason=structure_direction_missing source={ctx.Structure.DirectionSource ?? "NA"}");
                     return Reject(ctx, TradeDirection.None, 0, "structure_direction_missing");
+                }
 
                 direction = logicDirection;
+                if (!strictDirection)
+                {
+                    ctx.LogStructureAuthority("Index_PullbackEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
+                        $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={direction}");
+                    ctx.LogStructureAuthority("Index_PullbackEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
+                        $"resolvedDir={direction}");
+                }
                 ctx.Log?.Invoke($"[ENTRY][INDEX_PB][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
             }
 
             int barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
             bool recentImpulseWidened = !ctx.Structure.HasImpulse && barsSinceImpulse >= 0 && barsSinceImpulse <= 14;
-            if (!ctx.Structure.HasImpulse && !recentImpulseWidened)
+            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
+            if (!ctx.Structure.HasImpulse && impulseOk)
             {
+                ctx.LogStructureAuthority("Index_PullbackEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("Index_PullbackEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
+                    $"barsSinceImpulse={barsSinceImpulse}");
+            }
+            if (!impulseOk)
+            {
+                ctx.LogStructureAuthority("Index_PullbackEntry", "STILL_FAIL", "HasImpulse", "NONE",
+                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
                 ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=no_trade_without_impulse");
                 return Reject(ctx, TradeDirection.None, 0, "no_impulse");
             }
@@ -51,8 +73,18 @@ namespace GeminiV26.EntryTypes.INDEX
                 ctx.Structure.HasMicroPullback &&
                 ctx.Structure.PullbackDepth <= 0.20 &&
                 (ctx.Structure.PullbackEarlySignal || ctx.Structure.ContinuationEarlySignal || trendFollowThrough);
-            if (!ctx.Structure.HasPullback && !shallowPullbackWidened)
+            bool pullbackOk = ctx.Structure.HasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
+            if (!ctx.Structure.HasPullback && pullbackOk)
             {
+                ctx.LogStructureAuthority("Index_PullbackEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()}");
+                ctx.LogStructureAuthority("Index_PullbackEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
+                    $"depth={ctx.Structure.PullbackDepth:0.00}");
+            }
+            if (!pullbackOk)
+            {
+                ctx.LogStructureAuthority("Index_PullbackEntry", "STILL_FAIL", "HasPullback", "NONE",
+                    $"depth={ctx.Structure.PullbackDepth:0.00}");
                 ctx.Log?.Invoke("[ENTRY][PULLBACK][STRUCTURE_ERROR] violation=no_pullback_entry_without_retrace");
                 return Reject(ctx, TradeDirection.None, 0, "no_pullback");
             }
