@@ -13,6 +13,8 @@ namespace GeminiV26.EntryTypes.METAL
         private const int MinBars = 20;
         private const int MaxBarsSinceImpulse = 7;
         private const int MaxLateTriggerScore = 55;
+        private const int StrictBreakoutPersistenceBars = 2;
+        private const int RelaxedBreakoutPersistenceBars = 3;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -32,19 +34,45 @@ namespace GeminiV26.EntryTypes.METAL
             if (!ctx.Structure.HasImpulse || !ctx.Structure.HasFlag)
                 return Reject(ctx, dir, "NO_STRUCTURE", "[ENTRY][XAU_FLAG][BLOCK_STRUCTURE]");
 
+            double compressionScore = dir == TradeDirection.Long
+                ? ctx.FlagCompressionScoreLong_M5
+                : ctx.FlagCompressionScoreShort_M5;
+            bool strictFlagRange =
+                ctx.Structure.FlagCompression <= 0.72 &&
+                ctx.Structure.FlagBars >= 2;
+            bool widenedFlagRange =
+                ctx.Structure.FlagCompression <= 0.90 &&
+                compressionScore >= 0.28 &&
+                ctx.Structure.ImpulseStrength >= 0.45;
+
+            if (!strictFlagRange && !widenedFlagRange)
+                return Reject(ctx, dir, "NO_FLAG_RANGE", "[ENTRY][XAU_FLAG][BLOCK] reason=NO_FLAG_RANGE");
+
+            ctx.Log?.Invoke(
+                strictFlagRange
+                    ? $"[ENTRY][XAU_FLAG][RECOGNIZED] reason=FLAG_RANGE_STRICT compression={ctx.Structure.FlagCompression:0.00} bars={ctx.Structure.FlagBars}"
+                    : $"[ENTRY][XAU_FLAG][RECOGNIZED] reason=FLAG_RANGE_WIDENED compression={ctx.Structure.FlagCompression:0.00} score={compressionScore:0.00} impulse={ctx.Structure.ImpulseStrength:0.00}");
+
             bool breakoutConfirmed = dir == TradeDirection.Long
                 ? (ctx.FlagBreakoutUpConfirmed || ctx.Structure.FlagBreakoutUp)
                 : (ctx.FlagBreakoutDownConfirmed || ctx.Structure.FlagBreakoutDown);
 
             bool breakoutPersistent = dir == TradeDirection.Long
-                ? ctx.BreakoutUpBarsSince <= 2
-                : ctx.BreakoutDownBarsSince <= 2;
+                ? ctx.BreakoutUpBarsSince <= StrictBreakoutPersistenceBars
+                : ctx.BreakoutDownBarsSince <= StrictBreakoutPersistenceBars;
+            bool breakoutPersistentWidened = dir == TradeDirection.Long
+                ? ctx.BreakoutUpBarsSince <= RelaxedBreakoutPersistenceBars
+                : ctx.BreakoutDownBarsSince <= RelaxedBreakoutPersistenceBars;
+            bool triggerProxy = ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5 || ctx.IsAtrExpanding_M5;
 
             bool highQualityLocalBreak =
                 breakoutConfirmed &&
-                breakoutPersistent &&
+                (breakoutPersistent || (breakoutPersistentWidened && triggerProxy)) &&
                 ctx.LastClosedBarInTrendDirection &&
-                ctx.IsAtrExpanding_M5;
+                (ctx.IsAtrExpanding_M5 || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5);
+
+            if (breakoutConfirmed && !breakoutPersistent && breakoutPersistentWidened && triggerProxy)
+                ctx.Log?.Invoke("[ENTRY][XAU_FLAG][RECOGNIZED] reason=PERSISTENCE_WIDENED");
 
             double htfConf = ctx.ResolveAssetHtfConfidence01();
             var htfDir = ctx.ResolveAssetHtfAllowedDirection();
@@ -59,16 +87,17 @@ namespace GeminiV26.EntryTypes.METAL
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             double lateScore = dir == TradeDirection.Long ? ctx.TriggerLateScoreLong : ctx.TriggerLateScoreShort;
             if (barsSinceImpulse < 0 || barsSinceImpulse > MaxBarsSinceImpulse || lateScore >= MaxLateTriggerScore)
-                return Reject(ctx, dir, "STALE_OR_EXPIRED", "[ENTRY][XAU_FLAG][INVALID_STALE]");
+                return Reject(ctx, dir, "LATE_BLOCK", "[ENTRY][XAU_FLAG][BLOCK] reason=LATE_BLOCK");
 
             if (!highQualityLocalBreak)
-                return Reject(ctx, dir, "NO_PERSISTENT_BREAKOUT", "[ENTRY][XAU_FLAG][BLOCK_BREAK_QUALITY]");
+                return Reject(ctx, dir, "NO_PERSISTENT_BREAKOUT", "[ENTRY][XAU_FLAG][BLOCK] reason=NO_PERSISTENT_BREAKOUT");
 
             if (!ctx.M1TriggerInTrendDirection && !ctx.HasReactionCandle_M5)
-                return Reject(ctx, dir, "TRIGGER_NOT_QUALIFIED", "[ENTRY][XAU_FLAG][BLOCK_TRIGGER]");
+                return Reject(ctx, dir, "TRIGGER_NOT_QUALIFIED", "[ENTRY][XAU_FLAG][BLOCK] reason=TRIGGER_NOT_QUALIFIED");
 
             ctx.Log?.Invoke("[ENTRY][XAU_FLAG][STRUCT_OK]");
             ctx.Log?.Invoke("[ENTRY][XAU_FLAG][TRIGGER_OK]");
+            ctx.Log?.Invoke("[ENTRY][XAU_FLAG][RECOGNIZED] reason=STRUCTURE_FIRST_OK");
 
             int score = 60;
             if (ctx.Structure.FlagCompression <= 0.35)

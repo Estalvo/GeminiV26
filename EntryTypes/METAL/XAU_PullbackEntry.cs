@@ -12,6 +12,7 @@ namespace GeminiV26.EntryTypes.METAL
 
         private const int MinBars = 20;
         private const int FirstWindowMaxBars = 4;
+        private const int NearFirstWindowMaxBars = 6;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
@@ -31,33 +32,75 @@ namespace GeminiV26.EntryTypes.METAL
             if (!ctx.Structure.HasImpulse || !ctx.Structure.HasPullback)
                 return Reject(ctx, dir, "NO_IMPULSE_PULLBACK_STRUCTURE", "[ENTRY][XAU_PB][BLOCK_STRUCTURE]");
 
+            bool trendStateOk = ctx.QualificationState?.HasTrend == true;
+            bool localContinuationStructure =
+                ctx.Structure.ImpulseStrength >= 0.50 &&
+                ctx.Structure.PullbackDepth >= 0.10 &&
+                ctx.Structure.PullbackDepth <= 0.75 &&
+                (ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationConfirmedSignal);
+            if (!trendStateOk && !localContinuationStructure)
+                return Reject(ctx, dir, "NO_TREND_STATE", "[ENTRY][XAU_PB][BLOCK] reason=NO_TREND_STATE");
+            if (!trendStateOk && localContinuationStructure)
+                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=NO_TREND_STATE_BYPASS_LOCAL_CONTINUATION");
+
             int attempts = dir == TradeDirection.Long ? ctx.ContinuationAttemptCountLong : ctx.ContinuationAttemptCountShort;
             if (attempts > 1)
                 return Reject(ctx, dir, "REFIRE_BLOCK", "[ENTRY][XAU_PB][REFIRE_BLOCK]");
 
-            bool chop =
-                ctx.Adx_M5 < 18 ||
-                !ctx.IsAtrExpanding_M5 ||
-                (ctx.Structure.PullbackBars >= 3 && !ctx.Structure.PullbackConfirmedSignal);
-            if (chop)
-                return Reject(ctx, dir, "CHOP_PULLBACK_CLUSTER", "[ENTRY][XAU_PB][CHOP_BLOCK]");
+            bool hardChop =
+                ctx.Adx_M5 < 16 ||
+                (ctx.Adx_M5 < 18 &&
+                 !ctx.IsAtrExpanding_M5 &&
+                 ctx.Structure.PullbackBars >= 4 &&
+                 !ctx.Structure.PullbackConfirmedSignal);
+            if (hardChop)
+                return Reject(ctx, dir, "CHOP_BLOCK", "[ENTRY][XAU_PB][BLOCK] reason=CHOP_BLOCK");
+
+            bool widenedChopPass =
+                ctx.Adx_M5 >= 16 &&
+                ctx.Adx_M5 < 18 &&
+                !ctx.IsAtrExpanding_M5 &&
+                ctx.Structure.PullbackBars <= 3;
+            if (widenedChopPass)
+                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=CHOP_FILTER_WIDENED");
 
             int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
             if (barsSinceImpulse >= 0 && barsSinceImpulse <= FirstWindowMaxBars)
                 ctx.Log?.Invoke("[ENTRY][XAU_PB][FIRST_WINDOW]");
+            else if (barsSinceImpulse > FirstWindowMaxBars &&
+                     barsSinceImpulse <= NearFirstWindowMaxBars &&
+                     ctx.Structure.ImpulseStrength >= 0.60 &&
+                     (ctx.Structure.PullbackConfirmedSignal || ctx.HasReactionCandle_M5))
+                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=NEAR_FIRST_WINDOW");
             else
-                return Reject(ctx, dir, "OUTSIDE_FIRST_PULLBACK_WINDOW", "[ENTRY][XAU_PB][BLOCK_WINDOW]");
+                return Reject(ctx, dir, "LATE_BLOCK", "[ENTRY][XAU_PB][BLOCK] reason=LATE_BLOCK");
 
             bool depthMature = ctx.Structure.PullbackDepth >= 0.10 && ctx.Structure.PullbackDepth <= 0.75;
+            bool depthMatureWidened =
+                ctx.Structure.PullbackDepth >= 0.08 &&
+                ctx.Structure.PullbackDepth <= 0.82 &&
+                ctx.Structure.ImpulseStrength >= 0.55 &&
+                ctx.Structure.PullbackBars <= 4;
+            if (!depthMature && !depthMatureWidened)
+                return Reject(ctx, dir, "DEPTH_INVALID", "[ENTRY][XAU_PB][BLOCK] reason=DEPTH_INVALID");
+
             bool continuationAuthority =
                 ctx.Structure.PullbackConfirmedSignal &&
                 ctx.LastClosedBarInTrendDirection &&
                 (ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5);
+            bool continuationAuthorityWidened =
+                ctx.LastClosedBarInTrendDirection &&
+                (ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5) &&
+                (ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationConfirmedSignal);
 
-            if (!depthMature || !continuationAuthority)
-                return Reject(ctx, dir, "NO_CONTINUATION_AUTHORITY", "[ENTRY][XAU_PB][BLOCK_CONTINUATION]");
+            if (!continuationAuthority && !continuationAuthorityWidened)
+                return Reject(ctx, dir, "CONTINUATION_AUTHORITY_FAIL", "[ENTRY][XAU_PB][BLOCK] reason=CONTINUATION_AUTHORITY_FAIL");
 
             ctx.Log?.Invoke("[ENTRY][XAU_PB][CONTINUATION_OK]");
+            ctx.Log?.Invoke(
+                depthMature
+                    ? "[ENTRY][XAU_PB][RECOGNIZED] reason=STRUCTURE_FIRST_OK"
+                    : "[ENTRY][XAU_PB][RECOGNIZED] reason=DEPTH_WIDENED");
 
             int score = 62;
             if (ctx.Structure.ImpulseStrength >= 0.6)
