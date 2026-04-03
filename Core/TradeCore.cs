@@ -65,7 +65,6 @@ using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Context;
 using GeminiV26.Core.Analytics;
 using GeminiV26.Core.Memory;
-using GeminiV26.Core.Risk;
 using GeminiV26.Core.Runtime;
 using System.Linq;
 
@@ -262,7 +261,6 @@ namespace GeminiV26.Core
         private bool isIndexSymbol;
 
         private GlobalSessionGate _globalSessionGate;
-        private readonly GlobalRiskGuard _globalRiskGuard;
         private SessionMatrix _sessionMatrix;
 
         private EntryContext _ctx;
@@ -388,9 +386,6 @@ namespace GeminiV26.Core
             _memoryEngine = new MarketMemoryEngine(safePrint);
             _contextBuilder = new EntryContextBuilder(bot, _memoryEngine);
             _globalSessionGate = new GlobalSessionGate(_bot);
-            _globalRiskGuard = new GlobalRiskGuard(
-                new GeminiRiskConfig(),
-                message => GeminiV26.Core.Logging.GlobalLogger.Log(_bot, message));
             _sessionMatrix = new SessionMatrix(new SessionMatrixProvider());
 
             _xauEntryLogic = new XauEntryLogic(_bot);
@@ -888,12 +883,6 @@ namespace GeminiV26.Core
             {
                 GeminiV26.Core.Logging.GlobalLogger.Log(_bot, "[DEBUG] HasOpenGeminiPosition = TRUE");
                 GeminiV26.Core.Logging.GlobalLogger.Log(_bot, "BLOCK: existing Gemini position open");
-                return;
-            }
-
-            if (!(_globalRiskGuard?.CanTrade(_bot.Account.Equity, _bot.Server.Time) ?? true))
-            {
-                GeminiV26.Core.Logging.GlobalLogger.Log(_bot, "[TC] BLOCKED: GlobalRiskGuard daily drawdown");
                 return;
             }
 
