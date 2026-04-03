@@ -5,6 +5,16 @@ namespace GeminiV26.Core.Logging
 {
     public static class GlobalLogger
     {
+        public static void GlobalLogging(Robot bot, string msg)
+        {
+            Log(bot, msg);
+        }
+
+        public static void GlobalLogging(string msg, Robot bot = null)
+        {
+            Log(msg, bot);
+        }
+
         public static void Log(Robot bot, string msg)
         {
             Log(msg, bot);

@@ -9,8 +9,10 @@ namespace GeminiV26.Core.Analytics
     public static class UnifiedAnalyticsWriter
     {
         private static readonly ConcurrentDictionary<string, object> _locks = new ConcurrentDictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        private const string Header = "Symbol,PositionId,SetupType,EntryType,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,Confidence,Profit,OpenTimeUtc,CloseTimeUtc";
-        private const string FallbackHeader = "Symbol,PositionId,SetupType,EntryType,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,Confidence,Profit,OpenTimeUtc,CloseTimeUtc,FailureReason";
+        // Active analytics SSOT schema.
+        // Confidence column kept as backward-compatible alias for downstream readers.
+        private const string Header = "Symbol,PositionId,SetupType,EntryType,InstrumentClass,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,FinalConfidence,Confidence,Profit,OpenTimeUtc,CloseTimeUtc";
+        private const string FallbackHeader = "Symbol,PositionId,SetupType,EntryType,InstrumentClass,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,FinalConfidence,Confidence,Profit,OpenTimeUtc,CloseTimeUtc,FailureReason";
         private static int _degradedState;
 
         public static bool IsDegraded => _degradedState == 1;
@@ -52,11 +54,13 @@ namespace GeminiV26.Core.Analytics
                             Csv(resolvedPositionId),
                             Csv(record.SetupType),
                             Csv(record.EntryType),
+                            Csv(record.InstrumentClass),
                             Csv(record.MarketRegime),
                             record.MfeR.ToString("0.####", CultureInfo.InvariantCulture),
                             record.MaeR.ToString("0.####", CultureInfo.InvariantCulture),
                             record.RMultiple.ToString("0.####", CultureInfo.InvariantCulture),
                             record.TransitionQuality.ToString("0.####", CultureInfo.InvariantCulture),
+                            record.FinalConfidence.ToString("0.####", CultureInfo.InvariantCulture),
                             record.Confidence.ToString("0.####", CultureInfo.InvariantCulture),
                             record.Profit.ToString(CultureInfo.InvariantCulture),
                             record.OpenTimeUtc.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
@@ -105,11 +109,13 @@ namespace GeminiV26.Core.Analytics
                             Csv(resolvedPositionId),
                             Csv(record.SetupType),
                             Csv(record.EntryType),
+                            Csv(record.InstrumentClass),
                             Csv(record.MarketRegime),
                             record.MfeR.ToString("0.####", CultureInfo.InvariantCulture),
                             record.MaeR.ToString("0.####", CultureInfo.InvariantCulture),
                             record.RMultiple.ToString("0.####", CultureInfo.InvariantCulture),
                             record.TransitionQuality.ToString("0.####", CultureInfo.InvariantCulture),
+                            record.FinalConfidence.ToString("0.####", CultureInfo.InvariantCulture),
                             record.Confidence.ToString("0.####", CultureInfo.InvariantCulture),
                             record.Profit.ToString(CultureInfo.InvariantCulture),
                             record.OpenTimeUtc.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
@@ -136,7 +142,13 @@ namespace GeminiV26.Core.Analytics
 
         private static string Csv(string value)
         {
-            return value ?? string.Empty;
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+
+            if (value.IndexOfAny(new[] { ',', '"', '\n', '\r' }) >= 0)
+                return "\"" + value.Replace("\"", "\"\"") + "\"";
+
+            return value;
         }
     }
 }

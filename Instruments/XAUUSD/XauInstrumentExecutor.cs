@@ -349,7 +349,7 @@ namespace GeminiV26.Instruments.XAUUSD
             ctx.InitialStopLossPrice = slPriceActual;
             ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
             ctx.LastStopLossPrice = slPriceActual;
-            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
 
             // --- TP1 (fix R)
             ctx.Tp1Price = tradeType == TradeType.Buy

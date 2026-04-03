@@ -289,11 +289,11 @@ namespace GeminiV26.Instruments.ETHUSD
 
                     if (!ctx.InitialStopLossPrice.HasValue)
                     {
-                        _bot.Print($"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
+                        GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
                     }
 
                     var slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss;
-                    _bot.Print($"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
+                    GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
 
                     bool reached =
                         IsLong(ctx)
@@ -350,7 +350,7 @@ namespace GeminiV26.Instruments.ETHUSD
                                 $"barsOpen={ctx.BarsSinceEntryM5}\n" +
                                 $"reason={ctx.DeadTradeReason}", ctx, pos));
                             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] reason={ctx.DeadTradeReason}", ctx, pos));
-                            GlobalLogger.Log(_bot, 
+                            GlobalLogger.Log(_bot,
                                 $"[ETHUSD TVM EXIT] pos={pos.Id} reason={ctx.DeadTradeReason}"
                             );
 

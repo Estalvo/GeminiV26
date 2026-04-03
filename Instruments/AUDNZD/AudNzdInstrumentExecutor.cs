@@ -282,7 +282,7 @@ namespace GeminiV26.Instruments.AUDNZD
             ctx.InitialStopLossPrice = slPriceActual;
             ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
             ctx.LastStopLossPrice = slPriceActual;
-            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
 
             // ✅ Kanonikus FinalConfidence (70/30)
             ctx.ComputeFinalConfidence();
