@@ -849,22 +849,62 @@ namespace GeminiV26.Core.Entry
             DetectFlagBreakout(ctx);
             MapStructureContinuationSignals(ctx);
 
+            bool directionAuthorityOk = ctx.IsStructureDirectionAuthoritative();
+            bool impulseAuthorityOk = ctx.IsStructureImpulseAuthoritative();
+            bool pullbackAuthorityOk = ctx.IsStructurePullbackAuthoritative();
+            bool flagAuthorityOk = ctx.IsStructureFlagAuthoritative();
+
             bool primaryChainOk =
-                ctx.Structure.HasImpulse &&
+                directionAuthorityOk &&
+                impulseAuthorityOk &&
                 ctx.Structure.PullbackStandardOk &&
                 ctx.Structure.FlagStandardOk;
 
             bool altChainOk =
-                ctx.Structure.HasImpulse &&
-                (ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback) &&
-                ctx.Structure.FlagMessyOk;
+                directionAuthorityOk &&
+                impulseAuthorityOk &&
+                (ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback || ctx.Structure.PullbackStandardOk) &&
+                (ctx.Structure.FlagMessyOk || ctx.Structure.FlagStandardOk);
+
+            bool compositeChainOk =
+                directionAuthorityOk &&
+                impulseAuthorityOk &&
+                pullbackAuthorityOk &&
+                flagAuthorityOk;
+
+            if (!primaryChainOk && compositeChainOk)
+            {
+                if (!ctx.Structure.HasImpulse && impulseAuthorityOk)
+                {
+                    GlobalLogger.Log(_bot,
+                        $"[STRUCT][AUTH][IMPULSE_OK] symbol={ctx.Symbol ?? "NA"} recent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
+                }
+                if (!ctx.Structure.HasPullback && pullbackAuthorityOk)
+                {
+                    string pbMode = ctx.Structure.PullbackStandardOk ? "standard" : "shallow";
+                    GlobalLogger.Log(_bot,
+                        $"[STRUCT][AUTH][PULLBACK_OK] symbol={ctx.Symbol ?? "NA"} mode={pbMode}");
+                }
+                if (!ctx.Structure.HasFlag && flagAuthorityOk)
+                {
+                    string flagMode = ctx.Structure.FlagStandardOk ? "standard" : "messy";
+                    GlobalLogger.Log(_bot,
+                        $"[STRUCT][AUTH][FLAG_OK] symbol={ctx.Symbol ?? "NA"} mode={flagMode}");
+                }
+                if (ctx.Structure.ImpulseRecentOk && !ctx.Structure.HasImpulse)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=recent_impulse");
+                if ((ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback) && !ctx.Structure.PullbackStandardOk)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=shallow_pullback");
+                if (ctx.Structure.FlagMessyOk && !ctx.Structure.FlagStandardOk)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=messy_flag");
+            }
 
             if (!primaryChainOk && altChainOk)
             {
                 GlobalLogger.Log(_bot,
                     $"[STRUCT][CHAIN][PRIMARY_FAIL_ALT_OK] dir={ctx.Structure.StructureDirection} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} impulseAge={ctx.Structure.ImpulseAgeBars} pbDepth={ctx.Structure.PullbackDepth:0.00} pbBars={ctx.Structure.PullbackBars} flagBars={ctx.Structure.FlagBars} comp={ctx.Structure.FlagCompression:0.00}");
             }
-            else if (!primaryChainOk && !altChainOk)
+            else if (!primaryChainOk && !altChainOk && !compositeChainOk)
             {
                 GlobalLogger.Log(_bot,
                     $"[STRUCT][CHAIN][FULL_FAIL] dir={ctx.Structure.StructureDirection} source={ctx.Structure.DirectionSource ?? "NA"} impulse={ctx.Structure.HasImpulse.ToString().ToLowerInvariant()} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} impulseAge={ctx.Structure.ImpulseAgeBars} pb={ctx.Structure.HasPullback.ToString().ToLowerInvariant()} pbDepth={ctx.Structure.PullbackDepth:0.00} pbBars={ctx.Structure.PullbackBars} flag={ctx.Structure.HasFlag.ToString().ToLowerInvariant()} flagBars={ctx.Structure.FlagBars} comp={ctx.Structure.FlagCompression:0.00}");
@@ -1069,6 +1109,17 @@ namespace GeminiV26.Core.Entry
 
             if (direction == TradeDirection.None)
             {
+                if (ctx.IsStructureDirectionAuthoritative() && (ctx.LogicBiasDirection == TradeDirection.Long || ctx.LogicBiasDirection == TradeDirection.Short))
+                {
+                    direction = ctx.LogicBiasDirection;
+                    ctx.Structure.StructureDirection = direction;
+                    GlobalLogger.Log(_bot,
+                        $"[STRUCT][AUTH][DIR_OK] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"}");
+                }
+            }
+
+            if (direction == TradeDirection.None)
+            {
                 ctx.Structure.HasImpulse = false;
                 ctx.Structure.ImpulseRecentOk = false;
                 ctx.Structure.ImpulseAgeBars = ctx.BarsSinceImpulse_M5;
@@ -1170,6 +1221,13 @@ namespace GeminiV26.Core.Entry
 
             TradeDirection direction = ctx.Structure.StructureDirection;
             bool impulseOk = ctx.Structure.HasImpulse || ctx.Structure.ImpulseRecentOk;
+            if (!ctx.Structure.HasImpulse && impulseOk)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][AUTH][IMPULSE_OK] symbol={ctx.Symbol ?? "NA"} recent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
+                if (ctx.Structure.ImpulseRecentOk)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=recent_impulse");
+            }
             if (!impulseOk)
             {
                 GlobalLogger.Log(_bot,
@@ -1246,6 +1304,14 @@ namespace GeminiV26.Core.Entry
 
             TradeDirection direction = ctx.Structure.StructureDirection;
             bool pullbackOk = ctx.Structure.HasPullback || ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback;
+            if (!ctx.Structure.HasPullback && pullbackOk)
+            {
+                string mode = ctx.Structure.PullbackStandardOk ? "standard" : "shallow";
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][AUTH][PULLBACK_OK] symbol={ctx.Symbol ?? "NA"} mode={mode}");
+                if ((ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback) && !ctx.Structure.PullbackStandardOk)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=shallow_pullback");
+            }
             if (!pullbackOk)
             {
                 GlobalLogger.Log(_bot,
@@ -1296,6 +1362,12 @@ namespace GeminiV26.Core.Entry
             ctx.Structure.FlagStandardOk = standardOk;
             ctx.Structure.FlagMessyOk = messyOk;
             ctx.Structure.HasFlag = standardOk || messyOk;
+            if (!ctx.Structure.FlagStandardOk && ctx.Structure.FlagMessyOk)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][AUTH][FLAG_OK] symbol={ctx.Symbol ?? "NA"} mode=messy");
+                GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=messy_flag");
+            }
 
             if (!ctx.Structure.HasFlag)
             {
