@@ -1,6 +1,6 @@
-using GeminiV26.Core;
 using GeminiV26.Core.Entry;
 using GeminiV26.EntryTypes;
+using GeminiV26.Core;
 using GeminiV26.Instruments.FX;
 
 namespace GeminiV26.EntryTypes.FX
@@ -9,220 +9,187 @@ namespace GeminiV26.EntryTypes.FX
     {
         public EntryType Type => EntryType.FX_FlagContinuation;
 
+        private const int MinScore = EntryDecisionPolicy.MinScoreThreshold;
+        private const double MinPullbackAtr = 0.15;
+        private const double MaxPullbackAtr = 0.60;
+
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             FxDirectionValidation.LogDirectionDebug(ctx);
             if (ctx == null || !ctx.IsReady)
-                return Invalid(ctx, TradeDirection.None, "CTX_NOT_READY");
+                return Invalid(ctx, "CTX_NOT_READY");
 
-            LogStructure(ctx);
+            if (ctx.LogicBias == TradeDirection.None)
+                return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
 
-            bool hasImpulse = ctx.Structure?.HasImpulse == true;
-            bool hasPullback = ctx.Structure?.HasPullback == true;
-            bool hasFlag = ctx.Structure?.HasFlag == true;
-            var direction = ctx.Structure?.StructureDirection ?? TradeDirection.None;
-            bool structureDirStrict = direction == TradeDirection.Long || direction == TradeDirection.Short;
-            bool structureDirAuthority = ctx.IsStructureDirectionAuthoritative();
-            bool impulseStrict = hasImpulse;
-            bool pullbackStrict = hasPullback;
-            bool flagStrict = hasFlag;
-            bool breakoutUp = ctx.Structure?.FlagBreakoutUp == true;
-            bool breakoutDown = ctx.Structure?.FlagBreakoutDown == true;
-            bool alignedBreakout = direction == TradeDirection.Long ? breakoutUp : breakoutDown;
-            bool opposingBreakout = direction == TradeDirection.Long ? breakoutDown : breakoutUp;
-            bool hasContinuationSignal = ctx.Structure?.ContinuationEarlySignal == true || ctx.Structure?.ContinuationConfirmedSignal == true;
-            int barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
-            bool hasRecentDirectionalImpulse = direction != TradeDirection.None && barsSinceImpulse >= 0 && barsSinceImpulse <= 12;
-            bool trendFollowThrough = ctx.LastClosedBarInTrendDirection || ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5;
-            bool shallowPullbackWidened =
-                !hasPullback &&
-                (ctx.Structure?.HasMicroPullback == true || ctx.Structure?.PullbackDepth > 0.03) &&
-                (hasContinuationSignal || trendFollowThrough) &&
-                (ctx.Structure?.ImpulseStrength ?? 0.0) >= 0.45;
-            bool weakFlagWidened =
-                !hasFlag &&
-                (ctx.Structure?.FlagBars ?? 0) >= 2 &&
-                (ctx.Structure?.FlagCompression ?? 1.0) <= 0.88 &&
-                (hasContinuationSignal || trendFollowThrough);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
-            ctx.Log?.Invoke(
-                $"[FX][FLAG_CHECK] impulse={hasImpulse.ToString().ToLowerInvariant()} pullback={hasPullback.ToString().ToLowerInvariant()} flag={hasFlag.ToString().ToLowerInvariant()} direction={direction} breakout_up={breakoutUp.ToString().ToLowerInvariant()} breakout_down={breakoutDown.ToString().ToLowerInvariant()}");
-
-            if (direction != TradeDirection.Long && direction != TradeDirection.Short)
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                var logicDirection = ctx.LogicBiasDirection;
-                bool canUseLogicDirection =
-                    structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
-                if (!canUseLogicDirection)
-                {
-                    ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure?.DirectionSource ?? "NA"} finalValid=false");
-                    return Block(ctx, "NO_DIRECTION");
-                }
-
-                direction = logicDirection;
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={direction} finalValid=true");
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
-                    $"resolvedDir={direction}");
-                alignedBreakout = direction == TradeDirection.Long ? breakoutUp : breakoutDown;
-                opposingBreakout = direction == TradeDirection.Long ? breakoutDown : breakoutUp;
-                barsSinceImpulse = ctx.GetBarsSinceImpulse(direction);
-                hasRecentDirectionalImpulse = barsSinceImpulse >= 0 && barsSinceImpulse <= 12;
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=DIRECTION_FROM_LOGIC_BIAS direction={direction}");
+                var eval = EvaluateSide(TradeDirection.Long, ctx);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
-            else if (structureDirStrict)
+            else if (ctx.LogicBias == TradeDirection.Short)
             {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "DIR_OK", "StructureDirection", "StructureDirection",
-                    $"source={ctx.Structure?.DirectionSource ?? "NA"} resolvedDir={direction} strict=true");
+                var eval = EvaluateSide(TradeDirection.Short, ctx);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
             }
 
-            bool impulseOk = hasImpulse || hasRecentDirectionalImpulse || ctx.IsStructureImpulseAuthoritative();
-            if (!impulseStrict && impulseOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()} finalValid=true");
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse}");
-            }
+            return Invalid(ctx, TradeDirection.None, "NO_LOGIC_BIAS", 0);
+        }
 
-            bool localAuthority =
-                (hasPullback || shallowPullbackWidened) &&
-                (hasFlag || weakFlagWidened) &&
-                hasContinuationSignal &&
-                (alignedBreakout || !opposingBreakout);
+        private EntryEvaluation EvaluateSide(TradeDirection dir, EntryContext ctx)
+        {
+            int setupScore = 0;
+            int minScore = MinScore;
 
-            if (!impulseOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasImpulse", "NONE",
-                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure?.ImpulseRecentOk.ToString().ToLowerInvariant()}");
-                return Block(ctx, "NO_IMPULSE");
-            }
+            var timing = ContinuationTimingGate.Evaluate(ctx, dir, Type.ToString());
+            if (!timing.IsAllowed)
+                return Invalid(ctx, dir, timing.Reason, 0);
 
-            bool pullbackOk = hasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
-            if (!pullbackStrict && pullbackOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00} shallow={(ctx.Structure?.PullbackShallowOk ?? false).ToString().ToLowerInvariant()} micro={(ctx.Structure?.HasMicroPullback ?? false).ToString().ToLowerInvariant()} finalValid=true");
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
-            }
+            bool hasImpulse =
+                dir == TradeDirection.Long ? ctx.HasImpulseLong_M5 : ctx.HasImpulseShort_M5;
 
-            if (!pullbackOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasPullback", "NONE",
-                    $"depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
-                return Block(ctx, "NO_PULLBACK");
-            }
-            if (shallowPullbackWidened)
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={(ctx.Structure?.PullbackDepth ?? 0.0):0.00}");
+            double pullbackDepthAtr =
+                dir == TradeDirection.Long ? ctx.PullbackDepthRLong_M5 : ctx.PullbackDepthRShort_M5;
 
-            bool flagOk = hasFlag || weakFlagWidened || ctx.IsStructureFlagAuthoritative();
-            if (!flagStrict && flagOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "FLAG_OK", "HasFlag", "FlagMessyOk",
-                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00} messy={(ctx.Structure?.FlagMessyOk ?? false).ToString().ToLowerInvariant()} finalValid=true");
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "ALT_PATH_USED", "HasFlag", "FlagMessyOk",
-                    $"flagBars={ctx.Structure?.FlagBars ?? 0}");
-            }
+            bool isValidFlagStructure =
+                dir == TradeDirection.Long ? ctx.HasFlagLong_M5 : ctx.HasFlagShort_M5;
 
-            if (!flagOk)
-            {
-                ctx.LogStructureAuthority("FX_FlagContinuationEntry", "STILL_FAIL", "HasFlag", "NONE",
-                    $"flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00}");
-                return Block(ctx, "INVALID_FLAG");
-            }
-            if (weakFlagWidened)
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][WIDEN_ALLOW] code=WEAK_FLAG flagBars={ctx.Structure?.FlagBars ?? 0} compression={(ctx.Structure?.FlagCompression ?? 0.0):0.00}");
+            bool hasValidImpulse =
+                hasImpulse ||
+                (ctx.IsAtrExpanding_M5 && !ctx.IsRange_M5);
 
-            if (!alignedBreakout && !hasContinuationSignal)
-                return Block(ctx, "INVALID_FLAG");
+            if (!hasValidImpulse)
+                return Invalid(ctx, dir, "NO_IMPULSE", 49);
 
-            if (opposingBreakout)
-                return Block(ctx, "DIRECTION_MISMATCH");
+            if (!isValidFlagStructure)
+                return Invalid(ctx, dir, "INVALID_FLAG", 50);
 
-            var timing = ContinuationTimingGate.Evaluate(ctx, direction, Type.ToString());
-            if (!timing.IsAllowed && timing.Reason == "TIMING_SIDE_INACTIVE" && !localAuthority)
-                return Block(ctx, "TIMING_SIDE_INACTIVE");
+            if (pullbackDepthAtr < MinPullbackAtr)
+                return Invalid(ctx, dir, "PB_TOO_SHALLOW", 50);
 
-            int score = 70;
-            if (hasRecentDirectionalImpulse && !hasImpulse)
-            {
-                score -= 6;
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][PASS] reason=RECENT_IMPULSE_FALLBACK barsSinceImpulse={barsSinceImpulse}");
-            }
+            // =========================
+            // SESSION-AWARE PULLBACK DEPTH
+            // =========================
+            double maxPb = MaxPullbackAtr;
 
-            if (!timing.IsAllowed && timing.Reason == "TIMING_SIDE_INACTIVE" && localAuthority)
-            {
-                score -= 8;
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][PASS] reason=TIMING_SIDE_INACTIVE_LOCAL_AUTHORITY direction={direction}");
-            }
+            if (ctx.Session.ToString() == "NewYork")
+                maxPb = 0.75;
+
+            int score = 48;
+
+            if (pullbackDepthAtr > maxPb)
+                return Invalid(ctx, dir, "PB_TOO_DEEP", 49);
+
+            if (!ctx.IsPullbackDecelerating_M5)
+                return Invalid(ctx, dir, "NO_DECELERATION", 51);
+
+            if (!ctx.HasReactionCandle_M5)
+                return Invalid(ctx, dir, "NO_REACTION", 50);
+
+            // ✅ FIX: side-aware M1 confirmation
+            bool m1Confirm =
+                ctx.M1FlagBreakTrigger ||
+                (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir);
+
+            bool continuationSignal = m1Confirm;
+
+            bool hasStructure =
+                pullbackDepthAtr >= MinPullbackAtr;
+
+            if (!hasStructure)
+                setupScore -= 35;
             else
-            {
-                score += timing.ScoreAdjustment;
-            }
+                setupScore += 15;
 
-            var htfDir = ctx.ResolveAssetHtfAllowedDirection();
-            bool htfMismatch =
-                htfDir != TradeDirection.None &&
-                direction != TradeDirection.None &&
-                htfDir != direction;
+            bool hasContinuation =
+                continuationSignal;
 
-            if (htfMismatch && !localAuthority)
-                return Block(ctx, "HTF_MISMATCH");
+            if (hasContinuation)
+                setupScore += 20;
 
-            if (htfMismatch)
-            {
+            if (timing.RequireStrongStructure && !hasStructure)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_STRUCTURE", 0);
+
+            if (timing.RequireStrongTrigger && !m1Confirm)
+                return Invalid(ctx, dir, "TIMING_LATE_NEEDS_STRONG_TRIGGER", 0);
+
+            // ✅ FIX: side-aware score boost
+            if (ctx.HasBreakout_M1 && ctx.BreakoutDirection == dir)
+                score += 10;
+
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = m1Confirm || ctx.RangeBreakDirection == dir;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = continuationSignal || ctx.LastClosedBarInTrendDirection;
+
+            if (ctx.IsRange_M5)
                 score -= 10;
-                ctx.Log?.Invoke($"[ENTRY][FX_FLAG][PASS] reason=HTF_MISMATCH_LOCAL_AUTHORITY htf={htfDir} dir={direction}");
-            }
 
-            score = score < 0 ? 0 : (score > 100 ? 100 : score);
-            ctx.Log?.Invoke($"[ENTRY][FX_FLAG][RECOGNIZED] direction={direction} score={score} localAuthority={localAuthority.ToString().ToLowerInvariant()}");
+            score = TriggerScoreModel.Apply(ctx, $"FX_FLAG_CONT_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_M1_CONFIRM");
 
-            var eval = new EntryEvaluation
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
+            score += timing.ScoreAdjustment;
+            minScore += timing.MinScoreAdjustment;
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = System.Math.Min(score, minScore - 10);
+
+            if (score < minScore)
+                return Invalid(ctx, dir, "LOW_SCORE", score);
+
+            return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
-                Direction = direction,
+                Direction = dir,
                 Score = score,
                 IsValid = true,
-                TriggerConfirmed = alignedBreakout,
-                Reason = "FX_FLAG_STRUCTURE_CONFIRMED"
+                Reason = $"FX_FLAG_CONT score={score} pbATR={pullbackDepthAtr:F2}"
+            };
+        }
+
+        private EntryEvaluation Invalid(EntryContext ctx, string reason)
+            => new()
+            {
+                Symbol = ctx?.Symbol,
+                Type = Type,
+                IsValid = false,
+                Reason = reason
             };
 
-            EntryDirectionQuality.LogDecision(
-                ctx,
-                Type.ToString(),
-                direction == TradeDirection.Long ? eval : null,
-                direction == TradeDirection.Short ? eval : null,
-                eval.Direction);
-
-            return EntryDecisionPolicy.Normalize(eval);
-        }
-
-        private void LogStructure(EntryContext ctx)
-        {
-            ctx.Log?.Invoke(
-                $"[FX][STRUCTURE] impulse={(ctx.Structure?.HasImpulse == true).ToString().ToLowerInvariant()} pullback={(ctx.Structure?.HasPullback == true).ToString().ToLowerInvariant()} micro_pullback={(ctx.Structure?.HasMicroPullback == true).ToString().ToLowerInvariant()} flag={(ctx.Structure?.HasFlag == true).ToString().ToLowerInvariant()} direction={ctx.Structure?.StructureDirection ?? TradeDirection.None}");
-        }
-
-        private EntryEvaluation Block(EntryContext ctx, string reason)
-        {
-            ctx.Log?.Invoke($"[ENTRY][FX_FLAG][BLOCK] reason={reason}");
-            return Invalid(ctx, TradeDirection.None, reason);
-        }
-
-        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason)
+        private EntryEvaluation Invalid(EntryContext ctx, TradeDirection dir, string reason, int score)
             => new()
             {
                 Symbol = ctx?.Symbol,
                 Type = Type,
                 Direction = dir,
-                Score = 0,
+                Score = score,
                 IsValid = false,
                 Reason = reason
             };
+
+        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
+        {
+            return EntryDirectionQuality.Apply(
+                ctx,
+                direction,
+                score,
+                new DirectionQualityRequest
+                {
+                    TypeTag = "FX_FlagContinuationEntry",
+                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
+                });
+        }
+
     }
 }

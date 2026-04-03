@@ -82,12 +82,12 @@ using GeminiV26.Instruments.FX;
             if (fx.FlagTuning == null || !fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, TradeDirection.None, "NO_FLAG_TUNING", 0);
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvalForDir(ctx, fx, tuning, TradeDirection.Long);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 ApplyScoreModifier(eval, matrix);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
@@ -95,7 +95,6 @@ using GeminiV26.Instruments.FX;
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvalForDir(ctx, fx, tuning, TradeDirection.Short);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 ApplyScoreModifier(eval, matrix);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
@@ -148,7 +147,7 @@ using GeminiV26.Instruments.FX;
             ctx.Log?.Invoke(
                 $"[FX_FLAG START] sym={ctx.Symbol} sess={ctx.Session} candDir={flagDir} " +
                 $"trendDir={ctx.TrendDirection} " +
-                $"htf={ctx.ActiveHtfDirection}/{ctx.ActiveHtfConfidence:F2} " +
+                $"htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} " +
                 $"ema50>200={(ctx.Ema50_M5 > ctx.Ema200_M5)} " +
                 $"ema8>21={(ctx.Ema8_M5 > ctx.Ema21_M5)} " +
                 $"ema21Slope={ctx.Ema21Slope_M5:F4} " +
@@ -239,8 +238,8 @@ using GeminiV26.Instruments.FX;
 
             // --- HTF transition hardening ---
             bool htfTransitionZone =
-                ctx.ActiveHtfDirection == TradeDirection.None &&
-                ctx.ActiveHtfConfidence >= 0.50;
+                ctx.FxHtfAllowedDirection == TradeDirection.None &&
+                ctx.FxHtfConfidence01 >= 0.50;
 
             if (htfTransitionZone)
                 minBoost += 2;
@@ -277,11 +276,11 @@ using GeminiV26.Instruments.FX;
                     ApplyPenalty(1);
                 }
 
-                if (ctx.ActiveHtfDirection == TradeDirection.None && ctx.ActiveHtfConfidence >= 0.50)
+                if (ctx.FxHtfAllowedDirection == TradeDirection.None && ctx.FxHtfConfidence01 >= 0.50)
                 {
                     ApplyPenalty(2);
                     minBoost += 1;
-                    ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=2 conf={ctx.ActiveHtfConfidence:F2}");
+                    ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=2 conf={ctx.FxHtfConfidence01:F2}");
                 }
             }
 
@@ -697,7 +696,7 @@ using GeminiV26.Instruments.FX;
             {
                 ApplyPenalty(3);
                 minBoost += 2;
-                ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=3 conf={ctx.ActiveHtfConfidence:F2}");
+                ctx.Log?.Invoke($"[FX_FLAG][HTF][BIAS] candDir={flagDir} state=Transition impact=ScoreOnly penalty=3 conf={ctx.FxHtfConfidence01:F2}");
             }
 
             bool softM1 =
@@ -774,10 +773,10 @@ using GeminiV26.Instruments.FX;
                     minBoost += 2;
 
                 if (fx.RequireHtfAlignmentForContinuation &&
-                    ctx.ActiveHtfDirection != TradeDirection.None &&
-                    ctx.ActiveHtfDirection != flagDir)
+                    ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                    ctx.FxHtfAllowedDirection != flagDir)
                 {
-                    double conf = ctx.ActiveHtfConfidence;
+                    double conf = ctx.FxHtfConfidence01;
 
                     int penalty =
                         conf >= 0.75 ? 6 :
@@ -829,9 +828,9 @@ using GeminiV26.Instruments.FX;
 
                 ApplyPenalty(finalPenalty);
 
-                if (ctx.ActiveHtfDirection != TradeDirection.None &&
-                    flagDir != ctx.ActiveHtfDirection &&
-                    ctx.ActiveHtfConfidence >= 0.55)
+                if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                    flagDir != ctx.FxHtfAllowedDirection &&
+                    ctx.FxHtfConfidence01 >= 0.55)
                 {
                     ApplyPenalty(2);
                 }
@@ -850,12 +849,12 @@ using GeminiV26.Instruments.FX;
             }
 
             // HTF CONFLICT – SOFT ONLY
-            bool htfHasDir = ctx.ActiveHtfDirection != TradeDirection.None;
-            bool htfConflict = htfHasDir && flagDir != ctx.ActiveHtfDirection;
+            bool htfHasDir = ctx.FxHtfAllowedDirection != TradeDirection.None;
+            bool htfConflict = htfHasDir && flagDir != ctx.FxHtfAllowedDirection;
 
             if (htfConflict)
             {
-                double conf = ctx.ActiveHtfConfidence;
+                double conf = ctx.FxHtfConfidence01;
 
                 int penalty =
                     conf >= 0.75 ? 6 :
@@ -892,7 +891,7 @@ using GeminiV26.Instruments.FX;
                     if (!transitionLong)
                     {
                         ApplyPenalty(8);
-                        if (ctx.ActiveHtfConfidence > 0.65) ApplyPenalty(3);
+                        if (ctx.FxHtfConfidence01 > 0.65) ApplyPenalty(3);
                     }
                     else ApplyReward(4);
                 }
@@ -917,8 +916,8 @@ using GeminiV26.Instruments.FX;
                     {
                         ApplyPenalty(8);
 
-                        if (ctx.ActiveHtfConfidence > 0.65 &&
-                            ctx.ActiveHtfDirection == TradeDirection.Long)
+                        if (ctx.FxHtfConfidence01 > 0.65 &&
+                            ctx.FxHtfAllowedDirection == TradeDirection.Long)
                         {
                             ApplyPenalty(3);
                         }
@@ -1024,7 +1023,7 @@ using GeminiV26.Instruments.FX;
 
             if (score < min)
                 return Invalid(ctx, flagDir,
-                    $"LOW_SCORE({score}<{min}) htf={ctx.ActiveHtfDirection}/{ctx.ActiveHtfConfidence:F2} session={ctx.Session} boost={minBoost} flagDir={flagDir}({flagDirReason})",
+                    $"LOW_SCORE({score}<{min}) htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} session={ctx.Session} boost={minBoost} flagDir={flagDir}({flagDirReason})",
                     score);
 
             // ✅ IMPORTANT: NO HARD GATE on ctx.TrendDirection anymore

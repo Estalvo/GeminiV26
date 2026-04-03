@@ -46,29 +46,25 @@ namespace GeminiV26.EntryTypes
                 return CreateInvalid(ctx, $"WeakEvidence({ctx.ReversalEvidenceScore});");
             }
 
-            bool htfMismatch =
-                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
-                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
-                ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
-            if (htfMismatch)
-                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return CreateInvalid(ctx, "HTF_MISMATCH");
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Long, htfMismatch);
+                var eval = EvaluateSide(ctx, TradeDirection.Long);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Short, htfMismatch);
+                var eval = EvaluateSide(ctx, TradeDirection.Short);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
             return CreateInvalid(ctx, "NO_LOGIC_BIAS");
         }
-        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir, bool htfMismatch)
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
             var eval = new EntryEvaluation
             {
@@ -82,11 +78,6 @@ namespace GeminiV26.EntryTypes
 
             int score = 0;
             int setupScore = 0;
-            if (htfMismatch)
-            {
-                score -= 8;
-                eval.Reason += "HTF_SOFT_MISMATCH;";
-            }
 
             score += ctx.ReversalEvidenceScore * 12;
             score += 20;
