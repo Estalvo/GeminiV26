@@ -71,6 +71,47 @@ using System.Linq;
 
 namespace GeminiV26.Core
 {
+    internal static class TradeCoreGlobalLogger
+    {
+        public static void Log(Robot bot, string msg)
+        {
+            if (msg == null)
+                return;
+
+            if (bot != null)
+                bot.Print(msg);
+            else
+                System.Diagnostics.Debug.WriteLine(msg);
+        }
+
+        public static void Log(string msg, Robot bot = null)
+        {
+            Log(bot, msg);
+        }
+
+        public static void Log(string msg, Robot bot, string positionId)
+        {
+            if (msg == null)
+                return;
+
+            Log(bot, positionId == null ? msg : $"[POS:{positionId}] {msg}");
+        }
+
+        public static void Log(string msg)
+        {
+            Log((Robot)null, msg);
+        }
+
+        public static void Log(object source, string msg)
+        {
+            if (msg == null)
+                return;
+
+            string prefix = source == null ? "[LOG]" : $"[{source.GetType().Name}]";
+            Log($"{prefix} {msg}");
+        }
+    }
+
     public class TradeCore
     {
         private readonly Robot _bot;
