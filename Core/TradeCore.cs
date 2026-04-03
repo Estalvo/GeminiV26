@@ -38,6 +38,7 @@ using GeminiV26.EntryTypes.METAL;
 using GeminiV26.EntryTypes.Crypto;
 using GeminiV26.Interfaces;
 using GeminiV26.Core.Logging;
+using GlobalLogger = global::GeminiV26.Core.Logging.GlobalLogger;
 using GeminiV26.Instruments.XAUUSD;
 using GeminiV26.Instruments.NAS100;
 using GeminiV26.Instruments.US30;
