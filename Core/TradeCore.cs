@@ -3310,7 +3310,9 @@ namespace GeminiV26.Core
             if (IsFlagEntryType(candidate.Type))
             {
                 int flagBars = GetFlagBarsForCandidate(ctx, candidate, transition);
+                bool flagAuthorityOk = ctx.IsStructureFlagAuthoritative();
                 bool hasValidFlagContext = transition.HasFlag ||
+                                           flagAuthorityOk ||
                                            transition.FlagBars > 0 ||
                                            (ctx.FlagHigh > ctx.FlagLow) ||
                                            ctx.FlagAtr_M5 > 0 ||
@@ -3320,6 +3322,15 @@ namespace GeminiV26.Core
                     bool shouldHardBlock = flagBars == 0 || !hasValidFlagContext;
                     GlobalLogger.Log(_bot,
                         $"[INDEX][FLAG_CHECK] flagBars={flagBars} action={(shouldHardBlock ? "block" : "penalty")}");
+
+                    if (shouldHardBlock && flagAuthorityOk)
+                    {
+                        shouldHardBlock = false;
+                        GlobalLogger.Log(_bot,
+                            $"[STRUCT][AUTH][FLAG_OK] symbol={instrument} mode={(ctx.Structure.FlagStandardOk ? "standard" : "messy")}");
+                        if (!ctx.Structure.FlagStandardOk && ctx.Structure.FlagMessyOk)
+                            GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={instrument} alt=messy_flag");
+                    }
 
                     if (shouldHardBlock)
                     {
@@ -3345,7 +3356,8 @@ namespace GeminiV26.Core
                 }
             }
 
-            if (!transition.HasImpulse)
+            bool impulseAuthorityOk = ctx.IsStructureImpulseAuthoritative();
+            if (!transition.HasImpulse && !impulseAuthorityOk)
             {
                 if (instrumentClass == InstrumentClass.CRYPTO)
                 {
@@ -3375,6 +3387,13 @@ namespace GeminiV26.Core
                 GlobalLogger.Log(_bot,
                     $"[ENTRY][FILTER][NO_IMPULSE] instrument={instrumentClass} entryType={candidate.Type} action=penalty score={impulseScoreBefore}->{candidate.Score} penalty={penalty}");
                 return true;
+            }
+            else if (!transition.HasImpulse && impulseAuthorityOk)
+            {
+                GlobalLogger.Log(_bot,
+                    $"[STRUCT][AUTH][IMPULSE_OK] symbol={instrument} recent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
+                if (ctx.Structure.ImpulseRecentOk && !ctx.Structure.HasImpulse)
+                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={instrument} alt=recent_impulse");
             }
 
             bool weakStructure =
