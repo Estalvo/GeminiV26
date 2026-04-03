@@ -387,7 +387,8 @@ namespace GeminiV26.Core.Entry
                 return;
             }
 
-            Bot?.Print(TradeLogIdentity.WithTempId(message, this));
+            if (Bot != null)
+                GeminiV26.Core.Logging.GlobalLogger.Log(Bot, TradeLogIdentity.WithTempId(message, this));
         }
 
         public int GetBarsSinceImpulse(TradeDirection direction)

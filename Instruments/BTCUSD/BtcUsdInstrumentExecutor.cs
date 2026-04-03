@@ -228,7 +228,7 @@ namespace GeminiV26.Instruments.BTCUSD
                 return;
             }
 
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[BTC RISK] score={entry.Score} logicConf={logicConfidence} RC={adjustedRiskConfidence} FC={ctx.FinalConfidence} " +
                 $"risk%={riskPercent:F2} slDist={slPriceDist:F2} slPips={slPips:F1} " +
                 $"volUnits={volumeUnits}"
@@ -322,7 +322,7 @@ namespace GeminiV26.Instruments.BTCUSD
             ctx.InitialStopLossPrice = slPriceActual;
             ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
             ctx.LastStopLossPrice = slPriceActual;
-            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
 
             // 🔒 FINAL CONFIDENCE
             ctx.ComputeFinalConfidence();

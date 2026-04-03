@@ -268,11 +268,11 @@ namespace GeminiV26.Instruments.USDCAD
 
                     if (!ctx.InitialStopLossPrice.HasValue)
                     {
-                        _bot.Print($"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
+                        GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
                     }
 
                     var slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss;
-                    _bot.Print($"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
+                    GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
 
                     bool reached =
                         IsLong(ctx)

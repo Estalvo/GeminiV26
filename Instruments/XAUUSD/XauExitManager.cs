@@ -334,11 +334,11 @@ namespace GeminiV26.Instruments.XAUUSD
 
                     if (!ctx.InitialStopLossPrice.HasValue)
                     {
-                        _bot.Print($"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
+                        GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[WARN][SL_MISSING] symbol={_bot.SymbolName} fallback path active");
                     }
 
                     var slUsed = ctx.InitialStopLossPrice ?? ctx.LastStopLossPrice ?? pos.StopLoss;
-                    _bot.Print($"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
+                    GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[TP1_SOURCE] symbol={_bot.SymbolName} entry={ctx.EntryPrice} slUsed={slUsed} source={(ctx.InitialStopLossPrice.HasValue ? "initial" : "fallback")}");
 
                     // ------------------------------------------------
                     // TP1 HIT DETECTION
@@ -348,7 +348,7 @@ namespace GeminiV26.Instruments.XAUUSD
                         IsLong(ctx)
                             ? sym.Bid >= tp1Price
                             : sym.Ask <= tp1Price;
-                                        
+
                     if (!hit)
                     {
                         if (TryGetExitBars(pos, TimeFrame.Minute, out var m1, ctx) && m1.Count > 0)
@@ -370,7 +370,7 @@ namespace GeminiV26.Instruments.XAUUSD
                     }
 
                     const int MinBarsBeforeTvm = 4;
-                    
+
                     if (ctx.BarsSinceEntryM5 >= MinBarsBeforeTvm)
                     {
                         if (!TryGetExitBars(pos, TimeFrame.Minute5, out var m5, ctx) ||
@@ -457,7 +457,7 @@ namespace GeminiV26.Instruments.XAUUSD
             long closeVolume = (long)sym.NormalizeVolumeInUnits(flooredUnits, RoundingMode.Down);
 
             GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE check symbol={pos.SymbolName} positionId={pos.Id} volumeInUnits={pos.VolumeInUnits} frac={frac} rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));
-            
+
             if (closeVolume < sym.VolumeInUnitsMin)
             {
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithPositionIds($"[EXIT] PARTIAL CLOSE skipped symbol={pos.SymbolName} positionId={pos.Id} reason=tp1_close_units_below_min rawUnits={rawUnitsD} flooredUnits={flooredUnits} closeVolume={closeVolume} min={sym.VolumeInUnitsMin} step={sym.VolumeInUnitsStep}", ctx, pos));

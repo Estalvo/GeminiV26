@@ -47,7 +47,7 @@ namespace GeminiV26.Core.Entry
                     }
 
                     // DEBUG – marad
-                    System.Diagnostics.Debug.WriteLine(
+                    GeminiV26.Core.Logging.GlobalLogger.Log(
                         $"[DEBUG_ROUTER] {ctx.Symbol} {entryType.GetType().Name} " +
                         $"{(eval == null ? "eval=NULL" : $"score={eval.Score} valid={eval.IsValid} dir={eval.Direction} reason={eval.Reason ?? ""}")}"
                     );

@@ -72,10 +72,10 @@ namespace GeminiV26.Instruments.EURUSD
             }
             var ms = _marketStateDetector?.Evaluate();
 
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[EUR EXEC] ENTRY RECEIVED type={entry.Type} finalDir={entryContext.FinalDirection} score={entry.Score} reason={entry.Reason}"
             );
-            
+
             // =========================
             // MARKET STATE – SOFT (FX)
             // =========================
@@ -141,7 +141,7 @@ namespace GeminiV26.Instruments.EURUSD
 
                 GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[SOFT_PENALTY] value={statePenalty} riskFinal={adjustedRiskConfidence}", entryContext));
 
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[EUR EXEC] CONF entryScore={entry.Score} logic={logicConfidence} final={ctx.FinalConfidence} statePenalty={statePenalty} riskConf={adjustedRiskConfidence}"
             );
 
@@ -173,10 +173,10 @@ namespace GeminiV26.Instruments.EURUSD
 
             long volumeUnits = CalculateVolumeInUnits(riskPercent, slPriceDist, adjustedRiskConfidence);
 
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[EUR EXEC] RISK risk%={riskPercent:F3} slDist={slPriceDist:F5} volume={volumeUnits}"
             );
-            
+
             if (volumeUnits <= 0)
             {
                 GlobalLogger.Log(_bot, "[EUR EXEC] BLOCKED: volume invalid");
@@ -196,10 +196,10 @@ namespace GeminiV26.Instruments.EURUSD
             double slPips = slPriceDist / _bot.Symbol.PipSize;
             double tp2Pips = Math.Abs(tp2Price - entryPrice) / _bot.Symbol.PipSize;
 
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[EUR EXEC] SEND ORDER type={tradeType} vol={volumeUnits} slPips={slPips:F1} tp2Pips={tp2Pips:F1}"
             );
-                
+
             GlobalLogger.Log(_bot, TradeLogIdentity.WithTempId($"[ENTRY][EXEC][REQUEST] symbol={entry.Symbol ?? entryContext.Symbol ?? _bot.SymbolName} entryType={entry.Type} pipelineId={entryContext.TempId} side={tradeType} volumeUnits={volumeUnits} slPips={slPips:0.#####} tpPips={tp2Pips:0.#####}", entryContext));
 
             var result = _bot.ExecuteMarketOrder(
@@ -210,7 +210,7 @@ namespace GeminiV26.Instruments.EURUSD
                 slPips,
                 tp2Pips,
                 entryContext.TempId);
-                    
+
             if (!result.IsSuccessful || result.Position == null)
             {
                 GlobalLogger.Log(_bot, "[EUR EXEC] Order execution FAILED");
@@ -276,7 +276,7 @@ namespace GeminiV26.Instruments.EURUSD
             ctx.InitialStopLossPrice = slPriceActual;
             ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
             ctx.LastStopLossPrice = slPriceActual;
-            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
 
             // ✅ 1 sor, safe: kanonikus FinalConfidence kiszámolása (CSV/analytics)
             ctx.ComputeFinalConfidence();

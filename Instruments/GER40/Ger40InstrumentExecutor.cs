@@ -165,7 +165,7 @@ namespace GeminiV26.Instruments.GER40
             // =========================
             // LOG – KÖTELEZŐ DEBUG
             // =========================
-            GlobalLogger.Log(_bot, 
+            GlobalLogger.Log(_bot,
                 $"[GER40 RISK] score={entry.Score} " +
                 $"risk%={riskPercent:F2} " +
                 $"slATR={slAtrMult:F2} " +
@@ -274,7 +274,7 @@ namespace GeminiV26.Instruments.GER40
             ctx.InitialStopLossPrice = slPriceActual;
             ctx.RiskPriceDistance = Math.Abs(ctx.EntryPrice - slPriceActual);
             ctx.LastStopLossPrice = slPriceActual;
-            _bot.Print($"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
+            GeminiV26.Core.Logging.GlobalLogger.Log(_bot, $"[SL_SNAPSHOT] symbol={_bot.SymbolName} entry={ctx.EntryPrice} initialSL={slPriceActual}");
 
             ctx.ComputeFinalConfidence();
 

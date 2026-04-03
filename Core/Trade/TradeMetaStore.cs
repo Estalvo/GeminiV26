@@ -12,7 +12,7 @@ namespace GeminiV26.Core
         {
             if (_pending.ContainsKey(symbol))
             {
-                System.Diagnostics.Debug.WriteLine(
+                GeminiV26.Core.Logging.GlobalLogger.Log(
                     $"[META OVERWRITE WARNING] symbol={symbol}"
                 );
             }
