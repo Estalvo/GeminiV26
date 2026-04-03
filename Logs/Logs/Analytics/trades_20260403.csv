@@ -1,2 +1,0 @@
-Symbol,PositionId,SetupType,EntryType,InstrumentClass,MarketRegime,MfeR,MaeR,RMultiple,TransitionQuality,FinalConfidence,Confidence,Profit,OpenTimeUtc,CloseTimeUtc
-US 30,251501231,Pullback,Index_Pullback,INDEX,,0.0987,-0.571,-0.571,0,49,49,-88.28999999999999,2026-04-03T08:30:01.2570000Z,2026-04-03T09:05:03.1510000Z

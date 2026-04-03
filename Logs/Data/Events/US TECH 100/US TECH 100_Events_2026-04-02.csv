@@ -1,3 +1,0 @@
-EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T19:38:05.1200000Z,US TECH 100,BotStop,0,,,,
-2026-04-02T19:38:10.3860000Z,US TECH 100,BotStart,0,,Started on Minute5,,

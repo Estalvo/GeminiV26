@@ -1,3 +1,0 @@
-EventTimestamp,Symbol,EventType,PositionId,Confidence,Reason,Extra,RValue
-2026-04-02T19:38:05.1200000Z,USDCAD,BotStop,0,,,,
-2026-04-02T19:38:10.3230000Z,USDCAD,BotStart,0,,Started on Minute5,,
