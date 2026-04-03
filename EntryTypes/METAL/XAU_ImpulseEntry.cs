@@ -26,6 +26,49 @@ namespace GeminiV26.EntryTypes.METAL
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
+            DirectionDebug.LogOnce(ctx);
+            var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
+            if (!matrix.AllowBreakout)
+                return Reject(ctx, "SESSION_MATRIX_BREAKOUT_DISABLED");
+
+            if (ctx == null || !ctx.IsReady || ctx.M5 == null)
+                return Reject(ctx, "CTX_NOT_READY");
+
+            if (ctx.LogicBias == TradeDirection.None)
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "NO_LOGIC_BIAS"
+                };
+
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return new EntryEvaluation
+                {
+                    Symbol = ctx?.Symbol,
+                    Type = Type,
+                    Direction = TradeDirection.None,
+                    Score = 0,
+                    IsValid = false,
+                    Reason = "HTF_MISMATCH"
+                };
+
+            if (ctx.LogicBias == TradeDirection.Long)
+            {
+                var eval = EvaluateSide(ctx, matrix, TradeDirection.Long);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(ctx, matrix, TradeDirection.Short);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
@@ -33,19 +76,13 @@ namespace GeminiV26.EntryTypes.METAL
                 Direction = TradeDirection.None,
                 Score = 0,
                 IsValid = false,
-                Reason = "XAU Impulse disabled"
+                Reason = "NO_LOGIC_BIAS"
             };
         }
-        private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir, bool htfMismatch)
+        private EntryEvaluation EvaluateSide(EntryContext ctx, SessionMatrixConfig matrix, TradeDirection dir)
         {
             int score = 60;
             int setupScore = 0;
-
-            if (htfMismatch)
-            {
-                score -= 8;
-                ctx.Log?.Invoke($"[HTF][SCORE_PENALTY] entryType={Type} dir={dir} penalty=8 score={score}");
-            }
 
             // =====================================================
             // 1️⃣ DIRECTIONAL CONTEXT

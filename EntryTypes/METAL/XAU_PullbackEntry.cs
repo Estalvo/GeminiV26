@@ -1,197 +1,381 @@
 using System;
 using GeminiV26.Core;
+using System.Collections.Generic;
 using GeminiV26.Core.Entry;
-using GeminiV26.Core.Matrix;
 using GeminiV26.EntryTypes;
+using GeminiV26.Core.Matrix;
 
 namespace GeminiV26.EntryTypes.METAL
 {
-    public sealed class XAU_PullbackEntry : IEntryType
+    public class XAU_PullbackEntry : IEntryType
     {
         public EntryType Type => EntryType.XAU_Pullback;
 
-        private const int MinBars = 20;
-        private const int FirstWindowMaxBars = 4;
-        private const int NearFirstWindowMaxBars = 6;
+        private const int BarsNotReadyMin = 20;
+        private const int ScoreDeadband = 2;
+
+        private const int FreshImpulsePenalty = 6;
+        private const int NoM1Penalty = 6;
 
         public EntryEvaluation Evaluate(EntryContext ctx)
         {
             DirectionDebug.LogOnce(ctx);
-
             var matrix = ctx?.SessionMatrixConfig ?? SessionMatrixDefaults.Neutral;
             if (!matrix.AllowPullback)
-                return Reject(ctx, TradeDirection.None, "SESSION_DISABLED", "[ENTRY][XAU_PB][BLOCK_SESSION]");
+                return Reject(ctx, "SESSION_DISABLED");
 
-            if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < MinBars)
-                return Reject(ctx, TradeDirection.None, "CTX_NOT_READY", "[ENTRY][XAU_PB][BLOCK_CTX]");
+            if (ctx == null || !ctx.IsReady || ctx.M5 == null || ctx.M5.Count < BarsNotReadyMin)
+                return Reject(ctx, "CTX_NOT_READY");
 
-            TradeDirection dir = ctx.Structure.StructureDirection;
-            bool structureDirStrict = dir == TradeDirection.Long || dir == TradeDirection.Short;
-            bool structureDirAuthority = ctx.IsStructureDirectionAuthoritative();
-            if (!structureDirStrict)
+            if (ctx.LogicBias == TradeDirection.None)
+                return Reject(ctx, "NO_LOGIC_BIAS");
+
+            if (ctx.MarketState?.IsTrend != true)
+                return Reject(ctx, "NO_TREND_STATE");
+
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return Reject(ctx, "HTF_MISMATCH");
+
+            if (ctx.LogicBias == TradeDirection.Long)
             {
-                var logicDirection = ctx.LogicBiasDirection;
-                bool canUseLogicDirection =
-                    structureDirAuthority &&
-                    (logicDirection == TradeDirection.Long || logicDirection == TradeDirection.Short);
-                if (!canUseLogicDirection)
+                var eval = EvaluateSide(TradeDirection.Long, ctx, matrix);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+            else if (ctx.LogicBias == TradeDirection.Short)
+            {
+                var eval = EvaluateSide(TradeDirection.Short, ctx, matrix);
+                EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
+                return EntryDecisionPolicy.Normalize(eval);
+            }
+
+            return Reject(ctx, "NO_LOGIC_BIAS");
+        }
+        private EntryEvaluation EvaluateSide(
+            TradeDirection dir,
+            EntryContext ctx,
+            SessionMatrixConfig matrix)
+        {
+            int score = 60;
+            int minScore = EntryDecisionPolicy.MinScoreThreshold;
+            int setupScore = 0;
+
+            var reasons = new List<string>();
+
+            // =========================
+            // IMPULSE (2-sided)
+            // =========================
+            bool hasImpulse =
+                dir == TradeDirection.Long
+                    ? ctx.HasImpulseLong_M5
+                    : ctx.HasImpulseShort_M5;
+
+            if (!hasImpulse)
+            {
+                if (ctx.MarketState?.IsTrend == true)
+                    score -= 8;
+                else
+                    return InvalidDir(ctx, dir, "NO_IMPULSE", score);
+            }
+
+            int barsSinceImpulse =
+                dir == TradeDirection.Long
+                    ? ctx.BarsSinceImpulseLong_M5
+                    : ctx.BarsSinceImpulseShort_M5;
+
+            if (barsSinceImpulse > 6)
+                return InvalidDir(ctx, dir, "STALE_IMPULSE", score);
+
+            if (barsSinceImpulse == 0)
+            {
+                if (ctx.MarketState?.IsTrend == true)
                 {
-                    ctx.LogStructureAuthority("XAU_PullbackEntry", "STILL_FAIL", "StructureDirection", "NONE",
-                        $"reason=NO_DIRECTION source={ctx.Structure.DirectionSource ?? "NA"} finalValid=false");
-                    return Reject(ctx, TradeDirection.None, "NO_LOGIC_BIAS", "[ENTRY][XAU_PB][BLOCK_DIR]");
+                    score -= 4;
+                    reasons.Add("IMPULSE_TOO_FRESH_SOFT");
                 }
+                else
+                {
+                    return InvalidDir(ctx, dir, "IMPULSE_TOO_FRESH", score);
+                }
+            }
 
-                dir = logicDirection;
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "DIR_OK", "StructureDirection", "LogicBiasDirection",
-                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir} finalValid=true");
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "StructureDirection", "LogicBiasDirection",
-                    $"resolvedDir={dir}");
+            // =========================
+            // PULLBACK
+            // =========================
+            int pbBars =
+                dir == TradeDirection.Long
+                    ? ctx.PullbackBarsLong_M5
+                    : ctx.PullbackBarsShort_M5;
+            
+            double pbDepth =
+                dir == TradeDirection.Long
+                    ? ctx.PullbackDepthRLong_M5
+                    : ctx.PullbackDepthRShort_M5;
+
+           bool noPullback = pbBars == 0;
+
+            // EARLY CONTINUATION DETECTION
+            bool earlyContinuation =
+                pbBars > 0 &&          // ← EZ A KULCS FIX
+                hasImpulse &&
+                barsSinceImpulse <= 2 &&
+                ctx.LastClosedBarInTrendDirection;
+
+            // ha early continuation → NEM büntetjük
+            if (noPullback)
+            {
+            return InvalidDir(ctx, dir, "NO_PULLBACK", score);
+            }
+            else if (earlyContinuation)
+            {
+                score += 8;
+                reasons.Add("EARLY_CONTINUATION");
+            }
+
+            if (pbBars > 3)
+                return InvalidDir(ctx, dir, "PULLBACK_TOO_LONG", score);
+
+            double max = 1.0;
+            double deepLimit = 1.4;
+
+            // HARD REJECT csak extrém eset
+            if (pbDepth > deepLimit)
+            {
+                return InvalidDir(ctx, dir, "PB_TOO_DEEP_HARD", score);
+            }
+
+            // DEEP PULLBACK (nem automatikus halál!)
+            if (pbDepth > max)
+            {
+                bool compression =
+                    ctx.HasReactionCandle_M5 ||
+                    ctx.HasRejectionWick_M5 ||
+                    ctx.LastClosedBarInTrendDirection;
+
+                if (compression)
+                {
+                    score += 4;
+                    reasons.Add("DEEP_PB_ALLOWED");
+                }
+                else
+                {
+                    score -= 4;
+                    reasons.Add("DEEP_PB_NO_CONFIRM");
+                }
             }
             else
             {
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "DIR_OK", "StructureDirection", "StructureDirection",
-                    $"source={ctx.Structure.DirectionSource ?? "NA"} resolvedDir={dir} strict=true");
+                score += 8;
+                reasons.Add("PB_OK");
             }
 
-            int barsSinceImpulse = dir == TradeDirection.Long ? ctx.BarsSinceImpulseLong : ctx.BarsSinceImpulseShort;
-            bool recentImpulseWidened =
-                !ctx.Structure.HasImpulse &&
-                barsSinceImpulse >= 0 &&
-                barsSinceImpulse <= 8 &&
-                ctx.Structure.ImpulseStrength >= 0.50;
-            bool impulseOk = ctx.Structure.HasImpulse || recentImpulseWidened || ctx.IsStructureImpulseAuthoritative();
-            bool shallowPullbackWidened =
-                !ctx.Structure.HasPullback &&
-                ctx.Structure.HasMicroPullback &&
-                ctx.Structure.PullbackDepth >= 0.06 &&
-                ctx.Structure.PullbackDepth <= 0.24 &&
-                (ctx.Structure.ContinuationEarlySignal || ctx.Structure.ContinuationConfirmedSignal || ctx.HasReactionCandle_M5);
-            bool pullbackOk = ctx.Structure.HasPullback || shallowPullbackWidened || ctx.IsStructurePullbackAuthoritative();
-            if (!ctx.Structure.HasImpulse && impulseOk)
+            // =========================
+            // REACTION (core edge)
+            // =========================
+            bool reaction =
+                ctx.HasReactionCandle_M5 ||
+                ctx.HasRejectionWick_M5 ||
+                ctx.LastClosedBarInTrendDirection;
+
+            if (reaction)
             {
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "IMPULSE_OK", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()}");
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "HasImpulse", "ImpulseRecentOk",
-                    $"barsSinceImpulse={barsSinceImpulse}");
+                score += 10;
+                reasons.Add("REACTION_OK");
             }
-            if (!ctx.Structure.HasPullback && pullbackOk)
-            {
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "PULLBACK_OK", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={ctx.Structure.PullbackDepth:0.00} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()}");
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "ALT_PATH_USED", "HasPullback", "PullbackShallowOk|HasMicroPullback",
-                    $"depth={ctx.Structure.PullbackDepth:0.00}");
-            }
-            if (!impulseOk || !pullbackOk)
-            {
-                ctx.LogStructureAuthority("XAU_PullbackEntry", "STILL_FAIL", "HasImpulse|HasPullback", "NONE",
-                    $"impulseOk={impulseOk.ToString().ToLowerInvariant()} pullbackOk={pullbackOk.ToString().ToLowerInvariant()} barsSinceImpulse={barsSinceImpulse}");
-                return Reject(ctx, dir, "NO_IMPULSE_PULLBACK_STRUCTURE", "[ENTRY][XAU_PB][WIDEN_STILL_BLOCK][CODE=NO_IMPULSE_PULLBACK_STRUCTURE]");
-            }
-            if (recentImpulseWidened)
-                ctx.Log?.Invoke($"[ENTRY][XAU_PB][WIDEN_ALLOW] code=RECENT_IMPULSE barsSinceImpulse={barsSinceImpulse}");
-            if (shallowPullbackWidened)
-                ctx.Log?.Invoke($"[ENTRY][XAU_PB][WIDEN_ALLOW] code=SHALLOW_PULLBACK depth={ctx.Structure.PullbackDepth:0.00}");
-
-            bool trendStateOk = ctx.QualificationState?.HasTrend == true;
-            bool localContinuationStructure =
-                ctx.Structure.ImpulseStrength >= 0.50 &&
-                ctx.Structure.PullbackDepth >= 0.10 &&
-                ctx.Structure.PullbackDepth <= 0.75 &&
-                (ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationConfirmedSignal);
-            if (!trendStateOk && !localContinuationStructure)
-                return Reject(ctx, dir, "NO_TREND_STATE", "[ENTRY][XAU_PB][BLOCK] reason=NO_TREND_STATE");
-            if (!trendStateOk && localContinuationStructure)
-                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=NO_TREND_STATE_BYPASS_LOCAL_CONTINUATION");
-
-            int attempts = dir == TradeDirection.Long ? ctx.ContinuationAttemptCountLong : ctx.ContinuationAttemptCountShort;
-            if (attempts > 1)
-                return Reject(ctx, dir, "REFIRE_BLOCK", "[ENTRY][XAU_PB][REFIRE_BLOCK]");
-
-            bool hardChop =
-                ctx.Adx_M5 < 16 ||
-                (ctx.Adx_M5 < 18 &&
-                 !ctx.IsAtrExpanding_M5 &&
-                 ctx.Structure.PullbackBars >= 4 &&
-                 !ctx.Structure.PullbackConfirmedSignal);
-            if (hardChop)
-                return Reject(ctx, dir, "CHOP_BLOCK", "[ENTRY][XAU_PB][BLOCK] reason=CHOP_BLOCK");
-
-            bool widenedChopPass =
-                ctx.Adx_M5 >= 16 &&
-                ctx.Adx_M5 < 18 &&
-                !ctx.IsAtrExpanding_M5 &&
-                ctx.Structure.PullbackBars <= 3;
-            if (widenedChopPass)
-                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=CHOP_FILTER_WIDENED");
-
-            if (barsSinceImpulse >= 0 && barsSinceImpulse <= FirstWindowMaxBars)
-                ctx.Log?.Invoke("[ENTRY][XAU_PB][FIRST_WINDOW]");
-            else if (barsSinceImpulse > FirstWindowMaxBars &&
-                     barsSinceImpulse <= NearFirstWindowMaxBars &&
-                     ctx.Structure.ImpulseStrength >= 0.60 &&
-                     (ctx.Structure.PullbackConfirmedSignal || ctx.HasReactionCandle_M5))
-                ctx.Log?.Invoke("[ENTRY][XAU_PB][RECOGNIZED] reason=NEAR_FIRST_WINDOW");
             else
-                return Reject(ctx, dir, "LATE_BLOCK", "[ENTRY][XAU_PB][BLOCK] reason=LATE_BLOCK");
+            {
+                score -= 6;
+                reasons.Add("NO_REACTION");
+            }
 
-            bool depthMature = ctx.Structure.PullbackDepth >= 0.10 && ctx.Structure.PullbackDepth <= 0.75;
-            bool depthMatureWidened =
-                ctx.Structure.PullbackDepth >= 0.08 &&
-                ctx.Structure.PullbackDepth <= 0.82 &&
-                ctx.Structure.ImpulseStrength >= 0.55 &&
-                ctx.Structure.PullbackBars <= 4;
-            if (!depthMature && !depthMatureWidened)
-                return Reject(ctx, dir, "DEPTH_INVALID", "[ENTRY][XAU_PB][BLOCK] reason=DEPTH_INVALID");
+            if (ctx.HasEarlyPullback_M5)
+            {
+                score += 1;
+                reasons.Add("EARLY_PULLBACK");
+            }
 
-            bool continuationAuthority =
-                ctx.Structure.PullbackConfirmedSignal &&
-                ctx.LastClosedBarInTrendDirection &&
-                (ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5);
-            bool continuationAuthorityWidened =
-                ctx.LastClosedBarInTrendDirection &&
-                (ctx.M1TriggerInTrendDirection || ctx.HasReactionCandle_M5) &&
-                (ctx.Structure.PullbackConfirmedSignal || ctx.Structure.ContinuationConfirmedSignal);
+            if (ctx.IsTransition_M5)
+            {
+                score -= 6;
+                reasons.Add("TRANSITION_PENALTY");
+            }
 
-            if (!continuationAuthority && !continuationAuthorityWidened)
-                return Reject(ctx, dir, "CONTINUATION_AUTHORITY_FAIL", "[ENTRY][XAU_PB][BLOCK] reason=CONTINUATION_AUTHORITY_FAIL");
+            // =========================
+            // M1 trigger
+            // =========================
+            bool m1 =
+                ctx.M1TriggerInTrendDirection ||
+                ctx.M1ReversalTrigger;
 
-            ctx.Log?.Invoke("[ENTRY][XAU_PB][CONTINUATION_OK]");
-            ctx.Log?.Invoke(
-                depthMature
-                    ? "[ENTRY][XAU_PB][RECOGNIZED] reason=STRUCTURE_FIRST_OK"
-                    : "[ENTRY][XAU_PB][RECOGNIZED] reason=DEPTH_WIDENED");
+            if (m1)
+            {
+                score += 10;
+                reasons.Add("M1_OK");
+            }
+            else
+            {
+                score -= NoM1Penalty;
+                reasons.Add("NO_M1");
+            }
 
-            int score = 62;
-            if (ctx.Structure.ImpulseStrength >= 0.6)
-                score += 8;
-            if (ctx.Structure.PullbackConfirmedSignal)
-                score += 8;
+            // =========================
+            // HTF (soft only)
+            // =========================
+            bool against =
+                ctx.MetalHtfAllowedDirection != TradeDirection.None &&
+                ctx.MetalHtfAllowedDirection != dir;
+
+            if (against)
+            {
+                score -= 5;
+                reasons.Add("HTF_AGAINST");
+            }
+
+            bool hasFlag =
+                dir == TradeDirection.Long
+                    ? ctx.HasFlagLong_M5
+                    : ctx.HasFlagShort_M5;
+
+            bool structuredPB =
+                ctx.IsPullbackDecelerating_M5 &&
+                pbBars >= 2;
+
+            bool earlyPB =
+                ctx.HasEarlyPullback_M5;
+
+            bool hasStructure =
+                hasFlag
+                || structuredPB
+                || earlyPB;
+
+            if (!hasStructure)
+                setupScore -= 40;
+            else
+                setupScore += 20;
+
+            bool breakoutConfirmed =
+                m1;
+
+            bool earlyBreakout =
+                earlyContinuation;
+
+            bool hasConfirmation =
+                breakoutConfirmed
+                || earlyBreakout;
+
+            if (hasConfirmation)
+                setupScore += 20;
+
+            int lastClosed = ctx.M5.Count - 2;
+            var bar = ctx.M5[lastClosed];
+            bool breakoutDetected = breakoutConfirmed || earlyBreakout;
+            bool strongCandle =
+                (dir == TradeDirection.Long && bar.Close > bar.Open) ||
+                (dir == TradeDirection.Short && bar.Close < bar.Open);
+            bool followThrough = hasConfirmation;
+
+            // =========================
+            // FINAL
+            // =========================
+            int scoreBeforeTriggerModel = score;
+            score = TriggerScoreModel.Apply(ctx, $"XAU_PULLBACK_{dir}", score, breakoutDetected, strongCandle, followThrough, "NO_PULLBACK_TRIGGER");
+            bool earlyWeakness = score < scoreBeforeTriggerModel;
+
+            score = ApplyMandatoryEntryAdjustments(ctx, dir, score, true);
             score += (int)Math.Round(matrix.EntryScoreModifier);
-            score = Math.Max(0, Math.Min(100, score));
+            score += setupScore;
+
+            if (setupScore <= 0)
+                score = Math.Min(score, minScore - 10);
+
+            bool noMomentum = !(ctx.MarketState?.IsMomentum ?? false);
+            if (ctx.Symbol == "XAUUSD"
+                && ctx.MarketState != null
+                && ctx.MarketState.IsTrend
+                && noMomentum
+                && earlyWeakness)
+            {
+                int scoreBeforeCompression = score;
+                score = (int)Math.Round(score * 0.65);
+                ctx.Log?.Invoke(
+                    $"[XAU CONTINUATION FILTER] score {scoreBeforeCompression}->{score} momentum={ctx.MarketState.IsMomentum} earlyWeakness={earlyWeakness}");
+            }
+
+            bool valid = score >= minScore;
+
+            if (!valid)
+                return InvalidDir(ctx, dir, "LOW_SCORE", score);
 
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
                 Direction = dir,
-                IsValid = true,
                 Score = score,
-                Reason = "XAU_PULLBACK_STRUCTURE_FIRST_OK"
+                IsValid = true,
+                Reason = $"ACCEPT {dir} score={score} pbBars={pbBars} depth={pbDepth:F2} early={earlyContinuation}"
             };
         }
 
-        private static EntryEvaluation Reject(EntryContext ctx, TradeDirection dir, string reason, string log)
+        // =========================
+
+        private EntryEvaluation Reject(EntryContext ctx, string reason)
         {
-            ctx?.Log?.Invoke(log);
             return new EntryEvaluation
             {
                 Symbol = ctx?.Symbol,
-                Type = EntryType.XAU_Pullback,
-                Direction = dir,
+                Type = Type,
+                Direction = TradeDirection.None,
                 IsValid = false,
-                Score = 0,
                 Reason = reason
             };
         }
+
+        private EntryEvaluation RejectBoth(
+            EntryContext ctx,
+            EntryEvaluation buy,
+            EntryEvaluation sell)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = TradeDirection.None,
+                IsValid = false,
+                Score = Math.Max(buy.Score, sell.Score),
+                Reason = $"REJECT BOTH buy={buy.Score}/{buy.IsValid} sell={sell.Score}/{sell.IsValid}"
+            };
+        }
+
+        private EntryEvaluation InvalidDir(
+            EntryContext ctx,
+            TradeDirection dir,
+            string reason,
+            int score)
+        {
+            return new EntryEvaluation
+            {
+                Symbol = ctx.Symbol,
+                Type = Type,
+                Direction = dir,
+                Score = Math.Max(0, score),
+                IsValid = false,
+                Reason = reason
+            };
+        }
+
+        private static int ApplyMandatoryEntryAdjustments(EntryContext ctx, TradeDirection direction, int score, bool applyTrendRegimePenalty)
+        {
+            return EntryDirectionQuality.Apply(
+                ctx,
+                direction,
+                score,
+                new DirectionQualityRequest
+                {
+                    TypeTag = "XAU_PullbackEntry",
+                    ApplyTrendRegimePenalty = applyTrendRegimePenalty
+                });
+        }
+
     }
 }

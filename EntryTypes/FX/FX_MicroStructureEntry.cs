@@ -30,19 +30,18 @@ namespace GeminiV26.EntryTypes.FX
             if (fx == null)
                 return Invalid(ctx, TradeDirection.None, "NO_FX_PROFILE", 0);
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvalForDir(ctx, fx, TradeDirection.Long);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvalForDir(ctx, fx, TradeDirection.Short);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -66,7 +65,7 @@ namespace GeminiV26.EntryTypes.FX
 
             ctx.Log?.Invoke(
                 $"[FX_MICRO START] sym={ctx.Symbol} dir={dir} " +
-                $"htf={ctx.ActiveHtfDirection}/{ctx.ActiveHtfConfidence:F2} " +
+                $"htf={ctx.FxHtfAllowedDirection}/{ctx.FxHtfConfidence01:F2} " +
                 $"impulse={ctx.HasImpulse_M5} atrExp={ctx.IsAtrExpanding_M5} range={ctx.IsRange_M5}"
             );
 
@@ -117,11 +116,11 @@ namespace GeminiV26.EntryTypes.FX
             // -----------------------------------------------------
             // HTF ALIGNMENT (soft)
             // -----------------------------------------------------
-            if (ctx.ActiveHtfDirection == dir)
+            if (ctx.FxHtfAllowedDirection == dir)
             {
                 score += 5;
             }
-            else if (ctx.ActiveHtfDirection != TradeDirection.None)
+            else if (ctx.FxHtfAllowedDirection != TradeDirection.None)
             {
                 score -= 10;
             }

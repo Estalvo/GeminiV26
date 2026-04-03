@@ -38,82 +38,12 @@ namespace GeminiV26.Core.Entry
 
                 foreach (var entryType in _entryTypes)
                 {
-                    if (entryType != null && entryType.Type == EntryType.XAU_Impulse)
-                    {
-                        ctx?.Log?.Invoke("[ENTRY BLOCK] XAU Impulse disabled");
-                        continue;
-                    }
-
-                    TradeDirection htfAllowedDirection = ctx?.ResolveAssetHtfAllowedDirection() ?? TradeDirection.None;
-                    var startClassification = HtfClassificationModel.ComputeHtfClassification(
-                        TradeDirection.None,
-                        htfAllowedDirection);
-                    GlobalLogger.Log(this, 
-                        $"[ENTRY_TRACE][START] symbol={ctx?.Symbol} entryType={entryType?.GetType().Name} stage=START candidateDirection={TradeDirection.None} score=NA classification={startClassification}");
-
                     var eval = entryType.Evaluate(ctx);
 
                     if (eval != null)
                     {
-                        eval.RawDirection = eval.Direction;
-                        eval.LogicBiasDirection = ctx?.LogicBiasDirection ?? TradeDirection.None;
-                        if (eval.RawLogicConfidence <= 0)
-                            eval.RawLogicConfidence = ctx?.LogicBiasConfidence ?? 0;
-
-                        if (eval.RawDirection == TradeDirection.None && eval.LogicBiasDirection != TradeDirection.None)
-                        {
-                            CryptoDirectionFallback.ApplyIfEligible(ctx, eval, eval.Reason);
-                            eval.RawDirection = eval.Direction;
-                        }
-
-                        if (!eval.PatternDetected)
-                            eval.PatternDetected = CryptoDirectionFallback.DetectPattern(ctx, eval.RawDirection != TradeDirection.None ? eval.RawDirection : eval.LogicBiasDirection);
-
-                        if (eval.LogicBiasDirection != TradeDirection.None && eval.RawDirection == TradeDirection.None)
-                        {
-                            GlobalLogger.Log(this,
-                                $"[CRITICAL][DIRECTION_BROKEN] symbol={ctx?.Symbol} entryType={eval.Type} logicBiasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} reason={eval.Reason ?? "NA"}");
-                            GlobalLogger.Log(this,
-                                $"[DIR][ROUTER_WARNING] symbol={ctx?.Symbol} entryType={eval.Type} rawDirection={eval.RawDirection} logicBias={eval.LogicBiasDirection} reason=DirectionInvalidAfterFallback");
-                        }
-
-                        eval.SetupType = eval.Type.ToString();
-                        eval.BaseScore = eval.Score;
-                        eval.AfterHtfScoreAdjustment = eval.Score;
-                        eval.AfterPenaltyScore = eval.Score;
-                        eval.FinalScoreSnapshot = eval.Score;
-                        eval.ScoreThresholdSnapshot = EntryDecisionPolicy.MinScoreThreshold;
-                        eval.DirectionAfterScore = eval.Direction;
-                        eval.DirectionAfterGates = eval.Direction;
-                        eval.EntryTraceClassification = "ENTRY_UNKNOWN";
-                        HtfClassificationModel.InitializeEntryHtfClassification(
-                            eval,
-                            eval.Direction,
-                            htfAllowedDirection);
-
-                        GlobalLogger.Log(this, 
-                            $"[ENTRY_TRACE][LOGIC] symbol={ctx?.Symbol} entryType={eval.Type} stage=LOGIC candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +
-                            $"rawDirection={eval.RawDirection} logicBiasDirection={eval.LogicBiasDirection} logicConfidence={eval.RawLogicConfidence} " +
-                            $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()} setupType={eval.SetupType}");
-
-                        GlobalLogger.Log(this, 
-                            $"[ENTRY_TRACE][DIRECTION_SOURCE] symbol={ctx?.Symbol} entryType={eval.Type} biasDirection={eval.LogicBiasDirection} rawDirection={eval.RawDirection} " +
-                            $"fallbackUsed={eval.FallbackDirectionUsed.ToString().ToLowerInvariant()} confidence={eval.RawLogicConfidence} stage=POST_LOGIC " +
-                            $"patternDetected={eval.PatternDetected.ToString().ToLowerInvariant()}");
-
                         eval = EntryDecisionPolicy.Normalize(eval);
-                        eval.FinalScoreSnapshot = eval.Score;
-                        eval.DirectionAfterScore = eval.Direction;
-                        bool passedThreshold = eval.Score >= EntryDecisionPolicy.MinScoreThreshold;
-                        GlobalLogger.Log(this, 
-                            $"[ENTRY_TRACE][SCORE] symbol={ctx?.Symbol} entryType={eval.Type} stage=SCORE candidateDirection={eval.Direction} score={eval.Score} classification={eval.HtfClassification} " +
-                            $"baseScore={eval.BaseScore} afterHtfScoreAdjustment={eval.AfterHtfScoreAdjustment} afterPenalty={eval.AfterPenaltyScore} finalScore={eval.FinalScoreSnapshot} " +
-                            $"scoreThreshold={EntryDecisionPolicy.MinScoreThreshold} passedThreshold={passedThreshold.ToString().ToLowerInvariant()}");
-
                         eval.Reason = "[ROUTER] " + (eval.Reason ?? "");
-                        GlobalLogger.Log(this, 
-                            $"[ENTRY_TRACE][FINAL] symbol={ctx?.Symbol} entryType={eval.Type} stage=ENTRY_ROUTER candidateDirection={eval.Direction} score={eval.Score} " +
-                            $"classification={eval.HtfClassification} finalCandidateDirection={eval.Direction} finalScore={eval.Score} blocked={(!eval.IsValid).ToString().ToLowerInvariant()} finalReason={eval.Reason ?? "NA"}");
                     }
 
                     // DEBUG – marad

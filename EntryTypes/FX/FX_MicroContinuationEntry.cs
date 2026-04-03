@@ -32,19 +32,18 @@ namespace GeminiV26.EntryTypes.FX
             if (!fx.FlagTuning.TryGetValue(ctx.Session, out var tuning))
                 return Invalid(ctx, "NO_SESSION_TUNING");
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(TradeDirection.Long, ctx, tuning);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(TradeDirection.Short, ctx, tuning);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }

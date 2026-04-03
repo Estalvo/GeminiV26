@@ -25,39 +25,26 @@ namespace GeminiV26.EntryTypes.METAL
             if (ctx.LogicBias == TradeDirection.None)
                 return RejectDecision(ctx, TradeDirection.None, 0, "NO_LOGIC_BIAS", null);
 
-            bool htfMismatch =
-                ctx.ResolveAssetHtfConfidence01() >= 0.6 &&
-                ctx.ResolveAssetHtfAllowedDirection() != TradeDirection.None &&
-                ctx.ResolveAssetHtfAllowedDirection() != ctx.LogicBias;
-            if (htfMismatch)
-                ctx.Log?.Invoke($"[HTF][SOFT_MISMATCH] entryType={Type} dir={ctx.LogicBias} htf={ctx.ResolveAssetHtfAllowedDirection()} conf={ctx.ResolveAssetHtfConfidence01():0.00}");
+            if (ctx.HtfConfidence >= 0.6 && ctx.HtfDirection != ctx.LogicBias)
+                return RejectDecision(ctx, TradeDirection.None, 0, "HTF_MISMATCH", null);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Long, htfMismatch);
+                var eval = EvaluateSide(ctx, TradeDirection.Long);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
-                var eval = EvaluateSide(ctx, TradeDirection.Short, htfMismatch);
+                var eval = EvaluateSide(ctx, TradeDirection.Short);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
 
             return RejectDecision(ctx, TradeDirection.None, 0, "NO_LOGIC_BIAS", null);
         }
-        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir, bool htfMismatch)
+        private EntryEvaluation EvaluateSide(EntryContext ctx, TradeDirection dir)
         {
-            // TEMP LOGGING (AUDIT): explicit runtime visibility for XAU reversal reachability.
-            string marketStateLabel =
-                ctx?.MarketState == null
-                    ? "NULL"
-                    : ctx.MarketState.IsTrend ? "Trend"
-                    : ctx.MarketState.IsRange ? "Range"
-                    : ctx.MarketState.IsLowVol ? "LowVol"
-                    : "Neutral";
-
             var reasons = new List<string>(8);
             int setupScore = 0;
 
@@ -81,11 +68,6 @@ namespace GeminiV26.EntryTypes.METAL
             // =====================================================
             int evidence = ctx.ReversalEvidenceScore;
             int score = evidence * 12 + 20;
-            if (htfMismatch)
-            {
-                score -= 8;
-                reasons.Add("HTF_SOFT_MISMATCH(-8)");
-            }
             if (evidence < MinEvidence)
             {
                 score -= 12;
@@ -176,16 +158,13 @@ namespace GeminiV26.EntryTypes.METAL
                 $"Score={score} Min={MinScore} Decision=ACCEPT | " +
                 string.Join(" | ", reasons);
 
-            bool isValid = score >= MinScore;
-            ctx?.Log?.Invoke($"[XAU_REVERSAL] isValid={isValid} state={marketStateLabel} bias={ctx?.TrendDirection}");
-
             return new EntryEvaluation
             {
                 Symbol = ctx.Symbol,
                 Type = Type,
                 Direction = dir,
                 Score = score,
-                IsValid = isValid,
+                IsValid = score >= MinScore,
                 Reason = note
             };
         }
@@ -239,17 +218,6 @@ namespace GeminiV26.EntryTypes.METAL
             string reason,
             List<string> reasons)
         {
-            // TEMP LOGGING (AUDIT): traces invalid reversal paths with market state + bias context.
-            string marketStateLabel =
-                ctx?.MarketState == null
-                    ? "NULL"
-                    : ctx.MarketState.IsTrend ? "Trend"
-                    : ctx.MarketState.IsRange ? "Range"
-                    : ctx.MarketState.IsLowVol ? "LowVol"
-                    : "Neutral";
-            bool isValid = false;
-            ctx?.Log?.Invoke($"[XAU_REVERSAL] isValid={isValid} state={marketStateLabel} bias={ctx?.TrendDirection}");
-
             string note =
                 $"[XAU_REV] {ctx?.Symbol} dir={dir} " +
                 $"Score={score} Decision=REJECT Reason={reason} | " +

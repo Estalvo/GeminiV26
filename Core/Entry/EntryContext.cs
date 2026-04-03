@@ -3,54 +3,12 @@ using cAlgo.API.Internals;
 using Gemini.Memory;
 using GeminiV26.Instruments.FX;
 using GeminiV26.Instruments.INDEX;
-using GeminiV26.Core;
 using GeminiV26.Core.Matrix;
 using GeminiV26.Core.Logging;
 using System;
 
 namespace GeminiV26.Core.Entry
 {
-    public sealed class EntryContextFlags
-    {
-        public bool IsDeadMarketBlocked { get; set; }
-    }
-
-    public class StructureContext
-    {
-        public bool HasImpulse;
-        public double ImpulseStrength;
-        public double ImpulseRange;
-        public int ImpulseBars;
-        public int ImpulseAgeBars;
-        public bool ImpulseRecentOk;
-        public string DirectionSource;
-
-        public bool HasPullback;
-        public bool HasMicroPullback;
-        public double PullbackDepth;
-        public int PullbackBars;
-        public bool PullbackStandardOk;
-        public bool PullbackShallowOk;
-        public bool PullbackEarlySignal;
-        public bool PullbackConfirmedSignal;
-        public bool ContinuationEarlySignal;
-        public bool ContinuationConfirmedSignal;
-        public double PullbackLow;
-        public double PullbackHigh;
-
-        public bool HasFlag;
-        public double FlagCompression;
-        public int FlagBars;
-        public double FlagHigh;
-        public double FlagLow;
-        public bool FlagStandardOk;
-        public bool FlagMessyOk;
-        public bool FlagBreakoutUp;
-        public bool FlagBreakoutDown;
-
-        public TradeDirection StructureDirection;
-    }
-
     public class EntryContext
     {
         // =========================
@@ -65,9 +23,6 @@ namespace GeminiV26.Core.Entry
             set => TempId = value;
         }
         public Action<string> Log { get; set; }
-        public EntryContextFlags Flags { get; set; } = new EntryContextFlags();
-        public StructureContext Structure = new StructureContext();
-        public GeminiV26.Core.Entry.Qualification.EntryState QualificationState { get; set; }
 
         public DateTime LastUpdateUtc { get; set; } = DateTime.UtcNow;
         public Robot Bot { get; }
@@ -111,7 +66,6 @@ namespace GeminiV26.Core.Entry
         // ATR
         // =========================
         public double AtrM5;
-        public double AtrM1;
         public double AtrM15;
 
         public double AtrSlope_M5;
@@ -300,10 +254,6 @@ namespace GeminiV26.Core.Entry
         public double MetalHtfConfidence01 { get; set; } = 0.0;
         public string MetalHtfReason { get; set; }
 
-        // Selected active HTF (single-source runtime fields)
-        public TradeDirection ActiveHtfDirection { get; set; } = TradeDirection.None;
-        public double ActiveHtfConfidence { get; set; } = 0.0;
-
         // =========================
         // DIRECTION FLOW (SSOT)
         // =========================
@@ -313,13 +263,6 @@ namespace GeminiV26.Core.Entry
         public TradeDirection RoutedDirection { get; set; } = TradeDirection.None;
         public TradeDirection FinalDirection { get; set; } = TradeDirection.None;
         public bool DirectionDebugLogged { get; set; }
-        public string LastLoggedStateFingerprint { get; set; }
-
-        // Pre-exec snapshot fields (audit only).
-        // Authoritative owner of FinalConfidence is PositionContext after position creation.
-        public int EntryScore { get; set; }
-        public int FinalConfidence { get; set; }
-        public int RiskConfidence { get; set; }
 
         public double TotalMoveSinceBreakAtr { get; set; }
 
@@ -340,8 +283,6 @@ namespace GeminiV26.Core.Entry
         public SymbolMemoryState Memory { get; set; }
         public bool HasMemory => Memory != null;
         public SymbolMemoryState MemoryState { get; set; }
-        public MovePhase MovePhase => MemoryState?.MovePhase ?? MovePhase.Unknown;
-        public int BarsSinceFirstPullback => MemoryState?.BarsSinceFirstPullback ?? -1;
         public MemoryAssessment MemoryAssessment { get; set; }
         public ContinuationWindowState MemoryContinuationWindow { get; set; } = ContinuationWindowState.Unknown;
         public MoveExtensionState MemoryMoveExtension { get; set; } = MoveExtensionState.Unknown;
@@ -392,24 +333,62 @@ namespace GeminiV26.Core.Entry
         [Obsolete("LEGACY – use LogicBiasConfidence")]
         public int LogicConfidence => LogicBiasConfidence;
 
-        [Obsolete("LEGACY – use RiskConfidence")]
-        public int AdjustedRiskConfidence
+        [Obsolete("LEGACY – use the instrument-specific *HtfAllowedDirection property")]
+        public TradeDirection HtfDirection
         {
-            get => RiskConfidence;
-            set => RiskConfidence = value;
+            get
+            {
+                if (FxHtfAllowedDirection != TradeDirection.None)
+                    return FxHtfAllowedDirection;
+
+                if (CryptoHtfAllowedDirection != TradeDirection.None)
+                    return CryptoHtfAllowedDirection;
+
+                if (IndexHtfAllowedDirection != TradeDirection.None)
+                    return IndexHtfAllowedDirection;
+
+                if (MetalHtfAllowedDirection != TradeDirection.None)
+                    return MetalHtfAllowedDirection;
+
+                return TradeDirection.None;
+            }
         }
 
-        [Obsolete("LEGACY – use ActiveHtfDirection")]
-        public TradeDirection HtfDirection => ActiveHtfDirection;
+        [Obsolete("LEGACY – use the instrument-specific *HtfConfidence01 property")]
+        public double HtfConfidence
+        {
+            get
+            {
+                double maxConfidence = FxHtfConfidence01;
 
-        [Obsolete("LEGACY – use ActiveHtfConfidence")]
-        public double HtfConfidence => ActiveHtfConfidence;
+                if (CryptoHtfConfidence01 > maxConfidence)
+                    maxConfidence = CryptoHtfConfidence01;
 
-        public TradeDirection ResolveAssetHtfAllowedDirection() => ActiveHtfDirection;
+                if (IndexHtfConfidence01 > maxConfidence)
+                    maxConfidence = IndexHtfConfidence01;
 
-        public double ResolveAssetHtfConfidence01() => ActiveHtfConfidence;
+                if (MetalHtfConfidence01 > maxConfidence)
+                    maxConfidence = MetalHtfConfidence01;
+
+                return maxConfidence;
+            }
+        }
 
         public string SymbolName => Symbol;
+
+        public void Print(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            if (Log != null)
+            {
+                Log(TradeLogIdentity.WithTempId(message, this));
+                return;
+            }
+
+            Bot?.Print(TradeLogIdentity.WithTempId(message, this));
+        }
 
         public int GetBarsSinceImpulse(TradeDirection direction)
         {
@@ -419,55 +398,6 @@ namespace GeminiV26.Core.Entry
                 TradeDirection.Short => BarsSinceImpulseShort_M5,
                 _ => BarsSinceImpulse_M5
             };
-        }
-
-        public bool IsStructureDirectionStrict()
-            => Structure?.StructureDirection == TradeDirection.Long ||
-               Structure?.StructureDirection == TradeDirection.Short;
-
-        public bool IsStructureDirectionAuthoritative()
-        {
-            if (IsStructureDirectionStrict())
-                return true;
-
-            bool hasResolvedSource =
-                !string.IsNullOrWhiteSpace(Structure?.DirectionSource) &&
-                !string.Equals(Structure.DirectionSource, "NONE", StringComparison.OrdinalIgnoreCase);
-
-            bool hasBroaderDirection =
-                LogicBiasDirection == TradeDirection.Long ||
-                LogicBiasDirection == TradeDirection.Short;
-
-            return hasResolvedSource && hasBroaderDirection;
-        }
-
-        public bool IsStructureImpulseAuthoritative()
-            => (Structure?.HasImpulse == true) || (Structure?.ImpulseRecentOk == true);
-
-        public bool IsStructurePullbackAuthoritative()
-            => (Structure?.HasPullback == true) ||
-               (Structure?.PullbackStandardOk == true) ||
-               (Structure?.PullbackShallowOk == true) ||
-               (Structure?.HasMicroPullback == true);
-
-        public bool IsStructureFlagAuthoritative()
-            => (Structure?.HasFlag == true) ||
-               (Structure?.FlagStandardOk == true) ||
-               (Structure?.FlagMessyOk == true);
-
-        public void LogStructureAuthority(string entryFamily, string tag, string strictFieldFailed, string rescueField, string details = null)
-        {
-            bool strictDir = IsStructureDirectionStrict();
-            bool strictImpulse = Structure?.HasImpulse == true;
-            bool strictPullback = Structure?.HasPullback == true;
-            bool strictFlag = Structure?.HasFlag == true;
-            bool dirAuth = IsStructureDirectionAuthoritative();
-            bool impulseAuth = IsStructureImpulseAuthoritative();
-            bool pullbackAuth = IsStructurePullbackAuthoritative();
-            bool flagAuth = IsStructureFlagAuthoritative();
-            bool finalValid = !string.Equals(tag, "STILL_FAIL", StringComparison.OrdinalIgnoreCase);
-            Log?.Invoke(
-                $"[STRUCT][AUTH][{tag}] symbol={Symbol} entry={entryFamily} strictFailed={strictFieldFailed} rescue={rescueField} strictState=dir:{strictDir.ToString().ToLowerInvariant()}|impulse:{strictImpulse.ToString().ToLowerInvariant()}|pullback:{strictPullback.ToString().ToLowerInvariant()}|flag:{strictFlag.ToString().ToLowerInvariant()} compositeState=dir:{dirAuth.ToString().ToLowerInvariant()}|impulse:{impulseAuth.ToString().ToLowerInvariant()}|pullback:{pullbackAuth.ToString().ToLowerInvariant()}|flag:{flagAuth.ToString().ToLowerInvariant()} finalValid={finalValid.ToString().ToLowerInvariant()} {details ?? "details=NA"}");
         }
 
         public bool HasDirectionalPullback(TradeDirection direction)
@@ -502,7 +432,7 @@ namespace GeminiV26.Core.Entry
 
         private bool GetCrossSidePullbackFallback()
         {
-            GlobalLogger.Log(Bot, "[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
+            Print("[CTX][DIR_WARNING] cross-side logic retained (no direction available)");
 
             bool hasAnySidePullback = HasPullbackLong_M5;
             hasAnySidePullback |= HasPullbackShort_M5;

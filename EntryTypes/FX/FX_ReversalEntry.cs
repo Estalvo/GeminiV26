@@ -39,19 +39,18 @@ namespace GeminiV26.EntryTypes.FX
             if (ctx.ReversalEvidenceScore < MIN_EVIDENCE)
                 return Invalid(ctx, "WEAK_EVIDENCE");
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Invalid(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Long);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, TradeDirection.Short);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -89,19 +88,19 @@ namespace GeminiV26.EntryTypes.FX
             // =========================
             // FX HTF bias – Reversal weighting (soft)
             // =========================
-            if (ctx.ActiveHtfDirection != TradeDirection.None &&
-                ctx.ActiveHtfConfidence > 0.0)
+            if (ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfConfidence01 > 0.0)
             {
-                if (dir != ctx.ActiveHtfDirection)
+                if (dir != ctx.FxHtfAllowedDirection)
                 {
                     // Reversal HTF ellen: enyhe büntetés
-                    int htfPenalty = (int)(4 + 3 * ctx.ActiveHtfConfidence);
+                    int htfPenalty = (int)(4 + 3 * ctx.FxHtfConfidence01);
                     score -= htfPenalty;
                 }
                 else
                 {
                     // Reversal HTF irányába: enyhe jutalom (ritkább, de értékes)
-                    int htfBonus = (int)(2 + 2 * ctx.ActiveHtfConfidence);
+                    int htfBonus = (int)(2 + 2 * ctx.FxHtfConfidence01);
                     score += htfBonus;
                 }
             }

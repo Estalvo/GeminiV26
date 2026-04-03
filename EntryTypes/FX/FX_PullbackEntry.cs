@@ -43,19 +43,18 @@ namespace GeminiV26.EntryTypes.FX
             if (!matrix.AllowPullback)
                 return Block(ctx, TradeDirection.None, "SESSION_MATRIX_PULLBACK_DISABLED", 0);
 
-            FxDirectionValidation.GetLowConfidenceHtfConflictPenalty(ctx);
+            if (FxDirectionValidation.ShouldRejectLowConfidenceHtfConflict(ctx))
+                return Block(ctx, TradeDirection.None, "FX_LOW_CONF_HTF_CONFLICT", 0);
 
             if (ctx.LogicBias == TradeDirection.Long)
             {
                 var eval = EvaluateSide(ctx, fx, matrix, TradeDirection.Long);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), eval, null, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
             else if (ctx.LogicBias == TradeDirection.Short)
             {
                 var eval = EvaluateSide(ctx, fx, matrix, TradeDirection.Short);
-                FxDirectionValidation.ApplyLowConfidenceHtfConflictSoftPenalty(ctx, eval);
                 EntryDirectionQuality.LogDecision(ctx, Type.ToString(), null, eval, eval.Direction);
                 return EntryDecisionPolicy.Normalize(eval);
             }
@@ -294,12 +293,12 @@ namespace GeminiV26.EntryTypes.FX
             }
 
             bool htfMismatch =
-                ctx.ActiveHtfDirection != TradeDirection.None &&
-                ctx.ActiveHtfDirection != dir;
+                ctx.FxHtfAllowedDirection != TradeDirection.None &&
+                ctx.FxHtfAllowedDirection != dir;
 
             if (htfMismatch)
             {
-                double conf = ctx.ActiveHtfConfidence;
+                double conf = ctx.FxHtfConfidence01;
                 int htfPenalty = (int)(conf * 10);
 
                 ApplyPenalty(ref score, ref penalty, htfPenalty, penaltyBudget, ctx, "HTF_MISMATCH");

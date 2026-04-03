@@ -66,22 +66,22 @@ namespace GeminiV26.Core.Entry
                 TempId = CreateEntryAttemptId(symbol),
                 IsReady = false,
                 TrendDirection = TradeDirection.None,
-                Log = message => GlobalLogger.Log(_bot, message)
+                Log = message => _bot.Print(message)
             };
 
             string canonicalSymbol = SymbolRouting.NormalizeSymbol(symbol);
-            GlobalLogger.Log(_bot, $"[MEMORY][CTX_ATTACH][START] symbol={canonicalSymbol}");
+            _bot.Print($"[MEMORY][CTX_ATTACH][START] symbol={canonicalSymbol}");
             var memory = _memoryEngine.GetState(canonicalSymbol);
 
             if (memory == null)
             {
                 ctx.Memory = null;
-                GlobalLogger.Log(_bot, $"[MEMORY][MISSING] symbol={canonicalSymbol}");
+                _bot.Print($"[MEMORY][MISSING] symbol={canonicalSymbol}");
             }
             else
             {
                 ctx.Memory = memory;
-                GlobalLogger.Log(_bot, $"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
+                _bot.Print($"[MEMORY][CTX_ATTACH] symbol={canonicalSymbol} hasMemory=true phase={memory.MovePhase} isBuilt={memory.IsBuilt} isUsable={memory.IsUsable}");
             }
 
             AttachMemorySnapshot(ctx, canonicalSymbol);
@@ -93,9 +93,9 @@ namespace GeminiV26.Core.Entry
                 !_runtimeSymbols.TryGetBars(TimeFrame.Minute5, symbol, out var m5) ||
                 !_runtimeSymbols.TryGetBars(TimeFrame.Minute15, symbol, out var m15))
             {
-                GlobalLogger.Log(_bot, $"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
-                GlobalLogger.Log(_bot, $"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
-                GlobalLogger.Log(_bot, $"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -107,8 +107,8 @@ namespace GeminiV26.Core.Entry
 
             if (ctx.M1.Count < 10 || ctx.M5.Count < 30 || ctx.M15.Count < 30)
             {
-                GlobalLogger.Log(_bot, $"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
-                GlobalLogger.Log(_bot, $"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=insufficient_bars");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -121,12 +121,10 @@ namespace GeminiV26.Core.Entry
             // ATR (M5 + M15)
             // =====================================================
 
-            var atr_m1 = _bot.Indicators.AverageTrueRange(ctx.M1, 14, MovingAverageType.Simple);
             var atr_m5 = _bot.Indicators.AverageTrueRange(ctx.M5, 14, MovingAverageType.Simple);
             var atr_m15 = _bot.Indicators.AverageTrueRange(ctx.M15, 14, MovingAverageType.Simple);
 
             // aktuális index
-            ctx.AtrM1 = atr_m1.Result[m1Idx];
             ctx.AtrM5 = atr_m5.Result[m5Idx];
             ctx.AtrM15 = atr_m15.Result.LastValue;
 
@@ -143,9 +141,9 @@ namespace GeminiV26.Core.Entry
                 !_runtimeSymbols.TryGetSymbolMeta(symbol, out _))
             {
                 ctx.RuntimeResolved = false;
-                GlobalLogger.Log(_bot, $"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
-                GlobalLogger.Log(_bot, $"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
-                GlobalLogger.Log(_bot, $"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+                _bot.Print($"[RESOLVER][ENTRY_BLOCK] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][EARLY_RETURN] symbol={symbol} reason=unresolved_runtime_symbol");
+                _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
                 LogEntryMemorySnapshot(ctx, symbol);
                 return ctx;
             }
@@ -469,7 +467,7 @@ namespace GeminiV26.Core.Entry
                 ctx.PullbackBars_M5 >= 1 &&
                 ctx.PullbackDepthAtr_M5 >= 0.25;
 
-            GlobalLogger.Log(_bot, $"[PB] bars={ctx.PullbackBars_M5} depth={ctx.PullbackDepthAtr_M5:F2} early={ctx.HasEarlyPullback_M5}");
+            _bot.Print($"[PB] bars={ctx.PullbackBars_M5} depth={ctx.PullbackDepthAtr_M5:F2} early={ctx.HasEarlyPullback_M5}");
 
             // =================================================
             // FLAG FEATURE EXTRACTION (v2.22 – compression based, NOT pullback based)
@@ -535,7 +533,7 @@ namespace GeminiV26.Core.Entry
                     Math.Abs(ctx.M5.HighPrices[impulseIdx] - ctx.M5.LowPrices[impulseIdx]);
             }
 
-            GlobalLogger.Log(_bot, $"[IMPULSE SRC] idx={impulseIdx} barsSince={ctx.BarsSinceImpulse_M5} range={impulseRange:F2}");
+            _bot.Print($"[IMPULSE SRC] idx={impulseIdx} barsSince={ctx.BarsSinceImpulse_M5} range={impulseRange:F2}");
 
             bool hasValidImpulseRange =
                 impulseRange > 0 &&
@@ -621,11 +619,6 @@ namespace GeminiV26.Core.Entry
 
             ctx.HasFlagShort_M5 = shortFlag;
             ctx.HasFlagLong_M5 = longFlag;
-            ctx.FlagBarsLong_M5 = longFlag ? flagBars : 0;
-            ctx.FlagBarsShort_M5 = shortFlag ? flagBars : 0;
-            double flagCompressionRatio = ctx.AtrM5 > 0 ? Math.Max(0.0, Math.Min(1.0, flagRange / ctx.AtrM5)) : 1.0;
-            ctx.FlagCompressionScoreLong_M5 = longFlag ? (1.0 - flagCompressionRatio) : 0.0;
-            ctx.FlagCompressionScoreShort_M5 = shortFlag ? (1.0 - flagCompressionRatio) : 0.0;
 
             // csak akkor mentjük a range-et ha EGYÉRTELMŰ
             if (shortFlag && !longFlag)
@@ -663,7 +656,7 @@ namespace GeminiV26.Core.Entry
                 ctx.HasFlagShort_M5 = false;
             }
 
-            GlobalLogger.Log(_bot, 
+            _bot.Print(
                 $"[FLAG FIX] recentImpulse={hasRecentImpulse} bars={flagBars} retraceOk={validRetrace} " +
                 $"tight={isTight} decel={ctx.IsPullbackDecelerating_M5} " +
                 $"long={ctx.HasFlagLong_M5} short={ctx.HasFlagShort_M5} " +
@@ -685,13 +678,13 @@ namespace GeminiV26.Core.Entry
             ctx.IsTransition_M5 =
                 weakTrend || compressed;
 
-            GlobalLogger.Log(_bot, $"[REGIME] transition={ctx.IsTransition_M5} weakTrend={weakTrend} compressed={compressed}");
+            _bot.Print($"[REGIME] transition={ctx.IsTransition_M5} weakTrend={weakTrend} compressed={compressed}");
 
             // ============================
             // DEBUG (opcionális, de most hasznos)
             // ============================
 
-            GlobalLogger.Log(_bot, 
+            _bot.Print(
                 $"[FLAG V2.22] tight={isTight} decel={decelerating} allowNoDecel=false " +
                 $"LH={hasLowerHighs} HL={hasHigherLows} " +
                 $"short={ctx.HasFlagShort_M5} long={ctx.HasFlagLong_M5} " +
@@ -841,75 +834,6 @@ namespace GeminiV26.Core.Entry
                 ctx.HasBreakout_M1 &&
                 ctx.BreakoutDirection == ctx.TrendDirection;
 
-            BuildImpulseAnchor(ctx);
-            BuildPullback(ctx);
-            BuildFlag(ctx);
-            DetectPullbackEarly(ctx);
-            DetectPullbackConfirmed(ctx);
-            DetectFlagBreakout(ctx);
-            MapStructureContinuationSignals(ctx);
-
-            bool directionAuthorityOk = ctx.IsStructureDirectionAuthoritative();
-            bool impulseAuthorityOk = ctx.IsStructureImpulseAuthoritative();
-            bool pullbackAuthorityOk = ctx.IsStructurePullbackAuthoritative();
-            bool flagAuthorityOk = ctx.IsStructureFlagAuthoritative();
-
-            bool primaryChainOk =
-                directionAuthorityOk &&
-                impulseAuthorityOk &&
-                ctx.Structure.PullbackStandardOk &&
-                ctx.Structure.FlagStandardOk;
-
-            bool altChainOk =
-                directionAuthorityOk &&
-                impulseAuthorityOk &&
-                (ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback || ctx.Structure.PullbackStandardOk) &&
-                (ctx.Structure.FlagMessyOk || ctx.Structure.FlagStandardOk);
-
-            bool compositeChainOk =
-                directionAuthorityOk &&
-                impulseAuthorityOk &&
-                pullbackAuthorityOk &&
-                flagAuthorityOk;
-
-            if (!primaryChainOk && compositeChainOk)
-            {
-                if (!ctx.Structure.HasImpulse && impulseAuthorityOk)
-                {
-                    GlobalLogger.Log(_bot,
-                        $"[STRUCT][AUTH][IMPULSE_OK] symbol={ctx.Symbol ?? "NA"} recent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
-                }
-                if (!ctx.Structure.HasPullback && pullbackAuthorityOk)
-                {
-                    string pbMode = ctx.Structure.PullbackStandardOk ? "standard" : "shallow";
-                    GlobalLogger.Log(_bot,
-                        $"[STRUCT][AUTH][PULLBACK_OK] symbol={ctx.Symbol ?? "NA"} mode={pbMode}");
-                }
-                if (!ctx.Structure.HasFlag && flagAuthorityOk)
-                {
-                    string flagMode = ctx.Structure.FlagStandardOk ? "standard" : "messy";
-                    GlobalLogger.Log(_bot,
-                        $"[STRUCT][AUTH][FLAG_OK] symbol={ctx.Symbol ?? "NA"} mode={flagMode}");
-                }
-                if (ctx.Structure.ImpulseRecentOk && !ctx.Structure.HasImpulse)
-                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=recent_impulse");
-                if ((ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback) && !ctx.Structure.PullbackStandardOk)
-                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=shallow_pullback");
-                if (ctx.Structure.FlagMessyOk && !ctx.Structure.FlagStandardOk)
-                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=messy_flag");
-            }
-
-            if (!primaryChainOk && altChainOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][CHAIN][PRIMARY_FAIL_ALT_OK] dir={ctx.Structure.StructureDirection} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} impulseAge={ctx.Structure.ImpulseAgeBars} pbDepth={ctx.Structure.PullbackDepth:0.00} pbBars={ctx.Structure.PullbackBars} flagBars={ctx.Structure.FlagBars} comp={ctx.Structure.FlagCompression:0.00}");
-            }
-            else if (!primaryChainOk && !altChainOk && !compositeChainOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][CHAIN][FULL_FAIL] dir={ctx.Structure.StructureDirection} source={ctx.Structure.DirectionSource ?? "NA"} impulse={ctx.Structure.HasImpulse.ToString().ToLowerInvariant()} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} impulseAge={ctx.Structure.ImpulseAgeBars} pb={ctx.Structure.HasPullback.ToString().ToLowerInvariant()} pbDepth={ctx.Structure.PullbackDepth:0.00} pbBars={ctx.Structure.PullbackBars} flag={ctx.Structure.HasFlag.ToString().ToLowerInvariant()} flagBars={ctx.Structure.FlagBars} comp={ctx.Structure.FlagCompression:0.00}");
-            }
-
             // =================================================
             // HTF BIAS – FINAL DISPATCH (Phase 3.8 FIX)
             // =================================================
@@ -920,9 +844,6 @@ namespace GeminiV26.Core.Entry
                 ctx.CryptoHtfAllowedDirection = htf.AllowedDirection;
                 ctx.CryptoHtfConfidence01 = htf.Confidence01;
                 ctx.CryptoHtfReason = htf.Reason;
-                ctx.ActiveHtfDirection = htf.AllowedDirection;
-                ctx.ActiveHtfConfidence = htf.Confidence01;
-                LogHtfAuditFlow(ctx, symbol, InstrumentClass.CRYPTO, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isFx)
             {
@@ -930,9 +851,6 @@ namespace GeminiV26.Core.Entry
                 ctx.FxHtfAllowedDirection = htf.AllowedDirection;
                 ctx.FxHtfConfidence01 = htf.Confidence01;
                 ctx.FxHtfReason = htf.Reason;
-                ctx.ActiveHtfDirection = htf.AllowedDirection;
-                ctx.ActiveHtfConfidence = htf.Confidence01;
-                LogHtfAuditFlow(ctx, symbol, InstrumentClass.FX, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isIndex)
             {
@@ -940,9 +858,6 @@ namespace GeminiV26.Core.Entry
                 ctx.IndexHtfAllowedDirection = htf.AllowedDirection;
                 ctx.IndexHtfConfidence01 = htf.Confidence01;
                 ctx.IndexHtfReason = htf.Reason;
-                ctx.ActiveHtfDirection = htf.AllowedDirection;
-                ctx.ActiveHtfConfidence = htf.Confidence01;
-                LogHtfAuditFlow(ctx, symbol, InstrumentClass.INDEX, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
             else if (isMetal)
             {
@@ -950,39 +865,12 @@ namespace GeminiV26.Core.Entry
                 ctx.MetalHtfAllowedDirection = htf.AllowedDirection;
                 ctx.MetalHtfConfidence01 = htf.Confidence01;
                 ctx.MetalHtfReason = htf.Reason;
-                ctx.ActiveHtfDirection = htf.AllowedDirection;
-                ctx.ActiveHtfConfidence = htf.Confidence01;
-                LogHtfAuditFlow(ctx, symbol, InstrumentClass.METAL, htf.State.ToString(), htf.AllowedDirection, htf.Confidence01, htf.Reason);
             }
 
-            GlobalLogger.Log(_bot, $"[HTF][SNAPSHOT] dir={ctx.ActiveHtfDirection} conf={ctx.ActiveHtfConfidence:F2}");
-            if (ctx.ActiveHtfDirection == TradeDirection.None)
-                GlobalLogger.Log(_bot, "[HTF][WARN] Missing HTF snapshot");
-
             ctx.IsReady = true;
-            GlobalLogger.Log(_bot, $"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
+            _bot.Print($"[CTX][MEMORY_READY] symbol={symbol} hasMemory={ctx.HasMemory}");
             LogEntryMemorySnapshot(ctx, symbol);
             return ctx;
-        }
-
-        private void LogHtfAuditFlow(
-            EntryContext ctx,
-            string symbol,
-            InstrumentClass assetClass,
-            string htfState,
-            TradeDirection allowedDirection,
-            double confidence01,
-            string reason)
-        {
-            GlobalLogger.Log(_bot, 
-                $"[AUDIT][HTF FLOW][SOURCE] symbol={symbol} asset={assetClass} entryType=N/A stage=SOURCE module={assetClass}HtfBiasEngine " +
-                $"htfState={htfState} allowedDirection={allowedDirection} align=false candidateDirection=None");
-            GlobalLogger.Log(_bot, 
-                $"[AUDIT][HTF FLOW][CONTEXT_BUILD] symbol={symbol} asset={assetClass} entryType=N/A stage={nameof(EntryContextBuilder)} module={nameof(EntryContextBuilder)} " +
-                $"htfState={htfState} allowedDirection={allowedDirection} align=false candidateDirection=None htfConfidence={confidence01:0.00}");
-            GlobalLogger.Log(_bot, 
-                $"[AUDIT][HTF CONTEXT] symbol={symbol} asset={assetClass} allowedDirection={allowedDirection} confidence={confidence01:0.00} reason={reason ?? "N/A"} " +
-                $"activeDirection={ctx.ActiveHtfDirection} activeConfidence={ctx.ActiveHtfConfidence:0.00}");
         }
 
         private void AttachMemorySnapshot(EntryContext ctx, string canonicalSymbol)
@@ -1038,12 +926,12 @@ namespace GeminiV26.Core.Entry
 
         private void LogEntryMemorySnapshot(EntryContext ctx, string symbol)
         {
-            GlobalLogger.Log(_bot, 
+            _bot.Print(
                 $"[ENTRY][SNAPSHOT] symbol={symbol} movePhase={ctx?.MemoryState?.MovePhase ?? MovePhase.Unknown} continuationWindow={ctx?.MemoryContinuationWindow ?? ContinuationWindowState.Unknown} extensionState={ctx?.MemoryMoveExtension ?? MoveExtensionState.Unknown} impulseFreshness={ctx?.MemoryImpulseFreshnessScore ?? 0:0.00} continuationFreshness={ctx?.MemoryContinuationFreshnessScore ?? 0:0.00} triggerLateScore={ctx?.MemoryTriggerLateScore ?? 0:0.00} chaseRisk={ctx?.MemoryAssessment?.IsChaseRisk ?? false} timingPenalty={ctx?.MemoryTimingPenalty ?? 0}");
 
-            GlobalLogger.Log(_bot, 
+            _bot.Print(
                 $"[CTX][TIMING][SIDE] symbol={symbol} side=LONG timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationLong ?? false} late={ctx?.HasLateContinuationLong ?? false} overextended={ctx?.IsOverextendedLong ?? false} freshness={ctx?.ContinuationFreshnessLong ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseLong ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakLong ?? -1} attempts={ctx?.ContinuationAttemptCountLong ?? -1} triggerLate={ctx?.TriggerLateScoreLong ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrLong ?? 0:0.00}");
-            GlobalLogger.Log(_bot, 
+            _bot.Print(
                 $"[CTX][TIMING][SIDE] symbol={symbol} side=SHORT timingLongActive={ctx?.IsTimingLongActive ?? false} timingShortActive={ctx?.IsTimingShortActive ?? false} early={ctx?.HasEarlyContinuationShort ?? false} late={ctx?.HasLateContinuationShort ?? false} overextended={ctx?.IsOverextendedShort ?? false} freshness={ctx?.ContinuationFreshnessShort ?? 0:0.00} barsSinceImpulse={ctx?.BarsSinceImpulseShort ?? -1} barsSinceBreak={ctx?.BarsSinceStructureBreakShort ?? -1} attempts={ctx?.ContinuationAttemptCountShort ?? -1} triggerLate={ctx?.TriggerLateScoreShort ?? 0:0.00} distanceAtr={ctx?.DistanceFromFastStructureAtrShort ?? 0:0.00}");
         }
 
@@ -1078,508 +966,6 @@ namespace GeminiV26.Core.Entry
             }
 
             return new string(buffer, index, buffer.Length - index);
-        }
-
-        private void BuildImpulseAnchor(EntryContext ctx)
-        {
-            if (ctx == null)
-            {
-                GlobalLogger.Log(_bot, "[STRUCT][IMPULSE][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
-                return;
-            }
-
-            if (ctx.M5 == null || ctx.M5.Count < 3)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={ctx.Structure?.StructureDirection ?? TradeDirection.None} code=CONTEXT_NOT_READY m5Count={(ctx.M5?.Count ?? 0)}");
-                return;
-            }
-
-            if (ctx.AtrM5 <= 0)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={ctx.Structure?.StructureDirection ?? TradeDirection.None} code=ATR_INVALID atrM5={ctx.AtrM5:0.00000}");
-                return;
-            }
-
-            TradeDirection direction = ResolveStructureDirection(ctx);
-            ctx.Structure.StructureDirection = direction;
-            GlobalLogger.Log(_bot,
-                $"[STRUCT][DIR][SOURCE] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} trend={ctx.TrendDirection} diSpread={ctx.DiSpread_M5:0.00} slopeM5={ctx.Ema21Slope_M5:0.00000} slopeM15={ctx.Ema21Slope_M15:0.00000}");
-
-            if (direction == TradeDirection.None)
-            {
-                if (ctx.IsStructureDirectionAuthoritative() && (ctx.LogicBiasDirection == TradeDirection.Long || ctx.LogicBiasDirection == TradeDirection.Short))
-                {
-                    direction = ctx.LogicBiasDirection;
-                    ctx.Structure.StructureDirection = direction;
-                    GlobalLogger.Log(_bot,
-                        $"[STRUCT][AUTH][DIR_OK] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"}");
-                }
-            }
-
-            if (direction == TradeDirection.None)
-            {
-                ctx.Structure.HasImpulse = false;
-                ctx.Structure.ImpulseRecentOk = false;
-                ctx.Structure.ImpulseAgeBars = ctx.BarsSinceImpulse_M5;
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} code=DIRECTION_UNRESOLVED age={ctx.BarsSinceImpulse_M5} adx={ctx.Adx_M5:0.0}");
-                return;
-            }
-
-            int m5Idx = ctx.M5.Count - 2;
-            double body = Math.Abs(ctx.M5.ClosePrices[m5Idx] - ctx.M5.OpenPrices[m5Idx]);
-            double range = Math.Abs(ctx.M5.HighPrices[m5Idx] - ctx.M5.LowPrices[m5Idx]);
-            double move = body / ctx.AtrM5;
-            int bars = ctx.BarsSinceImpulse_M5 <= 0 || ctx.BarsSinceImpulse_M5 >= 999 ? 0 : ctx.BarsSinceImpulse_M5;
-
-            bool directionalCurrentBar =
-                direction == TradeDirection.Long
-                    ? ctx.M5.ClosePrices[m5Idx] > ctx.M5.OpenPrices[m5Idx]
-                    : direction == TradeDirection.Short
-                        ? ctx.M5.ClosePrices[m5Idx] < ctx.M5.OpenPrices[m5Idx]
-                        : false;
-
-            bool strongMove = move >= 0.6;
-            bool expansion = range >= ctx.AtrM5 * 1.2;
-            bool currentImpulse = directionalCurrentBar && strongMove && expansion;
-
-            bool recentImpulseCandidate =
-                direction != TradeDirection.None &&
-                bars >= 0 &&
-                bars <= 6 &&
-                ctx.BarsSinceImpulse_M5 >= 0 &&
-                ctx.BarsSinceImpulse_M5 < 999;
-
-            double recentStrength = move;
-            double recentRange = range;
-            int impulseIdx = m5Idx;
-
-            if (!currentImpulse && recentImpulseCandidate)
-            {
-                int start = Math.Max(1, m5Idx - 8);
-                for (int i = m5Idx; i >= start; i--)
-                {
-                    double iRange = Math.Abs(ctx.M5.HighPrices[i] - ctx.M5.LowPrices[i]);
-                    double iBody = Math.Abs(ctx.M5.ClosePrices[i] - ctx.M5.OpenPrices[i]);
-                    if (ctx.AtrM5 <= 0 || iRange <= 0)
-                        continue;
-
-                    bool dirMatch =
-                        direction == TradeDirection.Long
-                            ? ctx.M5.ClosePrices[i] > ctx.M5.OpenPrices[i]
-                            : ctx.M5.ClosePrices[i] < ctx.M5.OpenPrices[i];
-                    bool iStrong = (iBody / ctx.AtrM5) >= 0.5;
-                    bool iExpansion = iRange >= ctx.AtrM5 * 1.0;
-                    if (!dirMatch || !iStrong || !iExpansion)
-                        continue;
-
-                    impulseIdx = i;
-                    recentStrength = iBody / ctx.AtrM5;
-                    recentRange = iRange;
-                    bars = m5Idx - i;
-                    break;
-                }
-            }
-
-            bool recentImpulseOk = !currentImpulse && recentImpulseCandidate && bars >= 0 && bars <= 6 && recentStrength >= 0.5;
-            ctx.Structure.HasImpulse = currentImpulse || recentImpulseOk;
-            ctx.Structure.ImpulseRecentOk = recentImpulseOk;
-            ctx.Structure.ImpulseAgeBars = bars;
-
-            if (!ctx.Structure.HasImpulse)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} source={ctx.Structure.DirectionSource ?? "NA"} code=NO_RECENT_IMPULSE age={bars} bodyAtr={move:0.00} rangeAtr={(ctx.AtrM5 > 0 ? range / ctx.AtrM5 : 0):0.00} adx={ctx.Adx_M5:0.0}");
-                return;
-            }
-
-            ctx.Structure.ImpulseStrength = Math.Max(move, recentStrength);
-            ctx.Structure.ImpulseRange = Math.Max(range, recentRange);
-            ctx.Structure.ImpulseBars = Math.Max(1, bars + 1);
-
-            if (recentImpulseOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][IMPULSE][RECENT_OK] dir={ctx.Structure.StructureDirection} source={ctx.Structure.DirectionSource ?? "NA"} age={bars} idx={impulseIdx} strength={ctx.Structure.ImpulseStrength:0.00} range={ctx.Structure.ImpulseRange:0.00000}");
-            }
-            else
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCTURE][IMPULSE] dir={ctx.Structure.StructureDirection} strength={ctx.Structure.ImpulseStrength:F2} range={ctx.Structure.ImpulseRange:F1}");
-            }
-        }
-
-        private void BuildPullback(EntryContext ctx)
-        {
-            if (ctx == null)
-            {
-                GlobalLogger.Log(_bot, "[STRUCT][PULLBACK][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
-                return;
-            }
-
-            TradeDirection direction = ctx.Structure.StructureDirection;
-            bool impulseOk = ctx.Structure.HasImpulse || ctx.Structure.ImpulseRecentOk;
-            if (!ctx.Structure.HasImpulse && impulseOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][AUTH][IMPULSE_OK] symbol={ctx.Symbol ?? "NA"} recent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
-                if (ctx.Structure.ImpulseRecentOk)
-                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=recent_impulse");
-            }
-            if (!impulseOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_PREREQ_NO_IMPULSE impulse={ctx.Structure.HasImpulse.ToString().ToLowerInvariant()} impulseRecent={ctx.Structure.ImpulseRecentOk.ToString().ToLowerInvariant()} age={ctx.Structure.ImpulseAgeBars}");
-                return;
-            }
-
-            double retrace = ctx.PullbackDepthAtr_M5;
-            int bars = ctx.PullbackBars_M5;
-
-            bool validDepth = retrace >= 0.2 && retrace <= 0.65;
-            bool notTooLong = bars <= 12;
-            bool standardOk = validDepth && notTooLong;
-
-            bool shallowDepth = retrace >= 0.06 && retrace <= 0.28;
-            bool shallowBars = bars >= 1 && bars <= 6;
-            bool directionalPressure =
-                ctx.LastClosedBarInTrendDirection ||
-                ctx.HasReactionCandle_M5 ||
-                ctx.IsPullbackDecelerating_M5 ||
-                ctx.M1TriggerInTrendDirection;
-            bool shallowOk = !standardOk && shallowDepth && shallowBars && directionalPressure;
-
-            if (!validDepth && !shallowDepth)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_DEPTH_INVALID depth={retrace:0.00} bars={bars} shallowDepth={shallowDepth.ToString().ToLowerInvariant()}");
-            }
-            if (!notTooLong && !shallowBars)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=PULLBACK_BARS_INVALID depth={retrace:0.00} bars={bars} notTooLong={notTooLong.ToString().ToLowerInvariant()} shallowBars={shallowBars.ToString().ToLowerInvariant()}");
-            }
-
-            ctx.Structure.PullbackStandardOk = standardOk;
-            ctx.Structure.PullbackShallowOk = shallowOk;
-            ctx.Structure.HasPullback = standardOk || shallowOk;
-
-            if (!ctx.Structure.HasPullback)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][PULLBACK][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=NO_VALID_PULLBACK depth={retrace:0.00} bars={bars} pressure={directionalPressure.ToString().ToLowerInvariant()}");
-                return;
-            }
-
-            ctx.Structure.HasMicroPullback =
-                retrace >= 0.08 &&
-                retrace <= 0.45 &&
-                bars <= 6;
-            ctx.Structure.PullbackDepth = retrace;
-            ctx.Structure.PullbackBars = bars;
-            ctx.Structure.PullbackLow = GetPullbackLow(ctx);
-            ctx.Structure.PullbackHigh = GetPullbackHigh(ctx);
-
-            if (standardOk)
-            {
-                GlobalLogger.Log(_bot, $"[STRUCT][PULLBACK][STANDARD_OK] depth={retrace:F2} bars={bars} micro={ctx.Structure.HasMicroPullback.ToString().ToLowerInvariant()}");
-            }
-            else if (shallowOk)
-            {
-                GlobalLogger.Log(_bot, $"[STRUCT][PULLBACK][SHALLOW_OK] depth={retrace:F2} bars={bars} pressure={directionalPressure.ToString().ToLowerInvariant()} micro={ctx.Structure.HasMicroPullback.ToString().ToLowerInvariant()}");
-            }
-
-            GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_RANGE] low={ctx.Structure.PullbackLow:F5} high={ctx.Structure.PullbackHigh:F5}");
-        }
-
-        private void BuildFlag(EntryContext ctx)
-        {
-            if (ctx == null)
-            {
-                GlobalLogger.Log(_bot, "[STRUCT][FLAG][FAIL] symbol=NA dir=None code=CONTEXT_NOT_READY");
-                return;
-            }
-
-            TradeDirection direction = ctx.Structure.StructureDirection;
-            bool pullbackOk = ctx.Structure.HasPullback || ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback;
-            if (!ctx.Structure.HasPullback && pullbackOk)
-            {
-                string mode = ctx.Structure.PullbackStandardOk ? "standard" : "shallow";
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][AUTH][PULLBACK_OK] symbol={ctx.Symbol ?? "NA"} mode={mode}");
-                if ((ctx.Structure.PullbackShallowOk || ctx.Structure.HasMicroPullback) && !ctx.Structure.PullbackStandardOk)
-                    GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=shallow_pullback");
-            }
-            if (!pullbackOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_PREREQ_NO_PULLBACK pullback={ctx.Structure.HasPullback.ToString().ToLowerInvariant()} shallow={ctx.Structure.PullbackShallowOk.ToString().ToLowerInvariant()} micro={ctx.Structure.HasMicroPullback.ToString().ToLowerInvariant()}");
-                return;
-            }
-
-            if (ctx.AtrM5 <= 0)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=ATR_INVALID atrM5={ctx.AtrM5:0.00000}");
-                return;
-            }
-
-            int bars = Math.Max(ctx.FlagBarsLong_M5, ctx.FlagBarsShort_M5);
-            if (bars <= 0 && (ctx.HasFlagLong_M5 || ctx.HasFlagShort_M5))
-                bars = Math.Max(2, Math.Min(5, ctx.PullbackBars_M5));
-
-            double compression = ctx.FlagAtr_M5 > 0
-                ? ctx.FlagAtr_M5 / ctx.AtrM5
-                : 1.0;
-
-            bool tight = compression <= 0.6;
-            bool shortFlag = bars <= 6;
-            bool standardOk = tight && shortFlag;
-
-            bool messyCompression = compression <= 0.90;
-            bool messyBars = bars >= 2 && bars <= 8;
-            bool directionalPressure =
-                ctx.Structure.ContinuationEarlySignal ||
-                ctx.Structure.ContinuationConfirmedSignal ||
-                ctx.LastClosedBarInTrendDirection ||
-                ctx.HasReactionCandle_M5 ||
-                ctx.IsPullbackDecelerating_M5;
-            bool messyOk = !standardOk && messyCompression && messyBars && directionalPressure;
-
-            if (!(shortFlag || messyBars))
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_BARS_INVALID bars={bars} short={shortFlag.ToString().ToLowerInvariant()} messyBars={messyBars.ToString().ToLowerInvariant()}");
-            }
-            if (!(tight || messyCompression))
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=FLAG_COMPRESSION_INVALID compression={compression:0.00} tight={tight.ToString().ToLowerInvariant()} messyCompression={messyCompression.ToString().ToLowerInvariant()}");
-            }
-
-            ctx.Structure.FlagStandardOk = standardOk;
-            ctx.Structure.FlagMessyOk = messyOk;
-            ctx.Structure.HasFlag = standardOk || messyOk;
-            if (!ctx.Structure.FlagStandardOk && ctx.Structure.FlagMessyOk)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][AUTH][FLAG_OK] symbol={ctx.Symbol ?? "NA"} mode=messy");
-                GlobalLogger.Log(_bot, $"[STRUCT][AUTH][ALT_PATH_USED] symbol={ctx.Symbol ?? "NA"} alt=messy_flag");
-            }
-
-            if (!ctx.Structure.HasFlag)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCT][FLAG][FAIL] symbol={ctx.Symbol ?? "NA"} dir={direction} code=NO_VALID_FLAG bars={bars} compression={compression:0.00} pressure={directionalPressure.ToString().ToLowerInvariant()}");
-                return;
-            }
-
-            ctx.Structure.FlagCompression = compression;
-            ctx.Structure.FlagBars = bars;
-            ctx.Structure.FlagHigh = ctx.FlagHigh;
-            ctx.Structure.FlagLow = ctx.FlagLow;
-
-            if (standardOk)
-                GlobalLogger.Log(_bot, $"[STRUCT][FLAG][STANDARD_OK] compression={compression:F2} bars={bars}");
-            else if (messyOk)
-                GlobalLogger.Log(_bot, $"[STRUCT][FLAG][MESSY_OK] compression={compression:F2} bars={bars} pressure={directionalPressure.ToString().ToLowerInvariant()}");
-            GlobalLogger.Log(_bot, $"[STRUCTURE][FLAG_RANGE] high={ctx.Structure.FlagHigh:F5} low={ctx.Structure.FlagLow:F5}");
-        }
-
-        private static TradeDirection ResolveStructureDirection(EntryContext ctx)
-        {
-            if (ctx == null)
-                return TradeDirection.None;
-
-            if (ctx.TrendDirection == TradeDirection.Long || ctx.TrendDirection == TradeDirection.Short)
-            {
-                ctx.Structure.DirectionSource = "TREND_DIRECTION";
-                return ctx.TrendDirection;
-            }
-
-            bool slopeLong = ctx.Ema21Slope_M5 > 0 && ctx.Ema21Slope_M15 > 0;
-            bool slopeShort = ctx.Ema21Slope_M5 < 0 && ctx.Ema21Slope_M15 < 0;
-            bool diLong = ctx.DiSpread_M5 >= 2.0;
-            bool diShort = ctx.DiSpread_M5 <= -2.0;
-
-            if (slopeLong && diLong)
-            {
-                ctx.Structure.DirectionSource = "EMA_DI_CONFLUENCE_LONG";
-                return TradeDirection.Long;
-            }
-
-            if (slopeShort && diShort)
-            {
-                ctx.Structure.DirectionSource = "EMA_DI_CONFLUENCE_SHORT";
-                return TradeDirection.Short;
-            }
-
-            if (ctx.DiSpread_M5 >= 4.0)
-            {
-                ctx.Structure.DirectionSource = "DI_DOMINANCE_LONG";
-                return TradeDirection.Long;
-            }
-
-            if (ctx.DiSpread_M5 <= -4.0)
-            {
-                ctx.Structure.DirectionSource = "DI_DOMINANCE_SHORT";
-                return TradeDirection.Short;
-            }
-
-            ctx.Structure.DirectionSource = "NONE";
-            return TradeDirection.None;
-        }
-
-        private void DetectFlagBreakout(EntryContext ctx)
-        {
-            if (ctx == null || !ctx.Structure.HasFlag || ctx.M1 == null || ctx.M1.Count < 2)
-                return;
-
-            int m1Idx = ctx.M1.Count - 2;
-            double price = ctx.M1.ClosePrices[m1Idx];
-
-            bool breakoutUp = price > ctx.Structure.FlagHigh;
-            bool breakoutDown = price < ctx.Structure.FlagLow;
-
-            ctx.Structure.FlagBreakoutUp = breakoutUp;
-            ctx.Structure.FlagBreakoutDown = breakoutDown;
-
-            if (breakoutUp || breakoutDown)
-            {
-                GlobalLogger.Log(_bot,
-                    $"[STRUCTURE][FLAG_BREAKOUT] dir={(breakoutUp ? "UP" : "DOWN")} price={price:F5}");
-            }
-
-            if (ctx.AtrM5 > 0)
-            {
-                double breakoutRef = breakoutUp ? ctx.Structure.FlagHigh : ctx.Structure.FlagLow;
-                double breakoutStrength = Math.Abs(price - breakoutRef) / ctx.AtrM5;
-                bool weakBreakout = breakoutStrength < 0.1;
-
-                if (weakBreakout)
-                {
-                    ctx.Structure.FlagBreakoutUp = false;
-                    ctx.Structure.FlagBreakoutDown = false;
-                    GlobalLogger.Log(_bot, "[STRUCTURE][FLAG_BREAKOUT_WEAK]");
-                }
-            }
-
-            bool invalidBreakout =
-                (ctx.Structure.FlagBreakoutUp && ctx.Structure.StructureDirection != TradeDirection.Long) ||
-                (ctx.Structure.FlagBreakoutDown && ctx.Structure.StructureDirection != TradeDirection.Short) ||
-                (ctx.Structure.FlagBreakoutUp && ctx.Structure.FlagBreakoutDown);
-
-            if (invalidBreakout)
-                GlobalLogger.Log(_bot, "[ERROR][FLAG_BREAKOUT_INVALID]");
-        }
-
-        private void DetectPullbackEarly(EntryContext ctx)
-        {
-            if (ctx == null || !ctx.Structure.HasPullback || ctx.M1 == null || ctx.M1.Count < 3)
-                return;
-
-            int m1Idx = ctx.M1.Count - 2;
-            double price = ctx.M1.ClosePrices[m1Idx];
-            double previousHigh = ctx.M1.HighPrices[m1Idx - 1];
-            double previousLow = ctx.M1.LowPrices[m1Idx - 1];
-            double previousClose = ctx.M1.ClosePrices[m1Idx - 1];
-
-            bool earlyLong =
-                ctx.Structure.StructureDirection == TradeDirection.Long &&
-                price > previousHigh;
-
-            bool earlyShort =
-                ctx.Structure.StructureDirection == TradeDirection.Short &&
-                price < previousLow;
-
-            ctx.Structure.PullbackEarlySignal = earlyLong || earlyShort;
-            ctx.Structure.ContinuationEarlySignal = ctx.Structure.PullbackEarlySignal;
-
-            if (ctx.Structure.PullbackEarlySignal)
-                GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_EARLY] dir={(earlyLong ? "LONG" : "SHORT")}");
-
-            double moveSize = Math.Abs(price - previousClose);
-            bool weakMove = ctx.AtrM1 > 0 && moveSize < ctx.AtrM1 * 0.05;
-
-            if (weakMove)
-            {
-                ctx.Structure.PullbackEarlySignal = false;
-                ctx.Structure.ContinuationEarlySignal = false;
-                GlobalLogger.Log(_bot, "[STRUCTURE][PULLBACK_EARLY_WEAK]");
-            }
-        }
-
-        private void DetectPullbackConfirmed(EntryContext ctx)
-        {
-            if (ctx == null || !ctx.Structure.HasPullback || ctx.M1 == null || ctx.M1.Count < 2)
-                return;
-
-            int m1Idx = ctx.M1.Count - 2;
-            double price = ctx.M1.ClosePrices[m1Idx];
-
-            bool confirmedLong =
-                ctx.Structure.StructureDirection == TradeDirection.Long &&
-                price > ctx.Structure.PullbackHigh;
-
-            bool confirmedShort =
-                ctx.Structure.StructureDirection == TradeDirection.Short &&
-                price < ctx.Structure.PullbackLow;
-
-            ctx.Structure.PullbackConfirmedSignal = confirmedLong || confirmedShort;
-            ctx.Structure.ContinuationConfirmedSignal = ctx.Structure.PullbackConfirmedSignal;
-
-            if (ctx.Structure.PullbackConfirmedSignal)
-                GlobalLogger.Log(_bot, $"[STRUCTURE][PULLBACK_CONFIRMED] dir={(confirmedLong ? "LONG" : "SHORT")}");
-
-            bool invalidTiming =
-                (ctx.Structure.PullbackEarlySignal || ctx.Structure.PullbackConfirmedSignal) &&
-                ctx.Structure.StructureDirection == TradeDirection.None;
-
-            if (invalidTiming)
-                GlobalLogger.Log(_bot, "[ERROR][PULLBACK_TIMING_INVALID]");
-        }
-
-        private void MapStructureContinuationSignals(EntryContext ctx)
-        {
-            if (ctx == null)
-                return;
-
-            ctx.Structure.ContinuationEarlySignal = ctx.Structure.PullbackEarlySignal;
-            ctx.Structure.ContinuationConfirmedSignal = ctx.Structure.PullbackConfirmedSignal;
-        }
-
-        private static double GetPullbackLow(EntryContext ctx)
-        {
-            if (ctx?.M1 == null || ctx.M1.Count < 3)
-                return 0;
-
-            int m1Idx = ctx.M1.Count - 2;
-            int window = Math.Max(2, Math.Min(m1Idx + 1, Math.Max(2, ctx.PullbackBars_M5 * 5)));
-            int start = Math.Max(0, m1Idx - window + 1);
-            double low = double.MaxValue;
-
-            for (int i = start; i <= m1Idx; i++)
-                low = Math.Min(low, ctx.M1.LowPrices[i]);
-
-            return low == double.MaxValue ? 0 : low;
-        }
-
-        private static double GetPullbackHigh(EntryContext ctx)
-        {
-            if (ctx?.M1 == null || ctx.M1.Count < 3)
-                return 0;
-
-            int m1Idx = ctx.M1.Count - 2;
-            int window = Math.Max(2, Math.Min(m1Idx + 1, Math.Max(2, ctx.PullbackBars_M5 * 5)));
-            int start = Math.Max(0, m1Idx - window + 1);
-            double high = double.MinValue;
-
-            for (int i = start; i <= m1Idx; i++)
-                high = Math.Max(high, ctx.M1.HighPrices[i]);
-
-            return high == double.MinValue ? 0 : high;
         }
     }
 }
