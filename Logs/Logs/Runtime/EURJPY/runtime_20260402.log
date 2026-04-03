@@ -184,3 +184,1255 @@
 [2026-04-02 19:45:01.039] BLOCK: global hard session block
 [2026-04-02 19:45:01.040] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
 [2026-04-02 19:45:01.040] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 19:50:00.175] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 19:50:00.175] [FX MSD] EURJPY | atrPips=2.77 adx=21.8 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 19:50:00.175] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=21.8
+[2026-04-02 19:50:00.175] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 19:50:00.175] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 19:50:00.176] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:50:00.176] [IMPULSE SRC] idx=2092 barsSince=0 range=0.02
+[2026-04-02 19:50:00.177] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 19:50:00.178] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 19:50:00.178] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.03200000000001069 atr=0.03214285714285836
+[2026-04-02 19:50:00.178] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=3.09 slopeM5=-0.00042 slopeM15=0.01675
+[2026-04-02 19:50:00.179] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=22.9
+[2026-04-02 19:50:00.179] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 19:50:00.179] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:50:00.179] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:50:00.180] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:50:00.180] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 19:50:00.180] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 19:50:00.180] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 19:50:00.180] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 19:50:00.181] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 19:50:00.181] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:50:00.181] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 19:50:00.181] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=21.8 atrPts=2.77
+[2026-04-02 19:50:00.181] [EURJPY] attemptId=EUR7244QF [ATTEMPT EUR7244QF] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 19:50:00.182] BLOCK: global hard session block
+[2026-04-02 19:50:00.182] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 19:50:00.182] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 19:55:00.285] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 19:55:00.285] [FX MSD] EURJPY | atrPips=3.09 adx=22.8 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 19:55:00.286] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=22.8
+[2026-04-02 19:55:00.287] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 19:55:00.287] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 19:55:00.289] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:55:00.289] [IMPULSE SRC] idx=2093 barsSince=0 range=0.06
+[2026-04-02 19:55:00.290] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.06/0.02 retr=0.00/0.02
+[2026-04-02 19:55:00.290] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 19:55:00.291] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.060000000000002274 atr=0.03328571428571487
+[2026-04-02 19:55:00.292] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=10.16 slopeM5=0.00153 slopeM15=0.01675
+[2026-04-02 19:55:00.292] [STRUCTURE][IMPULSE] dir=Long strength=1.38 range=0.1
+[2026-04-02 19:55:00.293] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 19:55:00.293] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 19:55:00.293] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:55:00.294] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:55:00.294] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:55:00.295] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 19:55:00.295] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 19:55:00.296] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 19:55:00.296] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 19:55:00.297] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 19:55:00.298] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:55:00.298] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 19:55:00.299] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=22.8 atrPts=3.09
+[2026-04-02 19:55:00.299] [EURJPY] attemptId=EUR72AKAO [ATTEMPT EUR72AKAO] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 19:55:00.300] BLOCK: global hard session block
+[2026-04-02 19:55:00.301] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 19:55:00.301] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:00:00.226] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:00:00.227] [FX MSD] EURJPY | atrPips=3.14 adx=22.9 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 20:00:00.227] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=22.9
+[2026-04-02 20:00:00.241] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:00:00.241] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:00:00.242] [PB] bars=1 depth=0.45 early=True
+[2026-04-02 20:00:00.242] [IMPULSE SRC] idx=2093 barsSince=1 range=0.06
+[2026-04-02 20:00:00.242] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.06 comp=0.06/0.02 retr=0.01/0.02
+[2026-04-02 20:00:00.243] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:00:00.243] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.058000000000021146 atr=0.03328571428571487
+[2026-04-02 20:00:00.244] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=9.94 slopeM5=0.00294 slopeM15=0.01850
+[2026-04-02 20:00:00.245] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2093 strength=1.38 range=0.05500
+[2026-04-02 20:00:00.246] [STRUCT][PULLBACK][STANDARD_OK] depth=0.45 bars=1 micro=false
+[2026-04-02 20:00:00.246] [STRUCTURE][PULLBACK_RANGE] low=184.12200 high=184.16300
+[2026-04-02 20:00:00.247] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_COMPRESSION_INVALID compression=1.74 tight=false messyCompression=false
+[2026-04-02 20:00:00.248] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=NO_VALID_FLAG bars=0 compression=1.74 pressure=false
+[2026-04-02 20:00:00.248] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=true pbDepth=0.45 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:00:00.249] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:00:00.249] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:00:00.250] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:00:00.250] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:00:00.251] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:00:00.251] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:00:00.251] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:00:00.251] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:00:00.252] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=22.9 atrPts=3.14
+[2026-04-02 20:00:00.252] [EURJPY] attemptId=EUR72GZQI [ATTEMPT EUR72GZQI] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:00:00.253] BLOCK: global hard session block
+[2026-04-02 20:00:00.253] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:00:00.254] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:05:01.685] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:05:01.685] [FX MSD] EURJPY | atrPips=3.11 adx=21.5 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 20:05:01.685] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=21.5
+[2026-04-02 20:05:01.685] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:05:01.686] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:05:01.686] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:05:01.687] [IMPULSE SRC] idx=2095 barsSince=0 range=0.03
+[2026-04-02 20:05:01.687] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.06/0.01 retr=0.00/0.02
+[2026-04-02 20:05:01.687] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:05:01.687] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.060000000000002274 atr=0.033714285714286314
+[2026-04-02 20:05:01.687] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=5.67 slopeM5=0.00349 slopeM15=0.01850
+[2026-04-02 20:05:01.688] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2093 strength=1.36 range=0.05500
+[2026-04-02 20:05:01.688] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:05:01.688] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:05:01.688] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:05:01.688] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:05:01.689] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:05:01.689] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:05:01.689] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:05:01.689] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:05:01.689] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:05:01.689] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:05:01.690] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:05:01.690] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:05:01.690] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=21.5 atrPts=3.11
+[2026-04-02 20:05:01.690] [EURJPY] attemptId=EUR72NGBZ [ATTEMPT EUR72NGBZ] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:05:01.690] BLOCK: global hard session block
+[2026-04-02 20:05:01.691] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:05:01.691] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:10:00.591] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:10:00.592] [FX MSD] EURJPY | atrPips=3.06 adx=20.3 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 20:10:00.592] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=20.3
+[2026-04-02 20:10:00.593] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:10:00.594] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:10:00.596] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:10:00.596] [IMPULSE SRC] idx=2095 barsSince=1 range=0.03
+[2026-04-02 20:10:00.597] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.04/0.01 retr=0.00/0.02
+[2026-04-02 20:10:00.597] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:10:00.598] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.038000000000010914 atr=0.03357142857143052
+[2026-04-02 20:10:00.599] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=DI_DOMINANCE_LONG trend=None diSpread=4.85 slopeM5=-0.00137 slopeM15=0.01850
+[2026-04-02 20:10:00.599] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=DI_DOMINANCE_LONG age=3 idx=2093 strength=1.37 range=0.05500
+[2026-04-02 20:10:00.600] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:10:00.600] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:10:00.601] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:10:00.601] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=DI_DOMINANCE_LONG impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:10:00.602] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:10:00.602] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:10:00.603] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:10:00.604] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:10:00.604] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:10:00.605] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:10:00.605] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:10:00.606] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:10:00.606] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=20.3 atrPts=3.06
+[2026-04-02 20:10:00.607] [EURJPY] attemptId=EUR72TUZ5 [ATTEMPT EUR72TUZ5] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:10:00.607] BLOCK: global hard session block
+[2026-04-02 20:10:00.608] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:10:00.609] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:15:00.374] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:15:00.374] [FX MSD] EURJPY | atrPips=2.85 adx=19.1 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:15:00.375] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=19.1
+[2026-04-02 20:15:00.375] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:15:00.376] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:15:00.377] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:15:00.378] [IMPULSE SRC] idx=2097 barsSince=0 range=0.03
+[2026-04-02 20:15:00.379] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 20:15:00.381] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:15:00.382] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.034000000000020236 atr=0.032142857142860394
+[2026-04-02 20:15:00.382] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=1.99 slopeM5=-0.00316 slopeM15=0.01619
+[2026-04-02 20:15:00.383] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=20.2
+[2026-04-02 20:15:00.383] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 20:15:00.384] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:15:00.385] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:15:00.387] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:15:00.387] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:15:00.387] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:15:00.387] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:15:00.388] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:15:00.389] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:15:00.389] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:15:00.389] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:15:00.390] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=19.1 atrPts=2.85
+[2026-04-02 20:15:00.390] [EURJPY] attemptId=EUR730AA0 [ATTEMPT EUR730AA0] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:15:00.390] BLOCK: global hard session block
+[2026-04-02 20:15:00.391] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:15:00.392] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:20:01.065] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:20:01.066] [FX MSD] EURJPY | atrPips=2.82 adx=17.9 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:20:01.066] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=17.9
+[2026-04-02 20:20:01.067] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:20:01.068] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:20:01.069] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:20:01.070] [IMPULSE SRC] idx=2098 barsSince=0 range=0.03
+[2026-04-02 20:20:01.071] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 20:20:01.071] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:20:01.072] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.028999999999996362 atr=0.03200000000000257
+[2026-04-02 20:20:01.072] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=1.47 slopeM5=-0.00442 slopeM15=0.01619
+[2026-04-02 20:20:01.073] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=19.0
+[2026-04-02 20:20:01.073] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 20:20:01.074] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:20:01.075] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:20:01.075] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:20:01.076] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:20:01.076] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:20:01.077] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:20:01.078] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:20:01.078] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:20:01.078] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:20:01.079] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:20:01.079] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=17.9 atrPts=2.82
+[2026-04-02 20:20:01.080] [EURJPY] attemptId=EUR736QAU [ATTEMPT EUR736QAU] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:20:01.080] BLOCK: global hard session block
+[2026-04-02 20:20:01.080] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:20:01.081] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:25:00.288] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 20:25:00.288] [FX MSD] EURJPY | atrPips=2.72 adx=16.4 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:25:00.288] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=16.4
+[2026-04-02 20:25:00.289] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 20:25:00.289] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 20:25:00.290] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:25:00.290] [IMPULSE SRC] idx=2098 barsSince=1 range=0.03
+[2026-04-02 20:25:00.291] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.04/0.01 retr=0.00/0.01
+[2026-04-02 20:25:00.291] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:25:00.291] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.036000000000001364 atr=0.0314285714285733
+[2026-04-02 20:25:00.292] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-0.06 slopeM5=-0.00565 slopeM15=0.01619
+[2026-04-02 20:25:00.292] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=1 adx=17.7
+[2026-04-02 20:25:00.292] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 20:25:00.292] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:25:00.293] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:25:00.293] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:25:00.293] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.60
+[2026-04-02 20:25:00.294] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.60 reason=FX_HTF BULL weak structure, low confidence, conf=0.60, gapATR=0.60, adx=12.8, distATR=0.66 activeDirection=Long activeConfidence=0.60
+[2026-04-02 20:25:00.294] [HTF][SNAPSHOT] dir=Long conf=0.60
+[2026-04-02 20:25:00.294] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 20:25:00.294] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 20:25:00.294] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:25:00.295] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 20:25:00.295] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=16.4 atrPts=2.72
+[2026-04-02 20:25:00.296] [EURJPY] attemptId=EUR73D56H [ATTEMPT EUR73D56H] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:25:00.296] BLOCK: global hard session block
+[2026-04-02 20:25:00.297] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 20:25:00.298] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:00:05.059] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:00:05.064] [FX MSD] EURJPY | atrPips=2.63 adx=15.7 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 21:00:05.064] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=15.7
+[2026-04-02 21:00:05.081] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:00:05.084] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:00:05.096] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:00:05.106] [IMPULSE SRC] idx=1997 barsSince=2 range=0.03
+[2026-04-02 21:00:05.106] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 21:00:05.109] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:00:05.111] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.02600000000001046 atr=0.03150000000000221
+[2026-04-02 21:00:05.117] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-1.35 slopeM5=-0.00814 slopeM15=0.01135
+[2026-04-02 21:00:05.123] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=2 adx=16.6
+[2026-04-02 21:00:05.124] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 21:00:05.128] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:00:05.131] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:00:05.136] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:00:05.136] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:00:05.137] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:00:05.137] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:00:05.137] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:00:05.138] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:00:05.138] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:00:05.138] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:00:05.138] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=15.7 atrPts=2.63
+[2026-04-02 21:00:05.138] [EURJPY] attemptId=EUR74M99F [ATTEMPT EUR74M99F] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:00:05.139] BLOCK: global hard session block
+[2026-04-02 21:00:05.143] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:00:05.145] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:05:00.936] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:05:00.937] [FX MSD] EURJPY | atrPips=4.14 adx=19.8 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 21:05:00.937] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=19.8
+[2026-04-02 21:05:00.938] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:05:00.938] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:05:00.940] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:05:00.940] [IMPULSE SRC] idx=1997 barsSince=3 range=0.03
+[2026-04-02 21:05:00.941] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.14/0.01 retr=0.00/0.01
+[2026-04-02 21:05:00.941] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:05:00.942] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.1419999999999959 atr=0.03792857142857388
+[2026-04-02 21:05:00.942] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-21.78 slopeM5=-0.00822 slopeM15=0.01135
+[2026-04-02 21:05:00.943] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=3 bodyAtr=0.08 rangeAtr=3.74 adx=18.5
+[2026-04-02 21:05:00.943] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=3
+[2026-04-02 21:05:00.944] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:05:00.945] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:05:00.945] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:05:00.946] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:05:00.946] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:05:00.947] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:05:00.947] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:05:00.948] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:05:00.948] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:05:00.949] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:05:00.949] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=19.8 atrPts=4.14
+[2026-04-02 21:05:00.949] [EURJPY] attemptId=EUR74SLJ6 [ATTEMPT EUR74SLJ6] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:05:00.950] BLOCK: global hard session block
+[2026-04-02 21:05:00.951] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:05:00.952] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:10:02.877] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:10:02.878] [FX MSD] EURJPY | atrPips=4.80 adx=20.6 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 21:10:02.879] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=20.6
+[2026-04-02 21:10:02.879] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:10:02.880] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:10:02.882] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:10:02.882] [IMPULSE SRC] idx=1997 barsSince=4 range=0.00
+[2026-04-02 21:10:02.883] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.16/0.03 retr=0.00/0.02
+[2026-04-02 21:10:02.884] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:10:02.884] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.16100000000000136 atr=0.04300000000000231
+[2026-04-02 21:10:02.885] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-15.13 slopeM5=-0.00656 slopeM15=0.01135
+[2026-04-02 21:10:02.885] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=4 bodyAtr=0.30 rangeAtr=2.51 adx=19.6
+[2026-04-02 21:10:02.885] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=4
+[2026-04-02 21:10:02.886] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:10:02.886] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:10:02.887] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:10:02.887] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:10:02.888] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:10:02.888] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:10:02.888] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:10:02.888] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:10:02.889] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:10:02.889] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:10:02.890] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=20.6 atrPts=4.80
+[2026-04-02 21:10:02.890] [EURJPY] attemptId=EUR74Z2IQ [ATTEMPT EUR74Z2IQ] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:10:02.890] BLOCK: global hard session block
+[2026-04-02 21:10:02.891] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:10:02.891] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:15:03.373] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:15:03.374] [FX MSD] EURJPY | atrPips=5.18 adx=22.0 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 21:15:03.374] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=22.0
+[2026-04-02 21:15:03.375] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:15:03.375] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:15:03.376] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:15:03.377] [IMPULSE SRC] idx=1997 barsSince=5 range=0.00
+[2026-04-02 21:15:03.377] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.12/0.04 retr=0.00/0.02
+[2026-04-02 21:15:03.378] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 21:15:03.378] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.12399999999999523 atr=0.04792857142857291
+[2026-04-02 21:15:03.379] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-15.17 slopeM5=-0.00469 slopeM15=0.00668
+[2026-04-02 21:15:03.379] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=5 bodyAtr=0.38 rangeAtr=2.17 adx=20.8
+[2026-04-02 21:15:03.379] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=5
+[2026-04-02 21:15:03.380] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:15:03.380] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:15:03.381] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:15:03.381] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:15:03.382] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:15:03.382] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:15:03.382] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:15:03.383] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:15:03.383] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:15:03.384] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:15:03.384] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=22.0 atrPts=5.18
+[2026-04-02 21:15:03.385] [EURJPY] attemptId=EUR755IDM [ATTEMPT EUR755IDM] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:15:03.385] BLOCK: global hard session block
+[2026-04-02 21:15:03.386] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:15:03.387] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:20:00.203] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:20:00.229] [FX MSD] EURJPY | atrPips=6.88 adx=23.4 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:20:00.229] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=23.4
+[2026-04-02 21:20:00.230] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:20:00.230] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:20:00.239] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:20:00.240] [IMPULSE SRC] idx=2000 barsSince=0 range=0.08
+[2026-04-02 21:20:00.241] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.08 comp=0.12/0.03 retr=0.00/0.03
+[2026-04-02 21:20:00.241] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 21:20:00.241] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.11599999999998545 atr=0.052500000000000976
+[2026-04-02 21:20:00.242] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-11.79 slopeM5=-0.00763 slopeM15=0.00668
+[2026-04-02 21:20:00.243] [STRUCTURE][IMPULSE] dir=Short strength=0.88 range=0.1
+[2026-04-02 21:20:00.243] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:20:00.244] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:20:00.245] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:20:00.246] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:20:00.246] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:20:00.246] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:20:00.247] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:20:00.247] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:20:00.248] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:20:00.249] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:20:00.249] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:20:00.253] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:20:00.256] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=23.4 atrPts=6.88
+[2026-04-02 21:20:00.257] [EURJPY] attemptId=EUR75BVFO [ATTEMPT EUR75BVFO] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:20:00.257] BLOCK: global hard session block
+[2026-04-02 21:20:00.257] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:20:00.258] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:25:00.061] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:25:00.062] [FX MSD] EURJPY | atrPips=5.96 adx=25.2 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:25:00.062] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=25.2
+[2026-04-02 21:25:00.063] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:25:00.065] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:25:00.068] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:25:00.068] [IMPULSE SRC] idx=2001 barsSince=0 range=0.05
+[2026-04-02 21:25:00.068] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.17/0.02 retr=0.00/0.02
+[2026-04-02 21:25:00.068] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:25:00.068] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.16599999999999682 atr=0.05842857142857229
+[2026-04-02 21:25:00.069] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-20.61 slopeM5=-0.01693 slopeM15=0.00668
+[2026-04-02 21:25:00.069] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2000 strength=0.79 range=0.08400
+[2026-04-02 21:25:00.069] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:25:00.069] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:25:00.070] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:25:00.070] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:25:00.070] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:25:00.071] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:25:00.072] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:25:00.072] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:25:00.073] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:25:00.073] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:25:00.074] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:25:00.074] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:25:00.075] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=25.2 atrPts=5.96
+[2026-04-02 21:25:00.075] [EURJPY] attemptId=EUR75IASC [ATTEMPT EUR75IASC] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 21:25:00.075] BLOCK: global hard session block
+[2026-04-02 21:25:00.076] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:25:00.077] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:30:00.314] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:30:00.324] [FX MSD] EURJPY | atrPips=5.34 adx=26.1 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:30:00.324] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=26.1
+[2026-04-02 21:30:00.325] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:30:00.325] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:30:00.339] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:30:00.339] [IMPULSE SRC] idx=2001 barsSince=1 range=0.05
+[2026-04-02 21:30:00.346] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.06/0.02 retr=0.00/0.02
+[2026-04-02 21:30:00.347] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:30:00.353] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.057999999999992724 atr=0.057999999999998816
+[2026-04-02 21:30:00.353] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-18.72 slopeM5=-0.02421 slopeM15=-0.00447
+[2026-04-02 21:30:00.354] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=2 idx=2000 strength=0.79 range=0.08400
+[2026-04-02 21:30:00.354] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:30:00.354] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:30:00.354] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:30:00.355] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:30:00.355] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:30:00.355] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:30:00.355] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:30:00.356] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:30:00.356] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:30:00.356] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:30:00.356] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:30:00.356] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:30:00.357] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=26.1 atrPts=5.34
+[2026-04-02 21:30:00.357] [EURJPY] attemptId=EUR75OQH2 [ATTEMPT EUR75OQH2] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:30:00.360] BLOCK: global hard session block
+[2026-04-02 21:30:00.360] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:30:00.361] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:35:01.807] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:35:01.807] [FX MSD] EURJPY | atrPips=5.04 adx=25.3 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:35:01.808] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=25.3
+[2026-04-02 21:35:01.808] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:35:01.809] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:35:01.810] [PB] bars=1 depth=0.16 early=False
+[2026-04-02 21:35:01.811] [IMPULSE SRC] idx=2003 barsSince=0 range=0.03
+[2026-04-02 21:35:01.811] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.05/0.01 retr=0.01/0.02
+[2026-04-02 21:35:01.812] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:35:01.812] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.049000000000006594 atr=0.05628571428571304
+[2026-04-02 21:35:01.812] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-13.15 slopeM5=-0.02410 slopeM15=-0.00447
+[2026-04-02 21:35:01.813] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=3 idx=2000 strength=0.82 range=0.08400
+[2026-04-02 21:35:01.813] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.16 bars=1 pressure=false
+[2026-04-02 21:35:01.814] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:35:01.814] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:35:01.815] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:35:01.815] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:35:01.816] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:35:01.816] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:35:01.816] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:35:01.817] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:35:01.817] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:35:01.818] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:35:01.818] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=25.3 atrPts=5.04
+[2026-04-02 21:35:01.819] [EURJPY] attemptId=EUR75V73N [ATTEMPT EUR75V73N] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:35:01.819] BLOCK: global hard session block
+[2026-04-02 21:35:01.820] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:35:01.821] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:40:00.308] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:40:00.315] [FX MSD] EURJPY | atrPips=4.93 adx=24.1 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:40:00.315] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=24.1
+[2026-04-02 21:40:00.316] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:40:00.316] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:40:00.327] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:40:00.327] [IMPULSE SRC] idx=2002 barsSince=0 range=0.05
+[2026-04-02 21:40:00.327] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.06/0.02 retr=0.00/0.02
+[2026-04-02 21:40:00.327] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:40:00.327] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.06399999999999295 atr=0.05678571428571339
+[2026-04-02 21:40:00.328] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-8.27 slopeM5=-0.01537 slopeM15=-0.00447
+[2026-04-02 21:40:00.328] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=4 idx=1998 strength=0.81 range=0.08400
+[2026-04-02 21:40:00.328] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:40:00.328] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:40:00.329] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:40:00.329] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:40:00.329] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:40:00.329] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:40:00.330] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:40:00.330] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:40:00.330] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:40:00.330] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:40:00.330] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:40:00.330] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:40:00.331] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=24.1 atrPts=4.93
+[2026-04-02 21:40:00.331] [EURJPY] attemptId=EUR761LFH [ATTEMPT EUR761LFH] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:40:00.331] BLOCK: global hard session block
+[2026-04-02 21:40:00.331] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:40:00.332] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:45:01.591] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:45:01.591] [FX MSD] EURJPY | atrPips=4.73 adx=22.8 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:45:01.592] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=False ADX=22.8
+[2026-04-02 21:45:01.592] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:45:01.592] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:45:01.593] [PB] bars=2 depth=0.67 early=True
+[2026-04-02 21:45:01.593] [IMPULSE SRC] idx=2002 barsSince=1 range=0.05
+[2026-04-02 21:45:01.593] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=0.05 comp=0.07/0.02 retr=0.04/0.02
+[2026-04-02 21:45:01.594] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:45:01.594] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=0.06700000000000728 atr=0.05671428571428651
+[2026-04-02 21:45:01.594] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-5.18 slopeM5=-0.00933 slopeM15=-0.00697
+[2026-04-02 21:45:01.595] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=5 idx=1998 strength=0.81 range=0.08400
+[2026-04-02 21:45:01.596] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.67 bars=2 shallowDepth=false
+[2026-04-02 21:45:01.596] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.67 bars=2 pressure=true
+[2026-04-02 21:45:01.596] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:45:01.597] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:45:01.597] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:45:01.597] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:45:01.598] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:45:01.598] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:45:01.598] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:45:01.599] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:45:01.599] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:45:01.600] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:45:01.600] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=False adx=22.8 atrPts=4.73
+[2026-04-02 21:45:01.600] [EURJPY] attemptId=EUR7681W5 [ATTEMPT EUR7681W5] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:45:01.601] BLOCK: global hard session block
+[2026-04-02 21:45:01.602] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:45:01.602] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:50:00.388] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:50:00.388] [FX MSD] EURJPY | atrPips=4.37 adx=22.1 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 21:50:00.389] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=22.1
+[2026-04-02 21:50:00.389] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:50:00.389] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:50:00.390] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:50:00.390] [IMPULSE SRC] idx=2002 barsSince=2 range=0.05
+[2026-04-02 21:50:00.391] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.04/0.02 retr=0.00/0.02
+[2026-04-02 21:50:00.391] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 21:50:00.391] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.040000000000020464 atr=0.05707142857142904
+[2026-04-02 21:50:00.391] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-5.86 slopeM5=-0.00585 slopeM15=-0.00697
+[2026-04-02 21:50:00.392] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=6 idx=1998 strength=0.81 range=0.08400
+[2026-04-02 21:50:00.392] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:50:00.392] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:50:00.392] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:50:00.392] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:50:00.393] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:50:00.393] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:50:00.394] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:50:00.394] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:50:00.394] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:50:00.394] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:50:00.395] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:50:00.395] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:50:00.395] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=22.1 atrPts=4.37
+[2026-04-02 21:50:00.395] [EURJPY] attemptId=EUR76EGFP [ATTEMPT EUR76EGFP] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:50:00.396] BLOCK: global hard session block
+[2026-04-02 21:50:00.396] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:50:00.397] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:55:00.269] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 21:55:00.269] [FX MSD] EURJPY | atrPips=4.29 adx=20.1 | lowVol=True trend=True momentum=False compression=True
+[2026-04-02 21:55:00.270] [FX MarketState] EURJPY Trend=True Momentum=False LowVol=True ADX=20.1
+[2026-04-02 21:55:00.271] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 21:55:00.271] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 21:55:00.273] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:55:00.273] [IMPULSE SRC] idx=2002 barsSince=3 range=0.05
+[2026-04-02 21:55:00.274] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.05 comp=0.05/0.02 retr=0.00/0.02
+[2026-04-02 21:55:00.274] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 21:55:00.275] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.05299999999999727 atr=0.058357142857141345
+[2026-04-02 21:55:00.275] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=TREND_DIRECTION trend=Short diSpread=-1.49 slopeM5=-0.00404 slopeM15=-0.00697
+[2026-04-02 21:55:00.276] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Short source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.22 rangeAtr=0.75 adx=21.4
+[2026-04-02 21:55:00.277] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 21:55:00.277] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:55:00.278] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:55:00.279] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:55:00.279] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 21:55:00.280] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 21:55:00.281] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 21:55:00.281] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 21:55:00.281] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 21:55:00.281] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:55:00.282] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 21:55:00.282] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=True momentum=False lowVol=True adx=20.1 atrPts=4.29
+[2026-04-02 21:55:00.283] [EURJPY] attemptId=EUR76KVUC [ATTEMPT EUR76KVUC] [DIR][CTX_BUILD] sym=EURJPY trend=Short impulse=None breakout=Long reversal=None
+[2026-04-02 21:55:00.283] BLOCK: global hard session block
+[2026-04-02 21:55:00.284] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 21:55:00.285] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:00:00.450] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:00:00.451] [FX MSD] EURJPY | atrPips=4.23 adx=18.7 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:00:00.452] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=18.7
+[2026-04-02 22:00:00.453] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:00:00.454] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:00:00.475] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:00:00.476] [IMPULSE SRC] idx=2002 barsSince=4 range=0.00
+[2026-04-02 22:00:00.477] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.05/0.05 retr=0.00/0.03
+[2026-04-02 22:00:00.477] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:00:00.477] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.046999999999997044 atr=0.058857142857141706
+[2026-04-02 22:00:00.477] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-0.96 slopeM5=-0.00068 slopeM15=-0.00752
+[2026-04-02 22:00:00.478] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=4 adx=20.0
+[2026-04-02 22:00:00.478] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=4
+[2026-04-02 22:00:00.478] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:00:00.478] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:00:00.481] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:00:00.482] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:00:00.482] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:00:00.482] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:00:00.483] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:00:00.483] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:00:00.483] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:00:00.483] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:00:00.484] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=18.7 atrPts=4.23
+[2026-04-02 22:00:00.484] [EURJPY] attemptId=EUR76RBGD [ATTEMPT EUR76RBGD] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:00:00.484] BLOCK: global hard session block
+[2026-04-02 22:00:00.485] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:00:00.485] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:05:00.260] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:05:00.261] [FX MSD] EURJPY | atrPips=4.47 adx=18.2 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:05:00.262] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=18.2
+[2026-04-02 22:05:00.262] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:05:00.264] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:05:00.265] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:05:00.266] [IMPULSE SRC] idx=2002 barsSince=5 range=0.00
+[2026-04-02 22:05:00.268] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.07/0.05 retr=0.00/0.03
+[2026-04-02 22:05:00.268] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:05:00.269] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.07499999999998863 atr=0.06278571428571159
+[2026-04-02 22:05:00.270] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=3.19 slopeM5=0.00402 slopeM15=-0.00752
+[2026-04-02 22:05:00.270] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=5 adx=19.1
+[2026-04-02 22:05:00.271] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=5
+[2026-04-02 22:05:00.272] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:05:00.272] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:05:00.273] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:05:00.275] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:05:00.275] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:05:00.276] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:05:00.277] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:05:00.278] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:05:00.279] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:05:00.280] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:05:00.281] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=18.2 atrPts=4.47
+[2026-04-02 22:05:00.282] [EURJPY] attemptId=EUR76XQSJ [ATTEMPT EUR76XQSJ] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:05:00.282] BLOCK: global hard session block
+[2026-04-02 22:05:00.283] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:05:00.284] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:10:00.161] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:10:00.162] [FX MSD] EURJPY | atrPips=4.06 adx=17.4 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:10:00.162] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=17.4
+[2026-04-02 22:10:00.163] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:10:00.163] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:10:00.165] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:10:00.166] [IMPULSE SRC] idx=2002 barsSince=6 range=0.00
+[2026-04-02 22:10:00.166] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.07/0.05 retr=0.00/0.03
+[2026-04-02 22:10:00.167] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:10:00.167] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.07499999999998863 atr=0.06249999999999797
+[2026-04-02 22:10:00.168] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=3.11 slopeM5=0.00656 slopeM15=-0.00752
+[2026-04-02 22:10:00.168] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=6 adx=18.2
+[2026-04-02 22:10:00.168] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=6
+[2026-04-02 22:10:00.169] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:10:00.169] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:10:00.170] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:10:00.170] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:10:00.171] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:10:00.171] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:10:00.172] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:10:00.173] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:10:00.173] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:10:00.174] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:10:00.174] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=17.4 atrPts=4.06
+[2026-04-02 22:10:00.175] [EURJPY] attemptId=EUR774677 [ATTEMPT EUR774677] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:10:00.175] BLOCK: global hard session block
+[2026-04-02 22:10:00.175] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:10:00.176] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:15:01.585] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:15:01.586] [FX MSD] EURJPY | atrPips=3.64 adx=16.8 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:15:01.586] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=16.8
+[2026-04-02 22:15:01.587] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:15:01.587] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:15:01.589] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:15:01.589] [IMPULSE SRC] idx=2002 barsSince=7 range=0.00
+[2026-04-02 22:15:01.590] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.02/0.04 retr=0.00/0.03
+[2026-04-02 22:15:01.590] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:15:01.591] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.019000000000005457 atr=0.053142857142857124
+[2026-04-02 22:15:01.591] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=3.37 slopeM5=0.00860 slopeM15=0.00344
+[2026-04-02 22:15:01.592] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.13 rangeAtr=0.21 adx=17.5
+[2026-04-02 22:15:01.592] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 22:15:01.593] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:15:01.593] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:15:01.593] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:15:01.594] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:15:01.594] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:15:01.595] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:15:01.595] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:15:01.596] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:15:01.596] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:15:01.597] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:15:01.597] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=16.8 atrPts=3.64
+[2026-04-02 22:15:01.598] [EURJPY] attemptId=EUR77AMRZ [ATTEMPT EUR77AMRZ] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=Long reversal=None
+[2026-04-02 22:15:01.598] BLOCK: global hard session block
+[2026-04-02 22:15:01.599] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:15:01.600] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:20:27.156] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:20:27.156] [FX MSD] EURJPY | atrPips=3.42 adx=17.0 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:20:27.156] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=17.0
+[2026-04-02 22:20:27.157] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:20:27.157] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:20:27.158] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:20:27.159] [IMPULSE SRC] idx=2002 barsSince=8 range=0.00
+[2026-04-02 22:20:27.159] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.03/0.04 retr=0.00/0.02
+[2026-04-02 22:20:27.160] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:20:27.160] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.02800000000002001 atr=0.04707142857142799
+[2026-04-02 22:20:27.160] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=6.07 slopeM5=0.00891 slopeM15=0.00344
+[2026-04-02 22:20:27.161] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=8 bodyAtr=0.15 rangeAtr=0.49 adx=17.2
+[2026-04-02 22:20:27.161] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 22:20:27.162] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:20:27.162] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:20:27.162] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:20:27.163] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:20:27.163] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:20:27.163] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:20:27.164] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:20:27.164] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:20:27.165] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:20:27.165] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:20:27.165] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=17.0 atrPts=3.42
+[2026-04-02 22:20:27.166] [EURJPY] attemptId=EUR77HLZ8 [ATTEMPT EUR77HLZ8] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:20:27.166] BLOCK: global hard session block
+[2026-04-02 22:20:27.167] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:20:27.168] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:25:02.500] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:25:02.501] [FX MSD] EURJPY | atrPips=3.19 adx=17.1 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 22:25:02.501] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=17.1
+[2026-04-02 22:25:02.501] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:25:02.502] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:25:02.504] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:25:02.504] [IMPULSE SRC] idx=2002 barsSince=9 range=0.00
+[2026-04-02 22:25:02.505] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.03/0.03 retr=0.00/0.02
+[2026-04-02 22:25:02.505] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:25:02.506] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.029999999999972715 atr=0.04099999999999885
+[2026-04-02 22:25:02.506] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=7.08 slopeM5=0.01056 slopeM15=0.00344
+[2026-04-02 22:25:02.507] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=9 bodyAtr=0.32 rangeAtr=0.46 adx=17.1
+[2026-04-02 22:25:02.508] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=9
+[2026-04-02 22:25:02.508] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:25:02.509] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=9 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:25:02.509] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:25:02.510] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:25:02.510] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:25:02.511] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:25:02.511] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:25:02.512] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:25:02.513] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:25:02.513] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:25:02.514] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=17.1 atrPts=3.19
+[2026-04-02 22:25:02.514] [EURJPY] attemptId=EUR77NIFS [ATTEMPT EUR77NIFS] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:25:02.515] BLOCK: global hard session block
+[2026-04-02 22:25:02.516] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:25:02.517] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:30:00.373] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:30:00.373] [FX MSD] EURJPY | atrPips=3.04 adx=16.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:30:00.374] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=16.3
+[2026-04-02 22:30:00.374] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:30:00.375] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:30:00.376] [PB] bars=1 depth=0.03 early=False
+[2026-04-02 22:30:00.377] [IMPULSE SRC] idx=2012 barsSince=0 range=0.02
+[2026-04-02 22:30:00.378] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 22:30:00.378] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:30:00.379] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.029999999999972715 atr=0.03671428571428237
+[2026-04-02 22:30:00.379] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=4.82 slopeM5=0.00905 slopeM15=0.00821
+[2026-04-02 22:30:00.380] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=0 idx=2012 strength=0.63 range=0.02400
+[2026-04-02 22:30:00.381] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=0.03 bars=1 shallowDepth=false
+[2026-04-02 22:30:00.382] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=0.03 bars=1 pressure=false
+[2026-04-02 22:30:00.382] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:30:00.383] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:30:00.384] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:30:00.385] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:30:00.385] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:30:00.386] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:30:00.386] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:30:00.387] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:30:00.387] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:30:00.388] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:30:00.388] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=16.3 atrPts=3.04
+[2026-04-02 22:30:00.389] [EURJPY] attemptId=EUR77TWA7 [ATTEMPT EUR77TWA7] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:30:00.390] BLOCK: global hard session block
+[2026-04-02 22:30:00.391] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:30:00.392] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:35:01.659] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:35:01.660] [FX MSD] EURJPY | atrPips=2.95 adx=14.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:35:01.660] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=14.5
+[2026-04-02 22:35:01.660] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:35:01.660] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:35:01.661] [PB] bars=1 depth=0.13 early=False
+[2026-04-02 22:35:01.662] [IMPULSE SRC] idx=2013 barsSince=0 range=0.03
+[2026-04-02 22:35:01.662] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.05/0.01 retr=0.00/0.01
+[2026-04-02 22:35:01.662] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:35:01.662] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.04999999999998295 atr=0.03099999999999576
+[2026-04-02 22:35:01.663] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=-0.17 slopeM5=0.00505 slopeM15=0.00821
+[2026-04-02 22:35:01.663] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=0 idx=2013 strength=0.77 range=0.02700
+[2026-04-02 22:35:01.663] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=0.13 bars=1 pressure=false
+[2026-04-02 22:35:01.663] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:35:01.663] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:35:01.664] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:35:01.664] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:35:01.665] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:35:01.665] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:35:01.665] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:35:01.666] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:35:01.666] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:35:01.666] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:35:01.666] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=14.5 atrPts=2.95
+[2026-04-02 22:35:01.667] [EURJPY] attemptId=EUR780CRL [ATTEMPT EUR780CRL] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:35:01.667] BLOCK: global hard session block
+[2026-04-02 22:35:01.667] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:35:01.668] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:40:00.499] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:40:00.499] [FX MSD] EURJPY | atrPips=2.95 adx=14.7 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:40:00.500] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=14.7
+[2026-04-02 22:40:00.500] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:40:00.501] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:40:00.503] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:40:00.503] [IMPULSE SRC] idx=2014 barsSince=0 range=0.03
+[2026-04-02 22:40:00.504] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.05/0.01 retr=0.00/0.02
+[2026-04-02 22:40:00.505] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:40:00.505] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.05099999999998772 atr=0.03221428571428321
+[2026-04-02 22:40:00.505] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.60 slopeM5=-0.00114 slopeM15=0.00821
+[2026-04-02 22:40:00.506] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=0 idx=2014 strength=0.53 range=0.03200
+[2026-04-02 22:40:00.506] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:40:00.506] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:40:00.506] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:40:00.506] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:40:00.507] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:40:00.507] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:40:00.507] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:40:00.507] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:40:00.508] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:40:00.508] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:40:00.508] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:40:00.508] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:40:00.509] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=14.7 atrPts=2.95
+[2026-04-02 22:40:00.509] [EURJPY] attemptId=EUR786RCG [ATTEMPT EUR786RCG] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:40:00.509] BLOCK: global hard session block
+[2026-04-02 22:40:00.510] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:40:00.510] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:45:00.493] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:45:00.494] [FX MSD] EURJPY | atrPips=2.71 adx=14.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:45:00.495] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=14.3
+[2026-04-02 22:45:00.495] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:45:00.496] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:45:00.498] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:45:00.498] [IMPULSE SRC] idx=2014 barsSince=1 range=0.03
+[2026-04-02 22:45:00.499] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.03/0.01 retr=0.00/0.02
+[2026-04-02 22:45:00.500] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:45:00.500] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.03200000000001069 atr=0.030785714285713084
+[2026-04-02 22:45:00.501] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.47 slopeM5=-0.00358 slopeM15=0.00701
+[2026-04-02 22:45:00.502] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2014 strength=0.55 range=0.03200
+[2026-04-02 22:45:00.503] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:45:00.504] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:45:00.504] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:45:00.505] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:45:00.505] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:45:00.506] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:45:00.506] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:45:00.507] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:45:00.507] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:45:00.508] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:45:00.509] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:45:00.509] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:45:00.510] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=14.3 atrPts=2.71
+[2026-04-02 22:45:00.511] [EURJPY] attemptId=EUR78D6TQ [ATTEMPT EUR78D6TQ] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:45:00.511] BLOCK: global hard session block
+[2026-04-02 22:45:00.512] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:45:00.513] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:50:01.994] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:50:01.994] [FX MSD] EURJPY | atrPips=2.55 adx=13.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:50:01.994] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=13.3
+[2026-04-02 22:50:01.994] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:50:01.994] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:50:01.995] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:50:01.995] [IMPULSE SRC] idx=2016 barsSince=0 range=0.02
+[2026-04-02 22:50:01.995] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.02/0.01 retr=0.00/0.01
+[2026-04-02 22:50:01.996] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:50:01.996] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.022999999999996135 atr=0.028571428571426947
+[2026-04-02 22:50:01.996] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-2.10 slopeM5=-0.00244 slopeM15=0.00701
+[2026-04-02 22:50:01.996] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=14.0
+[2026-04-02 22:50:01.996] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 22:50:01.997] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:50:01.997] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:50:01.997] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:50:01.997] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:50:01.997] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:50:01.998] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:50:01.998] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:50:01.998] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:50:01.998] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:50:01.998] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:50:01.998] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=13.3 atrPts=2.55
+[2026-04-02 22:50:01.999] [EURJPY] attemptId=EUR78JNGT [ATTEMPT EUR78JNGT] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:50:01.999] BLOCK: global hard session block
+[2026-04-02 22:50:01.999] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:50:02.000] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:55:01.761] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 22:55:01.761] [FX MSD] EURJPY | atrPips=2.44 adx=12.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 22:55:01.762] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=12.5
+[2026-04-02 22:55:01.762] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 22:55:01.763] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 22:55:01.764] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:55:01.765] [IMPULSE SRC] idx=2016 barsSince=1 range=0.02
+[2026-04-02 22:55:01.765] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 22:55:01.765] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:55:01.766] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.033999999999991815 atr=0.02757142857142623
+[2026-04-02 22:55:01.766] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=1.52 slopeM5=0.00088 slopeM15=0.00701
+[2026-04-02 22:55:01.767] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=1 adx=13.2
+[2026-04-02 22:55:01.767] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 22:55:01.768] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:55:01.768] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:55:01.769] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:55:01.769] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 22:55:01.770] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 22:55:01.770] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 22:55:01.771] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 22:55:01.771] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 22:55:01.771] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:55:01.772] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 22:55:01.772] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=12.5 atrPts=2.44
+[2026-04-02 22:55:01.773] [EURJPY] attemptId=EUR78Q2RN [ATTEMPT EUR78Q2RN] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:55:01.774] BLOCK: global hard session block
+[2026-04-02 22:55:01.774] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 22:55:01.775] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:00:05.424] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:00:05.425] [FX MSD] EURJPY | atrPips=2.30 adx=11.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:00:05.425] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=11.5
+[2026-04-02 23:00:05.426] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:00:05.426] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:00:05.428] [PB] bars=1 depth=0.19 early=False
+[2026-04-02 23:00:05.428] [IMPULSE SRC] idx=2016 barsSince=2 range=0.02
+[2026-04-02 23:00:05.428] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 23:00:05.429] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:00:05.429] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.025000000000005684 atr=0.026857142857139138
+[2026-04-02 23:00:05.430] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=0.39 slopeM5=0.00180 slopeM15=0.00428
+[2026-04-02 23:00:05.430] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=2 bodyAtr=0.41 rangeAtr=0.60 adx=12.3
+[2026-04-02 23:00:05.431] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 23:00:05.431] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:00:05.432] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:00:05.432] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:00:05.432] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:00:05.433] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:00:05.433] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:00:05.434] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:00:05.434] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:00:05.435] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:00:05.435] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:00:05.436] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=11.5 atrPts=2.30
+[2026-04-02 23:00:05.436] [EURJPY] attemptId=EUR78WL2Y [ATTEMPT EUR78WL2Y] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:00:05.437] BLOCK: global hard session block
+[2026-04-02 23:00:05.438] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:00:05.439] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:05:26.756] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:05:26.757] [FX MSD] EURJPY | atrPips=2.24 adx=11.1 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:05:26.757] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=11.1
+[2026-04-02 23:05:26.758] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:05:26.758] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:05:26.760] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:05:26.760] [IMPULSE SRC] idx=2018 barsSince=1 range=0.02
+[2026-04-02 23:05:26.760] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 23:05:26.761] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:05:26.761] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.025999999999982037 atr=0.025071428571426475
+[2026-04-02 23:05:26.762] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=-1.86 slopeM5=0.00091 slopeM15=0.00428
+[2026-04-02 23:05:26.762] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.24 rangeAtr=0.76 adx=11.7
+[2026-04-02 23:05:26.763] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 23:05:26.763] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:05:26.764] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:05:26.764] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:05:26.765] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:05:26.765] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:05:26.766] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:05:26.766] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:05:26.766] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:05:26.767] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:05:26.767] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:05:26.768] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=11.1 atrPts=2.24
+[2026-04-02 23:05:26.768] [EURJPY] attemptId=EUR793H0F [ATTEMPT EUR793H0F] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:05:26.769] BLOCK: global hard session block
+[2026-04-02 23:05:26.770] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:05:26.770] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:10:03.775] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:10:03.776] [FX MSD] EURJPY | atrPips=1.99 adx=10.6 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:10:03.776] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=10.6
+[2026-04-02 23:10:03.777] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:10:03.777] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:10:03.779] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:10:03.780] [IMPULSE SRC] idx=2018 barsSince=2 range=0.02
+[2026-04-02 23:10:03.781] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.02/0.01 retr=0.00/0.01
+[2026-04-02 23:10:03.781] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:10:03.782] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.019000000000005457 atr=0.02292857142856925
+[2026-04-02 23:10:03.783] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-1.83 slopeM5=-0.00109 slopeM15=0.00428
+[2026-04-02 23:10:03.783] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=2 adx=11.1
+[2026-04-02 23:10:03.784] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 23:10:03.785] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:10:03.785] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:10:03.786] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:10:03.786] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:10:03.787] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:10:03.787] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:10:03.788] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:10:03.788] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:10:03.789] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:10:03.789] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:10:03.790] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=10.6 atrPts=1.99
+[2026-04-02 23:10:03.790] [EURJPY] attemptId=EUR799ERN [ATTEMPT EUR799ERN] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:10:03.791] BLOCK: global hard session block
+[2026-04-02 23:10:03.792] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:10:03.793] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:15:00.472] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:15:00.472] [FX MSD] EURJPY | atrPips=1.87 adx=10.4 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:15:00.473] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=10.4
+[2026-04-02 23:15:00.473] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:15:00.474] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:15:00.475] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:15:00.476] [IMPULSE SRC] idx=2018 barsSince=3 range=0.02
+[2026-04-02 23:15:00.476] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.01/0.01 retr=0.00/0.01
+[2026-04-02 23:15:00.477] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:15:00.478] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.009999999999990905 atr=0.01828571428571227
+[2026-04-02 23:15:00.478] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-2.78 slopeM5=-0.00162 slopeM15=0.00171
+[2026-04-02 23:15:00.479] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=3 adx=10.8
+[2026-04-02 23:15:00.479] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=3
+[2026-04-02 23:15:00.480] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:15:00.481] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:15:00.481] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:15:00.482] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:15:00.482] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:15:00.483] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:15:00.483] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:15:00.484] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:15:00.484] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:15:00.485] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:15:00.485] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=10.4 atrPts=1.87
+[2026-04-02 23:15:00.486] [EURJPY] attemptId=EUR79FRP8 [ATTEMPT EUR79FRP8] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:15:00.486] BLOCK: global hard session block
+[2026-04-02 23:15:00.487] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:15:00.488] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:20:05.099] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:20:05.099] [FX MSD] EURJPY | atrPips=1.81 adx=10.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:20:05.100] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=10.5
+[2026-04-02 23:20:05.100] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:20:05.101] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:20:05.102] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:20:05.102] [IMPULSE SRC] idx=2018 barsSince=4 range=0.00
+[2026-04-02 23:20:05.103] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.02/0.01 retr=0.00/0.01
+[2026-04-02 23:20:05.103] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:20:05.104] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.019000000000005457 atr=0.018428571428570097
+[2026-04-02 23:20:05.104] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.17 slopeM5=-0.00193 slopeM15=0.00171
+[2026-04-02 23:20:05.105] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=8 bodyAtr=0.00 rangeAtr=1.03 adx=10.6
+[2026-04-02 23:20:05.105] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 23:20:05.106] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:20:05.106] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:20:05.107] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:20:05.107] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:20:05.108] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:20:05.109] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:20:05.109] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:20:05.110] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:20:05.110] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:20:05.111] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:20:05.111] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=10.5 atrPts=1.81
+[2026-04-02 23:20:05.112] [EURJPY] attemptId=EUR79MARA [ATTEMPT EUR79MARA] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:20:05.112] BLOCK: global hard session block
+[2026-04-02 23:20:05.113] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:20:05.114] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:25:03.156] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:25:03.157] [FX MSD] EURJPY | atrPips=1.85 adx=9.6 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:25:03.157] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=9.6
+[2026-04-02 23:25:03.158] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:25:03.158] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:25:03.159] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:25:03.160] [IMPULSE SRC] idx=2023 barsSince=0 range=0.02
+[2026-04-02 23:25:03.160] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 23:25:03.161] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:25:03.161] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.027999999999991587 atr=0.01914285714285313
+[2026-04-02 23:25:03.161] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=None source=NONE trend=None diSpread=-1.61 slopeM5=-0.00039 slopeM15=0.00171
+[2026-04-02 23:25:03.162] [STRUCT][IMPULSE][FAIL] symbol=EURJPY dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=10.1
+[2026-04-02 23:25:03.162] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 23:25:03.163] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:25:03.163] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:25:03.164] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:25:03.164] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:25:03.164] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:25:03.165] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:25:03.165] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:25:03.166] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:25:03.166] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:25:03.167] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:25:03.167] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=9.6 atrPts=1.85
+[2026-04-02 23:25:03.168] [EURJPY] attemptId=EUR79SOQQ [ATTEMPT EUR79SOQQ] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:25:03.168] BLOCK: global hard session block
+[2026-04-02 23:25:03.169] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:25:03.170] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:30:01.877] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:30:01.877] [FX MSD] EURJPY | atrPips=1.68 adx=9.0 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:30:01.878] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=9.0
+[2026-04-02 23:30:01.878] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:30:01.878] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:30:01.880] [PB] bars=3 depth=1.65 early=True
+[2026-04-02 23:30:01.880] [IMPULSE SRC] idx=2023 barsSince=1 range=0.02
+[2026-04-02 23:30:01.880] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.03/0.01
+[2026-04-02 23:30:01.881] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:30:01.881] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.030000000000001137 atr=0.018142857142854445
+[2026-04-02 23:30:01.881] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=-1.03 slopeM5=0.00101 slopeM15=0.00328
+[2026-04-02 23:30:01.882] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2023 strength=0.88 range=0.02100
+[2026-04-02 23:30:01.882] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=PULLBACK_DEPTH_INVALID depth=1.65 bars=3 shallowDepth=false
+[2026-04-02 23:30:01.882] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Long code=NO_VALID_PULLBACK depth=1.65 bars=3 pressure=true
+[2026-04-02 23:30:01.883] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:30:01.883] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:30:01.883] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:30:01.884] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:30:01.884] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:30:01.884] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:30:01.885] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:30:01.885] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:30:01.886] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:30:01.886] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:30:01.886] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=9.0 atrPts=1.68
+[2026-04-02 23:30:01.887] [EURJPY] attemptId=EUR79Z38I [ATTEMPT EUR79Z38I] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:30:01.887] BLOCK: global hard session block
+[2026-04-02 23:30:01.888] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:30:01.888] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:35:01.157] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:35:01.157] [FX MSD] EURJPY | atrPips=1.61 adx=8.8 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:35:01.157] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=8.8
+[2026-04-02 23:35:01.158] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:35:01.158] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:35:01.159] [PB] bars=1 depth=0.45 early=True
+[2026-04-02 23:35:01.159] [IMPULSE SRC] idx=2023 barsSince=2 range=0.02
+[2026-04-02 23:35:01.159] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.01/0.01 retr=0.01/0.01
+[2026-04-02 23:35:01.160] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:35:01.160] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.01300000000000523 atr=0.017714285714285034
+[2026-04-02 23:35:01.161] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Long source=TREND_DIRECTION trend=Long diSpread=-1.84 slopeM5=0.00219 slopeM15=0.00328
+[2026-04-02 23:35:01.161] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2023 strength=0.90 range=0.02100
+[2026-04-02 23:35:01.161] [STRUCT][PULLBACK][STANDARD_OK] depth=0.45 bars=1 micro=false
+[2026-04-02 23:35:01.162] [STRUCTURE][PULLBACK_RANGE] low=184.08400 high=184.09700
+[2026-04-02 23:35:01.162] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Long code=NO_VALID_FLAG bars=0 compression=0.73 pressure=false
+[2026-04-02 23:35:01.163] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=true pbDepth=0.45 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:35:01.163] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:35:01.164] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:35:01.164] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:35:01.165] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:35:01.165] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:35:01.165] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:35:01.166] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:35:01.166] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:35:01.167] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=8.8 atrPts=1.61
+[2026-04-02 23:35:01.168] [EURJPY] attemptId=EUR7A5I5R [ATTEMPT EUR7A5I5R] [DIR][CTX_BUILD] sym=EURJPY trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:35:01.168] BLOCK: global hard session block
+[2026-04-02 23:35:01.169] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:35:01.170] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:40:19.164] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:40:19.165] [FX MSD] EURJPY | atrPips=1.79 adx=9.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:40:19.165] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=9.5
+[2026-04-02 23:40:19.166] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:40:19.166] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:40:19.168] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:40:19.168] [IMPULSE SRC] idx=2026 barsSince=0 range=0.03
+[2026-04-02 23:40:19.169] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.03 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 23:40:19.169] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:40:19.170] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.026999999999986812 atr=0.01792857142857177
+[2026-04-02 23:40:19.170] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.51 slopeM5=0.00054 slopeM15=0.00328
+[2026-04-02 23:40:19.170] [STRUCTURE][IMPULSE] dir=Short strength=0.84 range=0.0
+[2026-04-02 23:40:19.171] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:40:19.171] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:40:19.172] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:40:19.172] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:40:19.173] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:40:19.173] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:40:19.174] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:40:19.174] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:40:19.175] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:40:19.175] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:40:19.175] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:40:19.176] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:40:19.176] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=9.5 atrPts=1.79
+[2026-04-02 23:40:19.177] [EURJPY] attemptId=EUR7ACBJ3 [ATTEMPT EUR7ACBJ3] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:40:19.178] BLOCK: global hard session block
+[2026-04-02 23:40:19.179] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:40:19.179] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:45:03.686] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:45:03.687] [FX MSD] EURJPY | atrPips=1.72 adx=9.8 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:45:03.687] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=9.8
+[2026-04-02 23:45:03.688] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:45:03.689] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:45:03.691] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:45:03.691] [IMPULSE SRC] idx=2027 barsSince=0 range=0.02
+[2026-04-02 23:45:03.692] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.03/0.01 retr=0.00/0.01
+[2026-04-02 23:45:03.693] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 23:45:03.693] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.03200000000001069 atr=0.01742857142857344
+[2026-04-02 23:45:03.694] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-5.68 slopeM5=-0.00070 slopeM15=0.00253
+[2026-04-02 23:45:03.695] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2026 strength=0.86 range=0.02700
+[2026-04-02 23:45:03.695] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:45:03.696] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:45:03.697] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:45:03.697] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:45:03.698] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:45:03.699] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:45:03.699] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:45:03.700] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:45:03.701] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:45:03.701] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:45:03.702] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:45:03.702] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:45:03.703] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=9.8 atrPts=1.72
+[2026-04-02 23:45:03.704] [EURJPY] attemptId=EUR7AIF2C [ATTEMPT EUR7AIF2C] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:45:03.705] BLOCK: global hard session block
+[2026-04-02 23:45:03.706] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:45:03.707] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:50:01.283] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:50:01.284] [FX MSD] EURJPY | atrPips=1.63 adx=9.9 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:50:01.292] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=9.9
+[2026-04-02 23:50:01.293] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:50:01.294] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:50:01.296] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:50:01.296] [IMPULSE SRC] idx=2027 barsSince=1 range=0.02
+[2026-04-02 23:50:01.297] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.02/0.01 retr=0.00/0.01
+[2026-04-02 23:50:01.297] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:50:01.298] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.020000000000010232 atr=0.01592857142857237
+[2026-04-02 23:50:01.298] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-5.49 slopeM5=-0.00145 slopeM15=0.00253
+[2026-04-02 23:50:01.299] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=2 idx=2026 strength=0.94 range=0.02700
+[2026-04-02 23:50:01.299] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:50:01.300] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:50:01.300] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:50:01.300] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:50:01.301] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:50:01.301] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:50:01.301] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:50:01.302] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:50:01.302] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:50:01.302] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:50:01.303] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:50:01.303] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:50:01.304] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=9.9 atrPts=1.63
+[2026-04-02 23:50:01.304] [EURJPY] attemptId=EUR7AOSOW [ATTEMPT EUR7AOSOW] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:50:01.305] BLOCK: global hard session block
+[2026-04-02 23:50:01.306] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:50:01.307] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=2 shortFlagBars=0
+[2026-04-02 23:55:10.469] [ONBAR DBG] raw=EURJPY canonical=EURJPY
+[2026-04-02 23:55:10.470] [FX MSD] EURJPY | atrPips=1.67 adx=10.9 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:55:10.470] [FX MarketState] EURJPY Trend=False Momentum=False LowVol=True ADX=10.9
+[2026-04-02 23:55:10.471] [MEMORY][CTX_ATTACH][START] symbol=EURJPY
+[2026-04-02 23:55:10.472] [MEMORY][CTX_ATTACH] symbol=EURJPY hasMemory=true phase=Continuation isBuilt=True isUsable=True
+[2026-04-02 23:55:10.473] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:55:10.473] [IMPULSE SRC] idx=2029 barsSince=0 range=0.02
+[2026-04-02 23:55:10.474] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.02 comp=0.02/0.01 retr=0.00/0.01
+[2026-04-02 23:55:10.474] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:55:10.475] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.022999999999996135 atr=0.01649999999999961
+[2026-04-02 23:55:10.475] [STRUCT][DIR][SOURCE] symbol=EURJPY dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-7.50 slopeM5=-0.00223 slopeM15=0.00253
+[2026-04-02 23:55:10.476] [STRUCTURE][IMPULSE] dir=Short strength=1.03 range=0.0
+[2026-04-02 23:55:10.476] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:55:10.477] [STRUCT][PULLBACK][FAIL] symbol=EURJPY dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:55:10.477] [STRUCT][FLAG][FAIL] symbol=EURJPY dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:55:10.478] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:55:10.479] [AUDIT][HTF FLOW][SOURCE] symbol=EURJPY asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:55:10.479] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=EURJPY asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.44
+[2026-04-02 23:55:10.480] [AUDIT][HTF CONTEXT] symbol=EURJPY asset=FX allowedDirection=Long confidence=0.44 reason=FX_HTF BULL low ADX, directional bias preserved, conf=0.44, gapATR=0.66, adx=12.0, slopeATR=0.08 activeDirection=Long activeConfidence=0.44
+[2026-04-02 23:55:10.481] [HTF][SNAPSHOT] dir=Long conf=0.44
+[2026-04-02 23:55:10.482] [CTX][MEMORY_READY] symbol=EURJPY hasMemory=True
+[2026-04-02 23:55:10.483] [ENTRY][SNAPSHOT] symbol=EURJPY movePhase=Continuation continuationWindow=Fresh extensionState=Normal impulseFreshness=0.82 continuationFreshness=1.00 triggerLateScore=0.05 chaseRisk=False timingPenalty=-5
+[2026-04-02 23:55:10.484] [CTX][TIMING][SIDE] symbol=EURJPY side=LONG timingLongActive=False timingShortActive=True early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:55:10.485] [CTX][TIMING][SIDE] symbol=EURJPY side=SHORT timingLongActive=False timingShortActive=True early=True late=False overextended=False freshness=1.00 barsSinceImpulse=1 barsSinceBreak=1 attempts=0 triggerLate=0.05 distanceAtr=0.11
+[2026-04-02 23:55:10.486] [ENTRY MARKETSTATE ASSIGN] sym=EURJPY trend=False momentum=False lowVol=True adx=10.9 atrPts=1.67
+[2026-04-02 23:55:10.486] [EURJPY] attemptId=EUR7AVF9H [ATTEMPT EUR7AVF9H] [DIR][CTX_BUILD] sym=EURJPY trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:55:10.487] BLOCK: global hard session block
+[2026-04-02 23:55:10.488] [MEMORY][ASSESSMENT] symbol=EURJPY firstPullback=False late=False exhausted=False chase=False timingPenalty=-5 trust=0.7
+[2026-04-02 23:55:10.489] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=3 shortFlagBars=0

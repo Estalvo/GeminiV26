@@ -242,3 +242,59 @@
 [2026-04-02 19:45:00.267] BLOCK: global hard session block
 [2026-04-02 19:45:00.267] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-30 trust=0.7
 [2026-04-02 19:45:00.268] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:50:00.196] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 19:50:00.196] [INDEX MSD] GERMANY 40 | atrPts=13.4 adx=15.2 | lowVol=False trend=False momentum=False | minAtr=9 minAdx=22
+[2026-04-02 19:50:00.196] [INDEX MarketState] GERMANY 40 Trend=False Momentum=False LowVol=False ADX=15.2
+[2026-04-02 19:50:00.196] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 19:50:00.197] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:50:00.197] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:50:00.197] [IMPULSE SRC] idx=2091 barsSince=1 range=14.00
+[2026-04-02 19:50:00.198] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=14.00 comp=20.00/4.90 retr=0.00/7.00
+[2026-04-02 19:50:00.198] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 19:50:00.198] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=20 atr=14.457142857142701
+[2026-04-02 19:50:00.198] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=None source=NONE trend=None diSpread=-1.85 slopeM5=-0.36588 slopeM15=20.23049
+[2026-04-02 19:50:00.198] [STRUCT][IMPULSE][FAIL] symbol=GERMANY 40 dir=None source=NONE code=DIRECTION_UNRESOLVED age=1 adx=16.0
+[2026-04-02 19:50:00.199] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 19:50:00.199] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:50:00.199] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:50:00.199] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:50:00.199] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.85
+[2026-04-02 19:50:00.200] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 activeDirection=Long activeConfidence=0.85
+[2026-04-02 19:50:00.200] [HTF][SNAPSHOT] dir=Long conf=0.85
+[2026-04-02 19:50:00.200] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 19:50:00.200] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=0.94 triggerLateScore=0.30 chaseRisk=False timingPenalty=-30
+[2026-04-02 19:50:00.200] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.94 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.30 distanceAtr=1.00
+[2026-04-02 19:50:00.201] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:50:00.201] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=False momentum=False lowVol=False adx=15.2 atrPts=13.40
+[2026-04-02 19:50:00.201] [GERMANY 40] attemptId=GER7244QU [ATTEMPT GER7244QU] [DIR][CTX_BUILD] sym=GERMANY 40 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 19:50:00.201] BLOCK: global hard session block
+[2026-04-02 19:50:00.202] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-30 trust=0.7
+[2026-04-02 19:50:00.202] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:55:00.218] [ONBAR DBG] raw=GERMANY 40 canonical=GER40
+[2026-04-02 19:55:00.219] [INDEX MSD] GERMANY 40 | atrPts=14.1 adx=15.2 | lowVol=False trend=False momentum=False | minAtr=9 minAdx=22
+[2026-04-02 19:55:00.219] [INDEX MarketState] GERMANY 40 Trend=False Momentum=False LowVol=False ADX=15.2
+[2026-04-02 19:55:00.220] [MEMORY][CTX_ATTACH][START] symbol=GER40
+[2026-04-02 19:55:00.220] [MEMORY][CTX_ATTACH] symbol=GER40 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:55:00.222] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:55:00.223] [IMPULSE SRC] idx=2093 barsSince=0 range=21.00
+[2026-04-02 19:55:00.223] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=21.00 comp=30.50/7.35 retr=0.00/8.74
+[2026-04-02 19:55:00.224] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 19:55:00.224] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=30.5 atr=14.564285714285559
+[2026-04-02 19:55:00.224] [STRUCT][DIR][SOURCE] symbol=GERMANY 40 dir=None source=NONE trend=None diSpread=3.81 slopeM5=-0.24171 slopeM15=20.23049
+[2026-04-02 19:55:00.225] [STRUCT][IMPULSE][FAIL] symbol=GERMANY 40 dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=15.6
+[2026-04-02 19:55:00.225] [STRUCT][PULLBACK][FAIL] symbol=GERMANY 40 dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 19:55:00.225] [STRUCT][FLAG][FAIL] symbol=GERMANY 40 dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:55:00.226] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:55:00.226] [AUDIT][HTF FLOW][SOURCE] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:55:00.227] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=GERMANY 40 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.85
+[2026-04-02 19:55:00.227] [AUDIT][HTF CONTEXT] symbol=GERMANY 40 asset=INDEX allowedDirection=Long confidence=0.85 reason=INDEX_HTF BULL continuation slope21ATR=0.36 slope50ATR=0.31 adx=25.9 gapATR=0.97 distFastATR=1.27 activeDirection=Long activeConfidence=0.85
+[2026-04-02 19:55:00.227] [HTF][SNAPSHOT] dir=Long conf=0.85
+[2026-04-02 19:55:00.228] [CTX][MEMORY_READY] symbol=GERMANY 40 hasMemory=True
+[2026-04-02 19:55:00.228] [ENTRY][SNAPSHOT] symbol=GERMANY 40 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=0.94 triggerLateScore=0.30 chaseRisk=False timingPenalty=-30
+[2026-04-02 19:55:00.228] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.94 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.30 distanceAtr=1.00
+[2026-04-02 19:55:00.229] [CTX][TIMING][SIDE] symbol=GERMANY 40 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:55:00.229] [ENTRY MARKETSTATE ASSIGN] sym=GERMANY 40 trend=False momentum=False lowVol=False adx=15.2 atrPts=14.11
+[2026-04-02 19:55:00.230] [GERMANY 40] attemptId=GER72AK8Y [ATTEMPT GER72AK8Y] [DIR][CTX_BUILD] sym=GERMANY 40 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 19:55:00.230] BLOCK: global hard session block
+[2026-04-02 19:55:00.231] [MEMORY][ASSESSMENT] symbol=GER40 firstPullback=False late=False exhausted=False chase=False timingPenalty=-30 trust=0.7
+[2026-04-02 19:55:00.232] [FLAG_BREAKOUT][WAIT] no impulse

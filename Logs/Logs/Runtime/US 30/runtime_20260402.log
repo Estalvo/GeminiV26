@@ -239,3 +239,1039 @@
 [2026-04-02 19:45:00.147] BLOCK: global hard session block
 [2026-04-02 19:45:00.148] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
 [2026-04-02 19:45:00.148] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:50:00.105] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 19:50:00.107] [INDEX MSD] US 30 | atrPts=32.4 adx=24.0 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 19:50:00.107] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=24.0
+[2026-04-02 19:50:00.107] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 19:50:00.108] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:50:00.109] [PB] bars=2 depth=0.63 early=True
+[2026-04-02 19:50:00.109] [IMPULSE SRC] idx=2091 barsSince=1 range=50.00
+[2026-04-02 19:50:00.109] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=50.00 comp=61.00/17.50 retr=23.50/22.54
+[2026-04-02 19:50:00.109] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 19:50:00.110] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=61 atr=37.57142857142857
+[2026-04-02 19:50:00.110] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=11.57 slopeM5=6.67230 slopeM15=25.15522
+[2026-04-02 19:50:00.110] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.29 rangeAtr=0.73 adx=23.4
+[2026-04-02 19:50:00.110] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 19:50:00.111] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:50:00.112] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:50:00.112] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:50:00.112] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.75
+[2026-04-02 19:50:00.113] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.75 reason=INDEX_HTF BULL continuation slope21ATR=0.18 slope50ATR=0.21 adx=28.7 gapATR=0.40 distFastATR=0.83 activeDirection=Long activeConfidence=0.75
+[2026-04-02 19:50:00.113] [HTF][SNAPSHOT] dir=Long conf=0.75
+[2026-04-02 19:50:00.114] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 19:50:00.114] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 19:50:00.114] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 19:50:00.115] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:50:00.116] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=24.0 atrPts=32.44
+[2026-04-02 19:50:00.116] [US 30] attemptId=US 7244O9 [ATTEMPT US 7244O9] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 19:50:00.116] BLOCK: global hard session block
+[2026-04-02 19:50:00.117] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 19:50:00.118] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:55:00.101] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 19:55:00.102] [INDEX MSD] US 30 | atrPts=34.5 adx=26.4 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 19:55:00.104] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=26.4
+[2026-04-02 19:55:00.105] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 19:55:00.106] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:55:00.108] [PB] bars=3 depth=1.72 early=True
+[2026-04-02 19:55:00.108] [IMPULSE SRC] idx=2093 barsSince=0 range=50.00
+[2026-04-02 19:55:00.109] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=False long=False short=False impulse=50.00 comp=73.50/17.50 retr=62.00/21.66
+[2026-04-02 19:55:00.109] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 19:55:00.110] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=73.5 atr=36.107142857142854
+[2026-04-02 19:55:00.110] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=18.24 slopeM5=7.15663 slopeM15=25.15522
+[2026-04-02 19:55:00.111] [STRUCTURE][IMPULSE] dir=Long strength=0.94 range=50.0
+[2026-04-02 19:55:00.111] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.72 bars=3 shallowDepth=false
+[2026-04-02 19:55:00.112] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.72 bars=3 pressure=true
+[2026-04-02 19:55:00.113] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:55:00.113] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:55:00.114] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:55:00.114] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.75
+[2026-04-02 19:55:00.115] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.75 reason=INDEX_HTF BULL continuation slope21ATR=0.18 slope50ATR=0.21 adx=28.7 gapATR=0.40 distFastATR=0.83 activeDirection=Long activeConfidence=0.75
+[2026-04-02 19:55:00.115] [HTF][SNAPSHOT] dir=Long conf=0.75
+[2026-04-02 19:55:00.116] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 19:55:00.117] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 19:55:00.117] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 19:55:00.118] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:55:00.118] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=26.4 atrPts=34.49
+[2026-04-02 19:55:00.119] [US 30] attemptId=US 72AK5H [ATTEMPT US 72AK5H] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 19:55:00.120] BLOCK: global hard session block
+[2026-04-02 19:55:00.121] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 19:55:00.122] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:00:00.437] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:00:00.437] [INDEX MSD] US 30 | atrPts=35.4 adx=28.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:00:00.438] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=28.5
+[2026-04-02 20:00:00.438] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:00:00.439] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:00:00.440] [PB] bars=4 depth=2.17 early=True
+[2026-04-02 20:00:00.441] [IMPULSE SRC] idx=2093 barsSince=1 range=50.00
+[2026-04-02 20:00:00.441] [FLAG FIX] recentImpulse=True bars=4 retraceOk=False tight=False decel=True long=False short=False impulse=50.00 comp=98.50/17.50 retr=81.00/22.35
+[2026-04-02 20:00:00.442] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 20:00:00.442] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=98.5 atr=37.25
+[2026-04-02 20:00:00.443] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=21.07 slopeM5=12.23330 slopeM15=27.82293
+[2026-04-02 20:00:00.443] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2093 strength=0.91 range=50.00000
+[2026-04-02 20:00:00.444] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=2.17 bars=4 shallowDepth=false
+[2026-04-02 20:00:00.444] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=2.17 bars=4 pressure=true
+[2026-04-02 20:00:00.445] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:00:00.445] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:00:00.446] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:00:00.446] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:00:00.446] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:00:00.447] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:00:00.447] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:00:00.448] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:00:00.448] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:00:00.449] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:00:00.449] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=28.5 atrPts=35.39
+[2026-04-02 20:00:00.450] [US 30] attemptId=US 72GZW5 [ATTEMPT US 72GZW5] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:00:00.450] BLOCK: global hard session block
+[2026-04-02 20:00:00.451] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:00:00.451] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 20:05:00.403] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:05:00.403] [INDEX MSD] US 30 | atrPts=34.7 adx=29.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:05:00.404] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=29.5
+[2026-04-02 20:05:00.404] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:05:00.404] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:05:00.406] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:05:00.406] [IMPULSE SRC] idx=2095 barsSince=0 range=37.50
+[2026-04-02 20:05:00.406] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=37.50 comp=50.50/13.12 retr=0.00/18.75
+[2026-04-02 20:05:00.407] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:05:00.407] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=50.5 atr=35.92857142857143
+[2026-04-02 20:05:00.407] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=18.65 slopeM5=13.93937 slopeM15=27.82293
+[2026-04-02 20:05:00.408] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2093 strength=0.95 range=50.00000
+[2026-04-02 20:05:00.408] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:05:00.409] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:05:00.409] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:05:00.410] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:05:00.410] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:05:00.411] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:05:00.412] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:05:00.412] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:05:00.413] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:05:00.413] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:05:00.414] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:05:00.414] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:05:00.415] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=29.5 atrPts=34.73
+[2026-04-02 20:05:00.416] [US 30] attemptId=US 72NFCE [ATTEMPT US 72NFCE] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:05:00.416] BLOCK: global hard session block
+[2026-04-02 20:05:00.417] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:05:00.418] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:10:00.188] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:10:00.189] [INDEX MSD] US 30 | atrPts=31.5 adx=30.0 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:10:00.189] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=30.0
+[2026-04-02 20:10:00.190] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:10:00.191] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:10:00.192] [PB] bars=1 depth=0.20 early=False
+[2026-04-02 20:10:00.193] [IMPULSE SRC] idx=2095 barsSince=1 range=37.50
+[2026-04-02 20:10:00.194] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=37.50 comp=45.90/13.12 retr=7.00/18.75
+[2026-04-02 20:10:00.194] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:10:00.195] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=45.900000000001455 atr=35.564285714285816
+[2026-04-02 20:10:00.195] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=16.67 slopeM5=11.59033 slopeM15=27.82293
+[2026-04-02 20:10:00.196] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=3 idx=2093 strength=0.96 range=50.00000
+[2026-04-02 20:10:00.196] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.20 bars=1 pressure=false
+[2026-04-02 20:10:00.197] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:10:00.198] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:10:00.198] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:10:00.199] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:10:00.199] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:10:00.200] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:10:00.201] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:10:00.201] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:10:00.202] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:10:00.203] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:10:00.203] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=30.0 atrPts=31.49
+[2026-04-02 20:10:00.204] [US 30] attemptId=US 72TUOA [ATTEMPT US 72TUOA] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:10:00.204] BLOCK: global hard session block
+[2026-04-02 20:10:00.205] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:10:00.206] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:15:00.249] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:15:00.250] [INDEX MSD] US 30 | atrPts=30.2 adx=31.3 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:15:00.250] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=31.3
+[2026-04-02 20:15:00.251] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:15:00.252] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:15:00.254] [PB] bars=2 depth=0.84 early=True
+[2026-04-02 20:15:00.255] [IMPULSE SRC] idx=2095 barsSince=2 range=37.50
+[2026-04-02 20:15:00.255] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=37.50 comp=29.50/13.12 retr=29.00/18.75
+[2026-04-02 20:15:00.256] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:15:00.256] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=29.5 atr=34.6000000000001
+[2026-04-02 20:15:00.256] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=18.62 slopeM5=9.86394 slopeM15=29.07539
+[2026-04-02 20:15:00.257] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=2093 strength=0.98 range=50.00000
+[2026-04-02 20:15:00.257] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.84 bars=2 shallowDepth=false
+[2026-04-02 20:15:00.258] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.84 bars=2 pressure=true
+[2026-04-02 20:15:00.259] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:15:00.259] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:15:00.260] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:15:00.261] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:15:00.261] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:15:00.262] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:15:00.263] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:15:00.264] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:15:00.264] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:15:00.265] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:15:00.266] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=31.3 atrPts=30.16
+[2026-04-02 20:15:00.267] [US 30] attemptId=US 730A6J [ATTEMPT US 730A6J] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:15:00.267] BLOCK: global hard session block
+[2026-04-02 20:15:00.269] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:15:00.269] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:20:02.936] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:20:02.936] [INDEX MSD] US 30 | atrPts=27.6 adx=32.4 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:20:02.937] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=32.4
+[2026-04-02 20:20:02.937] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:20:02.938] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:20:02.940] [PB] bars=3 depth=1.03 early=True
+[2026-04-02 20:20:02.941] [IMPULSE SRC] idx=2095 barsSince=3 range=37.50
+[2026-04-02 20:20:02.941] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=True long=False short=False impulse=37.50 comp=34.30/13.12 retr=34.30/18.75
+[2026-04-02 20:20:02.942] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:20:02.942] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=34.299999999995634 atr=33.42142857142868
+[2026-04-02 20:20:02.943] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=19.03 slopeM5=10.95813 slopeM15=29.07539
+[2026-04-02 20:20:02.943] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=5 idx=2093 strength=1.02 range=50.00000
+[2026-04-02 20:20:02.944] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.03 bars=3 shallowDepth=false
+[2026-04-02 20:20:02.944] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.03 bars=3 pressure=true
+[2026-04-02 20:20:02.945] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:20:02.945] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:20:02.946] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:20:02.946] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:20:02.947] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:20:02.947] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:20:02.947] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:20:02.948] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:20:02.948] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:20:02.949] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:20:02.949] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=32.4 atrPts=27.59
+[2026-04-02 20:20:02.950] [US 30] attemptId=US 736RQI [ATTEMPT US 736RQI] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:20:02.950] BLOCK: global hard session block
+[2026-04-02 20:20:02.951] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:20:02.952] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:25:00.096] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:25:00.096] [INDEX MSD] US 30 | atrPts=25.0 adx=33.4 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:25:00.097] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=33.4
+[2026-04-02 20:25:00.097] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:25:00.098] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:25:00.099] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:25:00.099] [IMPULSE SRC] idx=2095 barsSince=4 range=0.00
+[2026-04-02 20:25:00.099] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=15.00/25.34 retr=0.00/15.84
+[2026-04-02 20:25:00.099] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:25:00.100] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=15 atr=31.671428571428674
+[2026-04-02 20:25:00.100] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=18.87 slopeM5=12.53466 slopeM15=29.07539
+[2026-04-02 20:25:00.100] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=6 idx=2093 strength=1.07 range=50.00000
+[2026-04-02 20:25:00.101] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:25:00.101] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:25:00.101] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:25:00.102] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:25:00.102] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:25:00.102] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:25:00.102] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:25:00.102] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:25:00.103] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:25:00.103] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:25:00.103] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:25:00.103] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:25:00.104] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=33.4 atrPts=25.02
+[2026-04-02 20:25:00.104] [US 30] attemptId=US 73D51A [ATTEMPT US 73D51A] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:25:00.104] BLOCK: global hard session block
+[2026-04-02 20:25:00.105] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:25:00.105] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:30:00.300] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:30:00.300] [INDEX MSD] US 30 | atrPts=26.3 adx=35.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:30:00.300] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=35.5
+[2026-04-02 20:30:00.301] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:30:00.306] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:30:00.308] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:30:00.309] [IMPULSE SRC] idx=2100 barsSince=0 range=38.50
+[2026-04-02 20:30:00.310] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=38.50 comp=44.00/13.47 retr=0.00/19.25
+[2026-04-02 20:30:00.310] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:30:00.310] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=44 atr=32.63571428571439
+[2026-04-02 20:30:00.310] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=24.33 slopeM5=14.69515 slopeM15=34.78672
+[2026-04-02 20:30:00.311] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=0 idx=2100 strength=0.90 range=38.50000
+[2026-04-02 20:30:00.312] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:30:00.312] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 20:30:00.312] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:30:00.312] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:30:00.313] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:30:00.313] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:30:00.313] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:30:00.313] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:30:00.314] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:30:00.314] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:30:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:30:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:30:00.316] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=35.5 atrPts=26.34
+[2026-04-02 20:30:00.317] [US 30] attemptId=US 73JKOL [ATTEMPT US 73JKOL] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=Long reversal=None
+[2026-04-02 20:30:00.317] BLOCK: global hard session block
+[2026-04-02 20:30:00.317] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:30:00.318] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:40:00.436] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:40:00.439] [INDEX MSD] US 30 | atrPts=24.6 adx=37.6 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:40:00.440] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=37.6
+[2026-04-02 20:40:00.440] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:40:00.440] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:40:00.449] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:40:00.449] [IMPULSE SRC] idx=2090 barsSince=1 range=29.50
+[2026-04-02 20:40:00.450] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=29.50 comp=34.50/10.32 retr=0.00/14.75
+[2026-04-02 20:40:00.450] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:40:00.450] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=34.5 atr=30.56428571428582
+[2026-04-02 20:40:00.450] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=21.00 slopeM5=13.42161 slopeM15=34.78672
+[2026-04-02 20:40:00.450] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2089 strength=0.97 range=38.50000
+[2026-04-02 20:40:00.451] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:40:00.451] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 20:40:00.451] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:40:00.451] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:40:00.452] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:40:00.452] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:40:00.452] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:40:00.452] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:40:00.452] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:40:00.453] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:40:00.453] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:40:00.453] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:40:00.453] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=37.6 atrPts=24.57
+[2026-04-02 20:40:00.454] [US 30] attemptId=US 73WFR2 [ATTEMPT US 73WFR2] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:40:00.454] BLOCK: global hard session block
+[2026-04-02 20:40:00.454] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:40:00.455] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 20:50:00.196] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:50:00.203] [INDEX MSD] US 30 | atrPts=21.6 adx=39.7 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:50:00.203] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=39.7
+[2026-04-02 20:50:00.204] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:50:00.204] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:50:00.222] [PB] bars=2 depth=0.54 early=True
+[2026-04-02 20:50:00.222] [IMPULSE SRC] idx=1999 barsSince=3 range=29.50
+[2026-04-02 20:50:00.223] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=29.50 comp=20.50/10.32 retr=15.00/14.75
+[2026-04-02 20:50:00.223] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:50:00.223] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=20.5 atr=27.63571428571439
+[2026-04-02 20:50:00.224] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=21.19 slopeM5=10.26992 slopeM15=32.29702
+[2026-04-02 20:50:00.224] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=1998 strength=1.07 range=38.50000
+[2026-04-02 20:50:00.225] [STRUCT][PULLBACK][STANDARD_OK] depth=0.54 bars=2 micro=false
+[2026-04-02 20:50:00.225] [STRUCTURE][PULLBACK_RANGE] low=46506.70000 high=46527.20000
+[2026-04-02 20:50:00.226] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=NO_VALID_FLAG bars=0 compression=0.74 pressure=true
+[2026-04-02 20:50:00.226] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=true pbDepth=0.54 pbBars=2 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:50:00.230] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:50:00.230] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:50:00.230] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:50:00.231] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:50:00.231] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:50:00.232] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:50:00.232] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:50:00.232] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:50:00.233] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=39.7 atrPts=21.56
+[2026-04-02 20:50:00.233] [US 30] attemptId=US 749AIR [ATTEMPT US 749AIR] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:50:00.233] BLOCK: global hard session block
+[2026-04-02 20:50:00.233] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:50:00.234] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:55:00.620] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 20:55:00.620] [INDEX MSD] US 30 | atrPts=21.0 adx=39.9 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 20:55:00.621] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=39.9
+[2026-04-02 20:55:00.622] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 20:55:00.622] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:55:00.624] [PB] bars=1 depth=0.08 early=False
+[2026-04-02 20:55:00.624] [IMPULSE SRC] idx=1999 barsSince=4 range=0.00
+[2026-04-02 20:55:00.625] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=19.00/20.34 retr=2.00/12.71
+[2026-04-02 20:55:00.625] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:55:00.626] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=False short=False long=False range=19 atr=25.421428571428674
+[2026-04-02 20:55:00.626] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=18.94 slopeM5=8.74539 slopeM15=32.29702
+[2026-04-02 20:55:00.627] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=5 idx=1998 strength=1.16 range=38.50000
+[2026-04-02 20:55:00.627] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.08 bars=1 pressure=false
+[2026-04-02 20:55:00.627] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:55:00.628] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:55:00.628] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:55:00.629] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.77
+[2026-04-02 20:55:00.629] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.77 reason=INDEX_HTF BULL continuation slope21ATR=0.24 slope50ATR=0.21 adx=28.7 gapATR=0.47 distFastATR=1.07 activeDirection=Long activeConfidence=0.77
+[2026-04-02 20:55:00.630] [HTF][SNAPSHOT] dir=Long conf=0.77
+[2026-04-02 20:55:00.630] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 20:55:00.631] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 20:55:00.631] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 20:55:00.631] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:55:00.632] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=39.9 atrPts=20.96
+[2026-04-02 20:55:00.633] [US 30] attemptId=US 74FQBZ [ATTEMPT US 74FQBZ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:55:00.633] BLOCK: global hard session block
+[2026-04-02 20:55:00.634] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 20:55:00.635] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:00:15.102] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:00:15.108] [INDEX MSD] US 30 | atrPts=23.6 adx=38.9 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:00:15.108] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=38.9
+[2026-04-02 22:00:15.109] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:00:15.110] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:00:15.129] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:00:15.130] [IMPULSE SRC] idx=1994 barsSince=5 range=0.00
+[2026-04-02 22:00:15.131] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=30.00/19.97 retr=0.00/12.48
+[2026-04-02 22:00:15.131] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:00:15.131] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=30 atr=24.957142857142962
+[2026-04-02 22:00:15.132] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=15.34 slopeM5=8.40490 slopeM15=31.16092
+[2026-04-02 22:00:15.132] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=6 idx=1993 strength=1.18 range=38.50000
+[2026-04-02 22:00:15.133] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:00:15.133] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 22:00:15.134] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:00:15.134] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:00:15.140] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:00:15.141] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:00:15.141] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:00:15.141] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:00:15.142] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:00:15.142] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:00:15.143] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:00:15.143] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:00:15.144] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=38.9 atrPts=23.64
+[2026-04-02 22:00:15.144] [US 30] attemptId=US 76RMRI [ATTEMPT US 76RMRI] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:00:15.145] BLOCK: global hard session block
+[2026-04-02 22:00:15.146] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:00:15.147] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:05:00.305] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:05:00.306] [INDEX MSD] US 30 | atrPts=21.8 adx=37.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:05:00.306] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=37.5
+[2026-04-02 22:05:00.307] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:05:00.307] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:05:00.308] [PB] bars=1 depth=0.25 early=True
+[2026-04-02 22:05:00.309] [IMPULSE SRC] idx=1994 barsSince=6 range=0.00
+[2026-04-02 22:05:00.309] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=34.60/18.91 retr=6.00/11.82
+[2026-04-02 22:05:00.310] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:05:00.310] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=34.599999999998545 atr=23.642857142857142
+[2026-04-02 22:05:00.311] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=10.83 slopeM5=4.76809 slopeM15=31.16092
+[2026-04-02 22:05:00.311] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.21 rangeAtr=0.49 adx=38.3
+[2026-04-02 22:05:00.311] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 22:05:00.312] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:05:00.312] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:05:00.312] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:05:00.313] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:05:00.313] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:05:00.313] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:05:00.314] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:05:00.314] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:05:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:05:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:05:00.315] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=37.5 atrPts=21.76
+[2026-04-02 22:05:00.316] [US 30] attemptId=US 76XQTU [ATTEMPT US 76XQTU] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:05:00.317] BLOCK: global hard session block
+[2026-04-02 22:05:00.317] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:05:00.318] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:10:01.225] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:10:01.226] [INDEX MSD] US 30 | atrPts=20.8 adx=37.1 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:10:01.226] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=37.1
+[2026-04-02 22:10:01.227] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:10:01.228] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:10:01.230] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:10:01.231] [IMPULSE SRC] idx=1994 barsSince=7 range=0.00
+[2026-04-02 22:10:01.231] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=16.60/17.17 retr=0.00/10.73
+[2026-04-02 22:10:01.232] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:10:01.233] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=True short=False long=False range=16.599999999998545 atr=21.464285714285715
+[2026-04-02 22:10:01.234] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=11.74 slopeM5=3.42553 slopeM15=31.16092
+[2026-04-02 22:10:01.235] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.42 rangeAtr=0.63 adx=37.7
+[2026-04-02 22:10:01.235] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 22:10:01.235] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:10:01.236] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:10:01.236] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:10:01.237] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:10:01.237] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:10:01.238] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:10:01.238] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:10:01.239] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:10:01.239] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:10:01.242] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:10:01.242] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=37.1 atrPts=20.83
+[2026-04-02 22:10:01.242] [US 30] attemptId=US 77470Q [ATTEMPT US 77470Q] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=Long reversal=None
+[2026-04-02 22:10:01.243] BLOCK: global hard session block
+[2026-04-02 22:10:01.243] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:10:01.244] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:15:01.902] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:15:01.903] [INDEX MSD] US 30 | atrPts=19.4 adx=36.4 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:15:01.903] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=36.4
+[2026-04-02 22:15:01.904] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:15:01.904] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:15:01.907] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:15:01.907] [IMPULSE SRC] idx=1994 barsSince=8 range=0.00
+[2026-04-02 22:15:01.908] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=14.10/15.77 retr=0.00/9.86
+[2026-04-02 22:15:01.908] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 22:15:01.909] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=14.099999999998545 atr=19.714285714285715
+[2026-04-02 22:15:01.910] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG trend=None diSpread=11.19 slopeM5=0.60503 slopeM15=24.31902
+[2026-04-02 22:15:01.910] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG code=NO_RECENT_IMPULSE age=8 bodyAtr=0.23 rangeAtr=0.66 adx=37.0
+[2026-04-02 22:15:01.911] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 22:15:01.911] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:15:01.912] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=EMA_DI_CONFLUENCE_LONG impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:15:01.913] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:15:01.913] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:15:01.914] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:15:01.915] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:15:01.915] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:15:01.917] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:15:01.918] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:15:01.919] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:15:01.919] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=36.4 atrPts=19.42
+[2026-04-02 22:15:01.920] [US 30] attemptId=US 77AN0O [ATTEMPT US 77AN0O] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:15:01.921] BLOCK: global hard session block
+[2026-04-02 22:15:01.922] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:15:01.923] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:20:01.000] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:20:01.001] [INDEX MSD] US 30 | atrPts=21.8 adx=37.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:20:01.001] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=37.5
+[2026-04-02 22:20:01.002] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:20:01.002] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:20:01.004] [PB] bars=2 depth=1.17 early=True
+[2026-04-02 22:20:01.004] [IMPULSE SRC] idx=2003 barsSince=0 range=39.00
+[2026-04-02 22:20:01.005] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=39.00 comp=41.50/13.65 retr=25.00/12.86
+[2026-04-02 22:20:01.005] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 22:20:01.006] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=41.5 atr=21.43571428571418
+[2026-04-02 22:20:01.006] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=17.24 slopeM5=2.09548 slopeM15=24.31902
+[2026-04-02 22:20:01.007] [STRUCTURE][IMPULSE] dir=Long strength=0.82 range=39.0
+[2026-04-02 22:20:01.007] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.17 bars=2 shallowDepth=false
+[2026-04-02 22:20:01.008] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.17 bars=2 pressure=true
+[2026-04-02 22:20:01.008] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:20:01.009] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:20:01.009] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:20:01.010] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:20:01.010] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:20:01.011] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:20:01.011] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:20:01.012] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:20:01.012] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:20:01.013] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:20:01.013] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=37.5 atrPts=21.77
+[2026-04-02 22:20:01.013] [US 30] attemptId=US 77H1T3 [ATTEMPT US 77H1T3] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:20:01.013] BLOCK: global hard session block
+[2026-04-02 22:20:01.014] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:20:01.014] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:25:01.906] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:25:01.907] [INDEX MSD] US 30 | atrPts=21.5 adx=37.8 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:25:01.907] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=37.8
+[2026-04-02 22:25:01.908] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:25:01.908] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:25:01.910] [PB] bars=3 depth=1.31 early=True
+[2026-04-02 22:25:01.910] [IMPULSE SRC] idx=2003 barsSince=1 range=39.00
+[2026-04-02 22:25:01.911] [FLAG FIX] recentImpulse=True bars=3 retraceOk=False tight=False decel=False long=False short=False impulse=39.00 comp=42.00/13.65 retr=28.50/13.01
+[2026-04-02 22:25:01.912] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 22:25:01.912] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=42 atr=21.68571428571418
+[2026-04-02 22:25:01.913] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=16.19 slopeM5=3.30498 slopeM15=24.31902
+[2026-04-02 22:25:01.913] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2003 strength=0.81 range=39.00000
+[2026-04-02 22:25:01.914] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.31 bars=3 shallowDepth=false
+[2026-04-02 22:25:01.914] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.31 bars=3 pressure=true
+[2026-04-02 22:25:01.915] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:25:01.916] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:25:01.916] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:25:01.917] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:25:01.917] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:25:01.917] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:25:01.918] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:25:01.918] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:25:01.919] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:25:01.919] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:25:01.920] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=37.8 atrPts=21.48
+[2026-04-02 22:25:01.920] [US 30] attemptId=US 77NHZQ [ATTEMPT US 77NHZQ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:25:01.921] BLOCK: global hard session block
+[2026-04-02 22:25:01.922] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:25:01.922] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:30:02.400] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:30:02.401] [INDEX MSD] US 30 | atrPts=20.7 adx=38.0 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:30:02.401] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=38.0
+[2026-04-02 22:30:02.402] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:30:02.402] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:30:02.404] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:30:02.404] [IMPULSE SRC] idx=2003 barsSince=2 range=39.00
+[2026-04-02 22:30:02.404] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=39.00 comp=27.00/13.65 retr=0.00/13.12
+[2026-04-02 22:30:02.405] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:30:02.405] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=27 atr=21.86428571428561
+[2026-04-02 22:30:02.406] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=15.50 slopeM5=5.41362 slopeM15=22.46275
+[2026-04-02 22:30:02.406] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2003 strength=0.80 range=39.00000
+[2026-04-02 22:30:02.407] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:30:02.407] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 22:30:02.407] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:30:02.408] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:30:02.408] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:30:02.409] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:30:02.409] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:30:02.410] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:30:02.410] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:30:02.411] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:30:02.411] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:30:02.411] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:30:02.412] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=38.0 atrPts=20.73
+[2026-04-02 22:30:02.412] [US 30] attemptId=US 77TXUN [ATTEMPT US 77TXUN] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:30:02.413] BLOCK: global hard session block
+[2026-04-02 22:30:02.413] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:30:02.414] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:35:00.425] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:35:00.426] [INDEX MSD] US 30 | atrPts=20.6 adx=38.7 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:35:00.426] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=38.7
+[2026-04-02 22:35:00.427] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:35:00.427] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:35:00.429] [PB] bars=5 depth=1.97 early=True
+[2026-04-02 22:35:00.429] [IMPULSE SRC] idx=2003 barsSince=3 range=39.00
+[2026-04-02 22:35:00.430] [FLAG FIX] recentImpulse=True bars=5 retraceOk=False tight=False decel=True long=False short=False impulse=39.00 comp=50.00/13.65 retr=45.00/13.74
+[2026-04-02 22:35:00.431] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 22:35:00.431] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=50 atr=22.899999999999896
+[2026-04-02 22:35:00.432] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=16.75 slopeM5=7.14875 slopeM15=22.46275
+[2026-04-02 22:35:00.432] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=0 idx=2006 strength=0.68 range=24.00000
+[2026-04-02 22:35:00.433] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.97 bars=5 shallowDepth=false
+[2026-04-02 22:35:00.434] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.97 bars=5 pressure=true
+[2026-04-02 22:35:00.434] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:35:00.435] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:35:00.435] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:35:00.436] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:35:00.436] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:35:00.437] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:35:00.437] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:35:00.437] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:35:00.438] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:35:00.438] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:35:00.438] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=38.7 atrPts=20.57
+[2026-04-02 22:35:00.438] [US 30] attemptId=US 780BTB [ATTEMPT US 780BTB] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:35:00.439] BLOCK: global hard session block
+[2026-04-02 22:35:00.439] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:35:00.439] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:40:00.202] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:40:00.203] [INDEX MSD] US 30 | atrPts=19.0 adx=39.1 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:40:00.203] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=39.1
+[2026-04-02 22:40:00.204] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:40:00.204] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:40:00.206] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:40:00.207] [IMPULSE SRC] idx=2006 barsSince=1 range=24.00
+[2026-04-02 22:40:00.207] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=24.00 comp=24.00/8.40 retr=0.00/12.00
+[2026-04-02 22:40:00.208] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:40:00.209] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=24 atr=20.86428571428561
+[2026-04-02 22:40:00.210] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=16.29 slopeM5=7.54432 slopeM15=22.46275
+[2026-04-02 22:40:00.210] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2006 strength=0.74 range=24.00000
+[2026-04-02 22:40:00.210] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:40:00.211] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:40:00.211] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:40:00.211] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:40:00.212] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:40:00.213] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:40:00.213] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:40:00.214] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:40:00.215] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:40:00.215] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:40:00.216] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:40:00.217] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:40:00.217] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=39.1 atrPts=19.00
+[2026-04-02 22:40:00.218] [US 30] attemptId=US 786R47 [ATTEMPT US 786R47] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:40:00.219] BLOCK: global hard session block
+[2026-04-02 22:40:00.220] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:40:00.221] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:45:00.310] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:45:00.310] [INDEX MSD] US 30 | atrPts=17.3 adx=39.5 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:45:00.311] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=39.5
+[2026-04-02 22:45:00.311] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:45:00.311] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:45:00.311] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:45:00.312] [IMPULSE SRC] idx=2006 barsSince=2 range=24.00
+[2026-04-02 22:45:00.312] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=24.00 comp=11.50/8.40 retr=0.00/11.58
+[2026-04-02 22:45:00.312] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:45:00.312] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=11.5 atr=19.292857142857038
+[2026-04-02 22:45:00.313] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=16.37 slopeM5=7.73120 slopeM15=21.19341
+[2026-04-02 22:45:00.313] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2006 strength=0.80 range=24.00000
+[2026-04-02 22:45:00.313] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:45:00.313] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 22:45:00.313] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:45:00.313] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:45:00.314] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:45:00.314] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:45:00.314] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:45:00.314] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:45:00.314] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:45:00.315] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:45:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:45:00.315] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:45:00.315] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=39.5 atrPts=17.34
+[2026-04-02 22:45:00.315] [US 30] attemptId=US 78D6OJ [ATTEMPT US 78D6OJ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:45:00.316] BLOCK: global hard session block
+[2026-04-02 22:45:00.316] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:45:00.316] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:50:00.098] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:50:00.098] [INDEX MSD] US 30 | atrPts=16.3 adx=38.6 | lowVol=False trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:50:00.099] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=False ADX=38.6
+[2026-04-02 22:50:00.099] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:50:00.100] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:50:00.101] [PB] bars=1 depth=0.29 early=True
+[2026-04-02 22:50:00.102] [IMPULSE SRC] idx=2006 barsSince=3 range=24.00
+[2026-04-02 22:50:00.102] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=24.00 comp=16.00/8.40 retr=5.50/11.28
+[2026-04-02 22:50:00.102] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:50:00.103] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=16 atr=18.79999999999979
+[2026-04-02 22:50:00.103] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=13.31 slopeM5=6.11927 slopeM15=21.19341
+[2026-04-02 22:50:00.104] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=3 idx=2006 strength=0.82 range=24.00000
+[2026-04-02 22:50:00.104] [STRUCT][PULLBACK][STANDARD_OK] depth=0.29 bars=1 micro=true
+[2026-04-02 22:50:00.105] [STRUCTURE][PULLBACK_RANGE] low=46516.60000 high=46526.20000
+[2026-04-02 22:50:00.105] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=NO_VALID_FLAG bars=0 compression=0.85 pressure=false
+[2026-04-02 22:50:00.106] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=true pbDepth=0.29 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:50:00.106] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:50:00.106] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:50:00.107] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:50:00.107] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:50:00.108] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:50:00.108] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:50:00.109] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:50:00.109] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:50:00.110] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=False adx=38.6 atrPts=16.34
+[2026-04-02 22:50:00.110] [US 30] attemptId=US 78JM0B [ATTEMPT US 78JM0B] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:50:00.111] BLOCK: global hard session block
+[2026-04-02 22:50:00.111] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:50:00.112] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:55:01.808] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 22:55:01.809] [INDEX MSD] US 30 | atrPts=15.1 adx=38.4 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 22:55:01.809] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=38.4
+[2026-04-02 22:55:01.810] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 22:55:01.810] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:55:01.811] [PB] bars=2 depth=0.38 early=True
+[2026-04-02 22:55:01.812] [IMPULSE SRC] idx=2006 barsSince=4 range=0.00
+[2026-04-02 22:55:01.812] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=True long=False short=False impulse=0.00 comp=11.00/14.79 retr=7.00/9.24
+[2026-04-02 22:55:01.813] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:55:01.813] [FLAG V2.22] tight=True decel=True allowNoDecel=false LH=True HL=True short=False long=False range=11 atr=18.485714285713975
+[2026-04-02 22:55:01.814] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=13.35 slopeM5=5.37206 slopeM15=21.19341
+[2026-04-02 22:55:01.814] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=2006 strength=0.84 range=24.00000
+[2026-04-02 22:55:01.815] [STRUCT][PULLBACK][STANDARD_OK] depth=0.38 bars=2 micro=true
+[2026-04-02 22:55:01.815] [STRUCTURE][PULLBACK_RANGE] low=46516.60000 high=46527.60000
+[2026-04-02 22:55:01.815] [STRUCT][FLAG][STANDARD_OK] compression=0.60 bars=0
+[2026-04-02 22:55:01.816] [STRUCTURE][FLAG_RANGE] high=0.00000 low=0.00000
+[2026-04-02 22:55:01.816] [STRUCTURE][FLAG_BREAKOUT] dir=UP price=46523.50000
+[2026-04-02 22:55:01.817] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:55:01.817] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.84
+[2026-04-02 22:55:01.818] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.84 reason=INDEX_HTF BULL continuation slope21ATR=0.33 slope50ATR=0.24 adx=28.8 gapATR=0.56 distFastATR=1.13 activeDirection=Long activeConfidence=0.84
+[2026-04-02 22:55:01.818] [HTF][SNAPSHOT] dir=Long conf=0.84
+[2026-04-02 22:55:01.819] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 22:55:01.819] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 22:55:01.819] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 22:55:01.820] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:55:01.820] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=38.4 atrPts=15.11
+[2026-04-02 22:55:01.821] [US 30] attemptId=US 78Q2SY [ATTEMPT US 78Q2SY] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:55:01.821] BLOCK: global hard session block
+[2026-04-02 22:55:01.822] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 22:55:01.823] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:00:03.215] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:00:03.216] [INDEX MSD] US 30 | atrPts=14.4 adx=37.9 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:00:03.216] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=37.9
+[2026-04-02 23:00:03.217] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:00:03.217] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:00:03.219] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:00:03.219] [IMPULSE SRC] idx=2006 barsSince=5 range=0.00
+[2026-04-02 23:00:03.220] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=12.00/14.56 retr=0.00/9.10
+[2026-04-02 23:00:03.220] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:00:03.221] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=12 atr=18.199999999999687
+[2026-04-02 23:00:03.221] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=12.12 slopeM5=4.10188 slopeM15=21.76673
+[2026-04-02 23:00:03.222] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=5 idx=2006 strength=0.85 range=24.00000
+[2026-04-02 23:00:03.222] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:00:03.223] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:00:03.223] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:00:03.224] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:00:03.224] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:00:03.225] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:00:03.225] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:00:03.226] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:00:03.226] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:00:03.227] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:00:03.227] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:00:03.228] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:00:03.228] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=37.9 atrPts=14.37
+[2026-04-02 23:00:03.229] [US 30] attemptId=US 78WJDB [ATTEMPT US 78WJDB] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:00:03.229] BLOCK: global hard session block
+[2026-04-02 23:00:03.230] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:00:03.232] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:05:06.002] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:05:06.002] [INDEX MSD] US 30 | atrPts=14.4 adx=35.6 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:05:06.002] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=35.6
+[2026-04-02 23:05:06.003] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:05:06.003] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:05:06.005] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:05:06.005] [IMPULSE SRC] idx=2006 barsSince=6 range=0.00
+[2026-04-02 23:05:06.006] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=22.50/14.38 retr=0.00/8.99
+[2026-04-02 23:05:06.006] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:05:06.007] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=22.5 atr=17.97857142857122
+[2026-04-02 23:05:06.007] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=7.30 slopeM5=3.03807 slopeM15=21.76673
+[2026-04-02 23:05:06.008] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=6 idx=2006 strength=0.86 range=24.00000
+[2026-04-02 23:05:06.008] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:05:06.009] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:05:06.009] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:05:06.010] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:05:06.010] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:05:06.011] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:05:06.011] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:05:06.011] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:05:06.012] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:05:06.012] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:05:06.013] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:05:06.013] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:05:06.014] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=35.6 atrPts=14.44
+[2026-04-02 23:05:06.014] [US 30] attemptId=US 793101 [ATTEMPT US 793101] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:05:06.015] BLOCK: global hard session block
+[2026-04-02 23:05:06.016] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:05:06.016] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:10:00.599] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:10:00.600] [INDEX MSD] US 30 | atrPts=13.6 adx=34.4 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:10:00.600] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=34.4
+[2026-04-02 23:10:00.601] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:10:00.601] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:10:00.603] [PB] bars=1 depth=0.23 early=False
+[2026-04-02 23:10:00.604] [IMPULSE SRC] idx=2006 barsSince=7 range=0.00
+[2026-04-02 23:10:00.604] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=15.90/13.75 retr=3.90/8.59
+[2026-04-02 23:10:00.605] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:10:00.605] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=15.900000000001455 atr=17.18571428571418
+[2026-04-02 23:10:00.606] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=7.05 slopeM5=1.48915 slopeM15=21.76673
+[2026-04-02 23:10:00.606] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=7 bodyAtr=0.09 rangeAtr=0.58 adx=35.6
+[2026-04-02 23:10:00.607] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 23:10:00.607] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:10:00.608] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:10:00.608] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:10:00.609] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:10:00.610] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:10:00.610] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:10:00.611] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:10:00.612] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:10:00.612] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:10:00.613] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:10:00.614] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=34.4 atrPts=13.56
+[2026-04-02 23:10:00.614] [US 30] attemptId=US 799CBJ [ATTEMPT US 799CBJ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:10:00.615] BLOCK: global hard session block
+[2026-04-02 23:10:00.616] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:10:00.617] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:15:01.812] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:15:01.812] [INDEX MSD] US 30 | atrPts=12.7 adx=32.7 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:15:01.813] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=32.7
+[2026-04-02 23:15:01.813] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:15:01.814] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:15:01.815] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:15:01.816] [IMPULSE SRC] idx=2006 barsSince=8 range=0.00
+[2026-04-02 23:15:01.816] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=13.40/12.25 retr=0.00/7.66
+[2026-04-02 23:15:01.817] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:15:01.817] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=13.400000000001455 atr=15.314285714285818
+[2026-04-02 23:15:01.818] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG trend=None diSpread=5.56 slopeM5=0.26287 slopeM15=18.78794
+[2026-04-02 23:15:01.818] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG code=NO_RECENT_IMPULSE age=8 bodyAtr=0.29 rangeAtr=0.55 adx=34.1
+[2026-04-02 23:15:01.819] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 23:15:01.819] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:15:01.820] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=EMA_DI_CONFLUENCE_LONG impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:15:01.820] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:15:01.821] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:15:01.821] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:15:01.822] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:15:01.822] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:15:01.822] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:15:01.823] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:15:01.823] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:15:01.824] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=32.7 atrPts=12.74
+[2026-04-02 23:15:01.824] [US 30] attemptId=US 79FSQ4 [ATTEMPT US 79FSQ4] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:15:01.825] BLOCK: global hard session block
+[2026-04-02 23:15:01.826] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:15:01.827] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:20:01.034] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:20:01.035] [INDEX MSD] US 30 | atrPts=12.0 adx=31.5 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:20:01.035] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=31.5
+[2026-04-02 23:20:01.036] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:20:01.037] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:20:01.038] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:20:01.039] [IMPULSE SRC] idx=2006 barsSince=9 range=0.00
+[2026-04-02 23:20:01.039] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=9.60/11.91 retr=0.00/7.45
+[2026-04-02 23:20:01.040] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:20:01.040] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=True short=False long=False range=9.599999999998545 atr=14.892857142857142
+[2026-04-02 23:20:01.041] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=DI_DOMINANCE_LONG trend=None diSpread=5.85 slopeM5=-0.20649 slopeM15=18.78794
+[2026-04-02 23:20:01.041] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=DI_DOMINANCE_LONG code=NO_RECENT_IMPULSE age=9 bodyAtr=0.07 rangeAtr=0.51 adx=32.8
+[2026-04-02 23:20:01.042] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=9
+[2026-04-02 23:20:01.042] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:20:01.043] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=DI_DOMINANCE_LONG impulse=false impulseRecent=false impulseAge=9 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:20:01.043] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:20:01.044] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:20:01.044] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:20:01.045] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:20:01.045] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:20:01.045] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:20:01.046] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:20:01.046] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:20:01.047] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=31.5 atrPts=12.01
+[2026-04-02 23:20:01.048] [US 30] attemptId=US 79M7MF [ATTEMPT US 79M7MF] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:20:01.048] BLOCK: global hard session block
+[2026-04-02 23:20:01.049] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:20:01.050] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:25:00.297] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:25:00.298] [INDEX MSD] US 30 | atrPts=11.9 adx=30.8 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:25:00.298] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=30.8
+[2026-04-02 23:25:00.299] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:25:00.299] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:25:00.300] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:25:00.301] [IMPULSE SRC] idx=2006 barsSince=10 range=0.00
+[2026-04-02 23:25:00.301] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=12.00/11.86 retr=0.00/7.41
+[2026-04-02 23:25:00.302] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:25:00.302] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=12 atr=14.821428571428571
+[2026-04-02 23:25:00.303] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=DI_DOMINANCE_LONG trend=None diSpread=6.91 slopeM5=-0.50590 slopeM15=18.78794
+[2026-04-02 23:25:00.303] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=DI_DOMINANCE_LONG code=NO_RECENT_IMPULSE age=10 bodyAtr=0.04 rangeAtr=0.81 adx=31.8
+[2026-04-02 23:25:00.304] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=10
+[2026-04-02 23:25:00.304] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:25:00.305] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=DI_DOMINANCE_LONG impulse=false impulseRecent=false impulseAge=10 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:25:00.305] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:25:00.305] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:25:00.306] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:25:00.306] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:25:00.307] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:25:00.307] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:25:00.308] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:25:00.308] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:25:00.309] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=30.8 atrPts=11.89
+[2026-04-02 23:25:00.309] [US 30] attemptId=US 79SMJB [ATTEMPT US 79SMJB] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:25:00.310] BLOCK: global hard session block
+[2026-04-02 23:25:00.310] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:25:00.311] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:30:00.029] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:30:00.029] [INDEX MSD] US 30 | atrPts=11.2 adx=30.0 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:30:00.030] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=30.0
+[2026-04-02 23:30:00.031] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:30:00.031] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:30:00.033] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:30:00.034] [IMPULSE SRC] idx=1018 barsSince=999 range=0.00
+[2026-04-02 23:30:00.034] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=12.00/10.17 retr=0.00/6.36
+[2026-04-02 23:30:00.035] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:30:00.035] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=12 atr=12.714285714285714
+[2026-04-02 23:30:00.036] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG trend=None diSpread=6.64 slopeM5=0.07646 slopeM15=15.74358
+[2026-04-02 23:30:00.037] [STRUCT][IMPULSE][FAIL] symbol=US 30 dir=Long source=EMA_DI_CONFLUENCE_LONG code=NO_RECENT_IMPULSE age=0 bodyAtr=0.31 rangeAtr=0.75 adx=30.8
+[2026-04-02 23:30:00.037] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 23:30:00.038] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:30:00.038] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=EMA_DI_CONFLUENCE_LONG impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:30:00.039] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:30:00.040] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:30:00.041] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:30:00.041] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:30:00.042] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:30:00.043] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:30:00.043] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:30:00.044] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:30:00.044] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=30.0 atrPts=11.23
+[2026-04-02 23:30:00.045] [US 30] attemptId=US 79Z1SV [ATTEMPT US 79Z1SV] [DIR][CTX_BUILD] sym=US 30 trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:30:00.045] BLOCK: global hard session block
+[2026-04-02 23:30:00.046] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:30:00.047] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:35:07.031] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:35:07.032] [INDEX MSD] US 30 | atrPts=11.7 adx=30.3 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:35:07.032] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=30.3
+[2026-04-02 23:35:07.033] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:35:07.033] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:35:07.034] [PB] bars=3 depth=1.42 early=True
+[2026-04-02 23:35:07.035] [IMPULSE SRC] idx=1019 barsSince=999 range=0.00
+[2026-04-02 23:35:07.035] [FLAG FIX] recentImpulse=False bars=3 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=19.90/9.54 retr=16.90/5.96
+[2026-04-02 23:35:07.036] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:35:07.036] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=19.900000000001455 atr=11.928571428571429
+[2026-04-02 23:35:07.036] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=9.87 slopeM5=1.15133 slopeM15=15.74358
+[2026-04-02 23:35:07.037] [STRUCTURE][IMPULSE] dir=Long strength=0.71 range=16.0
+[2026-04-02 23:35:07.037] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.42 bars=3 shallowDepth=false
+[2026-04-02 23:35:07.038] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.42 bars=3 pressure=true
+[2026-04-02 23:35:07.039] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:35:07.039] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:35:07.039] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:35:07.040] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:35:07.040] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:35:07.041] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:35:07.041] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:35:07.042] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:35:07.042] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:35:07.042] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:35:07.043] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=30.3 atrPts=11.66
+[2026-04-02 23:35:07.043] [US 30] attemptId=US 7A5MOY [ATTEMPT US 7A5MOY] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:35:07.044] BLOCK: global hard session block
+[2026-04-02 23:35:07.045] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:35:07.046] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:40:01.900] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:40:01.900] [INDEX MSD] US 30 | atrPts=11.3 adx=30.1 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:40:01.901] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=30.1
+[2026-04-02 23:40:01.901] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:40:01.902] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:40:01.903] [PB] bars=4 depth=1.62 early=True
+[2026-04-02 23:40:01.904] [IMPULSE SRC] idx=2018 barsSince=1 range=16.00
+[2026-04-02 23:40:01.904] [FLAG FIX] recentImpulse=True bars=4 retraceOk=False tight=False decel=False long=False short=False impulse=16.00 comp=19.90/5.60 retr=18.50/6.86
+[2026-04-02 23:40:01.905] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:40:01.905] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=19.900000000001455 atr=11.428571428571429
+[2026-04-02 23:40:01.906] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=9.47 slopeM5=2.41939 slopeM15=15.74358
+[2026-04-02 23:40:01.906] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2018 strength=0.74 range=16.00000
+[2026-04-02 23:40:01.906] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=1.62 bars=4 shallowDepth=false
+[2026-04-02 23:40:01.907] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=1.62 bars=4 pressure=true
+[2026-04-02 23:40:01.907] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:40:01.908] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:40:01.908] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:40:01.909] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:40:01.910] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:40:01.911] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:40:01.911] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:40:01.912] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:40:01.913] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:40:01.914] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:40:01.914] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=30.1 atrPts=11.29
+[2026-04-02 23:40:01.915] [US 30] attemptId=US 7ABY7I [ATTEMPT US 7ABY7I] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:40:01.915] BLOCK: global hard session block
+[2026-04-02 23:40:01.916] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:40:01.916] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:45:01.402] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:45:01.403] [INDEX MSD] US 30 | atrPts=10.8 adx=29.7 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:45:01.404] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=29.7
+[2026-04-02 23:45:01.404] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:45:01.405] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:45:01.407] [PB] bars=1 depth=0.24 early=False
+[2026-04-02 23:45:01.407] [IMPULSE SRC] idx=2018 barsSince=2 range=16.00
+[2026-04-02 23:45:01.408] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=16.00 comp=10.10/5.60 retr=2.50/6.26
+[2026-04-02 23:45:01.408] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:45:01.409] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=10.099999999998545 atr=10.435714285714182
+[2026-04-02 23:45:01.409] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=8.84 slopeM5=2.52672 slopeM15=14.08507
+[2026-04-02 23:45:01.410] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2018 strength=0.81 range=16.00000
+[2026-04-02 23:45:01.410] [STRUCT][PULLBACK][STANDARD_OK] depth=0.24 bars=1 micro=true
+[2026-04-02 23:45:01.411] [STRUCTURE][PULLBACK_RANGE] low=46513.60000 high=46523.70000
+[2026-04-02 23:45:01.412] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_COMPRESSION_INVALID compression=0.97 tight=false messyCompression=false
+[2026-04-02 23:45:01.412] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=NO_VALID_FLAG bars=0 compression=0.97 pressure=false
+[2026-04-02 23:45:01.413] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=true pbDepth=0.24 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:45:01.413] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:45:01.413] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:45:01.413] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:45:01.413] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:45:01.414] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:45:01.414] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:45:01.414] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:45:01.414] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:45:01.414] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=29.7 atrPts=10.84
+[2026-04-02 23:45:01.415] [US 30] attemptId=US 7AIDAZ [ATTEMPT US 7AIDAZ] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:45:01.415] BLOCK: global hard session block
+[2026-04-02 23:45:01.415] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:45:01.416] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:50:00.798] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:50:00.798] [INDEX MSD] US 30 | atrPts=10.5 adx=28.6 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:50:00.799] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=28.6
+[2026-04-02 23:50:00.799] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:50:00.800] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:50:00.801] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:50:00.802] [IMPULSE SRC] idx=2018 barsSince=3 range=16.00
+[2026-04-02 23:50:00.802] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=16.00 comp=14.10/5.60 retr=0.00/6.22
+[2026-04-02 23:50:00.803] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:50:00.803] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=14.099999999998545 atr=10.36428571428561
+[2026-04-02 23:50:00.804] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=6.70 slopeM5=2.02429 slopeM15=14.08507
+[2026-04-02 23:50:00.804] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=3 idx=2018 strength=0.82 range=16.00000
+[2026-04-02 23:50:00.804] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:50:00.805] [STRUCT][PULLBACK][FAIL] symbol=US 30 dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 23:50:00.805] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:50:00.806] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:50:00.806] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:50:00.807] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:50:00.807] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:50:00.808] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:50:00.808] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:50:00.809] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:50:00.809] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:50:00.810] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:50:00.810] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=28.6 atrPts=10.51
+[2026-04-02 23:50:00.811] [US 30] attemptId=US 7AOSBG [ATTEMPT US 7AOSBG] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:50:00.811] BLOCK: global hard session block
+[2026-04-02 23:50:00.812] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:50:00.813] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:55:00.210] [ONBAR DBG] raw=US 30 canonical=US30
+[2026-04-02 23:55:00.210] [INDEX MSD] US 30 | atrPts=10.5 adx=26.8 | lowVol=True trend=True momentum=False | minAtr=16 minAdx=20
+[2026-04-02 23:55:00.211] [INDEX MarketState] US 30 Trend=True Momentum=False LowVol=True ADX=26.8
+[2026-04-02 23:55:00.211] [MEMORY][CTX_ATTACH][START] symbol=US30
+[2026-04-02 23:55:00.212] [MEMORY][CTX_ATTACH] symbol=US30 hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:55:00.213] [PB] bars=1 depth=0.57 early=True
+[2026-04-02 23:55:00.214] [IMPULSE SRC] idx=2018 barsSince=4 range=0.00
+[2026-04-02 23:55:00.214] [FLAG FIX] recentImpulse=False bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=14.10/8.58 retr=6.10/5.36
+[2026-04-02 23:55:00.214] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:55:00.215] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=14.099999999998545 atr=10.721428571428467
+[2026-04-02 23:55:00.215] [STRUCT][DIR][SOURCE] symbol=US 30 dir=Long source=TREND_DIRECTION trend=Long diSpread=4.00 slopeM5=0.84026 slopeM15=14.08507
+[2026-04-02 23:55:00.216] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=4 idx=2018 strength=0.79 range=16.00000
+[2026-04-02 23:55:00.216] [STRUCT][PULLBACK][STANDARD_OK] depth=0.57 bars=1 micro=false
+[2026-04-02 23:55:00.217] [STRUCTURE][PULLBACK_RANGE] low=46504.50000 high=46517.00000
+[2026-04-02 23:55:00.217] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=FLAG_COMPRESSION_INVALID compression=1.32 tight=false messyCompression=false
+[2026-04-02 23:55:00.218] [STRUCT][FLAG][FAIL] symbol=US 30 dir=Long code=NO_VALID_FLAG bars=0 compression=1.32 pressure=false
+[2026-04-02 23:55:00.218] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=true pbDepth=0.57 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:55:00.218] [AUDIT][HTF FLOW][SOURCE] symbol=US 30 asset=INDEX entryType=N/A stage=SOURCE module=INDEXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:55:00.219] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=US 30 asset=INDEX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.87
+[2026-04-02 23:55:00.219] [AUDIT][HTF CONTEXT] symbol=US 30 asset=INDEX allowedDirection=Long confidence=0.87 reason=INDEX_HTF BULL continuation slope21ATR=0.37 slope50ATR=0.30 adx=28.8 gapATR=0.66 distFastATR=1.13 activeDirection=Long activeConfidence=0.87
+[2026-04-02 23:55:00.220] [HTF][SNAPSHOT] dir=Long conf=0.87
+[2026-04-02 23:55:00.220] [CTX][MEMORY_READY] symbol=US 30 hasMemory=True
+[2026-04-02 23:55:00.221] [ENTRY][SNAPSHOT] symbol=US 30 movePhase=Decay continuationWindow=Unknown extensionState=Normal impulseFreshness=0.45 continuationFreshness=1.00 triggerLateScore=0.16 chaseRisk=False timingPenalty=-16
+[2026-04-02 23:55:00.221] [CTX][TIMING][SIDE] symbol=US 30 side=LONG timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=1.00 barsSinceImpulse=3 barsSinceBreak=5 attempts=0 triggerLate=0.16 distanceAtr=0.09
+[2026-04-02 23:55:00.221] [CTX][TIMING][SIDE] symbol=US 30 side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:55:00.222] [ENTRY MARKETSTATE ASSIGN] sym=US 30 trend=True momentum=False lowVol=True adx=26.8 atrPts=10.51
+[2026-04-02 23:55:00.222] [US 30] attemptId=US 7AV7CB [ATTEMPT US 7AV7CB] [DIR][CTX_BUILD] sym=US 30 trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:55:00.223] BLOCK: global hard session block
+[2026-04-02 23:55:00.224] [MEMORY][ASSESSMENT] symbol=US30 firstPullback=False late=False exhausted=False chase=False timingPenalty=-16 trust=0.7
+[2026-04-02 23:55:00.225] [FLAG_BREAKOUT][WAIT] no impulse

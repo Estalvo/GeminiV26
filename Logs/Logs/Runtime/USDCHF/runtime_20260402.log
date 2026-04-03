@@ -239,3 +239,1262 @@
 [2026-04-02 19:45:00.156] BLOCK: global hard session block
 [2026-04-02 19:45:00.157] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
 [2026-04-02 19:45:00.158] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:50:00.444] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 19:50:00.445] [FX MSD] USDCHF | atrPips=1.89 adx=12.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 19:50:00.445] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=12.5
+[2026-04-02 19:50:00.445] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 19:50:00.445] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:50:00.446] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:50:00.447] [IMPULSE SRC] idx=2091 barsSince=1 range=0.00
+[2026-04-02 19:50:00.449] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 19:50:00.450] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 19:50:00.451] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00021999999999999797 atr=0.00022857142857144304
+[2026-04-02 19:50:00.451] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=None source=NONE trend=None diSpread=-0.25 slopeM5=0.00003 slopeM15=0.00001
+[2026-04-02 19:50:00.452] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=None source=NONE code=DIRECTION_UNRESOLVED age=1 adx=13.4
+[2026-04-02 19:50:00.452] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 19:50:00.452] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:50:00.452] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:50:00.452] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:50:00.453] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 19:50:00.453] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 19:50:00.455] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 19:50:00.456] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 19:50:00.456] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 19:50:00.456] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 19:50:00.457] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:50:00.457] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=12.5 atrPts=1.89
+[2026-04-02 19:50:00.457] [USDCHF] attemptId=USD7244XS [ATTEMPT USD7244XS] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 19:50:00.458] BLOCK: global hard session block
+[2026-04-02 19:50:00.459] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 19:50:00.461] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 19:55:00.657] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 19:55:00.658] [FX MSD] USDCHF | atrPips=1.70 adx=11.7 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 19:55:00.658] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=11.7
+[2026-04-02 19:55:00.658] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 19:55:00.658] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 19:55:00.659] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 19:55:00.660] [IMPULSE SRC] idx=2091 barsSince=2 range=0.00
+[2026-04-02 19:55:00.660] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 19:55:00.660] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 19:55:00.660] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.000140000000000029 atr=0.00021357142857144788
+[2026-04-02 19:55:00.661] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=None source=NONE trend=None diSpread=-0.24 slopeM5=0.00004 slopeM15=0.00001
+[2026-04-02 19:55:00.661] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=None source=NONE code=DIRECTION_UNRESOLVED age=2 adx=12.5
+[2026-04-02 19:55:00.661] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 19:55:00.662] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 19:55:00.662] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 19:55:00.662] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 19:55:00.663] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 19:55:00.663] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 19:55:00.664] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 19:55:00.664] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 19:55:00.664] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 19:55:00.664] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 19:55:00.665] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 19:55:00.665] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=11.7 atrPts=1.70
+[2026-04-02 19:55:00.665] [USDCHF] attemptId=USD72AKL3 [ATTEMPT USD72AKL3] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 19:55:00.666] BLOCK: global hard session block
+[2026-04-02 19:55:00.666] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 19:55:00.667] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 20:00:00.308] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:00:00.309] [FX MSD] USDCHF | atrPips=1.83 adx=12.0 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:00:00.309] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=12.0
+[2026-04-02 20:00:00.309] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:00:00.309] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:00:00.310] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:00:00.311] [IMPULSE SRC] idx=2094 barsSince=0 range=0.00
+[2026-04-02 20:00:00.314] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:00:00.315] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:00:00.317] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.00029999999999996696 atr=0.00022000000000001383
+[2026-04-02 20:00:00.317] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=3.28 slopeM5=0.00004 slopeM15=0.00002
+[2026-04-02 20:00:00.318] [STRUCTURE][IMPULSE] dir=Long strength=0.64 range=0.0
+[2026-04-02 20:00:00.318] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:00:00.320] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 20:00:00.320] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:00:00.320] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:00:00.321] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:00:00.321] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:00:00.321] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:00:00.322] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:00:00.323] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:00:00.324] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:00:00.324] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:00:00.324] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:00:00.325] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=12.0 atrPts=1.83
+[2026-04-02 20:00:00.325] [USDCHF] attemptId=USD72GZS9 [ATTEMPT USD72GZS9] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:00:00.326] BLOCK: global hard session block
+[2026-04-02 20:00:00.326] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:00:00.327] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:05:03.261] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:05:03.261] [FX MSD] USDCHF | atrPips=1.82 adx=12.6 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:05:03.262] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=12.6
+[2026-04-02 20:05:03.263] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:05:03.264] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:05:03.266] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:05:03.267] [IMPULSE SRC] idx=2094 barsSince=1 range=0.00
+[2026-04-02 20:05:03.268] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:05:03.269] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:05:03.269] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00036999999999998145 atr=0.00022071428571430424
+[2026-04-02 20:05:03.270] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=5.30 slopeM5=0.00003 slopeM15=0.00002
+[2026-04-02 20:05:03.271] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2094 strength=0.63 range=0.00030
+[2026-04-02 20:05:03.272] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:05:03.272] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:05:03.273] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:05:03.274] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:05:03.274] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:05:03.275] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:05:03.276] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:05:03.276] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:05:03.277] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:05:03.277] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:05:03.278] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:05:03.279] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:05:03.279] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=12.6 atrPts=1.82
+[2026-04-02 20:05:03.280] [USDCHF] attemptId=USD72NHJT [ATTEMPT USD72NHJT] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:05:03.281] BLOCK: global hard session block
+[2026-04-02 20:05:03.282] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:05:03.284] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:10:00.588] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:10:00.589] [FX MSD] USDCHF | atrPips=1.69 adx=12.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:10:00.589] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=12.3
+[2026-04-02 20:10:00.590] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:10:00.590] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:10:00.592] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:10:00.593] [IMPULSE SRC] idx=2096 barsSince=0 range=0.00
+[2026-04-02 20:10:00.593] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:10:00.594] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:10:00.595] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00024000000000001798 atr=0.0002092857142857293
+[2026-04-02 20:10:00.595] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=4.12 slopeM5=0.00003 slopeM15=0.00002
+[2026-04-02 20:10:00.596] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=2 idx=2094 strength=0.67 range=0.00030
+[2026-04-02 20:10:00.597] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:10:00.597] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:10:00.598] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:10:00.598] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:10:00.599] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:10:00.599] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:10:00.600] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:10:00.600] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:10:00.601] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:10:00.601] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:10:00.601] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:10:00.602] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:10:00.602] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=12.3 atrPts=1.69
+[2026-04-02 20:10:00.603] [USDCHF] attemptId=USD72TUZ5 [ATTEMPT USD72TUZ5] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 20:10:00.604] BLOCK: global hard session block
+[2026-04-02 20:10:00.604] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:10:00.605] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:15:00.161] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:15:00.161] [FX MSD] USDCHF | atrPips=1.67 adx=11.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:15:00.162] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=11.3
+[2026-04-02 20:15:00.163] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:15:00.163] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:15:00.165] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:15:00.165] [IMPULSE SRC] idx=2097 barsSince=0 range=0.00
+[2026-04-02 20:15:00.165] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:15:00.166] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 20:15:00.166] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00026999999999999247 atr=0.00019500000000000867
+[2026-04-02 20:15:00.167] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=None source=NONE trend=None diSpread=-1.85 slopeM5=0.00000 slopeM15=0.00002
+[2026-04-02 20:15:00.167] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=None source=NONE code=DIRECTION_UNRESOLVED age=0 adx=11.8
+[2026-04-02 20:15:00.168] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=None code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 20:15:00.169] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=None code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:15:00.169] [STRUCT][CHAIN][FULL_FAIL] dir=None source=NONE impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:15:00.170] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:15:00.170] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:15:00.171] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:15:00.171] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:15:00.172] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:15:00.172] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:15:00.173] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:15:00.173] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:15:00.174] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=11.3 atrPts=1.67
+[2026-04-02 20:15:00.174] [USDCHF] attemptId=USD730A4D [ATTEMPT USD730A4D] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:15:00.175] BLOCK: global hard session block
+[2026-04-02 20:15:00.176] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:15:00.176] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:20:00.812] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:20:00.812] [FX MSD] USDCHF | atrPips=1.67 adx=12.5 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 20:20:00.813] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=12.5
+[2026-04-02 20:20:00.813] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:20:00.814] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:20:00.815] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:20:00.816] [IMPULSE SRC] idx=2098 barsSince=0 range=0.00
+[2026-04-02 20:20:00.816] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:20:00.817] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:20:00.817] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00034000000000000696 atr=0.00019571428571429905
+[2026-04-02 20:20:00.818] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-7.18 slopeM5=-0.00003 slopeM15=0.00002
+[2026-04-02 20:20:00.818] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=0 idx=2098 strength=0.82 range=0.00018
+[2026-04-02 20:20:00.819] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 20:20:00.819] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 20:20:00.820] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:20:00.820] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:20:00.821] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:20:00.821] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:20:00.822] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:20:00.822] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:20:00.822] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:20:00.823] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:20:00.823] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:20:00.824] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:20:00.824] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=12.5 atrPts=1.67
+[2026-04-02 20:20:00.825] [USDCHF] attemptId=USD736Q3H [ATTEMPT USD736Q3H] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:20:00.825] BLOCK: global hard session block
+[2026-04-02 20:20:00.825] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:20:00.826] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 20:25:00.360] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 20:25:00.360] [FX MSD] USDCHF | atrPips=1.58 adx=13.1 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 20:25:00.361] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=13.1
+[2026-04-02 20:25:00.361] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 20:25:00.361] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 20:25:00.362] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 20:25:00.362] [IMPULSE SRC] idx=2098 barsSince=1 range=0.00
+[2026-04-02 20:25:00.363] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 20:25:00.363] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 20:25:00.363] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00021000000000004349 atr=0.00018928571428572516
+[2026-04-02 20:25:00.363] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-7.98 slopeM5=-0.00006 slopeM15=0.00002
+[2026-04-02 20:25:00.364] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=1 bodyAtr=0.00 rangeAtr=0.53 adx=12.7
+[2026-04-02 20:25:00.364] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 20:25:00.365] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 20:25:00.365] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 20:25:00.366] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 20:25:00.366] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.90
+[2026-04-02 20:25:00.366] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.90 reason=FX_HTF BULL strong structure, conf=0.90, gapATR=2.65, adx=20.9, distATR=1.32 activeDirection=Long activeConfidence=0.90
+[2026-04-02 20:25:00.367] [HTF][SNAPSHOT] dir=Long conf=0.90
+[2026-04-02 20:25:00.367] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 20:25:00.367] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 20:25:00.368] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 20:25:00.368] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 20:25:00.368] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=13.1 atrPts=1.58
+[2026-04-02 20:25:00.368] [USDCHF] attemptId=USD73D58N [ATTEMPT USD73D58N] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 20:25:00.369] BLOCK: global hard session block
+[2026-04-02 20:25:00.370] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 20:25:00.370] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:00:05.086] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:00:05.092] [FX MSD] USDCHF | atrPips=2.10 adx=15.5 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 21:00:05.095] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=15.5
+[2026-04-02 21:00:05.107] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:00:05.109] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:00:05.122] [PB] bars=1 depth=3.05 early=True
+[2026-04-02 21:00:05.124] [IMPULSE SRC] idx=1997 barsSince=2 range=0.00
+[2026-04-02 21:00:05.126] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:00:05.128] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:00:05.131] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=9.999999999998899E-05 atr=0.00018357142857144165
+[2026-04-02 21:00:05.131] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-7.83 slopeM5=-0.00007 slopeM15=-0.00002
+[2026-04-02 21:00:05.132] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=2 bodyAtr=0.05 rangeAtr=0.27 adx=13.1
+[2026-04-02 21:00:05.132] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 21:00:05.133] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:00:05.133] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:00:05.136] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:00:05.136] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:00:05.136] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:00:05.137] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:00:05.137] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:00:05.140] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:00:05.142] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:00:05.145] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:00:05.146] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=15.5 atrPts=2.10
+[2026-04-02 21:00:05.146] [USDCHF] attemptId=USD74M99V [ATTEMPT USD74M99V] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:00:05.147] BLOCK: global hard session block
+[2026-04-02 21:00:05.147] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:00:05.148] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:05:00.283] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:05:00.284] [FX MSD] USDCHF | atrPips=2.94 adx=20.5 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 21:05:00.284] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=20.5
+[2026-04-02 21:05:00.285] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:05:00.286] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:05:00.288] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:05:00.289] [IMPULSE SRC] idx=1997 barsSince=3 range=0.00
+[2026-04-02 21:05:00.290] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:05:00.291] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:05:00.292] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0015199999999999658 atr=0.0002571428571428685
+[2026-04-02 21:05:00.293] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-41.97 slopeM5=-0.00011 slopeM15=-0.00002
+[2026-04-02 21:05:00.294] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=3 bodyAtr=0.08 rangeAtr=3.93 adx=17.0
+[2026-04-02 21:05:00.295] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=3
+[2026-04-02 21:05:00.297] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:05:00.298] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:05:00.300] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:05:00.301] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:05:00.302] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:05:00.303] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:05:00.304] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:05:00.304] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:05:00.305] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:05:00.306] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:05:00.307] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=20.5 atrPts=2.94
+[2026-04-02 21:05:00.308] [USDCHF] attemptId=USD74SL1D [ATTEMPT USD74SL1D] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:05:00.309] BLOCK: global hard session block
+[2026-04-02 21:05:00.310] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:05:00.311] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:10:00.869] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:10:00.870] [FX MSD] USDCHF | atrPips=2.78 adx=23.7 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 21:10:00.870] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=23.7
+[2026-04-02 21:10:00.870] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:10:00.871] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:10:00.872] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:10:00.873] [IMPULSE SRC] idx=2001 barsSince=0 range=0.00
+[2026-04-02 21:10:00.873] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:10:00.874] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:10:00.874] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0010200000000000209 atr=0.0002571428571428685
+[2026-04-02 21:10:00.874] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-39.55 slopeM5=-0.00016 slopeM15=-0.00002
+[2026-04-02 21:10:00.875] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=0 idx=2001 strength=0.66 range=0.00020
+[2026-04-02 21:10:00.875] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:10:00.876] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 21:10:00.876] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:10:00.877] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:10:00.877] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:10:00.878] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:10:00.878] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:10:00.878] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:10:00.879] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:10:00.879] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:10:00.880] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:10:00.880] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:10:00.881] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=23.7 atrPts=2.78
+[2026-04-02 21:10:00.881] [USDCHF] attemptId=USD74Z0YQ [ATTEMPT USD74Z0YQ] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:10:00.882] BLOCK: global hard session block
+[2026-04-02 21:10:00.883] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:10:00.884] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:15:01.499] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:15:01.500] [FX MSD] USDCHF | atrPips=2.63 adx=26.8 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 21:15:01.500] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=26.8
+[2026-04-02 21:15:01.501] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:15:01.501] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:15:01.503] [PB] bars=1 depth=0.46 early=True
+[2026-04-02 21:15:01.504] [IMPULSE SRC] idx=2001 barsSince=1 range=0.00
+[2026-04-02 21:15:01.504] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:15:01.505] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:15:01.505] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.00019999999999997797 atr=0.0002621428571428695
+[2026-04-02 21:15:01.506] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-37.57 slopeM5=-0.00020 slopeM15=-0.00011
+[2026-04-02 21:15:01.506] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.27 rangeAtr=0.69 adx=23.7
+[2026-04-02 21:15:01.507] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 21:15:01.507] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:15:01.508] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:15:01.509] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:15:01.509] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:15:01.510] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:15:01.511] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:15:01.511] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:15:01.512] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:15:01.513] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:15:01.513] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:15:01.514] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=26.8 atrPts=2.63
+[2026-04-02 21:15:01.515] [USDCHF] attemptId=USD755GXJ [ATTEMPT USD755GXJ] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:15:01.516] BLOCK: global hard session block
+[2026-04-02 21:15:01.517] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:15:01.518] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:20:00.288] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:20:00.291] [FX MSD] USDCHF | atrPips=3.16 adx=30.1 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:20:00.292] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=30.1
+[2026-04-02 21:20:00.293] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:20:00.293] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:20:00.300] [PB] bars=2 depth=2.91 early=True
+[2026-04-02 21:20:00.300] [IMPULSE SRC] idx=1998 barsSince=2 range=0.00
+[2026-04-02 21:20:00.300] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:20:00.301] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 21:20:00.301] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00019000000000002348 atr=0.0002542857142857228
+[2026-04-02 21:20:00.301] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-36.81 slopeM5=-0.00019 slopeM15=-0.00011
+[2026-04-02 21:20:00.302] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=2 bodyAtr=0.16 rangeAtr=0.39 adx=26.8
+[2026-04-02 21:20:00.302] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=2
+[2026-04-02 21:20:00.302] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:20:00.302] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:20:00.302] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:20:00.303] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:20:00.303] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:20:00.303] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:20:00.303] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:20:00.304] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:20:00.304] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:20:00.304] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:20:00.304] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=30.1 atrPts=3.16
+[2026-04-02 21:20:00.305] [USDCHF] attemptId=USD75BVHE [ATTEMPT USD75BVHE] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:20:00.305] BLOCK: global hard session block
+[2026-04-02 21:20:00.305] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:20:00.305] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 21:25:07.998] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:25:07.999] [FX MSD] USDCHF | atrPips=3.75 adx=34.0 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:25:07.999] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=34.0
+[2026-04-02 21:25:07.999] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:25:08.000] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:25:08.001] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:25:08.002] [IMPULSE SRC] idx=2001 barsSince=0 range=0.00
+[2026-04-02 21:25:08.002] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:25:08.003] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:25:08.003] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0012999999999999678 atr=0.00032642857142857674
+[2026-04-02 21:25:08.004] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-53.07 slopeM5=-0.00027 slopeM15=-0.00011
+[2026-04-02 21:25:08.004] [STRUCTURE][IMPULSE] dir=Short strength=1.62 range=0.0
+[2026-04-02 21:25:08.004] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:25:08.005] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 21:25:08.005] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:25:08.006] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:25:08.006] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:25:08.007] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:25:08.007] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:25:08.008] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:25:08.008] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:25:08.009] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:25:08.009] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:25:08.009] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:25:08.010] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=34.0 atrPts=3.75
+[2026-04-02 21:25:08.010] [USDCHF] attemptId=USD75IGWT [ATTEMPT USD75IGWT] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:25:08.011] BLOCK: global hard session block
+[2026-04-02 21:25:08.012] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:25:08.013] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:30:00.092] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:30:00.099] [FX MSD] USDCHF | atrPips=3.46 adx=37.3 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:30:00.100] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=37.3
+[2026-04-02 21:30:00.100] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:30:00.101] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:30:00.116] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:30:00.117] [IMPULSE SRC] idx=2001 barsSince=1 range=0.00
+[2026-04-02 21:30:00.117] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:30:00.118] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:30:00.118] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0006799999999999029 atr=0.0003435714285714272
+[2026-04-02 21:30:00.119] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-48.73 slopeM5=-0.00033 slopeM15=-0.00025
+[2026-04-02 21:30:00.119] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=1 idx=2001 strength=1.54 range=0.00068
+[2026-04-02 21:30:00.120] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:30:00.120] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:30:00.121] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:30:00.121] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:30:00.122] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:30:00.122] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:30:00.123] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:30:00.123] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:30:00.124] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:30:00.124] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:30:00.125] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:30:00.125] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:30:00.126] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=37.3 atrPts=3.46
+[2026-04-02 21:30:00.126] [USDCHF] attemptId=USD75OQB0 [ATTEMPT USD75OQB0] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:30:00.127] BLOCK: global hard session block
+[2026-04-02 21:30:00.128] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:30:00.129] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:35:00.592] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:35:00.593] [FX MSD] USDCHF | atrPips=4.12 adx=34.1 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:35:00.593] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=34.1
+[2026-04-02 21:35:00.594] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:35:00.595] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:35:00.596] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:35:00.597] [IMPULSE SRC] idx=2003 barsSince=0 range=0.00
+[2026-04-02 21:35:00.597] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:35:00.598] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:35:00.598] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0012699999999999934 atr=0.0004049999999999966
+[2026-04-02 21:35:00.599] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-22.95 slopeM5=-0.00029 slopeM15=-0.00025
+[2026-04-02 21:35:00.599] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=2 idx=2001 strength=2.40 range=0.00097
+[2026-04-02 21:35:00.600] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:35:00.601] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:35:00.601] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:35:00.602] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:35:00.602] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:35:00.603] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:35:00.603] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:35:00.604] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:35:00.604] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:35:00.605] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:35:00.605] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:35:00.606] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:35:00.606] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=34.1 atrPts=4.12
+[2026-04-02 21:35:00.607] [USDCHF] attemptId=USD75V65S [ATTEMPT USD75V65S] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:35:00.608] BLOCK: global hard session block
+[2026-04-02 21:35:00.609] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:35:00.610] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:40:06.467] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:40:06.475] [FX MSD] USDCHF | atrPips=3.83 adx=34.1 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:40:06.475] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=34.1
+[2026-04-02 21:40:06.476] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:40:06.476] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:40:06.493] [PB] bars=2 depth=0.15 early=False
+[2026-04-02 21:40:06.494] [IMPULSE SRC] idx=2001 barsSince=1 range=0.00
+[2026-04-02 21:40:06.494] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:40:06.495] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 21:40:06.495] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0009700000000000264 atr=0.0003985714285714307
+[2026-04-02 21:40:06.496] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-22.01 slopeM5=-0.00015 slopeM15=-0.00025
+[2026-04-02 21:40:06.496] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=3 idx=1999 strength=1.33 range=0.00068
+[2026-04-02 21:40:06.497] [STRUCT][PULLBACK][SHALLOW_OK] depth=0.15 bars=2 pressure=true micro=true
+[2026-04-02 21:40:06.497] [STRUCTURE][PULLBACK_RANGE] low=0.79711 high=0.79808
+[2026-04-02 21:40:06.498] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_COMPRESSION_INVALID compression=2.43 tight=false messyCompression=false
+[2026-04-02 21:40:06.498] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=NO_VALID_FLAG bars=0 compression=2.43 pressure=true
+[2026-04-02 21:40:06.499] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=3 pb=true pbDepth=0.15 pbBars=2 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:40:06.499] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:40:06.500] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:40:06.500] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:40:06.500] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:40:06.501] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:40:06.501] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:40:06.502] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:40:06.502] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:40:06.503] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=34.1 atrPts=3.83
+[2026-04-02 21:40:06.504] [USDCHF] attemptId=USD761Q6I [ATTEMPT USD761Q6I] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:40:06.504] BLOCK: global hard session block
+[2026-04-02 21:40:06.505] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:40:06.506] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:45:01.358] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:45:01.359] [FX MSD] USDCHF | atrPips=3.73 adx=32.6 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:45:01.359] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=32.6
+[2026-04-02 21:45:01.360] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:45:01.360] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:45:01.362] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:45:01.362] [IMPULSE SRC] idx=2001 barsSince=2 range=0.00
+[2026-04-02 21:45:01.363] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:45:01.364] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 21:45:01.364] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00047000000000008146 atr=0.0004100000000000056
+[2026-04-02 21:45:01.365] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-15.34 slopeM5=-0.00005 slopeM15=-0.00026
+[2026-04-02 21:45:01.365] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=4 idx=1999 strength=1.29 range=0.00068
+[2026-04-02 21:45:01.366] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:45:01.366] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 21:45:01.367] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:45:01.367] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:45:01.368] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:45:01.368] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:45:01.368] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:45:01.369] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:45:01.369] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:45:01.370] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:45:01.370] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:45:01.371] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:45:01.371] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=32.6 atrPts=3.73
+[2026-04-02 21:45:01.372] [USDCHF] attemptId=USD7681PN [ATTEMPT USD7681PN] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:45:01.372] BLOCK: global hard session block
+[2026-04-02 21:45:01.373] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:45:01.374] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:50:02.459] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:50:02.459] [FX MSD] USDCHF | atrPips=3.61 adx=32.0 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:50:02.460] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=32.0
+[2026-04-02 21:50:02.460] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:50:02.461] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:50:02.462] [PB] bars=2 depth=0.59 early=True
+[2026-04-02 21:50:02.463] [IMPULSE SRC] idx=2001 barsSince=3 range=0.00
+[2026-04-02 21:50:02.463] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:50:02.463] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 21:50:02.464] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=False HL=True short=False long=False range=0.0003700000000000925 atr=0.0004250000000000087
+[2026-04-02 21:50:02.464] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-14.40 slopeM5=-0.00004 slopeM15=-0.00026
+[2026-04-02 21:50:02.465] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=5 idx=1999 strength=1.25 range=0.00068
+[2026-04-02 21:50:02.465] [STRUCT][PULLBACK][STANDARD_OK] depth=0.59 bars=2 micro=false
+[2026-04-02 21:50:02.466] [STRUCTURE][PULLBACK_RANGE] low=0.79797 high=0.79834
+[2026-04-02 21:50:02.466] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=NO_VALID_FLAG bars=0 compression=0.87 pressure=true
+[2026-04-02 21:50:02.467] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=5 pb=true pbDepth=0.59 pbBars=2 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:50:02.467] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:50:02.468] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:50:02.468] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:50:02.468] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:50:02.469] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:50:02.469] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:50:02.470] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:50:02.470] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:50:02.471] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=32.0 atrPts=3.61
+[2026-04-02 21:50:02.471] [USDCHF] attemptId=USD76EI1F [ATTEMPT USD76EI1F] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:50:02.472] BLOCK: global hard session block
+[2026-04-02 21:50:02.473] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:50:02.473] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 21:55:00.883] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 21:55:00.884] [FX MSD] USDCHF | atrPips=3.73 adx=32.2 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 21:55:00.884] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=32.2
+[2026-04-02 21:55:00.885] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 21:55:00.886] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 21:55:00.889] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 21:55:00.890] [IMPULSE SRC] idx=2001 barsSince=4 range=0.00
+[2026-04-02 21:55:00.891] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 21:55:00.891] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 21:55:00.892] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0005300000000000304 atr=0.0004492857142857235
+[2026-04-02 21:55:00.892] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-17.18 slopeM5=-0.00003 slopeM15=-0.00026
+[2026-04-02 21:55:00.893] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=TREND_DIRECTION age=6 idx=1999 strength=1.18 range=0.00068
+[2026-04-02 21:55:00.894] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 21:55:00.894] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 21:55:00.895] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 21:55:00.896] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 21:55:00.896] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 21:55:00.897] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 21:55:00.897] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 21:55:00.898] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 21:55:00.898] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 21:55:00.899] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 21:55:00.899] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 21:55:00.900] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 21:55:00.900] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=32.2 atrPts=3.73
+[2026-04-02 21:55:00.901] [USDCHF] attemptId=USD76KWB9 [ATTEMPT USD76KWB9] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 21:55:00.901] BLOCK: global hard session block
+[2026-04-02 21:55:00.902] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 21:55:00.903] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:00:00.506] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:00:00.506] [FX MSD] USDCHF | atrPips=4.38 adx=33.4 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 22:00:00.507] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=33.4
+[2026-04-02 22:00:00.507] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:00:00.508] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:00:00.508] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:00:00.509] [IMPULSE SRC] idx=2006 barsSince=0 range=0.00
+[2026-04-02 22:00:00.509] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:00:00.509] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 22:00:00.510] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0010200000000000209 atr=0.0004900000000000063
+[2026-04-02 22:00:00.510] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=TREND_DIRECTION trend=Short diSpread=-23.81 slopeM5=-0.00008 slopeM15=-0.00028
+[2026-04-02 22:00:00.510] [STRUCTURE][IMPULSE] dir=Short strength=0.94 range=0.0
+[2026-04-02 22:00:00.510] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:00:00.511] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 22:00:00.511] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:00:00.512] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:00:00.518] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:00:00.518] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:00:00.519] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:00:00.519] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:00:00.519] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:00:00.519] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:00:00.519] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:00:00.520] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:00:00.520] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=33.4 atrPts=4.38
+[2026-04-02 22:00:00.520] [USDCHF] attemptId=USD76RBI4 [ATTEMPT USD76RBI4] [DIR][CTX_BUILD] sym=USDCHF trend=Short impulse=None breakout=None reversal=None
+[2026-04-02 22:00:00.520] BLOCK: global hard session block
+[2026-04-02 22:00:00.521] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:00:00.521] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:05:00.380] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:05:00.380] [FX MSD] USDCHF | atrPips=5.20 adx=29.4 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 22:05:00.380] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=29.4
+[2026-04-02 22:05:00.381] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:05:00.381] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:05:00.382] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:05:00.383] [IMPULSE SRC] idx=2007 barsSince=0 range=0.00
+[2026-04-02 22:05:00.383] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:05:00.383] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 22:05:00.384] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0016900000000000803 atr=0.0005828571428571548
+[2026-04-02 22:05:00.384] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.52 slopeM5=0.00001 slopeM15=-0.00028
+[2026-04-02 22:05:00.384] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=1 idx=2006 strength=1.99 range=0.00122
+[2026-04-02 22:05:00.385] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:05:00.385] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:05:00.386] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:05:00.386] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:05:00.387] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:05:00.387] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:05:00.388] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:05:00.389] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:05:00.390] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:05:00.391] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:05:00.392] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:05:00.392] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:05:00.393] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=29.4 atrPts=5.20
+[2026-04-02 22:05:00.393] [USDCHF] attemptId=USD76XQW0 [ATTEMPT USD76XQW0] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:05:00.394] BLOCK: global hard session block
+[2026-04-02 22:05:00.395] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:05:00.396] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:10:10.284] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:10:10.284] [FX MSD] USDCHF | atrPips=4.59 adx=27.8 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 22:10:10.285] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=27.8
+[2026-04-02 22:10:10.285] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:10:10.286] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:10:10.287] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:10:10.287] [IMPULSE SRC] idx=2007 barsSince=1 range=0.00
+[2026-04-02 22:10:10.288] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:10:10.288] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 22:10:10.289] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=0.0012199999999999989 atr=0.0005857142857143005
+[2026-04-02 22:10:10.290] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.45 slopeM5=0.00008 slopeM15=-0.00028
+[2026-04-02 22:10:10.290] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=2 idx=2006 strength=0.79 range=0.00075
+[2026-04-02 22:10:10.290] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:10:10.291] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:10:10.291] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:10:10.292] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:10:10.292] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:10:10.293] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:10:10.293] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:10:10.294] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:10:10.294] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:10:10.295] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:10:10.295] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:10:10.295] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:10:10.296] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=27.8 atrPts=4.59
+[2026-04-02 22:10:10.296] [USDCHF] attemptId=USD774E0G [ATTEMPT USD774E0G] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:10:10.297] BLOCK: global hard session block
+[2026-04-02 22:10:10.298] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:10:10.299] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:15:43.159] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:15:43.160] [FX MSD] USDCHF | atrPips=4.03 adx=26.4 | lowVol=False trend=True momentum=False compression=True
+[2026-04-02 22:15:43.160] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=26.4
+[2026-04-02 22:15:43.161] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:15:43.161] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:15:43.163] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:15:43.163] [IMPULSE SRC] idx=2007 barsSince=2 range=0.00
+[2026-04-02 22:15:43.163] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:15:43.164] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:15:43.164] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=6.0000000000060005E-05 atr=0.00048285714285715785
+[2026-04-02 22:15:43.165] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.42 slopeM5=0.00019 slopeM15=-0.00009
+[2026-04-02 22:15:43.165] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=3 idx=2006 strength=0.95 range=0.00075
+[2026-04-02 22:15:43.166] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:15:43.166] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:15:43.167] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:15:43.167] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:15:43.168] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:15:43.168] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:15:43.169] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:15:43.169] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:15:43.170] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:15:43.170] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:15:43.171] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:15:43.171] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:15:43.172] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=26.4 atrPts=4.03
+[2026-04-02 22:15:43.172] [USDCHF] attemptId=USD77BIUX [ATTEMPT USD77BIUX] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:15:43.173] BLOCK: global hard session block
+[2026-04-02 22:15:43.174] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:15:43.175] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:20:04.158] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:20:04.159] [FX MSD] USDCHF | atrPips=3.63 adx=25.4 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 22:20:04.160] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=25.4
+[2026-04-02 22:20:04.161] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:20:04.161] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:20:04.164] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:20:04.164] [IMPULSE SRC] idx=2007 barsSince=3 range=0.00
+[2026-04-02 22:20:04.165] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:20:04.165] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:20:04.166] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0001300000000000745 atr=0.00047714285714287437
+[2026-04-02 22:20:04.167] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-5.96 slopeM5=0.00016 slopeM15=-0.00009
+[2026-04-02 22:20:04.167] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=4 idx=2006 strength=0.96 range=0.00075
+[2026-04-02 22:20:04.168] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:20:04.169] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:20:04.169] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:20:04.170] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=4 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:20:04.171] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:20:04.171] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:20:04.172] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:20:04.172] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:20:04.173] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:20:04.174] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:20:04.174] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:20:04.175] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:20:04.176] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=25.4 atrPts=3.63
+[2026-04-02 22:20:04.177] [USDCHF] attemptId=USD77H48R [ATTEMPT USD77H48R] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=Short reversal=None
+[2026-04-02 22:20:04.177] BLOCK: global hard session block
+[2026-04-02 22:20:04.178] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:20:04.180] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:25:37.169] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:25:37.170] [FX MSD] USDCHF | atrPips=3.25 adx=24.3 | lowVol=False trend=True momentum=False compression=False
+[2026-04-02 22:25:37.170] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=False ADX=24.3
+[2026-04-02 22:25:37.171] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:25:37.171] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:25:37.173] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:25:37.173] [IMPULSE SRC] idx=2007 barsSince=4 range=0.00
+[2026-04-02 22:25:37.174] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:25:37.174] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:25:37.175] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00013999999999991797 atr=0.00046928571428572763
+[2026-04-02 22:25:37.175] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-6.25 slopeM5=0.00014 slopeM15=-0.00009
+[2026-04-02 22:25:37.176] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=5 idx=2006 strength=0.98 range=0.00075
+[2026-04-02 22:25:37.176] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:25:37.177] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:25:37.177] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:25:37.178] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=5 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:25:37.178] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:25:37.179] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:25:37.179] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:25:37.180] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:25:37.180] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:25:37.181] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:25:37.181] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:25:37.182] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:25:37.182] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=False adx=24.3 atrPts=3.25
+[2026-04-02 22:25:37.183] [USDCHF] attemptId=USD77O96W [ATTEMPT USD77O96W] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=Long reversal=None
+[2026-04-02 22:25:37.183] BLOCK: global hard session block
+[2026-04-02 22:25:37.184] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:25:37.185] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:30:04.683] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:30:04.684] [FX MSD] USDCHF | atrPips=2.92 adx=23.0 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 22:30:04.684] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=23.0
+[2026-04-02 22:30:04.685] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:30:04.686] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:30:04.687] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:30:04.688] [IMPULSE SRC] idx=2007 barsSince=5 range=0.00
+[2026-04-02 22:30:04.688] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:30:04.689] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:30:04.689] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00013999999999991797 atr=0.00046642857142858193
+[2026-04-02 22:30:04.690] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-4.95 slopeM5=0.00013 slopeM15=-0.00001
+[2026-04-02 22:30:04.690] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=6 idx=2006 strength=0.99 range=0.00075
+[2026-04-02 22:30:04.691] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 22:30:04.691] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 22:30:04.692] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:30:04.692] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=6 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:30:04.693] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:30:04.693] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:30:04.694] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:30:04.694] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:30:04.694] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:30:04.695] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:30:04.695] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:30:04.696] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:30:04.696] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=23.0 atrPts=2.92
+[2026-04-02 22:30:04.697] [USDCHF] attemptId=USD77TZM0 [ATTEMPT USD77TZM0] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=Long reversal=None
+[2026-04-02 22:30:04.698] BLOCK: global hard session block
+[2026-04-02 22:30:04.699] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:30:04.700] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:35:31.360] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:35:31.361] [FX MSD] USDCHF | atrPips=2.62 adx=22.3 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 22:35:31.361] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=22.3
+[2026-04-02 22:35:31.362] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:35:31.362] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:35:31.363] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:35:31.364] [IMPULSE SRC] idx=2007 barsSince=6 range=0.00
+[2026-04-02 22:35:31.364] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:35:31.365] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:35:31.365] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00010999999999994348 atr=0.00038642857142858123
+[2026-04-02 22:35:31.366] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-6.33 slopeM5=0.00012 slopeM15=-0.00001
+[2026-04-02 22:35:31.366] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=7 bodyAtr=0.18 rangeAtr=0.21 adx=23.2
+[2026-04-02 22:35:31.366] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 22:35:31.367] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:35:31.367] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:35:31.368] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:35:31.368] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:35:31.369] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:35:31.369] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:35:31.370] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:35:31.370] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:35:31.371] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:35:31.371] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:35:31.371] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=22.3 atrPts=2.62
+[2026-04-02 22:35:31.372] [USDCHF] attemptId=USD780ZOO [ATTEMPT USD780ZOO] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:35:31.373] BLOCK: global hard session block
+[2026-04-02 22:35:31.374] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:35:31.374] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:40:26.556] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:40:26.557] [FX MSD] USDCHF | atrPips=2.31 adx=21.5 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 22:40:26.557] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=21.5
+[2026-04-02 22:40:26.558] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:40:26.558] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:40:26.560] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:40:26.560] [IMPULSE SRC] idx=2007 barsSince=7 range=0.00
+[2026-04-02 22:40:26.561] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:40:26.561] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:40:26.561] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=True HL=False short=False long=False range=9.00000000000345E-05 atr=0.0003614285714285919
+[2026-04-02 22:40:26.562] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-6.52 slopeM5=0.00010 slopeM15=-0.00001
+[2026-04-02 22:40:26.562] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT code=NO_RECENT_IMPULSE age=7 bodyAtr=0.00 rangeAtr=0.08 adx=22.3
+[2026-04-02 22:40:26.563] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=7
+[2026-04-02 22:40:26.563] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:40:26.564] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=false impulseRecent=false impulseAge=7 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:40:26.564] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:40:26.565] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:40:26.565] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:40:26.565] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:40:26.566] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:40:26.566] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:40:26.567] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:40:26.567] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:40:26.568] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=21.5 atrPts=2.31
+[2026-04-02 22:40:26.568] [USDCHF] attemptId=USD787BGF [ATTEMPT USD787BGF] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 22:40:26.569] BLOCK: global hard session block
+[2026-04-02 22:40:26.570] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:40:26.570] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 22:45:38.595] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:45:38.596] [FX MSD] USDCHF | atrPips=2.04 adx=20.7 | lowVol=True trend=True momentum=False compression=False
+[2026-04-02 22:45:38.596] [FX MarketState] USDCHF Trend=True Momentum=False LowVol=True ADX=20.7
+[2026-04-02 22:45:38.597] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:45:38.598] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:45:38.600] [PB] bars=1 depth=0.07 early=False
+[2026-04-02 22:45:38.601] [IMPULSE SRC] idx=2007 barsSince=8 range=0.00
+[2026-04-02 22:45:38.602] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:45:38.602] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:45:38.603] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=False short=False long=False range=3.0000000000085514E-05 atr=0.000294285714285739
+[2026-04-02 22:45:38.604] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-6.47 slopeM5=0.00008 slopeM15=0.00010
+[2026-04-02 22:45:38.604] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=8 bodyAtr=0.07 rangeAtr=0.10 adx=21.5
+[2026-04-02 22:45:38.605] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=8
+[2026-04-02 22:45:38.606] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:45:38.606] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=8 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:45:38.607] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:45:38.608] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:45:38.608] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:45:38.609] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:45:38.610] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:45:38.610] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:45:38.611] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:45:38.611] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:45:38.612] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=True momentum=False lowVol=True adx=20.7 atrPts=2.04
+[2026-04-02 22:45:38.613] [USDCHF] attemptId=USD78E08C [ATTEMPT USD78E08C] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:45:38.614] BLOCK: global hard session block
+[2026-04-02 22:45:38.615] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:45:38.616] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:50:43.259] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:50:43.260] [FX MSD] USDCHF | atrPips=1.83 adx=19.9 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 22:50:43.261] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=19.9
+[2026-04-02 22:50:43.262] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:50:43.262] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:50:43.264] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 22:50:43.265] [IMPULSE SRC] idx=2007 barsSince=9 range=0.00
+[2026-04-02 22:50:43.266] [FLAG FIX] recentImpulse=False bars=2 retraceOk=True tight=True decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:50:43.266] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:50:43.267] [FLAG V2.22] tight=True decel=False allowNoDecel=false LH=False HL=False short=False long=False range=4.999999999999449E-05 atr=0.00028285714285716405
+[2026-04-02 22:50:43.268] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.87 slopeM5=0.00008 slopeM15=0.00010
+[2026-04-02 22:50:43.268] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=9 bodyAtr=0.11 rangeAtr=0.18 adx=20.7
+[2026-04-02 22:50:43.269] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=9
+[2026-04-02 22:50:43.270] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:50:43.270] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=9 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:50:43.271] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:50:43.271] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:50:43.272] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:50:43.273] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:50:43.273] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:50:43.274] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:50:43.275] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:50:43.275] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:50:43.276] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=19.9 atrPts=1.83
+[2026-04-02 22:50:43.277] [USDCHF] attemptId=USD78KJB3 [ATTEMPT USD78KJB3] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:50:43.277] BLOCK: global hard session block
+[2026-04-02 22:50:43.279] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:50:43.280] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 22:55:11.960] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 22:55:11.961] [FX MSD] USDCHF | atrPips=1.66 adx=19.0 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 22:55:11.962] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=19.0
+[2026-04-02 22:55:11.963] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 22:55:11.963] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 22:55:11.965] [PB] bars=3 depth=0.31 early=True
+[2026-04-02 22:55:11.966] [IMPULSE SRC] idx=2007 barsSince=10 range=0.00
+[2026-04-02 22:55:11.967] [FLAG FIX] recentImpulse=False bars=3 retraceOk=True tight=True decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 22:55:11.967] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 22:55:11.968] [FLAG V2.22] tight=True decel=True allowNoDecel=false LH=False HL=True short=False long=False range=7.00000000000145E-05 atr=0.0002600000000000142
+[2026-04-02 22:55:11.969] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.23 slopeM5=0.00008 slopeM15=0.00010
+[2026-04-02 22:55:11.969] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=10 bodyAtr=0.08 rangeAtr=0.19 adx=19.8
+[2026-04-02 22:55:11.970] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=10
+[2026-04-02 22:55:11.970] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 22:55:11.971] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=10 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 22:55:11.972] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 22:55:11.973] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 22:55:11.973] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 22:55:11.974] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 22:55:11.975] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 22:55:11.975] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 22:55:11.976] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 22:55:11.977] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 22:55:11.977] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=19.0 atrPts=1.66
+[2026-04-02 22:55:11.978] [USDCHF] attemptId=USD78QAN2 [ATTEMPT USD78QAN2] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 22:55:11.979] BLOCK: global hard session block
+[2026-04-02 22:55:11.980] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 22:55:11.981] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:00:06.070] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:00:06.071] [FX MSD] USDCHF | atrPips=1.55 adx=18.5 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:00:06.072] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=18.5
+[2026-04-02 23:00:06.073] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:00:06.073] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:00:06.075] [PB] bars=1 depth=0.04 early=False
+[2026-04-02 23:00:06.076] [IMPULSE SRC] idx=2018 barsSince=0 range=0.00
+[2026-04-02 23:00:06.076] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:00:06.077] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:00:06.078] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=0.00010999999999994348 atr=0.00024571428571429355
+[2026-04-02 23:00:06.078] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-6.22 slopeM5=0.00007 slopeM15=0.00008
+[2026-04-02 23:00:06.079] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=0 bodyAtr=0.41 rangeAtr=0.45 adx=19.1
+[2026-04-02 23:00:06.080] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 23:00:06.080] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:00:06.081] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:00:06.082] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:00:06.083] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:00:06.084] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:00:06.084] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:00:06.085] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:00:06.086] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:00:06.086] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:00:06.087] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:00:06.088] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=18.5 atrPts=1.55
+[2026-04-02 23:00:06.089] [USDCHF] attemptId=USD78WLKQ [ATTEMPT USD78WLKQ] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=Short reversal=None
+[2026-04-02 23:00:06.090] BLOCK: global hard session block
+[2026-04-02 23:00:06.091] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:00:06.092] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:05:43.282] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:05:43.283] [FX MSD] USDCHF | atrPips=1.45 adx=18.4 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:05:43.284] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=18.4
+[2026-04-02 23:05:43.285] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:05:43.285] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:05:43.287] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:05:43.288] [IMPULSE SRC] idx=2018 barsSince=1 range=0.00
+[2026-04-02 23:05:43.289] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:05:43.289] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:05:43.290] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.00017000000000000348 atr=0.0002150000000000128
+[2026-04-02 23:05:43.290] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-7.87 slopeM5=0.00005 slopeM15=0.00008
+[2026-04-02 23:05:43.291] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.28 rangeAtr=0.42 adx=18.7
+[2026-04-02 23:05:43.291] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 23:05:43.292] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:05:43.292] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:05:43.293] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:05:43.293] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:05:43.294] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:05:43.294] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:05:43.295] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:05:43.295] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:05:43.296] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:05:43.296] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:05:43.297] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=18.4 atrPts=1.45
+[2026-04-02 23:05:43.298] [USDCHF] attemptId=USD793TRM [ATTEMPT USD793TRM] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:05:43.298] BLOCK: global hard session block
+[2026-04-02 23:05:43.299] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:05:43.300] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:10:09.159] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:10:09.160] [FX MSD] USDCHF | atrPips=1.27 adx=18.0 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:10:09.160] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=18.0
+[2026-04-02 23:10:09.161] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:10:09.161] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:10:09.163] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:10:09.163] [IMPULSE SRC] idx=2019 barsSince=1 range=0.00
+[2026-04-02 23:10:09.163] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:10:09.164] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:10:09.164] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=9.00000000000345E-05 atr=0.0001621428571428726
+[2026-04-02 23:10:09.165] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-7.84 slopeM5=0.00003 slopeM15=0.00008
+[2026-04-02 23:10:09.165] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.06 rangeAtr=0.06 adx=18.4
+[2026-04-02 23:10:09.166] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 23:10:09.166] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:10:09.167] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:10:09.167] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:10:09.168] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:10:09.168] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:10:09.169] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:10:09.169] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:10:09.169] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:10:09.170] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:10:09.170] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:10:09.171] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=18.0 atrPts=1.27
+[2026-04-02 23:10:09.171] [USDCHF] attemptId=USD799IXD [ATTEMPT USD799IXD] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:10:09.172] BLOCK: global hard session block
+[2026-04-02 23:10:09.173] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:10:09.173] [FLAG_BREAKOUT][WAIT] no impulse
+[2026-04-02 23:15:08.061] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:15:08.062] [FX MSD] USDCHF | atrPips=1.18 adx=17.2 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:15:08.062] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.2
+[2026-04-02 23:15:08.063] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:15:08.063] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:15:08.064] [PB] bars=2 depth=0.74 early=True
+[2026-04-02 23:15:08.065] [IMPULSE SRC] idx=2021 barsSince=0 range=0.00
+[2026-04-02 23:15:08.065] [FLAG FIX] recentImpulse=True bars=2 retraceOk=False tight=False decel=True long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:15:08.066] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:15:08.066] [FLAG V2.22] tight=False decel=True allowNoDecel=false LH=True HL=False short=False long=False range=7.00000000000145E-05 atr=6.714285714286878E-05
+[2026-04-02 23:15:08.067] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.95 slopeM5=0.00003 slopeM15=0.00006
+[2026-04-02 23:15:08.067] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=0 bodyAtr=0.45 rangeAtr=1.04 adx=17.8
+[2026-04-02 23:15:08.068] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=0
+[2026-04-02 23:15:08.068] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:15:08.068] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:15:08.069] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:15:08.069] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:15:08.070] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:15:08.070] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:15:08.071] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:15:08.071] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:15:08.071] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:15:08.072] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:15:08.072] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.2 atrPts=1.18
+[2026-04-02 23:15:08.073] [USDCHF] attemptId=USD79FXJQ [ATTEMPT USD79FXJQ] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:15:08.073] BLOCK: global hard session block
+[2026-04-02 23:15:08.074] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:15:08.075] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:20:36.186] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:20:36.186] [FX MSD] USDCHF | atrPips=1.07 adx=16.7 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:20:36.187] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=16.7
+[2026-04-02 23:20:36.187] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:20:36.188] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:20:36.189] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:20:36.189] [IMPULSE SRC] idx=2021 barsSince=1 range=0.00
+[2026-04-02 23:20:36.190] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:20:36.190] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:20:36.191] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=7.00000000000145E-05 atr=6.35714285714406E-05
+[2026-04-02 23:20:36.191] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.86 slopeM5=0.00003 slopeM15=0.00006
+[2026-04-02 23:20:36.192] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.00 rangeAtr=0.63 adx=17.2
+[2026-04-02 23:20:36.192] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 23:20:36.193] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:20:36.193] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:20:36.194] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:20:36.194] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:20:36.195] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:20:36.195] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:20:36.195] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:20:36.196] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:20:36.196] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:20:36.197] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:20:36.197] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=16.7 atrPts=1.07
+[2026-04-02 23:20:36.198] [USDCHF] attemptId=USD79MYQK [ATTEMPT USD79MYQK] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:20:36.198] BLOCK: global hard session block
+[2026-04-02 23:20:36.199] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:20:36.200] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:25:03.462] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:25:03.462] [FX MSD] USDCHF | atrPips=1.06 adx=17.0 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:25:03.463] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.0
+[2026-04-02 23:25:03.463] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:25:03.464] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:25:03.465] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:25:03.466] [IMPULSE SRC] idx=2023 barsSince=0 range=0.00
+[2026-04-02 23:25:03.467] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:25:03.467] [REGIME] transition=False weakTrend=False compressed=False
+[2026-04-02 23:25:03.468] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.000140000000000029 atr=6.92857142857241E-05
+[2026-04-02 23:25:03.468] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-9.33 slopeM5=0.00002 slopeM15=0.00006
+[2026-04-02 23:25:03.469] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=0 idx=2023 strength=1.44 range=0.00012
+[2026-04-02 23:25:03.469] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:25:03.470] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:25:03.470] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:25:03.471] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:25:03.471] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:25:03.471] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:25:03.472] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:25:03.472] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:25:03.473] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:25:03.473] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:25:03.474] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:25:03.474] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:25:03.475] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.0 atrPts=1.06
+[2026-04-02 23:25:03.475] [USDCHF] attemptId=USD79SOYZ [ATTEMPT USD79SOYZ] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:25:03.476] BLOCK: global hard session block
+[2026-04-02 23:25:03.476] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:25:03.478] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:30:09.157] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:30:09.158] [FX MSD] USDCHF | atrPips=0.95 adx=17.0 | lowVol=True trend=False momentum=False compression=False
+[2026-04-02 23:30:09.158] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.0
+[2026-04-02 23:30:09.159] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:30:09.159] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:30:09.161] [PB] bars=1 depth=0.16 early=False
+[2026-04-02 23:30:09.161] [IMPULSE SRC] idx=2023 barsSince=1 range=0.00
+[2026-04-02 23:30:09.161] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:30:09.162] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 23:30:09.162] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=0.0001300000000000745 atr=6.214285714286774E-05
+[2026-04-02 23:30:09.163] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-9.65 slopeM5=0.00001 slopeM15=0.00003
+[2026-04-02 23:30:09.163] [STRUCT][IMPULSE][FAIL] symbol=USDCHF dir=Long source=TREND_DIRECTION code=NO_RECENT_IMPULSE age=1 bodyAtr=0.32 rangeAtr=0.32 adx=17.1
+[2026-04-02 23:30:09.164] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_PREREQ_NO_IMPULSE impulse=false impulseRecent=false age=1
+[2026-04-02 23:30:09.164] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:30:09.165] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=false impulseRecent=false impulseAge=1 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:30:09.165] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:30:09.166] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:30:09.166] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:30:09.166] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:30:09.167] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:30:09.167] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:30:09.168] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:30:09.168] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:30:09.169] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.0 atrPts=0.95
+[2026-04-02 23:30:09.169] [USDCHF] attemptId=USD79Z8UR [ATTEMPT USD79Z8UR] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:30:09.170] BLOCK: global hard session block
+[2026-04-02 23:30:09.170] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:30:09.171] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:35:14.786] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:35:14.787] [FX MSD] USDCHF | atrPips=0.90 adx=17.3 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:35:14.788] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.3
+[2026-04-02 23:35:14.789] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:35:14.789] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:35:14.791] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:35:14.791] [IMPULSE SRC] idx=2025 barsSince=0 range=0.00
+[2026-04-02 23:35:14.792] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:35:14.793] [REGIME] transition=True weakTrend=True compressed=True
+[2026-04-02 23:35:14.793] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=False short=False long=False range=5.999999999994898E-05 atr=6.071428571429489E-05
+[2026-04-02 23:35:14.794] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-11.08 slopeM5=-0.00001 slopeM15=0.00003
+[2026-04-02 23:35:14.795] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=2 idx=2023 strength=1.65 range=0.00012
+[2026-04-02 23:35:14.795] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:35:14.796] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:35:14.798] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:35:14.799] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:35:14.800] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:35:14.800] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:35:14.801] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:35:14.802] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:35:14.803] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:35:14.803] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:35:14.803] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:35:14.803] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:35:14.804] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.3 atrPts=0.90
+[2026-04-02 23:35:14.804] [USDCHF] attemptId=USD7A5SO8 [ATTEMPT USD7A5SO8] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:35:14.805] BLOCK: global hard session block
+[2026-04-02 23:35:14.805] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:35:14.806] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:40:02.469] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:40:02.469] [FX MSD] USDCHF | atrPips=0.87 adx=17.4 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:40:02.470] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.4
+[2026-04-02 23:40:02.470] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:40:02.471] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:40:02.473] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:40:02.473] [IMPULSE SRC] idx=2026 barsSince=0 range=0.00
+[2026-04-02 23:40:02.474] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:40:02.474] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:40:02.475] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=False short=False long=False range=8.000000000008001E-05 atr=6.214285714287568E-05
+[2026-04-02 23:40:02.475] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-10.70 slopeM5=-0.00001 slopeM15=0.00003
+[2026-04-02 23:40:02.476] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=3 idx=2023 strength=1.61 range=0.00012
+[2026-04-02 23:40:02.476] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:40:02.476] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:40:02.477] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:40:02.477] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=3 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:40:02.478] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:40:02.478] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:40:02.479] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:40:02.479] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:40:02.479] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:40:02.480] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:40:02.480] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:40:02.481] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:40:02.481] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.4 atrPts=0.87
+[2026-04-02 23:40:02.482] [USDCHF] attemptId=USD7ABYNK [ATTEMPT USD7ABYNK] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:40:02.483] BLOCK: global hard session block
+[2026-04-02 23:40:02.484] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:40:02.485] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:45:00.160] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:45:00.161] [FX MSD] USDCHF | atrPips=0.84 adx=17.0 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:45:00.161] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=17.0
+[2026-04-02 23:45:00.162] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:45:00.163] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:45:00.165] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:45:00.165] [IMPULSE SRC] idx=2027 barsSince=0 range=0.00
+[2026-04-02 23:45:00.166] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:45:00.166] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 23:45:00.167] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.00012000000000000899 atr=5.928571428573789E-05
+[2026-04-02 23:45:00.168] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Short source=DI_DOMINANCE_SHORT trend=None diSpread=-8.54 slopeM5=-0.00000 slopeM15=0.00002
+[2026-04-02 23:45:00.168] [STRUCT][IMPULSE][RECENT_OK] dir=Short source=DI_DOMINANCE_SHORT age=2 idx=2025 strength=0.67 range=0.00007
+[2026-04-02 23:45:00.168] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:45:00.169] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Short code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=false
+[2026-04-02 23:45:00.169] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Short code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:45:00.170] [STRUCT][CHAIN][FULL_FAIL] dir=Short source=DI_DOMINANCE_SHORT impulse=true impulseRecent=true impulseAge=2 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:45:00.170] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:45:00.171] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:45:00.171] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:45:00.172] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:45:00.172] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:45:00.173] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:45:00.173] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:45:00.173] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:45:00.174] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=17.0 atrPts=0.84
+[2026-04-02 23:45:00.175] [USDCHF] attemptId=USD7AICCO [ATTEMPT USD7AICCO] [DIR][CTX_BUILD] sym=USDCHF trend=None impulse=None breakout=None reversal=None
+[2026-04-02 23:45:00.175] BLOCK: global hard session block
+[2026-04-02 23:45:00.176] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:45:00.177] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:50:00.967] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:50:00.967] [FX MSD] USDCHF | atrPips=0.83 adx=16.0 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:50:00.967] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=16.0
+[2026-04-02 23:50:00.968] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:50:00.968] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:50:00.969] [PB] bars=0 depth=0.00 early=False
+[2026-04-02 23:50:00.969] [IMPULSE SRC] idx=2028 barsSince=0 range=0.00
+[2026-04-02 23:50:00.969] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:50:00.970] [REGIME] transition=True weakTrend=True compressed=False
+[2026-04-02 23:50:00.970] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=False HL=True short=False long=False range=0.0001300000000000745 atr=6.357142857144853E-05
+[2026-04-02 23:50:00.970] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.38 slopeM5=0.00001 slopeM15=0.00002
+[2026-04-02 23:50:00.970] [STRUCTURE][IMPULSE] dir=Long strength=0.79 range=0.0
+[2026-04-02 23:50:00.971] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=PULLBACK_DEPTH_INVALID depth=0.00 bars=0 shallowDepth=false
+[2026-04-02 23:50:00.971] [STRUCT][PULLBACK][FAIL] symbol=USDCHF dir=Long code=NO_VALID_PULLBACK depth=0.00 bars=0 pressure=true
+[2026-04-02 23:50:00.971] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_PREREQ_NO_PULLBACK pullback=false shallow=false micro=false
+[2026-04-02 23:50:00.972] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=false impulseAge=0 pb=false pbDepth=0.00 pbBars=0 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:50:00.972] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:50:00.972] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:50:00.972] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:50:00.973] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:50:00.973] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:50:00.973] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:50:00.973] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:50:00.974] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:50:00.974] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=16.0 atrPts=0.83
+[2026-04-02 23:50:00.974] [USDCHF] attemptId=USD7AOSFS [ATTEMPT USD7AOSFS] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:50:00.974] BLOCK: global hard session block
+[2026-04-02 23:50:00.975] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:50:00.975] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
+[2026-04-02 23:55:48.156] [ONBAR DBG] raw=USDCHF canonical=USDCHF
+[2026-04-02 23:55:48.156] [FX MSD] USDCHF | atrPips=0.78 adx=15.6 | lowVol=True trend=False momentum=False compression=True
+[2026-04-02 23:55:48.156] [FX MarketState] USDCHF Trend=False Momentum=False LowVol=True ADX=15.6
+[2026-04-02 23:55:48.157] [MEMORY][CTX_ATTACH][START] symbol=USDCHF
+[2026-04-02 23:55:48.157] [MEMORY][CTX_ATTACH] symbol=USDCHF hasMemory=true phase=Decay isBuilt=True isUsable=True
+[2026-04-02 23:55:48.157] [PB] bars=1 depth=0.46 early=True
+[2026-04-02 23:55:48.158] [IMPULSE SRC] idx=2028 barsSince=1 range=0.00
+[2026-04-02 23:55:48.158] [FLAG FIX] recentImpulse=True bars=2 retraceOk=True tight=False decel=False long=False short=False impulse=0.00 comp=0.00/0.00 retr=0.00/0.00
+[2026-04-02 23:55:48.158] [REGIME] transition=True weakTrend=False compressed=True
+[2026-04-02 23:55:48.158] [FLAG V2.22] tight=False decel=False allowNoDecel=false LH=True HL=True short=False long=False range=9.00000000000345E-05 atr=6.500000000001347E-05
+[2026-04-02 23:55:48.158] [STRUCT][DIR][SOURCE] symbol=USDCHF dir=Long source=TREND_DIRECTION trend=Long diSpread=-5.24 slopeM5=0.00001 slopeM15=0.00002
+[2026-04-02 23:55:48.159] [STRUCT][IMPULSE][RECENT_OK] dir=Long source=TREND_DIRECTION age=1 idx=2028 strength=0.77 range=0.00009
+[2026-04-02 23:55:48.159] [STRUCT][PULLBACK][STANDARD_OK] depth=0.46 bars=1 micro=false
+[2026-04-02 23:55:48.159] [STRUCTURE][PULLBACK_RANGE] low=0.79869 high=0.79873
+[2026-04-02 23:55:48.159] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=FLAG_COMPRESSION_INVALID compression=1.38 tight=false messyCompression=false
+[2026-04-02 23:55:48.159] [STRUCT][FLAG][FAIL] symbol=USDCHF dir=Long code=NO_VALID_FLAG bars=0 compression=1.38 pressure=false
+[2026-04-02 23:55:48.159] [STRUCT][CHAIN][FULL_FAIL] dir=Long source=TREND_DIRECTION impulse=true impulseRecent=true impulseAge=1 pb=true pbDepth=0.46 pbBars=1 flag=false flagBars=0 comp=0.00
+[2026-04-02 23:55:48.160] [AUDIT][HTF FLOW][SOURCE] symbol=USDCHF asset=FX entryType=N/A stage=SOURCE module=FXHtfBiasEngine htfState=Bull allowedDirection=Long align=false candidateDirection=None
+[2026-04-02 23:55:48.160] [AUDIT][HTF FLOW][CONTEXT_BUILD] symbol=USDCHF asset=FX entryType=N/A stage=EntryContextBuilder module=EntryContextBuilder htfState=Bull allowedDirection=Long align=false candidateDirection=None htfConfidence=0.89
+[2026-04-02 23:55:48.160] [AUDIT][HTF CONTEXT] symbol=USDCHF asset=FX allowedDirection=Long confidence=0.89 reason=FX_HTF BULL strong structure, conf=0.89, gapATR=2.89, adx=20.4, distATR=1.34 activeDirection=Long activeConfidence=0.89
+[2026-04-02 23:55:48.160] [HTF][SNAPSHOT] dir=Long conf=0.89
+[2026-04-02 23:55:48.160] [CTX][MEMORY_READY] symbol=USDCHF hasMemory=True
+[2026-04-02 23:55:48.160] [ENTRY][SNAPSHOT] symbol=USDCHF movePhase=Decay continuationWindow=Early extensionState=Normal impulseFreshness=0.59 continuationFreshness=0.97 triggerLateScore=0.23 chaseRisk=False timingPenalty=-23
+[2026-04-02 23:55:48.161] [CTX][TIMING][SIDE] symbol=USDCHF side=LONG timingLongActive=True timingShortActive=False early=True late=False overextended=False freshness=0.97 barsSinceImpulse=2 barsSinceBreak=4 attempts=0 triggerLate=0.23 distanceAtr=0.77
+[2026-04-02 23:55:48.161] [CTX][TIMING][SIDE] symbol=USDCHF side=SHORT timingLongActive=True timingShortActive=False early=False late=False overextended=False freshness=0.00 barsSinceImpulse=-1 barsSinceBreak=-1 attempts=-1 triggerLate=0.00 distanceAtr=0.00
+[2026-04-02 23:55:48.161] [ENTRY MARKETSTATE ASSIGN] sym=USDCHF trend=False momentum=False lowVol=True adx=15.6 atrPts=0.78
+[2026-04-02 23:55:48.161] [USDCHF] attemptId=USD7AW8BX [ATTEMPT USD7AW8BX] [DIR][CTX_BUILD] sym=USDCHF trend=Long impulse=None breakout=None reversal=None
+[2026-04-02 23:55:48.161] BLOCK: global hard session block
+[2026-04-02 23:55:48.162] [MEMORY][ASSESSMENT] symbol=USDCHF firstPullback=False late=False exhausted=False chase=False timingPenalty=-23 trust=0.7
+[2026-04-02 23:55:48.162] [FLAG_BREAKOUT][WAIT] builder flag missing long=False short=False longFlagBars=0 shortFlagBars=0
